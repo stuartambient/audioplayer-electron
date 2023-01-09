@@ -36,7 +36,7 @@ const difference = (setA, setB) => {
 
 const checkAgainstEntries = (data) => {
   return new Promise((resolve, reject) => {
-    let status = { deleted: 0, new: 0, nochange: false };
+    let status = { deleted: '', new: '', nochange: false };
     const dbAlbums = getAlbums();
     const dbAlbumsFullpath = dbAlbums.map((album) => album.fullpath);
 

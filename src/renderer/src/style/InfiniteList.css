@@ -6,7 +6,9 @@
   scroll-behavior: smooth;
   border-radius: 10px;
   background-color: black;
-  margin-right: 50px;
+  /* margin-right: 50px; */
+  scrollbar-color: rebeccapurple green;
+  scrollbar-width: thin;
 }
 
 .main-nav {
@@ -122,6 +124,7 @@ div #minus path {
   grid-row: 2 / 3;
   display: flex;
   justify-content: space-around;
+  align-items: center;
 }
 
 /* .search-menu .formelements {

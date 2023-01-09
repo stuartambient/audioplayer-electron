@@ -1,6 +1,7 @@
 import { app, shell, session, BrowserWindow, ipcMain, Menu } from 'electron';
 import * as path from 'path';
 import fs from 'fs';
+import url from 'url';
 import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -23,6 +24,33 @@ console.log(db); */
 
 const updatesFolder = `${process.cwd()}/src/updates`;
 
+let splashWindow;
+
+function createSplashWindow() {
+  splashWindow = new BrowserWindow({
+    width: 320,
+    height: 240,
+    frame: false,
+    resizable: false,
+    backgroundColor: '#FFF',
+    alwaysOnTop: true,
+    show: false
+  });
+  splashWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, 'splash.html'),
+      protocol: 'file',
+      slashes: true
+    })
+  );
+  splashWindow.on('closed', () => {
+    splashWindow = null;
+  });
+  splashWindow.once('ready-to-show', () => {
+    splashWindow.show();
+  });
+}
+
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -32,6 +60,7 @@ function createWindow() {
     frame: false, */
     backgroundColor: '#1D1B1B',
     frame: false,
+    /* useContentSize: true, */
     /* rgb(9, 0, 7) */
     show: false,
     /* autoHideMenuBar: true, */
@@ -108,6 +137,8 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
+
+/* app.on('ready', createSplashWindow); */
 
 const processUpdateResult = (type, result) => {
   let filename;
@@ -203,9 +234,15 @@ ipcMain.handle('file-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('folder-update-details', async (event, ...args) => {
-  console.log('called');
+  /*   const mainWindow = BrowserWindow.getFocusedWindow();
+  const child = new BrowserWindow({ parent: mainWindow });
+  child.show();
+  child.loadFile(`${updatesFolder}/folder-updates.txt`); */
+
   const folderupdates = await fs.promises.readFile(`${updatesFolder}/folder-updates.txt`, {
     encoding: 'utf8'
   });
+  /*   const parsedFolderUpdate = folderupdates.split('\n');
+  console.log(parsedFolderUpdate); */
   return folderupdates;
 });

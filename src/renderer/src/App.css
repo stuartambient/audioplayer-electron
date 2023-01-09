@@ -108,7 +108,7 @@ body {
   grid-row: 3 / 11;
   display: grid;
   grid-template-rows: auto 200px repeat(5, auto);
-  margin-left: 50px;
+  /* margin-left: 50px; */
 
   grid-template-areas:
     'title'
