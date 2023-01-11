@@ -1,0 +1,83 @@
+.text-editor {
+  grid-row: 4 / 7;
+  grid-column: 1 / 5;
+}
+
+/* .text-editor .text-editor--wrapper {
+  height: 100px;
+} */
+
+.text-editor textarea {
+  resize: none;
+  height: 300px;
+  width: 500px;
+
+  display: block;
+
+  padding: 10px;
+  /* margin: 10px 0 0 -10px; */
+  /*   width: 100%;
+  height: 90%; */
+
+  border-right: 1px solid;
+
+  /* resize  : none; */
+  overflow: auto;
+  scrollbar-color: #15171d #0d0f13;
+}
+
+.text-editor .editor-btn {
+  height: 1.2rem;
+}
+
+.active {
+  border: 1px solid var(--blue3);
+  background-color: pink;
+  color: white;
+}
+
+.text-editor .editor-btn--label {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  width: 5rem;
+  color: var(--blue4);
+  font-weight: 600;
+  /* font-size: 1.2rem;
+  border: 1px solid var(--blue1);
+  background-color: var(--blue3); */
+}
+
+.text-editor .editor-btn--label svg {
+  width: 1.2em;
+  height: 1.2em;
+}
+
+.text-editor .editor-btn--label:hover {
+  border: 1px solid var(--blue3);
+  background-color: var(--blue1);
+  cursor: pointer;
+}
+
+.text-editor .text-editor--menu {
+  height: 1.8rem;
+  display: flex;
+  justify-content: space-evenly;
+  background-color: silver;
+  align-items: center;
+}
+
+.text-editor .text-editor--menu p {
+  background-color: var(--blue4);
+  padding: 0.1rem;
+  border-radius: 5px;
+  padding: 0 0.2rem;
+}
+
+.text-editor--wrapper {
+  overflow-y: scroll;
+}
+
+.active-edit {
+  background-color: lightgray;
+}

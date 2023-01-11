@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import Loader from './Loader';
-import Modal from './Modal';
+/* import Modal from './Modal'; */
+import { AiOutlineFolderOpen, AiOutlineFileAdd } from 'react-icons/ai';
+import TextEditor from './TextEditor';
 import '../style/Update.css';
 
 const Update = () => {
@@ -12,9 +14,9 @@ const Update = () => {
   const [fileUpdateReq, setFileUpdateReq] = useState();
   const [showFileDetails, setShowFileDetails] = useState(false);
   const [showFolderDetails, setShowFolderDetails] = useState(false);
-  const [coords, setCoords] = useState();
+  /*   const [coords, setCoords] = useState();
 
-  const modalRef = useRef();
+  const modalRef = useRef(); */
   /*   useEffect(() => {
     if (folderUpdateRequest) {
       setFolderUpdateRequest(false);
@@ -26,7 +28,8 @@ const Update = () => {
 
   const handleUpdates = async (e) => {
     e.preventDefault();
-    switch (e.target.id) {
+    console.log(e.currentTarget.id);
+    switch (e.currentTarget.id) {
       case 'filesupdate':
         setFileUpdateReq(true);
         const filesUpdate = await window.api.updateFiles();
@@ -71,11 +74,11 @@ const Update = () => {
         setFileUpdateDetails(updateFilesFile); */
         break;
       case 'folder':
-        const rect = modalRef.current.getBoundingClientRect();
+        /*      const rect = modalRef.current.getBoundingClientRect();
         setCoords({
           left: rect.x + rect.width / 2,
           top: rect.y + window.scrollY
-        });
+        }); */
         setShowFolderDetails(!showFolderDetails);
         /* const updateFoldersFile = await window.api.folderUpdateDetails();
         setFolderUpdateDetails(updateFoldersFile); */
@@ -87,13 +90,18 @@ const Update = () => {
   return (
     <div className="update-container">
       <>
-        <button className="update-files" id="filesupdate" onClick={handleUpdates}>
-          Update Files
-        </button>
-        <br />
-        <button className="update-folders" id="foldersupdate" onClick={handleUpdates}>
-          Update Folders
-        </button>
+        <div className="update-files" id="filesupdate" onClick={handleUpdates}>
+          <div className="update-btns">
+            <AiOutlineFileAdd />
+            Update Files
+          </div>
+        </div>
+
+        <div className="update-folders" id="foldersupdate" onClick={handleUpdates}>
+          <div className="update-btns">
+            <AiOutlineFolderOpen /> Update Folders
+          </div>
+        </div>
       </>
       {fileUpdateReq && (
         <div className="file-update-results">
@@ -125,24 +133,16 @@ const Update = () => {
       </div>
       <div className="file-update-details" onClick={handleDetailsRequest} id="file">
         File update details
-        {showFileDetails && fileUpdateDetails && (
-          <textarea className="file-update-details--file">{fileUpdateDetails}</textarea>
-        )}
       </div>
-      <div
-        className="folder-update-details"
-        onClick={handleDetailsRequest}
-        ref={modalRef}
-        id="folder"
-      >
+      {showFileDetails && fileUpdateDetails && (
+        <TextEditor title="File - updates" text={fileUpdateDetails} />
+      )}
+      <div className="folder-update-details" onClick={handleDetailsRequest} id="folder">
         Folder update details
-        {showFolderDetails && folderUpdateDetails && (
-          <>
-            {/* <Modal coords={coords}>{folderUpdateDetails}</Modal> */}
-            <textarea className="folder-update-details-file">{folderUpdateDetails}</textarea>
-          </>
-        )}
       </div>{' '}
+      {showFolderDetails && folderUpdateDetails && (
+        <TextEditor title="Folder - updates" text={folderUpdateDetails} />
+      )}
     </div>
   );
 };

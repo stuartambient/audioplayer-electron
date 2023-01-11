@@ -119,7 +119,7 @@ div #minus path {
 
 .search-menu {
   list-style: none;
-  margin-right: 50px;
+  /*   margin-right: 50px; */
   grid-column: 2 / 3;
   grid-row: 2 / 3;
   display: flex;

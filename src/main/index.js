@@ -54,12 +54,13 @@ function createSplashWindow() {
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
+    width: 660,
     height: 680,
     /* transparent: true,
     frame: false, */
     backgroundColor: '#1D1B1B',
     frame: false,
+    resizable: false,
     /* useContentSize: true, */
     /* rgb(9, 0, 7) */
     show: false,

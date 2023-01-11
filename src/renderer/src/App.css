@@ -19,10 +19,19 @@ body {
   justify-content: center; */
 }
 
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+}
+
 .container {
   display: grid;
   /* grid-template-columns: 300px 400px; */
   grid-template-columns: 45vw 55vw;
+  grid-template-rows: 2.5rem;
   grid-auto-rows: 50px;
   justify-content: center;
   align-content: center;

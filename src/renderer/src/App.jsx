@@ -12,6 +12,7 @@ import {
   AiOutlineHome
 } from 'react-icons/ai';
 import { BsMusicPlayer } from 'react-icons/bs';
+import { CgMiniPlayer } from 'react-icons/cg';
 import { Buffer } from 'buffer';
 import {
   convertDuration,
@@ -355,6 +356,9 @@ function App() {
           </li>
           <li onClick={handleMainNav} id="player" className={state.player ? 'highlight' : ''}>
             <BsMusicPlayer />
+          </li>
+          <li onClick={handleMainNav} id="mini-mode" className="minimode">
+            <CgMiniPlayer style={{ stroke: 'white' }} />
           </li>
         </ul>
         <ul className="main-nav--right">
