@@ -34,6 +34,7 @@ function App() {
     update: false,
     player: false,
     library: false,
+    minimalmode: false,
     active: '',
     newtrack: '',
     playNext: false,
@@ -138,7 +139,12 @@ function App() {
           library: action.library
         };
       }
-
+      case 'player-minimode': {
+        return {
+          ...state,
+          minimalmode: action.minimalmode
+        };
+      }
       default:
         return;
     }
@@ -297,6 +303,10 @@ function App() {
     }
   };
 
+  const handleMinimalMode = () => {
+    console.log('minimode');
+  };
+
   const handleMainNav = (e) => {
     switch (e.currentTarget.id) {
       case 'close':
@@ -334,10 +344,25 @@ function App() {
           player: true
         });
         break;
+      case 'mini-mode':
+        dispatch({
+          type: 'player-minimode',
+          minimalmode: !state.minimalmode
+        });
+        break;
       default:
         return;
     }
   };
+
+  useEffect(() => {
+    if (state.minimalmode) {
+      window.api.screenMode('mini');
+    }
+    if (!state.minimalmode) {
+      window.api.screenMode('default');
+    }
+  }, [state.minimalmode]);
 
   return (
     <div className="container">

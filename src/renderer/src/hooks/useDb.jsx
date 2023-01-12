@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
   proxy: false,
 }); */
 
-const useTracks = (tracksPageNumber, tracksSearchTerm) => {
+const useTracks = (tracksPageNumber, tracksSearchTerm, sortType) => {
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
   const [tracks, setTracks] = useState([]);

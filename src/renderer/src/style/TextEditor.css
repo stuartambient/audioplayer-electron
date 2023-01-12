@@ -30,7 +30,7 @@
   height: 1.2rem;
 }
 
-.active {
+.editor-btn--active {
   border: 1px solid var(--blue3);
   background-color: pink;
   color: white;

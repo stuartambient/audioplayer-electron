@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { AiOutlineEdit, AiOutlineSave, AiOutlineCloseSquare } from 'react-icons/ai';
 import '../style/TextEditor.css';
 
-const TextEditor = ({ title, text }) => {
+const TextEditor = ({ title, text, closeFileDetails, closeFolderDetails }) => {
   const [edit, setEdit] = useState(false);
   const [save, setSave] = useState(false);
   const [close, setClose] = useState(false);
@@ -18,6 +18,12 @@ const TextEditor = ({ title, text }) => {
       }
       case 'close': {
         setClose(!close);
+        if (title === 'File - updates') {
+          closeFileDetails(false);
+        }
+        if (title === 'Folder - updates') {
+          closeFolderDetails(false);
+        }
         break;
       }
       default:
@@ -29,7 +35,7 @@ const TextEditor = ({ title, text }) => {
       <div className="text-editor--menu">
         <p>{title}</p>
         <div
-          className={edit ? 'editor-btn active' : 'editor-btn'}
+          className={edit ? 'editor-btn--active' : 'editor-btn'}
           id="edit"
           onClick={handleFileMenu}
         >

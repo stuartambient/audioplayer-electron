@@ -135,13 +135,21 @@ const Update = () => {
         File update details
       </div>
       {showFileDetails && fileUpdateDetails && (
-        <TextEditor title="File - updates" text={fileUpdateDetails} />
+        <TextEditor
+          title="File - updates"
+          text={fileUpdateDetails}
+          closeFileDetails={setShowFileDetails}
+        />
       )}
       <div className="folder-update-details" onClick={handleDetailsRequest} id="folder">
         Folder update details
       </div>{' '}
       {showFolderDetails && folderUpdateDetails && (
-        <TextEditor title="Folder - updates" text={folderUpdateDetails} />
+        <TextEditor
+          title="Folder - updates"
+          text={folderUpdateDetails}
+          closeFolderDetails={setShowFolderDetails}
+        />
       )}
     </div>
   );

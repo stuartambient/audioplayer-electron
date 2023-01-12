@@ -23,11 +23,11 @@ const createTable = () => {
   db.close();
 }; */
 
-const createIndex = () => {
+/* const createIndex = () => {
   const createIdx = db.prepare('CREATE INDEX audiofile_idx ON tracks(audiofile)');
   const idx = createIdx.run();
   db.close();
-};
+}; */
 
 const insertFiles = (files) => {
   const insert = db.prepare(
@@ -91,8 +91,12 @@ const searchAlbums = async () => {
   /*  db.close(); */
 };
 
+/* sort by artist, createdon, title genre */
+
 const allTracksByScroll = (offsetNum) => {
-  const stmt = db.prepare(`SELECT * FROM tracks LIMIT 50 OFFSET ${offsetNum * 50}`);
+  const stmt = db.prepare(
+    `SELECT * FROM tracks ORDER BY createdon LIMIT 50 OFFSET ${offsetNum * 50}`
+  );
   return stmt.all();
 };
 

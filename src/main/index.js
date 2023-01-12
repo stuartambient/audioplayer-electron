@@ -51,9 +51,11 @@ function createSplashWindow() {
   });
 }
 
+let mainWindow;
+
 function createWindow() {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 660,
     height: 680,
     /* transparent: true,
@@ -246,4 +248,21 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
   /*   const parsedFolderUpdate = folderupdates.split('\n');
   console.log(parsedFolderUpdate); */
   return folderupdates;
+});
+
+ipcMain.on('screen-mode', async (event, ...args) => {
+  console.log(args);
+  const defaultSize = {
+    width: 660,
+    height: 680
+  };
+
+  const miniSize = {
+    width: 300,
+    height: 300
+  };
+  const [currentWidth, currentHeight] = mainWindow.getSize();
+
+  if (args === 'mini') console.log('mini');
+  if (args === 'default') console.log('default');
 });

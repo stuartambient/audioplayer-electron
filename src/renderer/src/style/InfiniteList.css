@@ -120,7 +120,8 @@ div #minus path {
 .search-menu {
   list-style: none;
   /*   margin-right: 50px; */
-  grid-column: 2 / 3;
+  width: 100%;
+  grid-column: 1 / 3;
   grid-row: 2 / 3;
   display: flex;
   justify-content: space-around;
@@ -145,4 +146,23 @@ div #minus path {
   all: unset;
   border-radius: 10px;
   text-align: center;
+}
+
+.search-menu .sort-menu {
+  width: 40%;
+}
+
+.search-menu .sort-menu fieldset {
+  padding: 0;
+  margin: 0;
+  border: none;
+  display: flex;
+  color: white;
+
+  justify-content: space-around;
+}
+
+.search-menu .sort-menu .sort-menu--option {
+  display: flex;
+  flex-direction: column;
 }
