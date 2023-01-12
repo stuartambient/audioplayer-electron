@@ -3,16 +3,6 @@ import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
-import {
-  AiOutlineClose,
-  AiOutlineFullscreen,
-  AiOutlineMinus,
-  AiOutlineMenu,
-  AiOutlineScan,
-  AiOutlineHome
-} from 'react-icons/ai';
-import { BsMusicPlayer } from 'react-icons/bs';
-import { CgMiniPlayer } from 'react-icons/cg';
 import { Buffer } from 'buffer';
 import {
   convertDuration,
@@ -25,6 +15,7 @@ import InfiniteList from './Components/InfiniteList';
 import Switch from './Components/Switch';
 import Home from './Components/Home';
 import Update from './Components/Update';
+import MainNav from './Components/MainNav';
 
 import './App.css';
 
@@ -151,22 +142,14 @@ function App() {
   };
 
   const [state, dispatch] = useReducer(reducer, audioPlayer);
-  /* const [currentTrack, setCurrentTrack] = useState(); */
 
   const audio = new Audio();
   const audioRef = useRef(audio);
-  /* const [duration, setDuration] = useState(""); */
-  /* const [currentTime, setCurrentTime] = useState(""); */
-  const [progbarInc, setProgbarInc] = useState(0);
   const [type, setType] = useState('files');
 
-  const handleClick = (e) => {
-    let id;
-
-    e.target.id ? (id = e.target.id) : (id = e.target.parentNode.id);
-    switch (id) {
+  const handlePlayerControls = (e) => {
+    switch (e.currentTarget.id) {
       case 'playlist':
-        /* handleTest(); */
         dispatch({
           type: 'library'
         });
@@ -285,27 +268,22 @@ function App() {
     audioRef.current.load();
   };
 
-  const handleTextSearch = (e) => {
-    e.preventDefault();
-    if (e.currentTarget.textsearch.value === '') return;
-    if (type === 'files') {
-      setTracks([]);
-      setTracksSearchTerm(e.currentTarget.textsearch.value);
-      setTracksPageNumber(0);
-      dispatch({
-        type: 'set-next-track',
-        nextTrack: ''
-      });
-      dispatch({
-        type: 'set-prev-track',
-        prevTrack: ''
-      });
-    }
+  const handleMinimalMode = async () => {
+    state.minimalmode
+      ? await window.api.screenMode('mini')
+      : await window.api.screenMode('default');
   };
 
-  const handleMinimalMode = () => {
-    console.log('minimode');
-  };
+  useEffect(() => {
+    const changeMode = async () => {
+      await window.api.screenMode('mini');
+    };
+    const changeDefault = async () => {
+      await window.api.screenMode('default');
+    };
+    if (state.minimalmode && state.player) changeMode();
+    if (!state.minimalmode && state.player) changeDefault();
+  }, [state.minimalmode, state.player]);
 
   const handleMainNav = (e) => {
     switch (e.currentTarget.id) {
@@ -349,55 +327,21 @@ function App() {
           type: 'player-minimode',
           minimalmode: !state.minimalmode
         });
+        /* handleMinimalMode(); */
         break;
       default:
         return;
     }
   };
 
-  useEffect(() => {
-    if (state.minimalmode) {
-      window.api.screenMode('mini');
-    }
-    if (!state.minimalmode) {
-      window.api.screenMode('default');
-    }
-  }, [state.minimalmode]);
-
   return (
-    <div className="container">
-      <nav className="main-nav">
-        <ul className="main-nav--left" style={{ justifySelf: 'start' }}>
-          <li onClick={handleMainNav} id="menu">
-            <AiOutlineMenu />
-          </li>
-        </ul>
-        <ul className="main-nav--center">
-          <li onClick={handleMainNav} id="home" className={state.home ? 'highlight' : ''}>
-            <AiOutlineHome />
-          </li>
-          <li onClick={handleMainNav} id="update" className={state.update ? 'highlight' : ''}>
-            <AiOutlineScan />
-          </li>
-          <li onClick={handleMainNav} id="player" className={state.player ? 'highlight' : ''}>
-            <BsMusicPlayer />
-          </li>
-          <li onClick={handleMainNav} id="mini-mode" className="minimode">
-            <CgMiniPlayer style={{ stroke: 'white' }} />
-          </li>
-        </ul>
-        <ul className="main-nav--right">
-          <li onClick={handleMainNav} id="minimize">
-            <AiOutlineMinus />
-          </li>
-          <li onClick={handleMainNav} id="maximize">
-            <AiOutlineFullscreen />
-          </li>
-          <li onClick={handleMainNav} id="close">
-            <AiOutlineClose />
-          </li>
-        </ul>
-      </nav>
+    <div className={state.minimalmode && state.player ? 'container-minimal' : 'container'}>
+      <MainNav
+        onClick={handleMainNav}
+        home={state.home}
+        update={state.update}
+        player={state.player}
+      />
       {state.home && <Home />}
       {state.update && <Update />}
       {state.player ? (
@@ -410,7 +354,7 @@ function App() {
           duration={state.duration}
           currentTime={state.currentTime}
           pause={state.pause}
-          onClick={handleClick}
+          onClick={handlePlayerControls}
           audioRef={audioRef}
         />
       ) : null}

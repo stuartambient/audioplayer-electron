@@ -8,6 +8,7 @@ import {
 } from '../hooks/useTime';
 import { FaHeart, FaBackward, FaForward, FaListUl } from 'react-icons/fa';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
+import '../style/Player.css';
 
 const Player = ({
   title,

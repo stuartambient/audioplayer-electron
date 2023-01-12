@@ -24,7 +24,7 @@ console.log(db); */
 
 const updatesFolder = `${process.cwd()}/src/updates`;
 
-let splashWindow;
+/* let splashWindow;
 
 function createSplashWindow() {
   splashWindow = new BrowserWindow({
@@ -49,7 +49,7 @@ function createSplashWindow() {
   splashWindow.once('ready-to-show', () => {
     splashWindow.show();
   });
-}
+} */
 
 let mainWindow;
 
@@ -79,6 +79,7 @@ function createWindow() {
   });
 
   mainWindow.on('ready-to-show', () => {
+    mainWindow.setMinimumSize(300, 300);
     mainWindow.show();
   });
 
@@ -250,19 +251,18 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
   return folderupdates;
 });
 
-ipcMain.on('screen-mode', async (event, ...args) => {
-  console.log(args);
-  const defaultSize = {
-    width: 660,
-    height: 680
-  };
-
-  const miniSize = {
-    width: 300,
-    height: 300
-  };
-  const [currentWidth, currentHeight] = mainWindow.getSize();
-
-  if (args === 'mini') console.log('mini');
-  if (args === 'default') console.log('default');
+ipcMain.handle('screen-mode', async (event, ...args) => {
+  if (args[0] === 'mini') {
+    console.log('confirmed mini');
+    await mainWindow.setMinimumSize(300, 300);
+    await mainWindow.setSize(300, 300, false);
+  }
+  if (args[0] === 'default') {
+    console.log('confirmed default');
+    const [width, height] = await mainWindow.getMinimumSize();
+    /* console.log(width, height, width === 660, height === 680); */
+    if (width === 660 && height === 680) return;
+    await mainWindow.setMinimumSize(660, 680);
+    await mainWindow.setSize(660, 680, false);
+  }
 });

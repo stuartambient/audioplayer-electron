@@ -16,7 +16,7 @@ const api = {
   appClose: () => ipcRenderer.send('app-close'),
   fileUpdateDetails: () => ipcRenderer.invoke('file-update-details'),
   folderUpdateDetails: () => ipcRenderer.invoke('folder-update-details'),
-  screenMode: (size) => ipcRenderer.send('screen-mode', size)
+  screenMode: (size) => ipcRenderer.invoke('screen-mode', size)
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

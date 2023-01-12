@@ -1,0 +1,128 @@
+.audio-player {
+  border: solid 1px var(--blue1);
+  grid-column: 1 / 2;
+  grid-row: 3 / 11;
+  display: grid;
+  grid-template-rows: auto 200px repeat(5, auto);
+  /* margin-left: 50px; */
+
+  grid-template-areas:
+    'title'
+    'image'
+    'meta'
+    'volumebar'
+    'time'
+    'seekbar'
+    'controls';
+
+  /* grid-row-gap: 1rem; */
+  color: white;
+  background: black;
+  border-radius: 10px;
+  justify-items: center;
+  align-items: center;
+}
+
+.audio-player .title {
+  grid-area: title;
+}
+
+.audio-player .image {
+  grid-area: image;
+}
+
+.audio-player .image img {
+  width: 200px;
+  height: 200px;
+}
+
+.audio-player .metadata {
+  grid-area: meta;
+  display: flex;
+  /* justify-content: center; */
+  width: 90%;
+  flex-direction: column;
+}
+
+.audio-player .metadata .label {
+  color: var(--blue1);
+}
+
+.audio-player .time {
+  grid-area: time;
+  display: flex;
+  width: 90%;
+  justify-content: space-evenly;
+}
+
+.audio-player .time .label {
+  color: var(--blue1);
+}
+
+.audio-player .volume-outline {
+  grid-area: volumebar;
+}
+
+.audio-player .seekbar-outline {
+  grid-area: seekbar;
+}
+
+.audio-player .seekbar-outline,
+.audio-player .volume-outline {
+  border-radius: 10px;
+  width: 280px;
+  height: 1rem;
+  background-color: MidnightBlue;
+}
+
+.audio-player .seekbar-outline:hover,
+.audio-player .volume-outline:hover {
+  cursor: pointer;
+}
+
+.audio-player .seekbar-outline .seekbar,
+.audio-player .volume-outline .volumebar {
+  background: #0064d3;
+  width: 0;
+  border-radius: 10px;
+  height: 100%;
+}
+
+.audio-player .volume-outline .volumebar {
+  width: 100%;
+}
+
+.audio-player .controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  list-style: none;
+  margin: auto 0;
+  padding: 0;
+}
+
+.audio-player .controls .btn {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  position: relative;
+  background: var(--blue4);
+  z-index: 0;
+  border-bottom: 1px inset var(--blue1);
+  border-right: 1px inset var(--blue1);
+}
+
+.audio-player .controls .btn:hover {
+  cursor: pointer;
+}
+.audio-player .controls .btn:active {
+  transform: translateX(2px) translateY(2px);
+}
+
+.audio-player .controls .btn .icon {
+  font-size: 1.2rem;
+  color: var(--blue5);
+}

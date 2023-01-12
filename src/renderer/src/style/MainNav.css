@@ -1,0 +1,72 @@
+.main-nav {
+  border: 1px solid white;
+  padding: 0.3rem;
+  display: grid;
+  background: #2d2d2d;
+  grid-template-columns: 0.2fr 1fr 0.2fr;
+  grid-template-areas: 'left center right';
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+}
+
+.main-nav ul {
+  display: flex;
+  align-items: center;
+}
+
+.main-nav--center li {
+  margin: 0 0.8rem;
+}
+
+.main-nav--right {
+  justify-content: space-around;
+}
+
+.main-nav ul li :hover {
+  cursor: pointer;
+  color: var(--blue2);
+}
+
+.main-nav ul li svg:hover {
+  fill: var(--blue2);
+}
+
+.main-nav ul li div > svg:hover {
+  fill: var(--blue2);
+}
+
+.main-nav--left {
+  list-style: none;
+  grid-area: left;
+  justify-self: start;
+  margin-left: 5px;
+}
+
+.main-nav--center {
+  list-style: none;
+  grid-area: center;
+  justify-items: space-evenly;
+  margin-left: 100px;
+}
+
+.main-nav--right {
+  list-style: none;
+  grid-area: right;
+  justify-content: space-evenly;
+}
+
+.main-nav ul {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+.main-nav ul li svg {
+  fill: white;
+  height: 1.2em;
+  width: 1.2em;
+}
+
+.highlight {
+  border: 1px solid var(--blue1);
+}
