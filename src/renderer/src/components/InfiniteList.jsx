@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { GiMagnifyingGlass } from 'react-icons/gi';
+
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
+import MediaMenu from './MediaMenu';
 import { useTracks, useAlbums, useAlbumTracks } from '../hooks/useDb';
-import Switch from './Switch';
+/* import Switch from './Switch'; */
 import '../style/InfiniteList.css';
 
 const InfiniteList = ({
@@ -231,7 +232,7 @@ const InfiniteList = ({
           href={item.afid}
           id={item.afid}
           val={index}
-          onClick={(e) => onClick(e, item.artist, item.title, item.album, item.picture)}
+          onClick={(e) => onClick(e, item.artist, item.title, item.album, item.audiofile)}
         >
           Artist: {item.artist ? item.artist : 'not available'}
           <br></br>
@@ -274,75 +275,13 @@ const InfiniteList = ({
 
   return (
     <>
-      <ul className="search-menu">
-        <div className="sort-menu">
-          <fieldset>
-            <li className="sort-menu--option">
-              <label htmlFor="new">new</label>
-              <input
-                type="radio"
-                id="createdon"
-                name="sortby"
-                value="createdon"
-                checked={isSortSelected('createdon')}
-                onChange={handleSortClick}
-              />
-            </li>
-            <li className="sort-menu--option">
-              <label htmlFor="artist">artist</label>
-              <input
-                type="radio"
-                id="artist"
-                name="sortby"
-                value="artist"
-                checked={isSortSelected('artist')}
-                onChange={handleSortClick}
-              />
-            </li>
-            <li className="sort-menu--option">
-              <label htmlFor="recent">title</label>
-              <input
-                type="radio"
-                id="title"
-                name="sortby"
-                value="title"
-                checked={isSortSelected('title')}
-                onChange={handleSortClick}
-              />
-            </li>
-            <li className="sort-menu--option">
-              <label htmlFor="genre">genre</label>
-              <input
-                type="radio"
-                id="genre"
-                name="sortby"
-                value="genre"
-                checked={isSortSelected('genre')}
-                onChange={handleSortClick}
-              />
-            </li>
-          </fieldset>
-        </div>
-        <li>
-          <Switch type={type} setType={setType} />
-        </li>
-        <li>
-          <div className="form">
-            <form method="post" onSubmit={handleTextSearch}>
-              <div className="formelements">
-                <input type="text" className="textsearch" name="textsearch" id="textsearch" />
-
-                <button type="submit" className="submitbtn">
-                  <div className="icon">
-                    <GiMagnifyingGlass />
-                  </div>
-                </button>
-              </div>
-            </form>
-          </div>
-        </li>
-      </ul>
-
+      <MediaMenu
+        isSortSelected={isSortSelected}
+        handleSortClick={handleSortClick}
+        type={type}
+        setType={setType}
+        handleTextSearch={handleTextSearch}
+      />
       <div className="results">
         {type === 'files' && !tracks.length && !tracksLoading ? (
           <div className="noresults">No results</div>

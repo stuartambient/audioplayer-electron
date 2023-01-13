@@ -224,9 +224,9 @@ function App() {
     return `data:${buffer.format};base64,${bufferToString}`;
   };
 
-  const handleListItem = async (e, artist, title, album) => {
+  const handleListItem = async (e, artist, title, album, audiofile) => {
     e.preventDefault();
-
+    /*  console.log(artist, title, album, audiofile); */
     dispatch({
       type: 'newtrack',
       pause: false,
@@ -245,7 +245,8 @@ function App() {
       playPrev: false
     });
 
-    const filebuffer = await window.api.streamAudio(e.target.id);
+    /* const filebuffer = await window.api.streamAudio(e.target.id); */
+    const filebuffer = await window.api.streamAudio(audiofile);
 
     const blob = new Blob([filebuffer], { type: 'audio/wav' });
     const url = window.URL.createObjectURL(blob);

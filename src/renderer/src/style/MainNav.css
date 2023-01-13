@@ -1,4 +1,6 @@
 .main-nav {
+  grid-column: 1 / 3;
+  grid-row: 1 /2;
   border: 1px solid white;
   padding: 0.3rem;
   display: grid;

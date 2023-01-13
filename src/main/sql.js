@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
-const db = new Database(`${process.cwd()}/src/db/music.db`, { verbose: console.log });
+const db = new Database(`${process.cwd()}/src/db/music.db` /* , { verbose: console.log } */);
 db.pragma('journal_mode = WAL');
 db.pragma('synchronous = normal');
 db.pragma('page_size = 32768');

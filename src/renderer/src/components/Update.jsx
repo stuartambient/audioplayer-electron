@@ -28,7 +28,7 @@ const Update = () => {
 
   const handleUpdates = async (e) => {
     e.preventDefault();
-    console.log(e.currentTarget.id);
+    /*   console.log(e.currentTarget.id); */
     switch (e.currentTarget.id) {
       case 'filesupdate':
         setFileUpdateReq(true);

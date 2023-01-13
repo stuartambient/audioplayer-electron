@@ -11,19 +11,6 @@
   scrollbar-width: thin;
 }
 
-.main-nav {
-  grid-column: 1 / 3;
-  grid-row: 1 /2;
-  /*   display: flex;
-  align-items: center;
-  justify-content: space-evenly;
-  border: 1px solid white; */
-}
-
-.form {
-  display: flex;
-}
-
 #files {
   grid-column: 2 /3;
 }
@@ -117,52 +104,24 @@ div #minus path {
   padding: 0 1rem;
 }
 
-.search-menu {
-  list-style: none;
-  /*   margin-right: 50px; */
-  width: 100%;
-  grid-column: 1 / 3;
-  grid-row: 2 / 3;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-}
+/*
+`${active}--item-div`
+item 
+albumtracks
+media-menu
+sort-menu
+sort-menu--option
+form
+formelements
+textsearch
+submitbtn
+icon
+results
+noresults
+files
+albums
+item itemloading
 
-/* .search-menu .formelements {
-  display: flex;
-  align-items: center;
-} */
 
-.formelements {
-  border: 1px solid white;
-  /* border-radius: 10px; */
-  background: white;
-  height: 1.5rem;
-  display: flex;
-  align-items: center;
-}
 
-.textsearch {
-  all: unset;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.search-menu .sort-menu {
-  width: 40%;
-}
-
-.search-menu .sort-menu fieldset {
-  padding: 0;
-  margin: 0;
-  border: none;
-  display: flex;
-  color: white;
-
-  justify-content: space-around;
-}
-
-.search-menu .sort-menu .sort-menu--option {
-  display: flex;
-  flex-direction: column;
-}
+*/

@@ -147,7 +147,7 @@ app.on('window-all-closed', () => {
 const processUpdateResult = (type, result) => {
   let filename;
   type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt');
-  console.log(filename);
+  /* console.log(filename); */
   if (Array.isArray(result.new)) {
     writeFile(`\nDate: ${Date()} \nAdditions:`, `${updatesFolder}/${filename}`);
     result.new.forEach((res) => {
@@ -183,8 +183,8 @@ ipcMain.handle('create-table', () => {
 });
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
-  console.log('get-tracks');
-  console.log(args);
+  /*  console.log('get-tracks'); */
+  /* console.log(args); */
   if (args[1] === '') {
     const alltracks = await allTracksByScroll(args[0]);
     return alltracks;
@@ -195,7 +195,7 @@ ipcMain.handle('get-tracks', async (event, ...args) => {
 });
 
 ipcMain.handle('get-albums', async (event, ...args) => {
-  console.log('get-albums');
+  /*  console.log('get-albums'); */
   if (args[1] === '') {
     const allAlbums = await allAlbumsByScroll(args[0]);
     return allAlbums;
@@ -206,16 +206,16 @@ ipcMain.handle('get-albums', async (event, ...args) => {
 });
 
 ipcMain.handle('get-album-tracks', async (event, args) => {
-  console.log(args);
+  /* console.log(args); */
   const allAlbumTracks = await filesByAlbum(args);
   return allAlbumTracks;
 });
 
 ipcMain.handle('stream-audio', async (event, arg) => {
-  console.log(arg);
-  const track = await requestedFile(arg);
+  /*  const track = await requestedFile(arg);
+  console.log('track: ', track); */
   /* const picture = await parseFile(track.audiofile); */
-  const file = await fs.promises.readFile(track.audiofile);
+  const file = await fs.promises.readFile(arg);
   const filebuf = Buffer.from(file);
   /* return { filebuf, picture: picture.common.picture[0].data }; */
   return filebuf;
@@ -253,12 +253,12 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
   if (args[0] === 'mini') {
-    console.log('confirmed mini');
+    /* console.log('confirmed mini'); */
     await mainWindow.setMinimumSize(300, 300);
     await mainWindow.setSize(300, 300, false);
   }
   if (args[0] === 'default') {
-    console.log('confirmed default');
+    /* console.log('confirmed default'); */
     const [width, height] = await mainWindow.getMinimumSize();
     /* console.log(width, height, width === 660, height === 680); */
     if (width === 660 && height === 680) return;

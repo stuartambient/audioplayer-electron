@@ -1,0 +1,48 @@
+.media-menu {
+  list-style: none;
+  /*   margin-right: 50px; */
+  width: 100%;
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.media-menu .sort-menu {
+  width: 40%;
+}
+
+.media-menu .sort-menu fieldset {
+  padding: 0;
+  margin: 0;
+  border: none;
+  display: flex;
+  color: white;
+
+  justify-content: space-around;
+}
+
+.media-menu .sort-menu .sort-menu--option {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-menu li .form {
+  display: flex;
+}
+
+.media-menu li .form .formelements {
+  border: 1px solid white;
+  /* border-radius: 10px; */
+  background: white;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.media-menu li .form .formelements .textsearch {
+  all: unset;
+  border-radius: 10px;
+  text-align: center;
+}
