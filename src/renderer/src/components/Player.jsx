@@ -20,7 +20,8 @@ const Player = ({
   currentTime,
   pause,
   onClick,
-  audioRef
+  audioRef,
+  library
 }) => {
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -62,7 +63,7 @@ const Player = ({
   };
 
   return (
-    <div className="audio-player">
+    <div className={!library ? 'audio-player centered' : 'audio-player'}>
       <div className="title">{title ? <>{title.slice(0, 20)}</> : null}</div>
 
       {cover && cover !== 'not available' && (

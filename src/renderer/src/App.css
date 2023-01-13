@@ -29,3 +29,8 @@ textarea {
   align-content: center;
   row-gap: 10px;
 }
+
+.minimal {
+  grid-auto-rows: 20px;
+  grid-template-columns: 100vw;
+}

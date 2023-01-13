@@ -23,6 +23,14 @@
   align-items: center;
 }
 
+/* PLAYER WITHOUT MEDIA LIBRARY MOUNTED */
+.centered {
+  border: solid 1px var(--blue1);
+  grid-column: 1 / 3;
+  width: 100%;
+  justify-self: center;
+}
+
 .audio-player .title {
   grid-area: title;
 }
@@ -70,7 +78,8 @@
 .audio-player .seekbar-outline,
 .audio-player .volume-outline {
   border-radius: 10px;
-  width: 280px;
+  /* width: 280px; */
+  width: 90%;
   height: 1rem;
   background-color: MidnightBlue;
 }

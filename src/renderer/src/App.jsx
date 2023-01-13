@@ -335,7 +335,7 @@ function App() {
   };
 
   return (
-    <div className={state.minimalmode && state.player ? 'container-minimal' : 'container'}>
+    <div className={state.minimalmode && state.player ? 'container minimal' : 'container'}>
       <MainNav
         onClick={handleMainNav}
         home={state.home}
@@ -356,6 +356,7 @@ function App() {
           pause={state.pause}
           onClick={handlePlayerControls}
           audioRef={audioRef}
+          library={state.library}
         />
       ) : null}
       {state.library ? (
