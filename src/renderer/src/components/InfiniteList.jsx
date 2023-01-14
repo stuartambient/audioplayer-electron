@@ -1,14 +1,15 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
 
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
 import MediaMenu from './MediaMenu';
+import Item from './Item';
 import { useTracks, useAlbums, useAlbumTracks } from '../hooks/useDb';
 /* import Switch from './Switch'; */
 import '../style/InfiniteList.css';
 
 const InfiniteList = ({
-  onClick,
+  handleTrackSelection,
   currentTrack,
   setCurrentTrack,
   playNext,
@@ -222,54 +223,42 @@ const InfiniteList = ({
 
   const byFiles = tracks.map((item, index) => {
     return (
-      <div
+      <Item
+        type="file"
         key={getKey()}
-        id={`${item.afid}--item-div`}
+        divId={`${item.afid}--item-div`}
         className={`${active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'}
         ref={tracks.length === index + 1 ? lastTrackElement : scrollToView}
-      >
-        <a
-          href={item.afid}
-          id={item.afid}
-          val={index}
-          onClick={(e) => onClick(e, item.artist, item.title, item.album, item.audiofile)}
-        >
-          Artist: {item.artist ? item.artist : 'not available'}
-          <br></br>
-          Title: {item.title ? item.title : 'not available'}
-          <br></br>
-          Album: {item.album ? item.album : 'not available'}>
-        </a>
-      </div>
+        href={item.afid}
+        id={item.afid}
+        audiofile={item.audiofile}
+        val={index}
+        handleTrackSelection={handleTrackSelection}
+        artist={item.artist ? item.artist : 'not available'}
+        title={item.title ? item.title : 'not available'}
+        album={item.album ? item.artist : 'not available'}
+      />
     );
   });
 
   const byAlbums = albums.map((item, index) => {
     return (
-      <div
+      <Item
+        type="folder"
         key={getKey()}
         id={item._id}
         className="item"
         ref={albums.length === index + 1 ? lastAlbumElement : scrollToView}
-      >
-        <a
-          /* type="input"
-          href="#" */
-          href="http://"
-          id={item._id}
-          val={index}
-          /* onClick={handleAlbumTracksRequest} */
-          style={{ color: 'white', cursor: 'pointer' }}
-        >
-          {item.foldername}
-        </a>
-        <div id={item._id} term={item.fullpath} onClick={handleAlbumTracksRequest}>
-          {showMore === item._id ? <Minus id="minus" /> : <Plus id="plus" />}
-        </div>
-        {albumPattern === item.fullpath && albumTracks.length ? (
-          <ul className="albumtracks">{albumsTracks}</ul>
-        ) : null}
-      </div>
+        href="http://"
+        val={index}
+        foldername={item.foldername}
+        term={item.fullpath}
+        fullpath={item.fullpath}
+        handleAlbumTracksRequest={handleAlbumTracksRequest}
+        showMore={showMore}
+        albumPattern={albumPattern}
+        /*  albumTracksLength={albumTracks.length} */
+      ></Item>
     );
   });
 

@@ -57,7 +57,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 660,
-    height: 680,
+    height: 660,
     /* transparent: true,
     frame: false, */
     backgroundColor: '#1D1B1B',
@@ -262,7 +262,7 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
     const [width, height] = await mainWindow.getMinimumSize();
     /* console.log(width, height, width === 660, height === 680); */
     if (width === 660 && height === 680) return;
-    await mainWindow.setMinimumSize(660, 680);
-    await mainWindow.setSize(660, 680, false);
+    await mainWindow.setMinimumSize(660, 660);
+    await mainWindow.setSize(660, 660, false);
   }
 });

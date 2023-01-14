@@ -224,7 +224,7 @@ function App() {
     return `data:${buffer.format};base64,${bufferToString}`;
   };
 
-  const handleListItem = async (e, artist, title, album, audiofile) => {
+  const handleTrackSelection = async (e, artist, title, album, audiofile) => {
     e.preventDefault();
     /*  console.log(artist, title, album, audiofile); */
     dispatch({
@@ -362,7 +362,7 @@ function App() {
       ) : null}
       {state.library ? (
         <InfiniteList
-          onClick={handleListItem}
+          handleTrackSelection={handleTrackSelection}
           library={state.library}
           currentTrack={state.newtrack}
           playNext={state.playNext}

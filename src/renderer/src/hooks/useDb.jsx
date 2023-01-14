@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 /* import axios from "axios"; */
 
 /* const client = axios.create({
@@ -14,12 +14,13 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType) => {
   const [hasMoreTracks, setHasMoreTracks] = useState(false);
 
   useEffect(() => {
+    let isSubscribed = true;
     const loadTracks = async () => {
       let success = true;
       setTracksLoading(true);
       setTracksError(false);
-      const trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm);
-      if (trackRequest) {
+      let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm);
+      if (trackRequest && isSubscribed) {
         /* console.log('tr: ', trackRequest); */
         setTracks((prevTracks) => {
           return [...prevTracks, ...trackRequest];
@@ -27,8 +28,11 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType) => {
         setHasMoreTracks(trackRequest.length > 0);
         setTracksLoading(false);
       }
+      return () => console.log('files found');
     };
+
     loadTracks();
+    return () => (isSubscribed = false);
   }, [tracksPageNumber, tracksSearchTerm]);
 
   return { tracksLoading, tracks, setTracks, hasMoreTracks, tracksError };
@@ -42,11 +46,12 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm) => {
   const [hasMoreAlbums, setHasMoreAlbums] = useState(false);
 
   useEffect(() => {
+    let isSubscribed = true;
     const loadAlbums = async () => {
       setAlbumsLoading(true);
       setAlbumsError(false);
       const albumRequest = await window.api.getAlbums(albumsPageNumber, albumsSearchTerm);
-      if (albumRequest) {
+      if (albumRequest && isSubscribed) {
         setAlbums((prevAlbums) => {
           return [...prevAlbums, ...albumRequest];
         });
@@ -55,6 +60,7 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm) => {
       }
     };
     loadAlbums();
+    return () => (isSubscribed = false);
   }, [albumsPageNumber, albumsSearchTerm]);
 
   return { albumsLoading, albums, setAlbums, hasMoreAlbums, albumsError };
