@@ -44,13 +44,11 @@ const parseMeta = async (files) => {
         bitrate,
         sampleRate,
         like: 0,
-        createdon: Date(),
-        modifiedon: Date(),
         root
       });
     } catch (err) {
-      writeFile(audiofile, './metadataErrors.txt');
-      fs.renameSync(`${audiofile}`, `${audiofile}.bad`);
+      /*  writeFile(audiofile, './metadataErrors.txt');
+      fs.renameSync(`${audiofile}`, `${audiofile}.bad`); */
       console.error(err);
     }
   }

@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
-const db = new Database(`${process.cwd()}/src/db/music.db` /* , { verbose: console.log } */);
+const db = new Database(`${process.cwd()}/src/db/music.db`, { verbose: console.log });
 db.pragma('journal_mode = WAL');
 db.pragma('synchronous = normal');
 db.pragma('page_size = 32768');
@@ -31,7 +31,7 @@ const createTable = () => {
 
 const insertFiles = (files) => {
   const insert = db.prepare(
-    'INSERT INTO tracks VALUES (@afid, @root, @audiofile, @modified, @extension, @year, @title, @artist, @album, @genre, @lossless, @bitrate, @sampleRate, @like, @createdon, @modifiedon)'
+    'INSERT INTO tracks (afid, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, sampleRate, like) VALUES (@afid, @root, @audiofile, @modified, @extension, @year, @title, @artist, @album, @genre, @lossless, @bitrate, @sampleRate, @like)'
   );
 
   const insertMany = db.transaction((files) => {
@@ -140,6 +140,22 @@ const filesByAlbum = (albumPath) => {
   return albumFiles;
 };
 
+const likeTrack = (fileId) => {
+  let status;
+  const isLiked = db.prepare('SELECT like FROM tracks WHERE afid = ?');
+  const currentLike = isLiked.get(fileId);
+  currentLike.like === 1 ? (status = 0) : (status = 1);
+  const updateLike = db.prepare('UPDATE tracks SET like = ? WHERE afid = ? ');
+  const info = updateLike.run(status, fileId);
+  return info;
+};
+
+const isLiked = (id) => {
+  const isLiked = db.prepare('SELECT like FROM tracks WHERE afid = ?');
+  const currentLike = isLiked.get(id);
+  return isLiked.like;
+};
+
 export {
   createTable,
   insertFiles,
@@ -153,5 +169,7 @@ export {
   allAlbumsByScroll,
   allAlbumsBySearchTerm,
   requestedFile,
-  filesByAlbum
+  filesByAlbum,
+  likeTrack,
+  isLiked
 };

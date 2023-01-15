@@ -71,11 +71,15 @@ const useAlbumTracks = (pattern) => {
   const [error, setError] = useState([]);
 
   useEffect(() => {
+    let subscribed = true;
     const loadAlbumTracks = async () => {
       const albumTracksRequest = await window.api.getAlbumTracks(pattern);
-      setAlbumTracks(albumTracksRequest);
+      if (albumTracksRequest && subscribed) {
+        setAlbumTracks(albumTracksRequest);
+      }
     };
     loadAlbumTracks();
+    return () => (subscribed = false);
   }, [pattern]);
   return { albumTracks, setAlbumTracks };
 };

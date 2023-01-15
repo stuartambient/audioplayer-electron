@@ -14,7 +14,9 @@ import {
   allAlbumsBySearchTerm,
   filesByAlbum,
   createTable,
-  requestedFile
+  requestedFile,
+  likeTrack,
+  isLiked
 } from './sql.js';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
@@ -265,4 +267,15 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
     await mainWindow.setMinimumSize(660, 660);
     await mainWindow.setSize(660, 660, false);
   }
+});
+
+ipcMain.handle('update-like', async (event, ...args) => {
+  const updateTrackLike = likeTrack(args[0]);
+  /* return updateTrackLike; */
+  return true;
+});
+
+ipcMain.handle('is-liked', async (event, arg) => {
+  const checkIsLiked = await isLiked(arg);
+  return checkIsLiked;
 });

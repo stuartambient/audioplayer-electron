@@ -14,8 +14,11 @@ const Item = forwardRef(
       artist,
       title,
       audiofile,
+      like,
+
       /* ALBUMS */
       album,
+      albumTracks,
       foldername,
       albumTracksLength,
       showMore,
@@ -33,7 +36,7 @@ const Item = forwardRef(
             href={href}
             id={id}
             val={val}
-            onClick={(e) => handleTrackSelection(e, artist, title, album, audiofile)}
+            onClick={(e) => handleTrackSelection(e, artist, title, album, audiofile, like)}
           >
             Artist: {artist}
             <br></br>
@@ -47,10 +50,10 @@ const Item = forwardRef(
     if (type === 'folder') {
       return (
         <div id={id} className={className} ref={ref}>
-          <a href={href} id={id} val={val}>
+          <a href={href} id={id} val={val} onClick={(e) => e.preventDefault()}>
             {foldername}
           </a>
-          <div id={id} term={term} onClick={handleAlbumTracksRequest}>
+          <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}
           </div>
           {/*   {albumPattern === fullpath && albumTracksLength ? (

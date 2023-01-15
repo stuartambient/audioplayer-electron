@@ -49,7 +49,8 @@ function App() {
     randomize: false,
     albumPath: '',
     showMore: null,
-    delay: false
+    delay: false,
+    isLiked: false
   };
 
   const reducer = (state, action) => {
@@ -78,7 +79,8 @@ function App() {
           cover: action.cover,
           active: action.active,
           nextTrack: action.nextTrack,
-          prevTrack: action.prevTrack
+          prevTrack: action.prevTrack,
+          isLiked: action.isLiked
         };
       }
       case 'duration': {
@@ -147,7 +149,14 @@ function App() {
   const audioRef = useRef(audio);
   const [type, setType] = useState('files');
 
+  const handleUpdateLike = async (id) => {
+    if (!id) return;
+    const updatelike = await window.api.updateLike(id);
+    console.log('update like: ', updatelike);
+  };
+
   const handlePlayerControls = (e) => {
+    /*     console.log(e.currentTarget.id); */
     switch (e.currentTarget.id) {
       case 'playlist':
         dispatch({
@@ -172,6 +181,9 @@ function App() {
           playPrev: false,
           playNext: true
         });
+        break;
+      case 'like':
+        handleUpdateLike(state.active);
         break;
       default:
         return;
@@ -217,16 +229,33 @@ function App() {
   useEffect(() => {
     if (state.pause) audioRef.current.pause();
     if (!state.pause) audioRef.current.play();
-  }, [state.pause, audioRef]);
+  }, [state.pause, audioRef.current]);
+
+  /*   const handleLikeStatus = async () => {
+    const liked = await window.api.isLiked(state.active);
+
+    if (liked === 1) {
+      dispatch({
+        type: 'like-status',
+        isLiked: true
+      });
+    } else {
+      dispatch({
+        type: 'like-status',
+        isLiked: false
+      });
+    }
+  }; */
 
   const handlePicture = (buffer) => {
     const bufferToString = Buffer.from(buffer).toString('base64');
     return `data:${buffer.format};base64,${bufferToString}`;
   };
 
-  const handleTrackSelection = async (e, artist, title, album, audiofile) => {
+  const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
     e.preventDefault();
     /*  console.log(artist, title, album, audiofile); */
+
     dispatch({
       type: 'newtrack',
       pause: false,
@@ -236,7 +265,8 @@ function App() {
       album,
       active: e.target.id,
       nextTrack: '',
-      prevTrack: ''
+      prevTrack: '',
+      isLiked: like === 1 ? true : false
     });
 
     dispatch({
@@ -265,7 +295,6 @@ function App() {
         cover: handlePicture(picture)
       });
     }
-
     audioRef.current.load();
   };
 
@@ -358,6 +387,7 @@ function App() {
           onClick={handlePlayerControls}
           audioRef={audioRef}
           library={state.library}
+          isLiked={state.isLiked}
         />
       ) : null}
       {state.library ? (

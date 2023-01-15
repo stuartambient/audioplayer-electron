@@ -27,7 +27,7 @@
 .centered {
   border: solid 1px var(--blue1);
   grid-column: 1 / 3;
-  width: 50%;
+  width: 45%;
   justify-self: center;
 }
 
@@ -134,4 +134,10 @@
 .audio-player .controls .btn .icon {
   font-size: 1.2rem;
   color: var(--blue5);
+}
+
+.isliked svg {
+  fill: red;
+  /* font-size: 1.2rem;
+  color: var(--blue5); */
 }

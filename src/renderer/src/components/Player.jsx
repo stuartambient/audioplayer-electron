@@ -21,7 +21,9 @@ const Player = ({
   pause,
   onClick,
   audioRef,
-  library
+  library,
+  active,
+  isLiked
 }) => {
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -106,7 +108,7 @@ const Player = ({
         <div className="seekbar" style={{ width: progbarInc ? `${progbarInc}px` : null }}></div>
       </div>
       <ul className="controls">
-        <li className="btn" id="like" onClick={onClick}>
+        <li className={isLiked ? 'btn isliked' : 'btn'} id="like" onClick={onClick}>
           <FaHeart id="like" className="icon" />
         </li>
 

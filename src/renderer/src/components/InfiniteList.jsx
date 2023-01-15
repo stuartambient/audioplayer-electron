@@ -39,7 +39,7 @@ const InfiniteList = ({
     albumsSearchTerm
   );
 
-  /*  const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern); */
+  /*   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern); */
 
   /*   const albumsTracks = albumTracks.map((track) => {
     if (track.title) {
@@ -125,19 +125,22 @@ const InfiniteList = ({
   };
   const handleListScroll = (e) => {};
 
+  useEffect(() => {
+    console.log('show more: ', showMore, 'albumPattern: ', albumPattern);
+  }, [showMore, albumPattern]);
+
   const handleAlbumTracksRequest = (e) => {
     const term = e.currentTarget.getAttribute('term');
+
     if (showMore === e.currentTarget.id) {
       setShowMore(null);
-      setAlbumTracks([]);
+      /*   setAlbumTracks([]); */
       setAlbumPattern(null);
     } else {
       setShowMore(e.currentTarget.id);
       setAlbumPattern(term);
     }
-    /*   showMore === e.currentTarget.id
-      ? setShowMore(null)
-      : setShowMore(e.currentTarget.id);
+    /*  showMore === e.currentTarget.id ? setShowMore(null) : setShowMore(e.currentTarget.id);
     setAlbumPath(term); */
   };
 
@@ -231,6 +234,7 @@ const InfiniteList = ({
         ref={tracks.length === index + 1 ? lastTrackElement : scrollToView}
         href={item.afid}
         id={item.afid}
+        like={item.like}
         audiofile={item.audiofile}
         val={index}
         handleTrackSelection={handleTrackSelection}
@@ -246,7 +250,7 @@ const InfiniteList = ({
       <Item
         type="folder"
         key={getKey()}
-        id={item._id}
+        id={item.id}
         className="item"
         ref={albums.length === index + 1 ? lastAlbumElement : scrollToView}
         href="http://"
@@ -257,7 +261,8 @@ const InfiniteList = ({
         handleAlbumTracksRequest={handleAlbumTracksRequest}
         showMore={showMore}
         albumPattern={albumPattern}
-        /*  albumTracksLength={albumTracks.length} */
+        /* albumTracksLength={albumTracks.length}
+        albumTracks={albumTracks} */
       ></Item>
     );
   });
