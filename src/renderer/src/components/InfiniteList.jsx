@@ -19,7 +19,8 @@ const InfiniteList = ({
   active,
   dispatch,
   handlePicture,
-  library
+  library,
+  tracks
 }) => {
   const [tracksPageNumber, setTracksPageNumber] = useState(0);
   const [albumsPageNumber, setAlbumsPageNumber] = useState(0);
@@ -29,10 +30,11 @@ const InfiniteList = ({
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
   const [sortType, setSortType] = useState('createdon');
-  const { tracksLoading, tracks, setTracks, hasMoreTracks, tracksError } = useTracks(
+  const { tracksLoading /* , tracks, setTracks */, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
-    sortType
+    sortType,
+    dispatch
   );
   const { albumsLoading, albums, setAlbums, hasMoreAlbums, albumsError } = useAlbums(
     albumsPageNumber,
@@ -91,7 +93,11 @@ const InfiniteList = ({
     e.preventDefault();
     if (e.currentTarget.textsearch.value === '') return;
     if (type === 'files') {
-      setTracks([]);
+      /* setTracks([]); */
+      dispatch({
+        type: 'reset-tracks',
+        tracks: []
+      });
       setTracksSearchTerm(e.currentTarget.textsearch.value);
       setTracksPageNumber(0);
       dispatch({
@@ -239,7 +245,7 @@ const InfiniteList = ({
         val={index}
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
-        title={item.title ? item.title : 'not available'}
+        title={item.title ? item.title : item.audiofile}
         album={item.album ? item.artist : 'not available'}
       />
     );

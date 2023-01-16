@@ -151,16 +151,17 @@ const processUpdateResult = (type, result) => {
   type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt');
   /* console.log(filename); */
   if (Array.isArray(result.new)) {
-    writeFile(`\nDate: ${Date()} \nAdditions:`, `${updatesFolder}/${filename}`);
+    writeFile(`\nDate: ${Date()} \nAdditions:\n`, `${updatesFolder}/${filename}`);
     result.new.forEach((res) => {
-      writeFile(res, `${updatesFolder}/${filename}`);
+      writeFile(`${res}\n`, `${updatesFolder}/${filename}`);
     });
+    console.log('completed folders');
   }
   if (Array.isArray(result.deleted)) {
-    writeFile(`\nDate: ${Date()} \nDeletions:`, `${updatesFolder}/${filename}`);
+    writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}/${filename}`);
 
     result.deleted.forEach((res) => {
-      writeFile(res, `${updatesFolder}/${filename}`);
+      writeFile(`${res}\n`, `${updatesFolder}/${filename}`);
     });
   } else if (result.nochange === true) {
     writeFile(`\nDate: ${Date()} No changes`, `${updatesFolder}/${filename}`);

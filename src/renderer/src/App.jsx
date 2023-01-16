@@ -50,7 +50,8 @@ function App() {
     albumPath: '',
     showMore: null,
     delay: false,
-    isLiked: false
+    isLiked: false,
+    tracks: []
   };
 
   const reducer = (state, action) => {
@@ -136,6 +137,19 @@ function App() {
         return {
           ...state,
           minimalmode: action.minimalmode
+        };
+      }
+      case 'tracks-playlist': {
+        return {
+          ...state,
+          /*  tracks: action.tracks */
+          tracks: [...state.tracks, ...action.tracks]
+        };
+      }
+      case 'reset-tracks': {
+        return {
+          ...state,
+          tracks: action.tracks
         };
       }
       default:
@@ -255,6 +269,7 @@ function App() {
   const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
     e.preventDefault();
     /*  console.log(artist, title, album, audiofile); */
+    audioRef.current.src = '';
 
     dispatch({
       type: 'newtrack',
@@ -402,6 +417,7 @@ function App() {
           active={state.active}
           dispatch={dispatch}
           handlePicture={handlePicture}
+          tracks={state.tracks}
         />
       ) : null}
     </div>

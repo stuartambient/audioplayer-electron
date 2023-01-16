@@ -6,10 +6,10 @@ import { useState, useEffect, useMemo } from 'react';
   proxy: false,
 }); */
 
-const useTracks = (tracksPageNumber, tracksSearchTerm, sortType) => {
+const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, dispatch) => {
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
-  const [tracks, setTracks] = useState([]);
+  /*  const [tracks, setTracks] = useState([]); */
   /*   const [albums, setAlbums] = useState([]); */
   const [hasMoreTracks, setHasMoreTracks] = useState(false);
 
@@ -22,8 +22,12 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType) => {
       let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm);
       if (trackRequest && isSubscribed) {
         /* console.log('tr: ', trackRequest); */
-        setTracks((prevTracks) => {
-          return [...prevTracks, ...trackRequest];
+        /*   setTracks((prevTracks) => {
+          ret urn [...prevTracks, ...trackRequest];
+        });*/
+        dispatch({
+          type: 'tracks-playlist',
+          tracks: trackRequest
         });
         setHasMoreTracks(trackRequest.length > 0);
         setTracksLoading(false);
@@ -35,7 +39,7 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType) => {
     return () => (isSubscribed = false);
   }, [tracksPageNumber, tracksSearchTerm]);
 
-  return { tracksLoading, tracks, setTracks, hasMoreTracks, tracksError };
+  return { tracksLoading, /* tracks, setTracks, */ hasMoreTracks, tracksError };
 };
 
 const useAlbums = (albumsPageNumber, albumsSearchTerm) => {

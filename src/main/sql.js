@@ -53,7 +53,7 @@ const deleteFiles = (files) => {
 
 const insertAlbums = (data) => {
   const insert = db.prepare(
-    'INSERT INTO albums(id, rootlocation, foldername, fullpath, datecreated, datemodified) VALUES (@id, @root, @name, @fullpath, @datecreated, @datemodified)'
+    'INSERT INTO albums(id, rootlocation, foldername, fullpath) VALUES (@id, @root, @name, @fullpath)'
   );
 
   const insertMany = db.transaction((albums) => {
@@ -95,7 +95,7 @@ const searchAlbums = async () => {
 
 const allTracksByScroll = (offsetNum) => {
   const stmt = db.prepare(
-    `SELECT * FROM tracks ORDER BY createdon LIMIT 50 OFFSET ${offsetNum * 50}`
+    `SELECT * FROM tracks ORDER BY modified LIMIT 50 OFFSET ${offsetNum * 50}`
   );
   return stmt.all();
 };

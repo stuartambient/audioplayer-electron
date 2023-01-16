@@ -4,12 +4,19 @@ import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 import { parseFile } from 'music-metadata';
 import { roots } from '../../constant/constants';
+import { error } from 'node:console';
 
-const writeFile = (data, filename) => {
-  const file = fs.createWriteStream(filename, { flags: 'a' });
-  file.on('error', (err) => console.log(err));
-  file.write(data + '\n');
-  file.end();
+/* const writeFile = async (data, filename) => {
+  const writer = fs.createWriteStream(filename, { flags: 'a' });
+  writer.on('error', (err) => {
+    console.log(err);
+  });
+  await writer.write(data + '\n');
+  writer.end();
+}; */
+
+const writeFile = async (data, filename) => {
+  fs.writeFileSync(filename, data, { flag: 'a', encoding: 'utf8' });
 };
 
 const parseMeta = async (files) => {
@@ -47,8 +54,8 @@ const parseMeta = async (files) => {
         root
       });
     } catch (err) {
-      /*  writeFile(audiofile, './metadataErrors.txt');
-      fs.renameSync(`${audiofile}`, `${audiofile}.bad`); */
+      writeFile(audiofile, './metadataErrors.txt');
+      fs.renameSync(`${audiofile}`, `${audiofile}.bad`);
       console.error(err);
     }
   }

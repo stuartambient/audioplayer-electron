@@ -9,7 +9,7 @@ const parseNewEntries = (newEntries) => {
 
   for (const entry of newEntries) {
     const id = uuidv4();
-    let name, root, fullpath, datecreated, datemodified;
+    let name, root, fullpath /* , datecreated, datemodified */;
 
     for (const r of newroots) {
       if (entry.startsWith(r)) {
@@ -17,11 +17,11 @@ const parseNewEntries = (newEntries) => {
         root = r;
         name = newStr;
       }
-      datecreated = Date();
-      datemodified = Date();
+      /*       datecreated = Date();
+      datemodified = Date(); */
       fullpath = entry;
     }
-    newAlbums.push({ id, root, name, fullpath, datecreated, datemodified });
+    newAlbums.push({ id, root, name, fullpath /* , datecreated, datemodified */ });
   }
   return newAlbums;
 };
