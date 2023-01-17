@@ -257,8 +257,8 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 ipcMain.handle('screen-mode', async (event, ...args) => {
   if (args[0] === 'mini') {
     /* console.log('confirmed mini'); */
-    await mainWindow.setMinimumSize(300, 300);
-    await mainWindow.setSize(300, 300, false);
+    await mainWindow.setMinimumSize(380, 380);
+    await mainWindow.setSize(380, 380, false);
   }
   if (args[0] === 'default') {
     /* console.log('confirmed default'); */
@@ -279,4 +279,14 @@ ipcMain.handle('update-like', async (event, ...args) => {
 ipcMain.handle('is-liked', async (event, arg) => {
   const checkIsLiked = await isLiked(arg);
   return checkIsLiked;
+});
+
+ipcMain.on('open-child', async (event, ...args) => {
+  const child = new BrowserWindow({ parent: mainWindow });
+  console.log('dirname: ', __dirname);
+  child.loadFile(
+    path.join('C:/users/sambi/documents/nodeprojs/musicplayer-electron/src/renderer/child.html')
+  );
+  child.show();
+  return true;
 });

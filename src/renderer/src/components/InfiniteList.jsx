@@ -20,9 +20,9 @@ const InfiniteList = ({
   dispatch,
   handlePicture,
   library,
-  tracks
+  tracks,
+  tracksPageNumber
 }) => {
-  const [tracksPageNumber, setTracksPageNumber] = useState(0);
   const [albumsPageNumber, setAlbumsPageNumber] = useState(0);
   const [type, setType] = useState('files');
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
@@ -30,7 +30,7 @@ const InfiniteList = ({
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
   const [sortType, setSortType] = useState('createdon');
-  const { tracksLoading /* , tracks, setTracks */, hasMoreTracks, tracksError } = useTracks(
+  const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
     sortType,
@@ -99,7 +99,11 @@ const InfiniteList = ({
         tracks: []
       });
       setTracksSearchTerm(e.currentTarget.textsearch.value);
-      setTracksPageNumber(0);
+      /* setTracksPageNumber(0); */
+      dispatch({
+        type: 'tracks-pagenumber',
+        tracksPageNumber: 0
+      });
       dispatch({
         type: 'set-next-track',
         nextTrack: ''
@@ -173,11 +177,10 @@ const InfiniteList = ({
       filesObserver.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMoreTracks) {
-            /* console.log('entries: ', entries[0].isIntersecting, hasMore); */
-            setTracksPageNumber((prevTrackNumber) => prevTrackNumber + 1);
-            /*    dispatch({
-              type: "filesPageNumber",
-            }); */
+            dispatch({
+              type: 'tracks-pagenumber',
+              tracksPageNumber: tracksPageNumber + 1
+            });
           }
         },
         {
@@ -275,14 +278,16 @@ const InfiniteList = ({
 
   return (
     <>
-      <MediaMenu
-        isSortSelected={isSortSelected}
-        handleSortClick={handleSortClick}
-        type={type}
-        setType={setType}
-        handleTextSearch={handleTextSearch}
-      />
-      <div className="results">
+      {library === true ? (
+        <MediaMenu
+          isSortSelected={isSortSelected}
+          handleSortClick={handleSortClick}
+          type={type}
+          setType={setType}
+          handleTextSearch={handleTextSearch}
+        />
+      ) : null}
+      <div className={library ? 'results' : 'results--hidden'}>
         {type === 'files' && !tracks.length && !tracksLoading ? (
           <div className="noresults">No results</div>
         ) : null}

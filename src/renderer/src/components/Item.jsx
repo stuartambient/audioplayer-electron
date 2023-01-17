@@ -42,7 +42,7 @@ const Item = forwardRef(
             <br></br>
             Title: {title}
             <br></br>
-            Album: {album}>
+            Album: {album}
           </a>
         </div>
       );

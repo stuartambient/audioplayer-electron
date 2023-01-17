@@ -11,6 +11,10 @@
   scrollbar-width: thin;
 }
 
+.results--hidden {
+  display: none;
+}
+
 #files {
   grid-column: 2 /3;
 }

@@ -23,7 +23,8 @@ const Player = ({
   audioRef,
   library,
   active,
-  isLiked
+  isLiked,
+  minimalmode
 }) => {
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -64,8 +65,20 @@ const Player = ({
     audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
   };
 
+  const playerClassNames = () => {
+    if (!library && !minimalmode) {
+      return 'audio-player centered';
+    }
+    if (library && !minimalmode) {
+      return 'audio-player';
+    }
+    if (!library && minimalmode) {
+      return 'audio-player minimal-player';
+    }
+  };
+
   return (
-    <div className={!library ? 'audio-player centered' : 'audio-player'}>
+    <div className={playerClassNames()}>
       <div className="title">{title ? <>{title.slice(0, 20)}</> : null}</div>
 
       {cover && cover !== 'not available' && (

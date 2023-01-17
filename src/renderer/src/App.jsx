@@ -41,7 +41,7 @@ function App() {
     pause: false,
     progbarInc: 0,
     currentVolume: 1.0,
-    filesPageNumber: 0,
+    /* filesPageNumber: 0, */
     albumsPageNumber: 0,
     type: 'files',
     searchTermFiles: '',
@@ -51,7 +51,8 @@ function App() {
     showMore: null,
     delay: false,
     isLiked: false,
-    tracks: []
+    tracks: [],
+    tracksPageNumber: 0
   };
 
   const reducer = (state, action) => {
@@ -150,6 +151,12 @@ function App() {
         return {
           ...state,
           tracks: action.tracks
+        };
+      }
+      case 'tracks-pagenumber': {
+        return {
+          ...state,
+          tracksPageNumber: action.tracksPageNumber
         };
       }
       default:
@@ -403,23 +410,25 @@ function App() {
           audioRef={audioRef}
           library={state.library}
           isLiked={state.isLiked}
+          minimalmode={state.minimalmode}
         />
       ) : null}
-      {state.library ? (
-        <InfiniteList
-          handleTrackSelection={handleTrackSelection}
-          library={state.library}
-          currentTrack={state.newtrack}
-          playNext={state.playNext}
-          playPrev={state.playPrev}
-          nextTrack={state.nextTrack}
-          prevTrack={state.prevTrack}
-          active={state.active}
-          dispatch={dispatch}
-          handlePicture={handlePicture}
-          tracks={state.tracks}
-        />
-      ) : null}
+      {/*       {state.library ? ( */}
+      <InfiniteList
+        handleTrackSelection={handleTrackSelection}
+        library={state.library}
+        currentTrack={state.newtrack}
+        playNext={state.playNext}
+        playPrev={state.playPrev}
+        nextTrack={state.nextTrack}
+        prevTrack={state.prevTrack}
+        active={state.active}
+        dispatch={dispatch}
+        handlePicture={handlePicture}
+        tracks={state.tracks}
+        tracksPageNumber={state.tracksPageNumber}
+      />
+      {/*       ) : null} */}
     </div>
   );
 }

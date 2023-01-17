@@ -32,5 +32,6 @@ textarea {
 
 .minimal {
   grid-auto-rows: 20px;
-  grid-template-columns: 100vw;
+  grid-template-columns: none;
+  min-width: 100%;
 }
