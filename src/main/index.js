@@ -60,10 +60,10 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 660,
     height: 660,
-    /* transparent: true,
-    frame: false, */
-    backgroundColor: '#1D1B1B',
     frame: false,
+    /*frame: false, */
+    backgroundColor: '#1D1B1B',
+
     resizable: false,
     /* useContentSize: true, */
     /* rgb(9, 0, 7) */
@@ -257,8 +257,8 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 ipcMain.handle('screen-mode', async (event, ...args) => {
   if (args[0] === 'mini') {
     /* console.log('confirmed mini'); */
-    await mainWindow.setMinimumSize(380, 380);
-    await mainWindow.setSize(380, 380, false);
+    await mainWindow.setMinimumSize(380, 320);
+    await mainWindow.setSize(380, 320, false);
   }
   if (args[0] === 'default') {
     /* console.log('confirmed default'); */

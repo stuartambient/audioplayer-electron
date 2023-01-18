@@ -31,7 +31,9 @@ textarea {
 }
 
 .minimal {
-  grid-auto-rows: 20px;
-  grid-template-columns: none;
-  min-width: 100%;
+  /*  grid-auto-rows: 30px;
+  grid-template-columns: none; */
+  /* min-width: 100%; */
+  /* row-gap: 0px; */
+  display: initial;
 }

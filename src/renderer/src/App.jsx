@@ -177,7 +177,7 @@ function App() {
   };
 
   const handlePlayerControls = (e) => {
-    /*     console.log(e.currentTarget.id); */
+    console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'playlist':
         dispatch({
@@ -393,6 +393,7 @@ function App() {
         home={state.home}
         update={state.update}
         player={state.player}
+        minimalmode={state.minimalmode}
       />
       {state.home && <Home />}
       {state.update && <Update />}

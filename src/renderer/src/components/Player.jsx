@@ -8,6 +8,7 @@ import {
 } from '../hooks/useTime';
 import { FaHeart, FaBackward, FaForward, FaListUl } from 'react-icons/fa';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
+import { FiVolume } from 'react-icons/fi';
 import '../style/Player.css';
 
 const Player = ({
@@ -93,13 +94,13 @@ const Player = ({
       <div className="metadata">
         <>
           {artist ? (
-            <div>
+            <div className="metadata-artist">
               <span className="label">Artist: </span>
               <span className="real-time">{artist.slice(0, 25)}</span>
             </div>
           ) : null}
           {album ? (
-            <div>
+            <div className="metadata-album">
               <span className="label">Album: </span>
               <span className="real-time">{album.slice(0, 25)}</span>
             </div>
@@ -111,10 +112,14 @@ const Player = ({
         <div className="volumebar" ref={volumeslider}></div>
       </div>
       <div className="time">
-        <span className="label">Duration: </span>
-        <span className="real-time">{duration}</span>
-        <span className="label">Elapsed: </span>
-        <span className="real-time">{currentTime}</span>
+        <div className="duration">
+          <span className="label">Duration: </span>
+          <span className="real-time">{duration}</span>
+        </div>
+        <div className="elapsed">
+          <span className="label">Elapsed: </span>
+          <span className="real-time">{currentTime}</span>
+        </div>
       </div>
 
       <div className="seekbar-outline" ref={seekbarOutline} onClick={handleSeekTime}>
@@ -122,27 +127,27 @@ const Player = ({
       </div>
       <ul className="controls">
         <li className={isLiked ? 'btn isliked' : 'btn'} id="like" onClick={onClick}>
-          <FaHeart id="like" className="icon" />
+          <FaHeart />
         </li>
 
         {pause ? (
           <li className="btn" id="pauseplay" onClick={onClick}>
-            <GiPlayButton id="pauseplay" className="icon" />
+            <GiPlayButton />
           </li>
         ) : (
           <li className="btn" id="pauseplay" onClick={onClick}>
-            <GiPauseButton id="pauseplay" className="icon" />
+            <GiPauseButton />
           </li>
         )}
         <li className="btn" id="backward" onClick={onClick}>
-          <FaBackward id="backward" className="icon" />
+          <FaBackward />
         </li>
 
         <li className="btn" id="forward" onClick={onClick}>
-          <FaForward id="forward" className="icon" />
+          <FaForward />
         </li>
         <li className="btn" id="playlist" onClick={onClick}>
-          <FaListUl id="playlist" className="icon" />
+          <FaListUl />
         </li>
       </ul>
     </div>
