@@ -284,9 +284,7 @@ ipcMain.handle('is-liked', async (event, arg) => {
 ipcMain.on('open-child', async (event, ...args) => {
   const child = new BrowserWindow({ parent: mainWindow });
   console.log('dirname: ', __dirname);
-  child.loadFile(
-    path.join('C:/users/sambi/documents/nodeprojs/musicplayer-electron/src/renderer/child.html')
-  );
+  child.loadFile(path.join(__dirname, '../renderer/child.html'));
   child.show();
   return true;
 });

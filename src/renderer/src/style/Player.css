@@ -169,7 +169,7 @@
 .minimal-player .metadata {
   grid-area: meta;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 .minimal-player p {

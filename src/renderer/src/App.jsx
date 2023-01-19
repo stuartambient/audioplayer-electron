@@ -1,9 +1,12 @@
-import { useEffect, useState, useRef, useReducer } from 'react';
+import { useEffect, useState, useRef, useReducer, useContext } from 'react';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
 import { Buffer } from 'buffer';
+import useAppState from './hooks/useAppState';
+/* import useAudio from './hooks/useAudio'; */
+
 import {
   convertDuration,
   convertDurationSeconds,
@@ -20,154 +23,13 @@ import MainNav from './Components/MainNav';
 import './App.css';
 
 function App() {
-  const audioPlayer = {
-    home: true,
-    update: false,
-    player: false,
-    library: false,
-    minimalmode: false,
-    active: '',
-    newtrack: '',
-    playNext: false,
-    playPrev: false,
-    nextTrack: '',
-    prevTrack: '',
-    artist: '',
-    title: '',
-    album: '',
-    cover: '',
-    duration: '',
-    currentTime: '',
-    pause: false,
-    progbarInc: 0,
-    currentVolume: 1.0,
-    /* filesPageNumber: 0, */
-    albumsPageNumber: 0,
-    type: 'files',
-    searchTermFiles: '',
-    searchTermAlbums: '',
-    randomize: false,
-    albumPath: '',
-    showMore: null,
-    delay: false,
-    isLiked: false,
-    tracks: [],
-    tracksPageNumber: 0
-  };
-
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case 'library': {
-        return { ...state, library: !state.library };
-      }
-      case 'pauseplay': {
-        return { ...state, pause: !state.pause };
-      }
-      case 'direction': {
-        return {
-          ...state,
-          playNext: action.playNext,
-          playPrev: action.playPrev
-        };
-      }
-      case 'newtrack': {
-        return {
-          ...state,
-          pause: action.pause,
-          newtrack: action.newtrack,
-          artist: action.artist,
-          title: action.title,
-          album: action.album,
-          cover: action.cover,
-          active: action.active,
-          nextTrack: action.nextTrack,
-          prevTrack: action.prevTrack,
-          isLiked: action.isLiked
-        };
-      }
-      case 'duration': {
-        return {
-          ...state,
-          duration: action.duration
-        };
-      }
-
-      case 'current-time': {
-        return {
-          ...state,
-          currentTime: action.currentTime
-        };
-      }
-      case 'set-next-track': {
-        return {
-          ...state,
-          nextTrack: action.nextTrack
-        };
-      }
-
-      case 'set-prev-track': {
-        return {
-          ...state,
-          prevTrack: action.prevTrack
-        };
-      }
-      case 'set-cover': {
-        return {
-          ...state,
-          cover: action.cover
-        };
-      }
-
-      case 'set-delay': {
-        return {
-          ...state,
-          delay: action.delay
-        };
-      }
-
-      case 'set-page': {
-        return {
-          ...state,
-          home: action.home,
-          update: action.update,
-          player: action.player,
-          library: action.library
-        };
-      }
-      case 'player-minimode': {
-        return {
-          ...state,
-          minimalmode: action.minimalmode
-        };
-      }
-      case 'tracks-playlist': {
-        return {
-          ...state,
-          /*  tracks: action.tracks */
-          tracks: [...state.tracks, ...action.tracks]
-        };
-      }
-      case 'reset-tracks': {
-        return {
-          ...state,
-          tracks: action.tracks
-        };
-      }
-      case 'tracks-pagenumber': {
-        return {
-          ...state,
-          tracksPageNumber: action.tracksPageNumber
-        };
-      }
-      default:
-        return;
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, audioPlayer);
+  const { state, dispatch } = useAppState();
+  const audioContext = useContext(AudioContext);
+  console.log(audioContext.current);
 
   const audio = new Audio();
   const audioRef = useRef(audio);
+  /* const { audioRef } = useAudio(); */
   const [type, setType] = useState('files');
 
   const handleUpdateLike = async (id) => {
@@ -277,6 +139,7 @@ function App() {
     e.preventDefault();
     /*  console.log(artist, title, album, audiofile); */
     audioRef.current.src = '';
+    audioContext;
 
     dispatch({
       type: 'newtrack',
