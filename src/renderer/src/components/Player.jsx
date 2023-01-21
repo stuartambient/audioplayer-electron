@@ -76,6 +76,9 @@ const Player = ({
     if (!library && minimalmode) {
       return 'audio-player minimal-player';
     }
+    if (library && minimalmode) {
+      return 'audio-player minimal-player';
+    }
   };
 
   return (
@@ -146,9 +149,11 @@ const Player = ({
         <li className="btn" id="forward" onClick={onClick}>
           <FaForward />
         </li>
-        <li className="btn" id="playlist" onClick={onClick}>
-          <FaListUl />
-        </li>
+        {!minimalmode && (
+          <li className="btn" id="playlist" onClick={onClick}>
+            <FaListUl />
+          </li>
+        )}
       </ul>
     </div>
   );

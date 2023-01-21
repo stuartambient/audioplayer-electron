@@ -8,6 +8,14 @@ export default defineConfig({
   },
   preload: {
     plugins: [externalizeDepsPlugin()]
+    /*  build: {
+      rollupOptions: {
+        input: {
+          index: resolve(__dirname, 'src/preload/index.js'),
+          child: resolve(__dirname, 'src/preload/secondary.js')
+        }
+      }
+    } */
   },
   renderer: {
     resolve: {
@@ -15,14 +23,14 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    build: {
+    /*     build: {
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'src/renderer/index.html'),
           child: resolve(__dirname, 'src/renderer/child.html')
         }
       }
-    },
+    }, */
     plugins: [react()]
   }
 });

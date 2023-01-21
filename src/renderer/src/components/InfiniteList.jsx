@@ -18,10 +18,10 @@ const InfiniteList = ({
   prevTrack,
   active,
   dispatch,
-  handlePicture,
   library,
   tracks,
-  tracksPageNumber
+  tracksPageNumber,
+  minimalmode
 }) => {
   const [albumsPageNumber, setAlbumsPageNumber] = useState(0);
   const [type, setType] = useState('files');
@@ -126,13 +126,13 @@ const InfiniteList = ({
     } */
   };
 
-  const handleScanRequest = () => {
+  /*   const handleScanRequest = () => {
     if (library) {
       dispatch({
         type: 'library'
       });
     }
-  };
+  }; */
   const handleListScroll = (e) => {};
 
   useEffect(() => {
@@ -276,6 +276,18 @@ const InfiniteList = ({
     );
   });
 
+  const listClassNames = () => {
+    if (!library) {
+      return 'results--hidden';
+    }
+    if (library && !minimalmode) {
+      return 'results';
+    }
+    if (library && minimalmode) {
+      return 'results--minimal';
+    }
+  };
+
   return (
     <>
       {library === true ? (
@@ -287,7 +299,7 @@ const InfiniteList = ({
           handleTextSearch={handleTextSearch}
         />
       ) : null}
-      <div className={library ? 'results' : 'results--hidden'}>
+      <div className={listClassNames()}>
         {type === 'files' && !tracks.length && !tracksLoading ? (
           <div className="noresults">No results</div>
         ) : null}

@@ -7,7 +7,7 @@ import {
   AiOutlineClose,
   AiOutlineMobile
 } from 'react-icons/ai';
-
+import { FaListUl } from 'react-icons/fa';
 import { BsMusicPlayer } from 'react-icons/bs';
 import { CgMiniPlayer } from 'react-icons/cg';
 
@@ -55,8 +55,10 @@ const MainNav = ({ onClick, home, update, player, minimalmode }) => {
       {minimalmode && (
         <ul className="main-nav--left">
           <li onClick={onClick} id="mini-mode" className="">
-            {/*  <AiOutlineMobile /> */}
             <CgMiniPlayer />
+          </li>
+          <li onClick={onClick} id="mini-mode-playlist" className="">
+            <FaListUl />
           </li>
         </ul>
       )}

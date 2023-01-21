@@ -1,4 +1,13 @@
-import { app, shell, session, BrowserWindow, ipcMain, Menu } from 'electron';
+import {
+  app,
+  shell,
+  session,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  BrowserView,
+  webContents
+} from 'electron';
 import * as path from 'path';
 import fs from 'fs';
 import url from 'url';
@@ -186,7 +195,7 @@ ipcMain.handle('create-table', () => {
 });
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
-  /*  console.log('get-tracks'); */
+  /* console.log('args: ', args); */
   /* console.log(args); */
   if (args[1] === '') {
     const alltracks = await allTracksByScroll(args[0]);
@@ -255,6 +264,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
+  console.log(args);
   if (args[0] === 'mini') {
     /* console.log('confirmed mini'); */
     await mainWindow.setMinimumSize(380, 320);
@@ -267,6 +277,13 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
     if (width === 660 && height === 680) return;
     await mainWindow.setMinimumSize(660, 660);
     await mainWindow.setSize(660, 660, false);
+  }
+  if (args[0] === 'mini-expanded') {
+    /* console.log('confirmed default'); */
+    const [width, height] = await mainWindow.getMinimumSize();
+    /* console.log(width, height, width === 660, height === 680); */
+    await mainWindow.setMinimumSize(580, 320);
+    await mainWindow.setSize(580, 320, false);
   }
 });
 
@@ -283,8 +300,12 @@ ipcMain.handle('is-liked', async (event, arg) => {
 
 ipcMain.on('open-child', async (event, ...args) => {
   const child = new BrowserWindow({ parent: mainWindow });
-  console.log('dirname: ', __dirname);
-  child.loadFile(path.join(__dirname, '../renderer/child.html'));
+  /*  console.log('dirname: ', __dirname); */
+  child.loadFile(path.join(__dirname, '../renderer/index.html'));
   child.show();
   return true;
+});
+
+ipcMain.on('send-state', async (event, ...args) => {
+  console.log('----->', args);
 });

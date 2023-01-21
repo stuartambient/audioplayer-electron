@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef, useReducer, useContext } from 'react';
+import { useEffect, useState, useRef, useReducer, useContext, createContext } from 'react';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
 import { Buffer } from 'buffer';
-import useAppState from './hooks/useAppState';
+import AppState from './hooks/AppState';
 /* import useAudio from './hooks/useAudio'; */
 
 import {
@@ -23,12 +23,10 @@ import MainNav from './Components/MainNav';
 import './App.css';
 
 function App() {
-  const { state, dispatch } = useAppState();
-  const audioContext = useContext(AudioContext);
-  console.log(audioContext.current);
+  const { state, dispatch } = AppState();
 
-  const audio = new Audio();
-  const audioRef = useRef(audio);
+  /*  const audio = new Audio();
+  const audioRef = useRef(audio); */
   /* const { audioRef } = useAudio(); */
   const [type, setType] = useState('files');
 
@@ -38,10 +36,14 @@ function App() {
     console.log('update like: ', updatelike);
   };
 
+  const sendToMain = async () => {
+    await window.api.sendState(state.active, state.currentTrack).then((r) => console.log(r));
+  };
   const handlePlayerControls = (e) => {
     console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'playlist':
+        /* if (state.minimalmode) return; */
         dispatch({
           type: 'library'
         });
@@ -66,6 +68,7 @@ function App() {
         });
         break;
       case 'like':
+        sendToMain();
         handleUpdateLike(state.active);
         break;
       default:
@@ -74,11 +77,11 @@ function App() {
   };
 
   useEffect(() => {
-    audioRef.current.onloadedmetadata = async () => {
-      audioRef.current.play();
+    state.audioRef.current.onloadedmetadata = async () => {
+      state.audioRef.current.play();
       dispatch({
         type: 'duration',
-        duration: convertDuration(audioRef.current)
+        duration: convertDuration(state.audioRef.current)
       });
       dispatch({
         type: 'set-delay',
@@ -88,16 +91,16 @@ function App() {
   });
 
   useEffect(() => {
-    audioRef.current.ontimeupdate = () => {
+    state.audioRef.current.ontimeupdate = () => {
       dispatch({
         type: 'current-time',
-        currentTime: convertCurrentTime(audioRef.current)
+        currentTime: convertCurrentTime(state.audioRef.current)
       });
     };
-  }, [audioRef]);
+  }, [state.audioRef]);
 
   useEffect(() => {
-    audioRef.current.onended = () => {
+    state.audioRef.current.onended = () => {
       dispatch({
         type: 'direction',
         playNext: true
@@ -107,12 +110,12 @@ function App() {
         delay: false
       });
     };
-  }, [audioRef]);
+  }, [state.audioRef]);
 
   useEffect(() => {
-    if (state.pause) audioRef.current.pause();
-    if (!state.pause) audioRef.current.play();
-  }, [state.pause, audioRef.current]);
+    if (state.pause) state.audioRef.current.pause();
+    if (!state.pause) state.audioRef.current.play();
+  }, [state.pause, state.audioRef.current]);
 
   /*   const handleLikeStatus = async () => {
     const liked = await window.api.isLiked(state.active);
@@ -138,8 +141,7 @@ function App() {
   const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
     e.preventDefault();
     /*  console.log(artist, title, album, audiofile); */
-    audioRef.current.src = '';
-    audioContext;
+    state.audioRef.current.src = '';
 
     dispatch({
       type: 'newtrack',
@@ -166,7 +168,7 @@ function App() {
     const blob = new Blob([filebuffer], { type: 'audio/wav' });
     const url = window.URL.createObjectURL(blob);
 
-    audioRef.current.src = url;
+    state.audioRef.current.src = url;
 
     const picture = await window.api.getCover(e.target.id);
     if (picture === 0) {
@@ -180,14 +182,14 @@ function App() {
         cover: handlePicture(picture)
       });
     }
-    audioRef.current.load();
+    state.audioRef.current.load();
   };
 
-  const handleMinimalMode = async () => {
-    state.minimalmode
-      ? await window.api.screenMode('mini')
-      : await window.api.screenMode('default');
-  };
+  /* const handleMinimalMode = async () => { */
+  /* state.minimalmode
+      ? await window.api.screenMode('mini', 50)
+      : await window.api.screenMode('default'); */
+  /*  }; */
 
   useEffect(() => {
     const changeMode = async () => {
@@ -196,9 +198,13 @@ function App() {
     const changeDefault = async () => {
       await window.api.screenMode('default');
     };
+    const changeExpandMini = async () => {
+      await window.api.screenMode('mini-expanded');
+    };
     if (state.minimalmode && state.player) changeMode();
+    if (state.player && state.minimalmode && state.miniModePlaylist) changeExpandMini();
     if (!state.minimalmode && state.player) changeDefault();
-  }, [state.minimalmode, state.player]);
+  }, [state.minimalmode, state.player, state.miniModePlaylist]);
 
   const handleMainNav = (e) => {
     switch (e.currentTarget.id) {
@@ -242,7 +248,14 @@ function App() {
           type: 'player-minimode',
           minimalmode: !state.minimalmode
         });
-        /* handleMinimalMode(); */
+        break;
+      case 'mini-mode-playlist':
+        console.log(e.currentTarget.id);
+        dispatch({
+          type: 'mini-mode-playlist',
+          miniModePlaylist: !state.miniModePlaylist,
+          library: !state.library
+        });
         break;
       default:
         return;
@@ -271,27 +284,29 @@ function App() {
           currentTime={state.currentTime}
           pause={state.pause}
           onClick={handlePlayerControls}
-          audioRef={audioRef}
+          audioRef={state.audioRef}
           library={state.library}
           isLiked={state.isLiked}
           minimalmode={state.minimalmode}
         />
       ) : null}
-      {/*       {state.library ? ( */}
-      <InfiniteList
-        handleTrackSelection={handleTrackSelection}
-        library={state.library}
-        currentTrack={state.newtrack}
-        playNext={state.playNext}
-        playPrev={state.playPrev}
-        nextTrack={state.nextTrack}
-        prevTrack={state.prevTrack}
-        active={state.active}
-        dispatch={dispatch}
-        handlePicture={handlePicture}
-        tracks={state.tracks}
-        tracksPageNumber={state.tracksPageNumber}
-      />
+      {state.player || state.miniModePlaylist ? (
+        <InfiniteList
+          handleTrackSelection={handleTrackSelection}
+          library={state.library}
+          currentTrack={state.newtrack}
+          playNext={state.playNext}
+          playPrev={state.playPrev}
+          nextTrack={state.nextTrack}
+          prevTrack={state.prevTrack}
+          active={state.active}
+          dispatch={dispatch}
+          handlePicture={handlePicture}
+          tracks={state.tracks}
+          tracksPageNumber={state.tracksPageNumber}
+          minimalmode={state.minimalmode}
+        />
+      ) : null}
       {/*       ) : null} */}
     </div>
   );

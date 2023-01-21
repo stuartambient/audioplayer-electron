@@ -3,13 +3,13 @@ import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
 const api = {
-  updateFiles: () => ipcRenderer.invoke('update-files'),
+  /* updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
-  createTable: () => ipcRenderer.invoke('create-table'),
+  createTable: () => ipcRenderer.invoke('create-table'), */
   getTracks: (page, term) => ipcRenderer.invoke('get-tracks', page, term),
   getAlbums: (page, term) => ipcRenderer.invoke('get-albums', page, term),
-  getAlbumTracks: (pattern) => ipcRenderer.invoke('get-album-tracks', pattern),
-  streamAudio: (trackid) => ipcRenderer.invoke('stream-audio', trackid),
+  getAlbumTracks: (pattern) => ipcRenderer.invoke('get-album-tracks', pattern)
+  /*   streamAudio: (trackid) => ipcRenderer.invoke('stream-audio', trackid),
   getCover: (trackid) => ipcRenderer.invoke('get-cover', trackid),
   appMinimize: () => ipcRenderer.send('minimize'),
   appMaximize: () => ipcRenderer.send('maximize'),
@@ -19,8 +19,7 @@ const api = {
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
   updateLike: (id) => ipcRenderer.invoke('update-like', id),
   isLiked: (id) => ipcRenderer.invoke('is-liked', id),
-  openChild: () => ipcRenderer.send('open-child'),
-  sendState: (state) => ipcRenderer.send('send-state', state)
+  openChild: () => ipcRenderer.send('open-child') */
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

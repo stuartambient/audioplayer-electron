@@ -1,12 +1,14 @@
-import { useReducer } from 'react';
+import { useReducer, useRef } from 'react';
 
-const useAppState = () => {
+const AppState = () => {
   const audioPlayer = {
+    audioRef: useRef(new Audio()),
     home: true,
     update: false,
     player: false,
     library: false,
     minimalmode: false,
+    miniModePlaylist: false,
     active: '',
     newtrack: '',
     playNext: false,
@@ -140,12 +142,20 @@ const useAppState = () => {
           tracksPageNumber: action.tracksPageNumber
         };
       }
+      case 'mini-mode-playlist': {
+        return {
+          ...state,
+          miniModePlaylist: action.miniModePlaylist,
+          library: action.library
+        };
+      }
       default:
         return;
     }
   };
+
   const [state, dispatch] = useReducer(reducer, audioPlayer);
   return { state, dispatch };
 };
 
-export default useAppState;
+export default AppState;

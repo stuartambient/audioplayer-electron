@@ -95,7 +95,7 @@ const searchAlbums = async () => {
 
 const allTracksByScroll = (offsetNum) => {
   const stmt = db.prepare(
-    `SELECT * FROM tracks ORDER BY createdon LIMIT 50 OFFSET ${offsetNum * 50}`
+    `SELECT * FROM tracks ORDER BY modified DESC LIMIT 50 OFFSET ${offsetNum * 50}`
   );
   return stmt.all();
 };
