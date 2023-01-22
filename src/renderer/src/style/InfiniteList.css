@@ -11,13 +11,12 @@
   scrollbar-width: thin;
 }
 
-.results--minimal {
-  display: block;
-  width: 300px;
-  height: 300px;
+.results-minimal {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
 }
 
-.results--hidden {
+.results-hidden {
   display: none;
 }
 

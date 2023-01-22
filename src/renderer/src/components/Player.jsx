@@ -77,7 +77,7 @@ const Player = ({
       return 'audio-player minimal-player';
     }
     if (library && minimalmode) {
-      return 'audio-player minimal-player';
+      return 'audio-player minimal-player--expanded';
     }
   };
 
@@ -110,10 +110,7 @@ const Player = ({
           ) : null}
         </>
       </div>
-      {/* <div style={{ color: 'white' }}>{audioRef.current.volume * 10}</div> */}
-      <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
-        <div className="volumebar" ref={volumeslider}></div>
-      </div>
+
       <div className="time">
         <div className="duration">
           <span className="label">Duration: </span>
@@ -124,10 +121,31 @@ const Player = ({
           <span className="real-time">{currentTime}</span>
         </div>
       </div>
+      {minimalmode ? (
+        <div className="slider-group">
+          <>
+            <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
+              <div className="volumebar" ref={volumeslider}></div>
+            </div>
+            <div className="seekbar-outline" ref={seekbarOutline} onClick={handleSeekTime}>
+              <div
+                className="seekbar"
+                style={{ width: progbarInc ? `${progbarInc}px` : null }}
+              ></div>
+            </div>
+          </>
+        </div>
+      ) : (
+        <>
+          <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
+            <div className="volumebar" ref={volumeslider}></div>
+          </div>
+          <div className="seekbar-outline" ref={seekbarOutline} onClick={handleSeekTime}>
+            <div className="seekbar" style={{ width: progbarInc ? `${progbarInc}px` : null }}></div>
+          </div>
+        </>
+      )}
 
-      <div className="seekbar-outline" ref={seekbarOutline} onClick={handleSeekTime}>
-        <div className="seekbar" style={{ width: progbarInc ? `${progbarInc}px` : null }}></div>
-      </div>
       <ul className="controls">
         <li className={isLiked ? 'btn isliked' : 'btn'} id="like" onClick={onClick}>
           <FaHeart />

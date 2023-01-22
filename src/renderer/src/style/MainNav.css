@@ -70,3 +70,8 @@
 .highlight {
   border: 1px solid var(--blue1);
 }
+
+/* MAIN NAV MINIMAL */
+#mini-mode {
+  padding-right: 10px;
+}

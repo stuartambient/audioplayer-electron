@@ -274,9 +274,9 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
     /* console.log('confirmed default'); */
     const [width, height] = await mainWindow.getMinimumSize();
     /* console.log(width, height, width === 660, height === 680); */
-    if (width === 660 && height === 680) return;
-    await mainWindow.setMinimumSize(660, 660);
-    await mainWindow.setSize(660, 660, false);
+    if (width === 660 && height === 600) return;
+    await mainWindow.setMinimumSize(660, 600);
+    await mainWindow.setSize(660, 600, false);
   }
   if (args[0] === 'mini-expanded') {
     /* console.log('confirmed default'); */

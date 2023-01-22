@@ -30,10 +30,22 @@ textarea {
   row-gap: 10px;
 }
 
-.minimal {
+.container-minimal {
   /*  grid-auto-rows: 30px;
   grid-template-columns: none; */
   /* min-width: 100%; */
   /* row-gap: 0px; */
-  display: initial;
+  grid-template-rows: 30px 290px;
+  grid-template-columns: 380px;
+  width: 380px;
+  height: 320px;
+  row-gap: 0;
+}
+
+.container-mini-expanded {
+  grid-template-rows: 30px 290px;
+  grid-template-columns: 380px 200px;
+  width: 580px;
+  height: 320px;
+  row-gap: 0;
 }

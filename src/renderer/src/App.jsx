@@ -262,8 +262,20 @@ function App() {
     }
   };
 
+  const containerClassNames = () => {
+    if (state.miniModePlaylist) {
+      return 'container container-mini-expanded';
+    }
+    if (state.minimalmode && state.player) {
+      return 'container container-minimal';
+    }
+    if (!state.minimalmode) {
+      return 'container';
+    }
+  };
+
   return (
-    <div className={state.minimalmode && state.player ? 'container minimal' : 'container'}>
+    <div className={containerClassNames()}>
       <MainNav
         onClick={handleMainNav}
         home={state.home}

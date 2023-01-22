@@ -249,7 +249,7 @@ const InfiniteList = ({
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
-        album={item.album ? item.artist : 'not available'}
+        album={item.album ? item.album : 'not available'}
       />
     );
   });
@@ -278,19 +278,19 @@ const InfiniteList = ({
 
   const listClassNames = () => {
     if (!library) {
-      return 'results--hidden';
+      return 'results results-hidden';
     }
     if (library && !minimalmode) {
       return 'results';
     }
     if (library && minimalmode) {
-      return 'results--minimal';
+      return 'results results-minimal';
     }
   };
 
   return (
     <>
-      {library === true ? (
+      {library === true && !minimalmode ? (
         <MediaMenu
           isSortSelected={isSortSelected}
           handleSortClick={handleSortClick}
