@@ -19,8 +19,8 @@ const api = {
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
   updateLike: (id) => ipcRenderer.invoke('update-like', id),
   isLiked: (id) => ipcRenderer.invoke('is-liked', id),
-  openChild: () => ipcRenderer.send('open-child'),
-  sendState: (state) => ipcRenderer.send('send-state', state)
+  openChild: () => ipcRenderer.send('open-child')
+  /* sendState: (state) => ipcRenderer.send('send-state', state) */
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

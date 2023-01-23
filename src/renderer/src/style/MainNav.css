@@ -11,6 +11,7 @@
 .main-nav--minimal {
   background: none;
   border: none;
+  grid-column: 1 / 2;
 }
 
 .main-nav ul {

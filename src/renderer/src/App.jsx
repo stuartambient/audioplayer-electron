@@ -36,9 +36,9 @@ function App() {
     console.log('update like: ', updatelike);
   };
 
-  const sendToMain = async () => {
+  /*   const sendToMain = async () => {
     await window.api.sendState(state.active, state.currentTrack).then((r) => console.log(r));
-  };
+  }; */
   const handlePlayerControls = (e) => {
     console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
@@ -244,6 +244,20 @@ function App() {
         });
         break;
       case 'mini-mode':
+        if (state.miniModePlaylist) {
+          return dispatch({
+            type: 'exit-mini-to-full',
+            miniModePlaylist: !state.miniModePlaylist,
+            minimalmode: !state.minimalmode
+          });
+        }
+        if (state.library && !state.minimalmode) {
+          return dispatch({
+            type: 'enter-mini-from-fullplaylist',
+            miniModePlaylist: (state.miniModePlaylist = true),
+            minimalmode: (state.minimalmode = true)
+          });
+        }
         dispatch({
           type: 'player-minimode',
           minimalmode: !state.minimalmode
@@ -317,6 +331,7 @@ function App() {
           tracks={state.tracks}
           tracksPageNumber={state.tracksPageNumber}
           minimalmode={state.minimalmode}
+          miniModePlaylist={state.miniModePlaylist}
         />
       ) : null}
       {/*       ) : null} */}

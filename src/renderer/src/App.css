@@ -12,6 +12,10 @@ body {
   display: flex;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
 button,
 input,
 select,
@@ -43,9 +47,21 @@ textarea {
 }
 
 .container-mini-expanded {
-  grid-template-rows: 30px 290px;
-  grid-template-columns: 380px 200px;
-  width: 580px;
-  height: 320px;
+  grid-template-rows: 30px 290px 30px 200px;
+  grid-template-columns: 380px;
+  width: 380px;
+  height: 550px;
   row-gap: 0;
+}
+
+.container::-webkit-scrollbar {
+  display: none;
+}
+
+.container-minimal::-webkit-scrollbar {
+  display: none;
+}
+
+.container-mini-expanded::-webkit-scrollbar {
+  display: none;
 }

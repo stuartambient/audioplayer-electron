@@ -70,11 +70,9 @@ function createWindow() {
     width: 660,
     height: 660,
     frame: false,
-    /*frame: false, */
     backgroundColor: '#1D1B1B',
 
     resizable: false,
-    /* useContentSize: true, */
     /* rgb(9, 0, 7) */
     show: false,
     /* autoHideMenuBar: true, */
@@ -280,10 +278,10 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
   }
   if (args[0] === 'mini-expanded') {
     /* console.log('confirmed default'); */
-    const [width, height] = await mainWindow.getMinimumSize();
+    /* const [width, height] = await mainWindow.getMinimumSize(); */
     /* console.log(width, height, width === 660, height === 680); */
-    await mainWindow.setMinimumSize(580, 320);
-    await mainWindow.setSize(580, 320, false);
+    /* await mainWindow.setMinimumSize(580, 320); */
+    await mainWindow.setSize(380, 550, false);
   }
 });
 

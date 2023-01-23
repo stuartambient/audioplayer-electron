@@ -9,6 +9,10 @@
   align-items: center;
 }
 
+.media-menu--minimal {
+  grid-row: 3 / 4;
+}
+
 .media-menu .sort-menu {
   width: 40%;
 }
@@ -32,13 +36,11 @@
   display: flex;
 }
 
-.media-menu li .form .formelements {
-  border: 1px solid white;
-  /* border-radius: 10px; */
+.media-menu--minimal li .form .formelements {
+  border: none;
+  height: 20px;
   background: white;
-  height: 1.5rem;
   display: flex;
-  align-items: center;
 }
 
 .media-menu li .form .formelements .textsearch {

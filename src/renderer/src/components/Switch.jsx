@@ -1,21 +1,21 @@
-import { useRef, useState } from "react";
-import "../style/switch.css";
+import { useRef, useState } from 'react';
+import '../style/switch.css';
 
-const Switch = ({ type, setType }) => {
+const Switch = ({ type, setType, className }) => {
   const switchRef = useRef(null);
 
-  const handleSwitch = e => {
-    const switchAttr = switchRef.current.getAttribute("data-type");
+  const handleSwitch = (e) => {
+    const switchAttr = switchRef.current.getAttribute('data-type');
     switch (switchAttr) {
-      case "files":
+      case 'files':
         /* resetState(); */
-        switchRef.current.setAttribute("data-type", "albums");
-        setType("albums");
+        switchRef.current.setAttribute('data-type', 'albums');
+        setType('albums');
         break;
-      case "albums":
+      case 'albums':
         /* resetState(); */
-        switchRef.current.setAttribute("data-type", "files");
-        setType("files");
+        switchRef.current.setAttribute('data-type', 'files');
+        setType('files');
         break;
       default:
         return;
@@ -23,9 +23,9 @@ const Switch = ({ type, setType }) => {
   };
 
   return (
-    <div className="switch-container">
+    <div className={className}>
       <div
-        className={type === "files" ? "switch left" : "switch right"}
+        className={type === 'files' ? 'switch left' : 'switch right'}
         id="files"
         data-type="files"
         onClick={handleSwitch}

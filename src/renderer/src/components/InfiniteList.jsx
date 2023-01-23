@@ -21,7 +21,8 @@ const InfiniteList = ({
   library,
   tracks,
   tracksPageNumber,
-  minimalmode
+  minimalmode,
+  miniModePlaylist
 }) => {
   const [albumsPageNumber, setAlbumsPageNumber] = useState(0);
   const [type, setType] = useState('files');
@@ -290,13 +291,14 @@ const InfiniteList = ({
 
   return (
     <>
-      {library === true && !minimalmode ? (
+      {library === true ? (
         <MediaMenu
           isSortSelected={isSortSelected}
           handleSortClick={handleSortClick}
           type={type}
           setType={setType}
           handleTextSearch={handleTextSearch}
+          miniModePlaylist={miniModePlaylist}
         />
       ) : null}
       <div className={listClassNames()}>

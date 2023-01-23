@@ -149,6 +149,20 @@ const AppState = () => {
           library: action.library
         };
       }
+      case 'exit-mini-to-full': {
+        return {
+          ...state,
+          miniModePlaylist: action.miniModePlaylist,
+          minimalmode: action.minimalmode
+        };
+      }
+      case 'enter-mini-from-fullplaylist': {
+        return {
+          ...state,
+          miniModePlaylist: action.miniModePlaylist,
+          minimalmode: action.minimalmode
+        };
+      }
       default:
         return;
     }
