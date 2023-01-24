@@ -43,8 +43,19 @@
   display: flex;
 }
 
+.media-menu li .form .formelements {
+  display: flex;
+}
+
 .media-menu li .form .formelements .textsearch {
   all: unset;
   border-radius: 10px;
   text-align: center;
+  background: white;
+  height: 1.5rem;
+  border-radius: 0;
+}
+
+.media-menu li .form .formelements .submitbtn {
+  background: white;
 }

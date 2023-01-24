@@ -18,7 +18,7 @@ const Item = forwardRef(
 
       /* ALBUMS */
       album,
-      albumTracks,
+      albumsTracks,
       foldername,
       albumTracksLength,
       showMore,
@@ -56,9 +56,9 @@ const Item = forwardRef(
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}
           </div>
-          {/*   {albumPattern === fullpath && albumTracksLength ? (
+          {albumPattern === fullpath && albumTracksLength ? (
             <ul className="albumtracks">{albumsTracks}</ul>
-          ) : null} */}
+          ) : null}
         </div>
       );
     }

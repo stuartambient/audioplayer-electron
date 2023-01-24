@@ -42,15 +42,16 @@ const InfiniteList = ({
     albumsSearchTerm
   );
 
-  /*   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern); */
+  const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
 
-  /*   const albumsTracks = albumTracks.map((track) => {
+  const albumsTracks = albumTracks.map((track) => {
     if (track.title) {
       return <li key={track.afid}>{track.title}</li>;
     } else {
       <li key={track.afid}>{track.audiofile}</li>;
     }
-  }); */
+    console.log('---> at: ', albumsTracks);
+  });
 
   const scrollRef = useRef();
   const searchRef = useRef();
@@ -145,14 +146,14 @@ const InfiniteList = ({
 
     if (showMore === e.currentTarget.id) {
       setShowMore(null);
-      /*   setAlbumTracks([]); */
+      setAlbumTracks([]);
       setAlbumPattern(null);
     } else {
       setShowMore(e.currentTarget.id);
       setAlbumPattern(term);
     }
     /*  showMore === e.currentTarget.id ? setShowMore(null) : setShowMore(e.currentTarget.id);
-    setAlbumPath(term); */
+    setAlbumPattern(term); */
   };
 
   const isSortSelected = (value) => {
@@ -271,8 +272,8 @@ const InfiniteList = ({
         handleAlbumTracksRequest={handleAlbumTracksRequest}
         showMore={showMore}
         albumPattern={albumPattern}
-        /* albumTracksLength={albumTracks.length}
-        albumTracks={albumTracks} */
+        albumTracksLength={albumTracks.length}
+        albumsTracks={albumsTracks}
       ></Item>
     );
   });

@@ -71,6 +71,7 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm) => {
 };
 
 const useAlbumTracks = (pattern) => {
+  console.log(pattern);
   const [albumTracks, setAlbumTracks] = useState([]);
   const [error, setError] = useState([]);
 
@@ -80,10 +81,14 @@ const useAlbumTracks = (pattern) => {
       const albumTracksRequest = await window.api.getAlbumTracks(pattern);
       if (albumTracksRequest && subscribed) {
         setAlbumTracks(albumTracksRequest);
+      } else {
+        return;
       }
     };
-    loadAlbumTracks();
-    return () => (subscribed = false);
+    if (pattern) {
+      loadAlbumTracks();
+      return () => (subscribed = false);
+    }
   }, [pattern]);
   return { albumTracks, setAlbumTracks };
 };
