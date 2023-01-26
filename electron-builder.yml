@@ -1,5 +1,5 @@
 appId: com.electron.app
-productName: my-react-electron-app
+productName: musicplayer-electron
 directories:
   buildResources: build
 files:

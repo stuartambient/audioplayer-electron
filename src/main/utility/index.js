@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import app from 'electron';
 /* import { Buffer } from "node:buffer"; */
 import { v4 as uuidv4 } from 'uuid';
 import { parseFile } from 'music-metadata';
@@ -55,6 +56,10 @@ const parseMeta = async (files) => {
       });
     } catch (err) {
       writeFile(audiofile, './metadataErrors.txt');
+      /*    writeFile(
+        audiofile,
+        `${app.getPath('appData')}/musicplayer-electron/logs/metadataErrors.txt`
+      ); */
       fs.renameSync(`${audiofile}`, `${audiofile}.bad`);
       console.error(err);
     }

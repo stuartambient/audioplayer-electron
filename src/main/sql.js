@@ -1,27 +1,29 @@
+import { app } from 'electron';
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
 const db = new Database(`${process.cwd()}/src/db/music.db`, { verbose: console.log });
+/* const db = new Database(`${app.getPath('appData')}/musicplayer-electron/music.db`); */
 db.pragma('journal_mode = WAL');
 db.pragma('synchronous = normal');
 db.pragma('page_size = 32768');
 db.pragma('mmap_size = 30000000000');
 db.pragma('temp_store = memory');
 
-const createTable = () => {
+const createFoldersTable = () => {
   const ct = db.prepare(
     'CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )'
   );
   const createtable = ct.run();
-  db.close();
+  /* db.close(); */
 };
 
-/* const createTable = () => {
+const createFilesTable = () => {
   const ct = db.prepare(
     'CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )'
   );
   const createtable = ct.run();
-  db.close();
-}; */
+  /* db.close(); */
+};
 
 /* const createIndex = () => {
   const createIdx = db.prepare('CREATE INDEX audiofile_idx ON tracks(audiofile)');
@@ -156,8 +158,10 @@ const isLiked = (id) => {
   return isLiked.like;
 };
 
+createFoldersTable();
+createFilesTable();
+
 export {
-  createTable,
   insertFiles,
   insertAlbums,
   deleteAlbums,
@@ -171,5 +175,7 @@ export {
   requestedFile,
   filesByAlbum,
   likeTrack,
-  isLiked
+  isLiked,
+  createFoldersTable,
+  createFilesTable
 };

@@ -22,10 +22,11 @@ import {
   allAlbumsByScroll,
   allAlbumsBySearchTerm,
   filesByAlbum,
-  createTable,
   requestedFile,
   likeTrack,
   isLiked
+  /* createFoldersTable,
+  createFilesTable */
 } from './sql.js';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
@@ -34,6 +35,8 @@ import initFiles from './updateFiles';
 console.log(db); */
 
 const updatesFolder = `${process.cwd()}/src/updates`;
+
+/* const updatesFolder = `${app.getPath('appData')}/musicplayer-electron/updatelogs`; */
 
 /* let splashWindow;
 
@@ -90,6 +93,7 @@ function createWindow() {
   mainWindow.on('ready-to-show', () => {
     mainWindow.setMinimumSize(300, 300);
     mainWindow.show();
+    /* console.log('dirname: ', __dirname); */
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -162,7 +166,7 @@ const processUpdateResult = (type, result) => {
     result.new.forEach((res) => {
       writeFile(`${res}\n`, `${updatesFolder}/${filename}`);
     });
-    console.log('completed folders');
+    /* console.log('completed folders'); */
   }
   if (Array.isArray(result.deleted)) {
     writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}/${filename}`);
@@ -205,6 +209,7 @@ ipcMain.handle('get-tracks', async (event, ...args) => {
 });
 
 ipcMain.handle('get-albums', async (event, ...args) => {
+  console.log('args: ', args);
   /*  console.log('get-albums'); */
   if (args[1] === '') {
     const allAlbums = await allAlbumsByScroll(args[0]);
@@ -262,7 +267,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  console.log(args);
+  /* console.log(args); */
   if (args[0] === 'mini') {
     /* console.log('confirmed mini'); */
     await mainWindow.setMinimumSize(380, 320);

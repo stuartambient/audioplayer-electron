@@ -297,7 +297,7 @@ function App() {
         player={state.player}
         minimalmode={state.minimalmode}
       />
-      {state.home && <Home />}
+      {state.home && !state.minimalmode && <Home />}
       {state.update && <Update />}
       {state.player ? (
         <Player
@@ -332,6 +332,8 @@ function App() {
           tracksPageNumber={state.tracksPageNumber}
           minimalmode={state.minimalmode}
           miniModePlaylist={state.miniModePlaylist}
+          albums={state.albums}
+          albumsPageNumber={state.albumsPageNumber}
         />
       ) : null}
       {/*       ) : null} */}

@@ -4,9 +4,10 @@ import { useState, useEffect, useMemo } from 'react';
 /* const client = axios.create({
   baseURL: "http://localhost:3008/",
   proxy: false,
+
 }); */
 
-const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, dispatch) => {
+const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, resetKey, dispatch) => {
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
   /*  const [tracks, setTracks] = useState([]); */
@@ -21,10 +22,6 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, dispatch) => {
       setTracksError(false);
       let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm);
       if (trackRequest && isSubscribed) {
-        /* console.log('tr: ', trackRequest); */
-        /*   setTracks((prevTracks) => {
-          ret urn [...prevTracks, ...trackRequest];
-        });*/
         dispatch({
           type: 'tracks-playlist',
           tracks: trackRequest
@@ -37,16 +34,14 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, dispatch) => {
 
     loadTracks();
     return () => (isSubscribed = false);
-  }, [tracksPageNumber, tracksSearchTerm]);
+  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey]);
 
   return { tracksLoading, /* tracks, setTracks, */ hasMoreTracks, tracksError };
 };
 
-const useAlbums = (albumsPageNumber, albumsSearchTerm) => {
+const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispatch) => {
   const [albumsLoading, setAlbumsLoading] = useState(true);
   const [albumsError, setAlbumsError] = useState(false);
-  const [albums, setAlbums] = useState([]);
-  /*   const [albums, setAlbums] = useState([]); */
   const [hasMoreAlbums, setHasMoreAlbums] = useState(false);
 
   useEffect(() => {
@@ -56,8 +51,10 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm) => {
       setAlbumsError(false);
       const albumRequest = await window.api.getAlbums(albumsPageNumber, albumsSearchTerm);
       if (albumRequest && isSubscribed) {
-        setAlbums((prevAlbums) => {
-          return [...prevAlbums, ...albumRequest];
+        console.log('album-request-length: ', albumRequest.length);
+        dispatch({
+          type: 'albums-playlist',
+          albums: albumRequest
         });
         setHasMoreAlbums(albumRequest.length > 0);
         setAlbumsLoading(false);
@@ -65,13 +62,12 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm) => {
     };
     loadAlbums();
     return () => (isSubscribed = false);
-  }, [albumsPageNumber, albumsSearchTerm]);
+  }, [albumsPageNumber, albumsSearchTerm, sortType, resetKey]);
 
-  return { albumsLoading, albums, setAlbums, hasMoreAlbums, albumsError };
+  return { albumsLoading, hasMoreAlbums, albumsError };
 };
 
 const useAlbumTracks = (pattern) => {
-  console.log(pattern);
   const [albumTracks, setAlbumTracks] = useState([]);
   const [error, setError] = useState([]);
 

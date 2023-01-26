@@ -22,24 +22,30 @@ const InfiniteList = ({
   tracks,
   tracksPageNumber,
   minimalmode,
-  miniModePlaylist
+  miniModePlaylist,
+  albums,
+  albumsPageNumber
 }) => {
-  const [albumsPageNumber, setAlbumsPageNumber] = useState(0);
   const [type, setType] = useState('files');
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [albumsSearchTerm, setAlbumsSearchTerm] = useState('');
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
   const [sortType, setSortType] = useState('createdon');
+  const [resetKey, setResetKey] = useState(null);
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
     sortType,
+    resetKey,
     dispatch
   );
-  const { albumsLoading, albums, setAlbums, hasMoreAlbums, albumsError } = useAlbums(
+  const { albumsLoading, hasMoreAlbums, albumsError } = useAlbums(
     albumsPageNumber,
-    albumsSearchTerm
+    albumsSearchTerm,
+    sortType,
+    resetKey,
+    dispatch
   );
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
@@ -91,17 +97,22 @@ const InfiniteList = ({
     }
   }, [playNext, nextTrack, playPrev, prevTrack, tracks, currentTrack]);
 
+  /*   useEffect(() => {
+    if (open) {
+      setOpen(!open);
+    }
+  }, [open]); */
+
   const handleTextSearch = (e) => {
     e.preventDefault();
-    if (e.currentTarget.textsearch.value === '') return;
+    if (e.currentTarget.textsearch.value === '') {
+      setResetKey(getKey());
+    }
     if (type === 'files') {
-      /* setTracks([]); */
       dispatch({
         type: 'reset-tracks',
         tracks: []
       });
-      setTracksSearchTerm(e.currentTarget.textsearch.value);
-      /* setTracksPageNumber(0); */
       dispatch({
         type: 'tracks-pagenumber',
         tracksPageNumber: 0
@@ -114,31 +125,33 @@ const InfiniteList = ({
         type: 'set-prev-track',
         prevTrack: ''
       });
+      setTracksSearchTerm(e.currentTarget.textsearch.value);
     }
-    /* if (currentTrack) {
-        const ifCurrentTrack = tracks.filter((f) => f.afid === active);
-        setTracks(ifCurrentTrack);
-      } else {
-        setTracks([]); // if currentrack
-      } */
-    //} /* else {
-    /*  setAlbumsSearchTerm(e.currentTarget.textsearch.value);
-      setAlbumsPageNumber(0);
-      setAlbums([]);
-    } */
+    if (type === 'albums') {
+      dispatch({
+        type: 'reset-albums',
+        albums: []
+      });
+      dispatch({
+        type: 'albums-pagenumber',
+        albumsPageNumber: 0
+      });
+      /*       dispatch({
+        type: 'set-next-track',
+        nextTrack: ''
+      });
+      dispatch({
+        type: 'set-prev-track',
+        prevTrack: ''
+      }); */
+      setAlbumsSearchTerm(e.currentTarget.textsearch.value);
+    }
   };
 
-  /*   const handleScanRequest = () => {
-    if (library) {
-      dispatch({
-        type: 'library'
-      });
-    }
-  }; */
   const handleListScroll = (e) => {};
 
   useEffect(() => {
-    console.log('show more: ', showMore, 'albumPattern: ', albumPattern);
+    /* console.log('show more: ', showMore, 'albumPattern: ', albumPattern); */
   }, [showMore, albumPattern]);
 
   const handleAlbumTracksRequest = (e) => {
@@ -204,7 +217,10 @@ const InfiniteList = ({
         (entries) => {
           if (entries[0].isIntersecting && hasMoreAlbums) {
             /* console.log('entries: ', entries[0].isIntersecting, hasMore); */
-            setAlbumsPageNumber((prevPageNumber) => prevPageNumber + 1);
+            dispatch({
+              type: 'albums-pagenumber',
+              albumsPageNumber: albumsPageNumber + 1
+            });
             /*  dispatch({
               type: "albumsPageNumber",
             }); */

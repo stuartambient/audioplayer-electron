@@ -7,6 +7,7 @@ const AppState = () => {
     update: false,
     player: false,
     library: false,
+
     minimalmode: false,
     miniModePlaylist: false,
     active: '',
@@ -25,6 +26,7 @@ const AppState = () => {
     progbarInc: 0,
     currentVolume: 1.0,
     /* filesPageNumber: 0, */
+    albums: [],
     albumsPageNumber: 0,
     type: 'files',
     searchTermFiles: '',
@@ -130,16 +132,36 @@ const AppState = () => {
           tracks: [...state.tracks, ...action.tracks]
         };
       }
+      case 'albums-playlist': {
+        return {
+          ...state,
+          /*  tracks: action.tracks */
+          albums: [...state.albums, ...action.albums]
+        };
+      }
       case 'reset-tracks': {
         return {
           ...state,
           tracks: action.tracks
         };
       }
+
+      case 'reset-albums': {
+        return {
+          ...state,
+          albums: action.albums
+        };
+      }
       case 'tracks-pagenumber': {
         return {
           ...state,
           tracksPageNumber: action.tracksPageNumber
+        };
+      }
+      case 'albums-pagenumber': {
+        return {
+          ...state,
+          albumsPageNumber: action.albumsPageNumber
         };
       }
       case 'mini-mode-playlist': {
@@ -161,6 +183,12 @@ const AppState = () => {
           ...state,
           miniModePlaylist: action.miniModePlaylist,
           minimalmode: action.minimalmode
+        };
+      }
+      case 'library-reload': {
+        return {
+          ...state,
+          libraryReload: action.libraryReload
         };
       }
       default:
