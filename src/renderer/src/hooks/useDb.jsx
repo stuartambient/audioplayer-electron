@@ -89,4 +89,92 @@ const useAlbumTracks = (pattern) => {
   return { albumTracks, setAlbumTracks };
 };
 
-export { useTracks, useAlbums, useAlbumTracks };
+const useTotalTracksStat = () => {
+  console.log('hit');
+  const [totalTracks, setTotalTracks] = useState();
+  const [error, setError] = useState([]);
+
+  useEffect(() => {
+    let subscribed = true;
+    const getTotalTracks = async () => {
+      const totalTracksRequest = await window.api.totalTracksStat();
+      if (totalTracksRequest && subscribed) {
+        console.log(totalTracksRequest);
+        setTotalTracks(totalTracksRequest);
+      } else {
+        return;
+      }
+    };
+
+    getTotalTracks();
+    return () => (subscribed = false);
+  }, []);
+  return { totalTracks };
+};
+
+const useTopTenArtistsStat = () => {
+  console.log('hit top 10');
+  const [topTenArtists, setTopTenArtists] = useState([]);
+  useEffect(() => {
+    let subscribed = true;
+    const getTopTenArtists = async () => {
+      const topTenArtistsRequest = await window.api.topTenArtistsStat();
+      if (topTenArtistsRequest && subscribed) {
+        setTopTenArtists(topTenArtistsRequest);
+      } else {
+        return;
+      }
+    };
+    getTopTenArtists();
+    return () => (subscribed = false);
+  }, []);
+  return { topTenArtists };
+};
+
+const useLast10AlbumsStat = () => {
+  const [last10Albums, setLast10Albums] = useState([]);
+  useEffect(() => {
+    let subscribed = true;
+    const getLast10Albums = async () => {
+      const last10AlbumsRequest = await window.api.last10AlbumsStat();
+      if (last10AlbumsRequest && subscribed) {
+        console.log(last10AlbumsRequest);
+        setLast10Albums(last10AlbumsRequest);
+      } else {
+        return;
+      }
+    };
+    getLast10Albums();
+    return () => (subscribed = false);
+  }, []);
+  return { last10Albums };
+};
+
+const useLast100TracksStat = () => {
+  const [last100Tracks, setLast100Tracks] = useState([]);
+  useEffect(() => {
+    let subscribed = true;
+    const getLast100Tracks = async () => {
+      const last100TracksRequest = await window.api.last100TracksStat();
+      if (last100TracksRequest && subscribed) {
+        console.log(last100TracksRequest);
+        setLast100Tracks(last100TracksRequest);
+      } else {
+        return;
+      }
+    };
+    getLast100Tracks();
+    return () => (subscribed = false);
+  }, []);
+  return { last100Tracks };
+};
+
+export {
+  useTracks,
+  useAlbums,
+  useAlbumTracks,
+  useTotalTracksStat,
+  useTopTenArtistsStat,
+  useLast10AlbumsStat,
+  useLast100TracksStat
+};

@@ -65,3 +65,9 @@ textarea {
 .container-mini-expanded::-webkit-scrollbar {
   display: none;
 }
+
+.container-home {
+  grid-template-rows: 2.5rem 0.5fr 0.5fr;
+  grid-template-columns: 25% 75%;
+  align-content: start;
+}

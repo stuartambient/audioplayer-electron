@@ -1,3 +1,29 @@
-h1 {
-  color: white;
+.home-cards {
+  grid-row: 2 / 4;
+  grid-column: 1 / 2;
+  /*   display: grid;
+  grid-template-rows: repeat(2, 50%);
+  grid-template-columns: repeat(3, 30%); */
+  list-style: none;
+  /* height: 90vh;
+  width: 100vw;
+  column-gap: 10px;
+  row-gap: 10px;
+  justify-content: center; */
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  justify-content: space-around;
+  background: #262424;
+}
+
+.home-cards--item {
+  width: 100%;
+  padding: 0.5rem 0;
+  margin-left: 0.5rem;
+}
+
+.home-cards--item:hover {
+  background-color: #1d1b1b;
+  cursor: pointer;
 }

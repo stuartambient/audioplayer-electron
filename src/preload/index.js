@@ -19,8 +19,11 @@ const api = {
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
   updateLike: (id) => ipcRenderer.invoke('update-like', id),
   isLiked: (id) => ipcRenderer.invoke('is-liked', id),
-  openChild: () => ipcRenderer.send('open-child')
-  /* sendState: (state) => ipcRenderer.send('send-state', state) */
+  openChild: () => ipcRenderer.send('open-child'),
+  totalTracksStat: () => ipcRenderer.invoke('total-tracks-stat'),
+  topTenArtistsStat: () => ipcRenderer.invoke('top-ten-artists-stat'),
+  last10AlbumsStat: () => ipcRenderer.invoke('last-10Albums-stat'),
+  last100TracksStat: () => ipcRenderer.invoke('last-100Tracks-stat')
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -1,28 +1,36 @@
+import { useState, useEffect } from 'react';
+import Stats from './Stats';
 import '../style/Home.css';
+import RecentAdditions from './RecentAdditions';
 
 const Home = () => {
-  const handlePopup = async () => {
-    const callMain = window.api.openChild();
-    if (callMain) console.log(callMain);
+  const [homepage, setHomePage] = useState('recent-additions');
+
+  const handleHomePage = (e) => {
+    setHomePage(e.currentTarget.id);
   };
   return (
-    <div className="home-container" style={{ color: 'white', fontSize: '2.5rem' }}>
-      <>
-        <div className="home-card">
-          <div id="popup" onClick={handlePopup}>
-            Popup
-          </div>
-        </div>
-        {/*    <div className="home-card">Home 2</div>
-        <div className="home-card">Home 2</div>
-        <div className="home-card">Home 2</div>
-        <div className="home-card">Home 2</div>
-        <div className="home-card">Home 2</div>
-        <div className="home-card">Home 2</div>
-        <div className="home-card">Home 2</div>
-        <div className="home-card">Home 2</div> */}
-      </>
-    </div>
+    <>
+      <ul className="home-cards" style={{ color: 'white' }}>
+        <li className="home-cards--item" id="recent-additions" onClick={handleHomePage}>
+          <h3>Recent additions</h3>
+        </li>
+        <li className="home-cards--item" id="stats" onClick={handleHomePage}>
+          <h3>Stats</h3>
+          {/* <Stats /> */}
+        </li>
+        <li className="home-cards--item" id="playlists" onClick={handleHomePage}>
+          <h3>Playlists</h3>
+        </li>
+        <li className="home-cards--item" id="genres" onClick={handleHomePage}>
+          <h3>Genres</h3>
+        </li>
+        <li className="home-cards--item">5</li>
+        <li className="home-cards--item">6</li>
+      </ul>
+      {homepage === 'recent-additions' && <RecentAdditions />}
+      {homepage === 'stats' && <Stats />}
+    </>
   );
 };
 

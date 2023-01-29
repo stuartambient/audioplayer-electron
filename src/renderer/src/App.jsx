@@ -277,6 +277,12 @@ function App() {
   };
 
   const containerClassNames = () => {
+    if (state.home) {
+      return 'container container-home';
+    }
+    if (state.update) {
+      return 'container container-update';
+    }
     if (state.miniModePlaylist) {
       return 'container container-mini-expanded';
     }

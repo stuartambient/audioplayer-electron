@@ -28,6 +28,8 @@ import {
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
+
+import { totalTracks, topTenArtists, last10Albums, last100Tracks } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 
@@ -311,4 +313,34 @@ ipcMain.on('open-child', async (event, ...args) => {
 
 ipcMain.on('send-state', async (event, ...args) => {
   console.log('----->', args);
+});
+
+ipcMain.handle('total-tracks-stat', async () => {
+  const totaltracks = await totalTracks();
+  /* console.log(totaltracks.count(*)); */
+  const total = Object.values(totaltracks).join();
+  return total;
+});
+
+ipcMain.handle('top-ten-artists-stat', async () => {
+  const topTen = await topTenArtists();
+  return topTen;
+});
+
+ipcMain.handle('last-10Albums-stat', async () => {
+  const last10 = await last10Albums();
+  last10.forEach(async (l) => {
+    let tmp = await fs.promises.readdir(l.fullpath);
+    const checkImg = tmp.find((t) => t.endsWith('.jpg'));
+    const imgPath = `${l.fullpath}/${checkImg}`;
+    const file = await fs.promises.readFile(imgPath);
+    const filebuf = Buffer.from(file);
+    console.log(filebuf);
+  });
+  return last10;
+});
+
+ipcMain.handle('last-100Tracks-stat', async () => {
+  const last100 = await last100Tracks();
+  return last100;
 });

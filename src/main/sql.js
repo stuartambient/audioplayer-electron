@@ -1,13 +1,14 @@
 import { app } from 'electron';
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
-const db = new Database(`${process.cwd()}/src/db/music.db`, { verbose: console.log });
+import db from './connection';
+/* const db = new Database(`${process.cwd()}/src/db/music.db`, { verbose: console.log }); */
 /* const db = new Database(`${app.getPath('appData')}/musicplayer-electron/music.db`); */
-db.pragma('journal_mode = WAL');
+/* db.pragma('journal_mode = WAL');
 db.pragma('synchronous = normal');
 db.pragma('page_size = 32768');
 db.pragma('mmap_size = 30000000000');
-db.pragma('temp_store = memory');
+db.pragma('temp_store = memory'); */
 
 const createFoldersTable = () => {
   const ct = db.prepare(
@@ -179,3 +180,13 @@ export {
   createFoldersTable,
   createFilesTable
 };
+
+/*
+SELECT COUNT(*) FROM tracks;
+
+// RETURNS NON NULL , DEDUCT FROM ABOVE FOR NULL //
+SELECT COUNT(artist) FROM tracks;
+
+
+SELECT artist, COUNT(*) FROM tracks GROUP BY artist ORDER BY COUNT(*) DESC;
+*/
