@@ -305,7 +305,7 @@ function App() {
       />
       {state.home && !state.minimalmode && <Home />}
       {state.update && <Update />}
-      {state.player ? (
+      {state.player || state.home ? (
         <Player
           title={state.title}
           cover={state.cover}
@@ -320,9 +320,10 @@ function App() {
           library={state.library}
           isLiked={state.isLiked}
           minimalmode={state.minimalmode}
+          home={state.home}
         />
       ) : null}
-      {state.player || state.miniModePlaylist ? (
+      {state.player || state.miniModePlaylist || state.home ? (
         <InfiniteList
           handleTrackSelection={handleTrackSelection}
           library={state.library}

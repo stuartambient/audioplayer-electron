@@ -25,7 +25,8 @@ const Player = ({
   library,
   active,
   isLiked,
-  minimalmode
+  minimalmode,
+  home
 }) => {
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -67,8 +68,11 @@ const Player = ({
   };
 
   const playerClassNames = () => {
-    if (!library && !minimalmode) {
+    if (!library && !minimalmode && !home) {
       return 'audio-player centered';
+    }
+    if (home) {
+      return 'audio-player--homepage';
     }
     if (library && !minimalmode) {
       return 'audio-player';
@@ -98,13 +102,13 @@ const Player = ({
         <>
           {artist ? (
             <div className="metadata-artist">
-              <span className="label">Artist: </span>
+              {!home && <span className="label">Artist: </span>}
               <span className="real-time">{artist.slice(0, 25)}</span>
             </div>
           ) : null}
           {album ? (
             <div className="metadata-album">
-              <span className="label">Album: </span>
+              {!home && <span className="label">Album: </span>}
               <span className="real-time">{album.slice(0, 25)}</span>
             </div>
           ) : null}
@@ -113,11 +117,11 @@ const Player = ({
 
       <div className="time">
         <div className="duration">
-          <span className="label">Duration: </span>
+          {!home && <span className="label">Duration: </span>}
           <span className="real-time">{duration}</span>
         </div>
         <div className="elapsed">
-          <span className="label">Elapsed: </span>
+          {!home && <span className="label">Elapsed: </span>}
           <span className="real-time">{currentTime}</span>
         </div>
       </div>

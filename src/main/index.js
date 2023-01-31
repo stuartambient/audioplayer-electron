@@ -73,7 +73,7 @@ function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 660,
-    height: 660,
+    height: 600,
     frame: false,
     backgroundColor: '#1D1B1B',
 
@@ -93,7 +93,7 @@ function createWindow() {
   });
 
   mainWindow.on('ready-to-show', () => {
-    mainWindow.setMinimumSize(300, 300);
+    /* mainWindow.setMinimumSize(300, 300); */
     mainWindow.show();
     /* console.log('dirname: ', __dirname); */
   });
@@ -109,6 +109,16 @@ function createWindow() {
 
   ipcMain.on('minimize', (events, args) => {
     mainWindow.minimize();
+  });
+
+  ipcMain.on('maximize', (events, args) => {
+    console.log('getsize: ', mainWindow.getSize());
+    if (mainWindow.isMaximized()) {
+      mainWindow.unmaximize();
+    } else {
+      /*       mainWindow.setMinimumSize(660, 660); */
+      mainWindow.maximize();
+    }
   });
 
   // HMR for renderer base on electron-vite cli.
@@ -269,7 +279,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  /* console.log(args); */
+  console.log(args);
   if (args[0] === 'mini') {
     /* console.log('confirmed mini'); */
     await mainWindow.setMinimumSize(380, 320);
@@ -279,8 +289,8 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
     /* console.log('confirmed default'); */
     const [width, height] = await mainWindow.getMinimumSize();
     /* console.log(width, height, width === 660, height === 680); */
-    if (width === 660 && height === 600) return;
-    await mainWindow.setMinimumSize(660, 600);
+    /* if (width === 660 && height === 600) return; */
+    /* await mainWindow.setMinimumSize(660, 600); */
     await mainWindow.setSize(660, 600, false);
   }
   if (args[0] === 'mini-expanded') {
@@ -329,15 +339,19 @@ ipcMain.handle('top-ten-artists-stat', async () => {
 
 ipcMain.handle('last-10Albums-stat', async () => {
   const last10 = await last10Albums();
-  last10.forEach(async (l) => {
-    let tmp = await fs.promises.readdir(l.fullpath);
-    const checkImg = tmp.find((t) => t.endsWith('.jpg'));
-    const imgPath = `${l.fullpath}/${checkImg}`;
-    const file = await fs.promises.readFile(imgPath);
-    const filebuf = Buffer.from(file);
-    console.log(filebuf);
-  });
-  return last10;
+  const last10withImages = await Promise.all(
+    last10.map(async (l) => {
+      let tmp = await fs.promises.readdir(l.fullpath);
+      const checkImg = tmp.find((t) => t.endsWith('.jpg'));
+      if (!checkImg) return l;
+      const imgPath = `${l.fullpath}/${checkImg}`;
+      const file = await fs.promises.readFile(imgPath);
+      const filebuf = Buffer.from(file);
+      const imageobj = { img: filebuf };
+      return { ...l, ...imageobj };
+    })
+  );
+  return last10withImages;
 });
 
 ipcMain.handle('last-100Tracks-stat', async () => {
