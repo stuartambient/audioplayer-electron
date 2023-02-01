@@ -10,6 +10,7 @@ const AppState = () => {
 
     minimalmode: false,
     miniModePlaylist: false,
+    maximized: false,
     active: '',
     newtrack: '',
     playNext: false,
@@ -189,6 +190,12 @@ const AppState = () => {
         return {
           ...state,
           libraryReload: action.libraryReload
+        };
+      }
+      case 'set-maximize': {
+        return {
+          ...state,
+          maximized: action.maximized
         };
       }
       default:

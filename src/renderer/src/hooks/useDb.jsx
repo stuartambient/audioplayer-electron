@@ -89,6 +89,28 @@ const useAlbumTracks = (pattern) => {
   return { albumTracks, setAlbumTracks };
 };
 
+/* const usePlayAlbum = (id) => {
+  const [album, setAlbum] = useState([]);
+  const [error, setError] = useState([]);
+
+  useEffect(() => {
+    let subscribed = true;
+    const loadAlbum = async () => {
+      const albumRequest = await window.api.getAlbum(id);
+      if (albumRequest && subscribed) {
+        setAlbum(albumRequest);
+      } else {
+        return;
+      }
+    };
+    if (id) {
+      loadAlbum();
+      return () => (subscribed = false);
+    }
+  }, [id]);
+  return { album, setAlbum };
+}; */
+
 const useTotalTracksStat = () => {
   console.log('hit');
   const [totalTracks, setTotalTracks] = useState();

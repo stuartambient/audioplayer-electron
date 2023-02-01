@@ -77,7 +77,7 @@
   display: grid;
   align-items: center;
   /*  justify-items: space-around; */
-  grid-template-columns: 90% 10%;
+  grid-template-columns: 80% 10% 10%;
   margin: 0 0 0.2em 0;
   background: #0064d3;
   border-radius: 10px;

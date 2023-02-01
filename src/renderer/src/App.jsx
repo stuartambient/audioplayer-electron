@@ -215,6 +215,10 @@ function App() {
         window.api.appMinimize();
         break;
       case 'maximize':
+        dispatch({
+          type: 'set-maximize',
+          maximized: !state.maximized
+        });
         window.api.appMaximize();
         break;
       case 'home':

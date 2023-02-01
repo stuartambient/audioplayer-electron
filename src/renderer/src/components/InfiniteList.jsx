@@ -33,6 +33,7 @@ const InfiniteList = ({
   const [showMore, setShowMore] = useState(null);
   const [sortType, setSortType] = useState('createdon');
   const [resetKey, setResetKey] = useState(null);
+  const [checkbox, setChecbox] = useState({ checked: false, id: '' });
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
@@ -145,6 +146,20 @@ const InfiniteList = ({
         prevTrack: ''
       }); */
       setAlbumsSearchTerm(e.currentTarget.textsearch.value);
+    }
+  };
+
+  const handleListCheckboxes = (e) => {
+    e.preventDefault();
+    /* e.target.checked === false ? (e.target.checked = true) : (e.target.checked = false); */
+    const datatype = e.target.getAttribute('data-type');
+    switch (datatype) {
+      case 'album':
+        setChecbox({ checked: !checkbox.checked, id: e.target.id || '' });
+        setAlbumPattern(e.target.id);
+        break;
+      default:
+        return;
     }
   };
 
@@ -290,6 +305,8 @@ const InfiniteList = ({
         albumPattern={albumPattern}
         albumTracksLength={albumTracks.length}
         albumsTracks={albumsTracks}
+        handleListCheckboxes={handleListCheckboxes}
+        checked={checkbox.checked}
       ></Item>
     );
   });

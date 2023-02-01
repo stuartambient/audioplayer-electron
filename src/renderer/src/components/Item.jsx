@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import { forwardRef, useState } from 'react';
 import { Plus, Minus } from '../assets/icons';
 
 const Item = forwardRef(
@@ -25,7 +25,9 @@ const Item = forwardRef(
       albumPattern,
       handleAlbumTracksRequest,
       term,
-      fullpath
+      fullpath,
+      handleListCheckboxes,
+      checked
     },
     ref
   ) => {
@@ -53,6 +55,16 @@ const Item = forwardRef(
           <a href={href} id={id} val={val} onClick={(e) => e.preventDefault()}>
             {foldername}
           </a>
+          <div>
+            <input
+              type="checkbox"
+              id={fullpath}
+              checked={checked}
+              data-type="album"
+              value={fullpath}
+              onChange={handleListCheckboxes}
+            />
+          </div>
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}
           </div>

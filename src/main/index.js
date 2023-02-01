@@ -112,11 +112,11 @@ function createWindow() {
   });
 
   ipcMain.on('maximize', (events, args) => {
-    console.log('getsize: ', mainWindow.getSize());
+    console.log('getsize: ', mainWindow.getBounds());
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize();
     } else {
-      /*       mainWindow.setMinimumSize(660, 660); */
+      mainWindow.setMaximumSize(4000, 4000);
       mainWindow.maximize();
     }
   });
@@ -287,10 +287,11 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
   }
   if (args[0] === 'default') {
     /* console.log('confirmed default'); */
-    const [width, height] = await mainWindow.getMinimumSize();
+    /* const [width, height] = await mainWindow.getMinimumSize(); */
     /* console.log(width, height, width === 660, height === 680); */
     /* if (width === 660 && height === 600) return; */
     /* await mainWindow.setMinimumSize(660, 600); */
+    await mainWindow.setMinimumSize(660, 600);
     await mainWindow.setSize(660, 600, false);
   }
   if (args[0] === 'mini-expanded') {
@@ -298,6 +299,7 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
     /* const [width, height] = await mainWindow.getMinimumSize(); */
     /* console.log(width, height, width === 660, height === 680); */
     /* await mainWindow.setMinimumSize(580, 320); */
+    await mainWindow.setMinimumSize(380, 550);
     await mainWindow.setSize(380, 550, false);
   }
 });
