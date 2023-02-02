@@ -22,6 +22,16 @@ const Switch = ({ type, setType, className }) => {
     }
   };
 
+  const handleSwitchClassNames = () => {
+    switch (type) {
+      case 'files':
+        return 'switch left';
+      case 'albums':
+        return 'switch right';
+      case 'playlist':
+        return 'switch playlist';
+    }
+  };
   return (
     <div className={className}>
       <div

@@ -16,7 +16,7 @@ const RecentAdditions = () => {
       <ul className="recent-additions--albums">
         {last10Albums.map((album, idx) => {
           return (
-            <li>
+            <li key={idx}>
               {album.img && <img src={handlePicture(album.img)} alt="" />}
               <div className="overlay">
                 <span>{album.foldername}</span>

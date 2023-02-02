@@ -80,6 +80,18 @@ const getAlbums = () => {
   return albums;
 };
 
+const getAlbum = (id) => {
+  const getAnAlbum = db.prepare('SELECT fullpath FROM albums WHERE id = ?');
+  const album = getAnAlbum.get(id);
+  const files = db.prepare('SELECT * FROM tracks WHERE audiofile LIKE ?');
+  const assocFiles = files.all(`${album.fullpath}%`);
+  const albumFiles = [];
+  assocFiles.forEach((a) => {
+    albumFiles.push(a);
+  });
+  return albumFiles;
+};
+
 const getFiles = () => {
   const allFiles = db.prepare('SELECT audiofile FROM tracks');
   const files = allFiles.all();
@@ -168,6 +180,7 @@ export {
   deleteAlbums,
   deleteFiles,
   getAlbums,
+  getAlbum,
   getFiles,
   allTracksByScroll,
   allTracksBySearchTerm,

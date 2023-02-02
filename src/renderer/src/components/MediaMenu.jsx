@@ -62,7 +62,7 @@ const MediaMenu = ({
           </fieldset>
         </div>
       )}
-      <li>
+      {/* <li>
         <Switch
           type={type}
           setType={setType}
@@ -70,9 +70,9 @@ const MediaMenu = ({
             miniModePlaylist ? 'switch-container switch-container--minimal' : 'switch-container'
           }
         />
-      </li>
-      <li>
-        <div className="form">
+      </li> */}
+      <div className="right-side">
+        <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
             <div className="formelements">
               <input type="text" className="textsearch" name="textsearch" id="textsearch" />
@@ -84,8 +84,19 @@ const MediaMenu = ({
               </button>
             </div>
           </form>
-        </div>
-      </li>
+        </li>
+        <li className="tabs" style={{ color: 'white' }}>
+          <span className="tab" onClick={() => setType('files')}>
+            files
+          </span>
+          <span className="tab" onClick={() => setType('albums')}>
+            albums
+          </span>
+          <span className="tab" onClick={() => setType('playlist')}>
+            playlist
+          </span>
+        </li>
+      </div>
     </ul>
   );
 };

@@ -28,7 +28,7 @@ function App() {
   /*  const audio = new Audio();
   const audioRef = useRef(audio); */
   /* const { audioRef } = useAudio(); */
-  const [type, setType] = useState('files');
+  /*  const [type, setType] = useState('files'); */
 
   const handleUpdateLike = async (id) => {
     if (!id) return;

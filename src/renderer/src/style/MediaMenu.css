@@ -32,19 +32,26 @@
   flex-direction: column;
 }
 
-.media-menu li .form {
+.media-menu .right-side .form {
+  grid-row: 1 / 2;
   display: flex;
 }
 
-.media-menu--minimal li .form .formelements {
+.media-menu--minimal .right-side .form .formelements {
   border: none;
   height: 20px;
   background: white;
   display: flex;
+  align-items: center;
 }
 
-.media-menu li .form .formelements {
+.media-menu .right-side .form .formelements {
   display: flex;
+  align-items: center;
+}
+
+.media-menu .right-side .form .formelements .icon {
+  background: white;
 }
 
 .media-menu li .form .formelements .textsearch {
@@ -56,6 +63,39 @@
   border-radius: 0;
 }
 
-.media-menu li .form .formelements .submitbtn {
+.media-menu .right-side .form .formelements .textsearch {
+  border: none;
+}
+
+.media-menu .right-side .form .formelements .submitbtn {
   background: white;
+}
+
+.media-menu .right-side .form .formelements .submitbtn .icon svg {
+  fill: black;
+}
+
+.media-menu .right-side {
+  display: grid;
+  grid-template-rows: 70% 30%;
+  width: 50%;
+  justify-content: center;
+  row-gap: 8px;
+}
+
+.media-menu .right-side .tabs {
+  grid-row: 2 / 3;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+}
+
+.media-menu .right-side .tabs .tab {
+  border-right: 1px solid var(--blue1);
+  border-left: 1px solid var(--blue1);
+  border-top: 1px solid var(--blue1);
+}
+
+.media-menu .right-side .tabs .tab:hover {
+  cursor: pointer;
 }

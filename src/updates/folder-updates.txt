@@ -24649,3 +24649,43 @@ Additions:
 F:/Music/archival series. musique concrète soundtracks to experimental short films vol. 1-6
 F:/Music/Eliane Radigue - Adnos I-III
 F:/Music/Insomnia OST - Biosphere (1997) [FLAC]
+
+Date: Wed Feb 01 2023 06:43:37 GMT-0700 (Mountain Standard Time) 
+Additions:
+F:/Music/Alex M (Italy) - Never
+F:/Music/Beatriz Ferreyra - Senderos de luz y sombras (2023) FLAC
+F:/Music/Benjamin Lackner - Last Decade
+F:/Music/BIIANCO - Money Power Freedom (and a lover)
+F:/Music/Christian Zacharias - Schubert_ Piano Music, Sonata D 959 A Major
+F:/Music/Eberhard Weber - Once Upon A Time (Live in Avignon)
+F:/Music/Equimanthorn - A Fifth Conjuration
+F:/Music/Equimanthorn - Lectionum Antiquarum
+F:/Music/Equimanthorn - Nindinugga Nimshimshargal Enlillara
+F:/Music/Equimanthorn - Second Sephira Cella
+F:/Music/Evgueni Galperine - Theory of Becoming
+F:/Music/Formika - They All Said No, Or No Reply
+F:/Music/Gabriele Leporatti - Scarlatti Sonatas
+F:/Music/Gabriele Leporatti - The Young Brahms
+F:/Music/Hugo Selles - Three Portraits_ Liszt, Debussy and Rachmaninov
+F:/Music/Irina Mejoueva - Rachmaninov_ Piano Sonata No. 2, Op. 36, Morceaux de fantaisie, Op. 3, etc
+F:/Music/Keosz - Neven (Original Motion Picture Soundtrack)
+F:/Music/Lefti - Got Alotta Love
+F:/Music/Marc Johnson - Overpass
+F:/Music/Olesya Urusova - Piano Stories
+F:/Music/Rainforest Spiritual Enslavement - Water Witches
+F:/Music/Rebecca Penneys - Chopin_ Etudes (Complete)
+F:/Music/Rebecca Penneys - The Voice of the Piano
+F:/Music/Ruhail Qaisar - Fatima
+F:/Music/Steve Tibbetts - Hellbound Train_ An Anthology
+F:/Music/Tim Hecker - Infinity Pool (Original Motion Picture Soundtrack)
+F:/Music/Tom Verlaine - The Twilight Zone EP
+F:/Music/Various Artists - Textures
+F:/Music/Wolfert Brederode - Ruins and Remains
+F:/Music/Yon Pike - Litre of Plight
+
+Date: Wed Feb 01 2023 16:34:47 GMT-0700 (Mountain Standard Time) 
+Deletions:
+F:/Music/Equimanthorn - A Fifth Conjuration
+F:/Music/Equimanthorn - Lectionum Antiquarum
+F:/Music/Equimanthorn - Nindinugga Nimshimshargal Enlillara
+F:/Music/Equimanthorn - Second Sephira Cella

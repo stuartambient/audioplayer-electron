@@ -8,6 +8,7 @@ const api = {
   createTable: () => ipcRenderer.invoke('create-table'),
   getTracks: (page, term) => ipcRenderer.invoke('get-tracks', page, term),
   getAlbums: (page, term) => ipcRenderer.invoke('get-albums', page, term),
+  getAlbum: (id) => ipcRenderer.invoke('get-album', id),
   getAlbumTracks: (pattern) => ipcRenderer.invoke('get-album-tracks', pattern),
   streamAudio: (trackid) => ipcRenderer.invoke('stream-audio', trackid),
   getCover: (trackid) => ipcRenderer.invoke('get-cover', trackid),

@@ -4,7 +4,7 @@ import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
 import MediaMenu from './MediaMenu';
 import Item from './Item';
-import { useTracks, useAlbums, useAlbumTracks } from '../hooks/useDb';
+import { useTracks, useAlbums, useAlbumTracks, usePlayAlbum } from '../hooks/useDb';
 /* import Switch from './Switch'; */
 import '../style/InfiniteList.css';
 
@@ -33,7 +33,7 @@ const InfiniteList = ({
   const [showMore, setShowMore] = useState(null);
   const [sortType, setSortType] = useState('createdon');
   const [resetKey, setResetKey] = useState(null);
-  const [checkbox, setChecbox] = useState({ checked: false, id: '' });
+  const [checkbox, setCheckbox] = useState([]);
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
@@ -50,6 +50,12 @@ const InfiniteList = ({
   );
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
+
+  const { album } = usePlayAlbum(checkbox[checkbox.length - 1]?.id);
+
+  /*   useEffect(() => {
+    console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);
+  }, [checkbox]); */
 
   const albumsTracks = albumTracks.map((track) => {
     if (track.title) {
@@ -153,10 +159,16 @@ const InfiniteList = ({
     e.preventDefault();
     /* e.target.checked === false ? (e.target.checked = true) : (e.target.checked = false); */
     const datatype = e.target.getAttribute('data-type');
+
     switch (datatype) {
       case 'album':
-        setChecbox({ checked: !checkbox.checked, id: e.target.id || '' });
-        setAlbumPattern(e.target.id);
+        const isExist = checkbox.find(({ id }) => id === e.target.id);
+        if (isExist) {
+          const delCurrent = checkbox.filter((i) => i.id !== e.target.id);
+          return setCheckbox(delCurrent);
+        }
+
+        setCheckbox([...checkbox, { checked: !checkbox.checked, id: e.target.id }]);
         break;
       default:
         return;
@@ -306,7 +318,7 @@ const InfiniteList = ({
         albumTracksLength={albumTracks.length}
         albumsTracks={albumsTracks}
         handleListCheckboxes={handleListCheckboxes}
-        checked={checkbox.checked}
+        checked={checkbox.find((k) => k.id === item.id)}
       ></Item>
     );
   });

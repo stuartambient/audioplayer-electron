@@ -89,7 +89,7 @@ const useAlbumTracks = (pattern) => {
   return { albumTracks, setAlbumTracks };
 };
 
-/* const usePlayAlbum = (id) => {
+const usePlayAlbum = (id) => {
   const [album, setAlbum] = useState([]);
   const [error, setError] = useState([]);
 
@@ -108,8 +108,8 @@ const useAlbumTracks = (pattern) => {
       return () => (subscribed = false);
     }
   }, [id]);
-  return { album, setAlbum };
-}; */
+  return { id, album, setAlbum };
+};
 
 const useTotalTracksStat = () => {
   console.log('hit');
@@ -198,5 +198,6 @@ export {
   useTotalTracksStat,
   useTopTenArtistsStat,
   useLast10AlbumsStat,
-  useLast100TracksStat
+  useLast100TracksStat,
+  usePlayAlbum
 };

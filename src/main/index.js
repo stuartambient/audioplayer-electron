@@ -24,7 +24,8 @@ import {
   filesByAlbum,
   requestedFile,
   likeTrack,
-  isLiked
+  isLiked,
+  getAlbum
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
@@ -230,6 +231,11 @@ ipcMain.handle('get-albums', async (event, ...args) => {
     const allAlbums = await allAlbumsBySearchTerm(args[0], args[1]);
     return allAlbums;
   }
+});
+
+ipcMain.handle('get-album', async (_, args) => {
+  const album = getAlbum(args);
+  console.log('album: ', album);
 });
 
 ipcMain.handle('get-album-tracks', async (event, args) => {

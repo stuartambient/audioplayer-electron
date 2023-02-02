@@ -38,7 +38,8 @@ const AppState = () => {
     delay: false,
     isLiked: false,
     tracks: [],
-    tracksPageNumber: 0
+    tracksPageNumber: 0,
+    playlistMode: false
   };
 
   const reducer = (state, action) => {

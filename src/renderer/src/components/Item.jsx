@@ -31,6 +31,7 @@ const Item = forwardRef(
     },
     ref
   ) => {
+    /* console.log('checked: ', checked); */
     if (type === 'file') {
       return (
         <div id={divId} className={className} ref={ref}>
@@ -49,6 +50,7 @@ const Item = forwardRef(
         </div>
       );
     }
+
     if (type === 'folder') {
       return (
         <div id={id} className={className} ref={ref}>
@@ -58,7 +60,7 @@ const Item = forwardRef(
           <div>
             <input
               type="checkbox"
-              id={fullpath}
+              id={id}
               checked={checked}
               data-type="album"
               value={fullpath}
