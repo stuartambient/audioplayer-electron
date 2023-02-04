@@ -40,7 +40,6 @@ function App() {
     await window.api.sendState(state.active, state.currentTrack).then((r) => console.log(r));
   }; */
   const handlePlayerControls = (e) => {
-    console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'playlist':
         /* if (state.minimalmode) return; */
@@ -140,6 +139,7 @@ function App() {
 
   const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
     e.preventDefault();
+    console.log('track selection: ', e.target.id);
     /*  console.log(artist, title, album, audiofile); */
     state.audioRef.current.src = '';
 
@@ -341,6 +341,7 @@ function App() {
           handlePicture={handlePicture}
           tracks={state.tracks}
           tracksPageNumber={state.tracksPageNumber}
+          playlistTracks={state.playlistTracks}
           minimalmode={state.minimalmode}
           miniModePlaylist={state.miniModePlaylist}
           albums={state.albums}

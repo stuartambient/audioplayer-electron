@@ -76,6 +76,24 @@ const Item = forwardRef(
         </div>
       );
     }
+    if (type === 'playlist') {
+      return (
+        <div id={divId} className={className} ref={ref}>
+          <a
+            href={href}
+            id={id}
+            val={val}
+            onClick={(e) => handleTrackSelection(e, artist, title, album, audiofile, like)}
+          >
+            Artist: {artist}
+            <br></br>
+            Title: {title}
+            <br></br>
+            Album: {album}
+          </a>
+        </div>
+      );
+    }
   }
 );
 

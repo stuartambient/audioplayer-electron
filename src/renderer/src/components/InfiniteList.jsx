@@ -4,7 +4,13 @@ import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
 import MediaMenu from './MediaMenu';
 import Item from './Item';
-import { useTracks, useAlbums, useAlbumTracks, usePlayAlbum } from '../hooks/useDb';
+import {
+  useTracks,
+  useAlbums,
+  useAlbumTracks,
+  usePlaylist,
+  usePlaylistDialog
+} from '../hooks/useDb';
 /* import Switch from './Switch'; */
 import '../style/InfiniteList.css';
 
@@ -21,6 +27,7 @@ const InfiniteList = ({
   library,
   tracks,
   tracksPageNumber,
+  playlistTracks,
   minimalmode,
   miniModePlaylist,
   albums,
@@ -34,6 +41,7 @@ const InfiniteList = ({
   const [sortType, setSortType] = useState('createdon');
   const [resetKey, setResetKey] = useState(null);
   const [checkbox, setCheckbox] = useState([]);
+  /* const [playlisttracks, setPlaylistTracks] = useState([]); */
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
@@ -51,7 +59,7 @@ const InfiniteList = ({
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
 
-  const { album } = usePlayAlbum(checkbox[checkbox.length - 1]?.id);
+  usePlaylist(checkbox[checkbox.length - 1]?.id, dispatch);
 
   /*   useEffect(() => {
     console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);
@@ -173,6 +181,13 @@ const InfiniteList = ({
       default:
         return;
     }
+  };
+
+  const handlePlaylistFiles = (e) => {
+    if (e.target.id === 'playlist-save') {
+      usePlaylistDialog(e.target.id, playlistTracks);
+    }
+    /* return usePlaylistDialog(e.target.id); */
   };
 
   const handleListScroll = (e) => {};
@@ -323,6 +338,27 @@ const InfiniteList = ({
     );
   });
 
+  const byPlaylist = playlistTracks.map((item, index) => {
+    return (
+      <Item
+        type="playlist"
+        key={getKey()}
+        divId={`${item.afid}--item-div`}
+        className={`${active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'}
+        ref={tracks.length === index + 1 ? lastTrackElement : scrollToView}
+        href={item.afid}
+        id={item.afid}
+        like={item.like}
+        audiofile={item.audiofile}
+        val={index}
+        handleTrackSelection={handleTrackSelection}
+        artist={item.artist ? item.artist : 'not available'}
+        title={item.title ? item.title : item.audiofile}
+        album={item.album ? item.album : 'not available'}
+      />
+    );
+  });
+
   const listClassNames = () => {
     if (!library) {
       return 'results results-hidden';
@@ -345,6 +381,7 @@ const InfiniteList = ({
           setType={setType}
           handleTextSearch={handleTextSearch}
           miniModePlaylist={miniModePlaylist}
+          handlePlaylistFiles={handlePlaylistFiles}
         />
       ) : null}
       <div className={listClassNames()}>
@@ -354,16 +391,37 @@ const InfiniteList = ({
         {type === 'albums' && !albums.length && !albumsLoading ? (
           <div className="noresults">No results</div>
         ) : null}
-        {type === 'files' ? (
+        {type === 'playlist' && !playlistTracks.length ? (
+          <div className="noresults">No current playlist</div>
+        ) : null}
+        {type === 'files' && (
           <>
             <div className="files">{byFiles}</div>
             <div className="albums" style={{ display: 'none' }}>
               {byAlbums}
             </div>
+            <div className="playlist" style={{ display: 'none' }}>
+              {byPlaylist}
+            </div>
           </>
-        ) : (
+        )}
+        {type === 'albums' && (
           <>
             <div className="albums">{byAlbums}</div>
+            <div className="files" style={{ display: 'none' }}>
+              {byFiles}
+            </div>
+            <div className="playlist" style={{ display: 'none' }}>
+              {byPlaylist}
+            </div>
+          </>
+        )}
+        {type === 'playlist' && (
+          <>
+            <div className="playlist">{byPlaylist}</div>
+            <div className="albums" style={{ display: 'none' }}>
+              {byAlbums}
+            </div>
             <div className="files" style={{ display: 'none' }}>
               {byFiles}
             </div>

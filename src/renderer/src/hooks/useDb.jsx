@@ -51,7 +51,7 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispa
       setAlbumsError(false);
       const albumRequest = await window.api.getAlbums(albumsPageNumber, albumsSearchTerm);
       if (albumRequest && isSubscribed) {
-        console.log('album-request-length: ', albumRequest.length);
+        /* console.log('album-request-length: ', albumRequest.length); */
         dispatch({
           type: 'albums-playlist',
           albums: albumRequest
@@ -89,16 +89,20 @@ const useAlbumTracks = (pattern) => {
   return { albumTracks, setAlbumTracks };
 };
 
-const usePlayAlbum = (id) => {
-  const [album, setAlbum] = useState([]);
+const usePlaylist = (id, dispatch) => {
+  /* const [playlistTracks, setPlaylistTracks] = useState([]); */
   const [error, setError] = useState([]);
 
   useEffect(() => {
     let subscribed = true;
     const loadAlbum = async () => {
-      const albumRequest = await window.api.getAlbum(id);
-      if (albumRequest && subscribed) {
-        setAlbum(albumRequest);
+      const playlistTracksRequest = await window.api.getAlbum(id);
+      if (playlistTracksRequest && subscribed) {
+        /* setPlaylistTracks([...playlistTracks, ...tracksRequest]); */
+        dispatch({
+          type: 'current-playlist',
+          playlistTracks: playlistTracksRequest
+        });
       } else {
         return;
       }
@@ -108,7 +112,7 @@ const usePlayAlbum = (id) => {
       return () => (subscribed = false);
     }
   }, [id]);
-  return { id, album, setAlbum };
+  return;
 };
 
 const useTotalTracksStat = () => {
@@ -160,7 +164,7 @@ const useLast10AlbumsStat = () => {
     const getLast10Albums = async () => {
       const last10AlbumsRequest = await window.api.last10AlbumsStat();
       if (last10AlbumsRequest && subscribed) {
-        console.log(last10AlbumsRequest);
+        /* console.log(last10AlbumsRequest); */
         setLast10Albums(last10AlbumsRequest);
       } else {
         return;
@@ -179,7 +183,7 @@ const useLast100TracksStat = () => {
     const getLast100Tracks = async () => {
       const last100TracksRequest = await window.api.last100TracksStat();
       if (last100TracksRequest && subscribed) {
-        console.log(last100TracksRequest);
+        /* console.log(last100TracksRequest); */
         setLast100Tracks(last100TracksRequest);
       } else {
         return;
@@ -191,6 +195,15 @@ const useLast100TracksStat = () => {
   return { last100Tracks };
 };
 
+const usePlaylistDialog = async (req, playlistTracks) => {
+  if (req === 'playlist-open') {
+    const open = await window.api.openPlaylist();
+  }
+  if (req === 'playlist-save') {
+    const save = await window.api.savePlaylist(playlistTracks);
+  }
+};
+
 export {
   useTracks,
   useAlbums,
@@ -199,5 +212,6 @@ export {
   useTopTenArtistsStat,
   useLast10AlbumsStat,
   useLast100TracksStat,
-  usePlayAlbum
+  usePlaylist,
+  usePlaylistDialog
 };

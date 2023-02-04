@@ -38,11 +38,13 @@ const AppState = () => {
     delay: false,
     isLiked: false,
     tracks: [],
+    playlistTracks: [],
     tracksPageNumber: 0,
     playlistMode: false
   };
 
   const reducer = (state, action) => {
+    /* console.log(action); */
     switch (action.type) {
       case 'library': {
         return { ...state, library: !state.library };
@@ -132,6 +134,14 @@ const AppState = () => {
           ...state,
           /*  tracks: action.tracks */
           tracks: [...state.tracks, ...action.tracks]
+        };
+      }
+
+      case 'current-playlist': {
+        return {
+          ...state,
+          /*  tracks: action.tracks */
+          playlistTracks: [...state.playlistTracks, ...action.playlistTracks]
         };
       }
       case 'albums-playlist': {

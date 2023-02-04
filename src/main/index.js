@@ -6,6 +6,7 @@ import {
   ipcMain,
   Menu,
   BrowserView,
+  dialog,
   webContents
 } from 'electron';
 import * as path from 'path';
@@ -37,7 +38,23 @@ import initFiles from './updateFiles';
 /* const db = new Database('music.db', { verbose: console.log });
 console.log(db); */
 
-const updatesFolder = `${process.cwd()}/src/updates`;
+/* const updatesFolder = `${process.cwd()}/src/updates`; */
+
+/* IN DOCUMENTS/ELECTRONMUSICPLAYER */
+const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`;
+const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`;
+const playlistsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\playlists`;
+if (!fs.existsSync(updatesFolder)) {
+  fs.mkdirSync(updatesFolder);
+}
+if (!fs.existsSync(metaErrorsFolder)) {
+  fs.mkdirSync(metaErrorsFolder);
+}
+if (!fs.existsSync(playlistsFolder)) {
+  fs.mkdirSync(playlistsFolder);
+}
+
+/* console.log('df: ', documentsFolder); */
 
 /* const updatesFolder = `${app.getPath('appData')}/musicplayer-electron/updatelogs`; */
 
@@ -142,6 +159,19 @@ app.on('ready', async () => await session.defaultSession.loadExtension(reactDevT
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
+  console.log('getAppPath() - ', app.getAppPath());
+  console.log(
+    'HOME : ',
+    app.getPath('home'),
+    'APPDATE : ',
+    app.getPath('appData'),
+    'DESKTOP : ',
+    app.getPath('desktop'),
+    'DOCUMENTS : ',
+    app.getPath('documents'),
+    'LOGS: ',
+    app.getPath('logs')
+  );
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -175,20 +205,20 @@ const processUpdateResult = (type, result) => {
   type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt');
   /* console.log(filename); */
   if (Array.isArray(result.new)) {
-    writeFile(`\nDate: ${Date()} \nAdditions:\n`, `${updatesFolder}/${filename}`);
+    writeFile(`\nDate: ${Date()} \nAdditions:\n`, `${updatesFolder}\\${filename}`);
     result.new.forEach((res) => {
-      writeFile(`${res}\n`, `${updatesFolder}/${filename}`);
+      writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
     });
     /* console.log('completed folders'); */
   }
   if (Array.isArray(result.deleted)) {
-    writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}/${filename}`);
+    writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}\\${filename}`);
 
     result.deleted.forEach((res) => {
-      writeFile(`${res}\n`, `${updatesFolder}/${filename}`);
+      writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
     });
   } else if (result.nochange === true) {
-    writeFile(`\nDate: ${Date()} No changes`, `${updatesFolder}/${filename}`);
+    writeFile(`\nDate: ${Date()} No changes`, `${updatesFolder}\\${filename}`);
   }
 };
 
@@ -222,8 +252,6 @@ ipcMain.handle('get-tracks', async (event, ...args) => {
 });
 
 ipcMain.handle('get-albums', async (event, ...args) => {
-  console.log('args: ', args);
-  /*  console.log('get-albums'); */
   if (args[1] === '') {
     const allAlbums = await allAlbumsByScroll(args[0]);
     return allAlbums;
@@ -235,7 +263,7 @@ ipcMain.handle('get-albums', async (event, ...args) => {
 
 ipcMain.handle('get-album', async (_, args) => {
   const album = getAlbum(args);
-  console.log('album: ', album);
+  return album;
 });
 
 ipcMain.handle('get-album-tracks', async (event, args) => {
@@ -276,7 +304,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
   child.show();
   child.loadFile(`${updatesFolder}/folder-updates.txt`); */
 
-  const folderupdates = await fs.promises.readFile(`${updatesFolder}/folder-updates.txt`, {
+  const folderupdates = await fs.promises.readFile(`${updatesFolder}\\folder-updates.txt`, {
     encoding: 'utf8'
   });
   /*   const parsedFolderUpdate = folderupdates.split('\n');
@@ -365,4 +393,28 @@ ipcMain.handle('last-10Albums-stat', async () => {
 ipcMain.handle('last-100Tracks-stat', async () => {
   const last100 = await last100Tracks();
   return last100;
+});
+
+ipcMain.handle('open-playlist', async () => {
+  const open = await dialog.showOpenDialog(mainWindow, {
+    defaultPath: playlistsFolder,
+    properties: ['openFile'],
+    filters: [{ name: 'Playlist', extensions: ['m3u'] }]
+  });
+  console.log('open: ', open);
+});
+
+ipcMain.handle('save-playlist', async (_, args) => {
+  console.log(args);
+  const save = await dialog.showSaveDialog(mainWindow, {
+    defaultPath: playlistsFolder,
+    filters: [{ name: 'Playlist', extensions: ['m3u'] }]
+  });
+  const toM3uPlaylist = args.map((file) => file.audiofile);
+  fs.writeFileSync(save.filePath, '#EXTM3U\n');
+  toM3uPlaylist.forEach((f) => fs.writeFileSync(save.filePath, `${f}\n`, { flag: 'a' }));
+  const show = await dialog.showMessageBox(mainWindow, {
+    message: `Saved playlist ${path.basename(save.filePath)}`,
+    buttons: []
+  });
 });

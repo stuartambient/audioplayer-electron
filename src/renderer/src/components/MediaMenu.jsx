@@ -1,5 +1,4 @@
 import { GiMagnifyingGlass } from 'react-icons/gi';
-import Switch from './Switch';
 import '../style/MediaMenu.css';
 
 const MediaMenu = ({
@@ -8,7 +7,8 @@ const MediaMenu = ({
   type,
   setType,
   handleTextSearch,
-  miniModePlaylist
+  miniModePlaylist,
+  handlePlaylistFiles
 }) => {
   return (
     <ul className={miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
@@ -62,15 +62,7 @@ const MediaMenu = ({
           </fieldset>
         </div>
       )}
-      {/* <li>
-        <Switch
-          type={type}
-          setType={setType}
-          className={
-            miniModePlaylist ? 'switch-container switch-container--minimal' : 'switch-container'
-          }
-        />
-      </li> */}
+
       <div className="right-side">
         <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
@@ -85,16 +77,32 @@ const MediaMenu = ({
             </div>
           </form>
         </li>
+        {type === 'playlist' && (
+          <li className="playlist-dialogs">
+            <span id="playlist-open" onClick={handlePlaylistFiles}>
+              Open
+            </span>
+            <span id="playlist-save" onClick={handlePlaylistFiles}>
+              Save
+            </span>
+          </li>
+        )}
         <li className="tabs" style={{ color: 'white' }}>
-          <span className="tab" onClick={() => setType('files')}>
-            files
-          </span>
-          <span className="tab" onClick={() => setType('albums')}>
-            albums
-          </span>
-          <span className="tab" onClick={() => setType('playlist')}>
-            playlist
-          </span>
+          <div className={type === 'files' ? 'tab active' : 'tab'} onClick={() => setType('files')}>
+            <span>files</span>
+          </div>
+          <div
+            className={type === 'albums' ? 'tab active' : 'tab'}
+            onClick={() => setType('albums')}
+          >
+            <span>albums</span>
+          </div>
+          <div
+            className={type === 'playlist' ? 'tab active' : 'tab'}
+            onClick={() => setType('playlist')}
+          >
+            <span>playlist</span>
+          </div>
         </li>
       </div>
     </ul>
