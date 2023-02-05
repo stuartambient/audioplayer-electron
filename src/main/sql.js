@@ -123,6 +123,17 @@ const allTracksBySearchTerm = (offsetNum, text) => {
   return stmt.all(term);
 };
 
+const getPlaylist = (playlist) => {
+  const plfile = db.prepare('SELECT * FROM tracks WHERE audiofile = ?');
+  /* const assocFiles = files.all(`${albumPath}%`); */
+  const albumFiles = [];
+  playlist.forEach((pl) => {
+    albumFiles.push(plfile.get(pl));
+  });
+  /* console.log(albumFiles); */
+  return albumFiles;
+};
+
 const allAlbumsByScroll = (offsetNum) => {
   const stmt = db.prepare(`SELECT * FROM albums LIMIT 50 OFFSET ${offsetNum * 50}`);
   return stmt.all();
@@ -191,7 +202,8 @@ export {
   likeTrack,
   isLiked,
   createFoldersTable,
-  createFilesTable
+  createFilesTable,
+  getPlaylist
 };
 
 /*

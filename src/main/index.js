@@ -26,7 +26,8 @@ import {
   requestedFile,
   likeTrack,
   isLiked,
-  getAlbum
+  getAlbum,
+  getPlaylist
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
@@ -396,23 +397,38 @@ ipcMain.handle('last-100Tracks-stat', async () => {
 });
 
 ipcMain.handle('open-playlist', async () => {
+  let result;
   const open = await dialog.showOpenDialog(mainWindow, {
     defaultPath: playlistsFolder,
     properties: ['openFile'],
     filters: [{ name: 'Playlist', extensions: ['m3u'] }]
   });
-  console.log('open: ', open);
+  fs.readFile(open.filePaths.join(), 'utf8', (err, f) => {
+    if (err) return console.log(err);
+    const plfiles = f.replaceAll('\\', '/').split('\n');
+    const result = getPlaylist(plfiles);
+  });
 });
 
 ipcMain.handle('save-playlist', async (_, args) => {
-  console.log(args);
   const save = await dialog.showSaveDialog(mainWindow, {
     defaultPath: playlistsFolder,
     filters: [{ name: 'Playlist', extensions: ['m3u'] }]
   });
-  const toM3uPlaylist = args.map((file) => file.audiofile);
-  fs.writeFileSync(save.filePath, '#EXTM3U\n');
-  toM3uPlaylist.forEach((f) => fs.writeFileSync(save.filePath, `${f}\n`, { flag: 'a' }));
+
+  args.forEach((a, index) => {
+    const tmp = a.audiofile.replaceAll('/', '\\');
+    if (index === args.length - 1) {
+      fs.writeFileSync(save.filePath, `${tmp}`, {
+        flag: 'a'
+      });
+    } else {
+      fs.writeFileSync(save.filePath, `${tmp}\n`, {
+        flag: 'a'
+      });
+    }
+  });
+
   const show = await dialog.showMessageBox(mainWindow, {
     message: `Saved playlist ${path.basename(save.filePath)}`,
     buttons: []

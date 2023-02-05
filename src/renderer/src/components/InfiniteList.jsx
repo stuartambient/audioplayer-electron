@@ -41,7 +41,7 @@ const InfiniteList = ({
   const [sortType, setSortType] = useState('createdon');
   const [resetKey, setResetKey] = useState(null);
   const [checkbox, setCheckbox] = useState([]);
-  /* const [playlisttracks, setPlaylistTracks] = useState([]); */
+  const [playlistReq, setPlaylistReq] = useState('');
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
@@ -60,6 +60,8 @@ const InfiniteList = ({
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
 
   usePlaylist(checkbox[checkbox.length - 1]?.id, dispatch);
+
+  usePlaylistDialog(playlistReq, playlistTracks);
 
   /*   useEffect(() => {
     console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);
@@ -185,9 +187,10 @@ const InfiniteList = ({
 
   const handlePlaylistFiles = (e) => {
     if (e.target.id === 'playlist-save') {
-      usePlaylistDialog(e.target.id, playlistTracks);
+      setPlaylistReq('playlist-save');
+    } else {
+      setPlaylistReq('playlist-open');
     }
-    /* return usePlaylistDialog(e.target.id); */
   };
 
   const handleListScroll = (e) => {};

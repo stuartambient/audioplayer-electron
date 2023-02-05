@@ -195,13 +195,27 @@ const useLast100TracksStat = () => {
   return { last100Tracks };
 };
 
-const usePlaylistDialog = async (req, playlistTracks) => {
-  if (req === 'playlist-open') {
+const usePlaylistDialog = (req, playlistTracks = null) => {
+  let isSubscribed = true;
+  useEffect(() => {
+    const openplaylist = async () => {
+      console.log('opening');
+      const openpl = await window.api.openPlaylist();
+      if (openpl && isSubscribed) {
+        console.log(openpl);
+      }
+    };
+    if (req === 'playlist-open') openplaylist();
+    return () => (isSubscribed = false);
+  }, [req, playlistTracks]);
+
+  /*   if (req === 'playlist-open') {
     const open = await window.api.openPlaylist();
-  }
-  if (req === 'playlist-save') {
+    console.log('open: ', open);
+  } */
+  /*  if (req === 'playlist-save') {
     const save = await window.api.savePlaylist(playlistTracks);
-  }
+  } */
 };
 
 export {
