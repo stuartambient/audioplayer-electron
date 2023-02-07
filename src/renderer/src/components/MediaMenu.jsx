@@ -103,6 +103,9 @@ const MediaMenu = ({
           >
             <span>playlist</span>
           </div>
+          <div className={type === 'other' ? 'tab active' : 'tab'} onClick={() => setType('other')}>
+            <span>other</span>
+          </div>
         </li>
       </div>
     </ul>

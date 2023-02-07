@@ -209,6 +209,12 @@ const AppState = () => {
           maximized: action.maximized
         };
       }
+      case 'load-playlist': {
+        return {
+          ...state,
+          playlistTracks: action.playlistTracks
+        };
+      }
       default:
         return;
     }

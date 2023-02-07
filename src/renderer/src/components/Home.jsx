@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Stats from './Stats';
+import Playlists from './Playlists';
 import AppState from '../hooks/AppState';
 import '../style/Home.css';
 import RecentAdditions from './RecentAdditions';
@@ -33,6 +34,7 @@ const Home = () => {
 
       {homepage === 'recent-additions' && <RecentAdditions />}
       {homepage === 'stats' && <Stats />}
+      {homepage === 'playlists' && <Playlists />}
     </>
   );
 };

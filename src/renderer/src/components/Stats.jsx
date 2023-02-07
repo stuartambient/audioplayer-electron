@@ -1,24 +1,41 @@
 import { useState, useEffect } from 'react';
 import { useTotalTracksStat, useTopTenArtistsStat } from '../hooks/useDb';
+/* import { AiOutlineTrophy } from 'react-icons'; */
+import '../style/Stats.css';
 
 const Stats = () => {
   const { totalTracks } = useTotalTracksStat();
   const { topTenArtists } = useTopTenArtistsStat();
 
   return (
-    <ul
-      style={{
-        gridColumn: '2 / 3',
-        color: 'white',
-        listStyle: 'none',
-        alignSelf: 'center',
-        justifySelf: 'center'
-      }}
-    >
-      <li>Total tracks: </li>
-      <li>Total albums: </li>
-      <li>Top 10 Artists: </li>
-    </ul>
+    <div className="stats">
+      <ul className="stats-quick-stats">
+        <li className="stats-total-tracks">
+          <span className="stats-label">
+            {/* <AiOutlineTrophy /> */}
+            Total tracks:
+          </span>
+          {totalTracks}
+        </li>
+        <li className="stats-total-albums">
+          <span className="stats-label">
+            {' '}
+            {/* <AiOutlineTrophy /> */}
+            Total albums:
+          </span>
+        </li>
+      </ul>
+      <ul className="stats-top10artists" style={{ color: 'white' }}>
+        <span className="stats-label">Top ten artists:</span>
+        {topTenArtists.map((tta) => {
+          return (
+            <li className="stats-top10artist">
+              {tta.artist} # of tracks: {tta['COUNT(*)']}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 };
 

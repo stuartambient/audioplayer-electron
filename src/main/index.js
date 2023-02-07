@@ -210,7 +210,6 @@ const processUpdateResult = (type, result) => {
     result.new.forEach((res) => {
       writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
     });
-    /* console.log('completed folders'); */
   }
   if (Array.isArray(result.deleted)) {
     writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}\\${filename}`);
@@ -241,8 +240,6 @@ ipcMain.handle('create-table', () => {
 });
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
-  /* console.log('args: ', args); */
-  /* console.log(args); */
   if (args[1] === '') {
     const alltracks = await allTracksByScroll(args[0]);
     return alltracks;
@@ -274,12 +271,8 @@ ipcMain.handle('get-album-tracks', async (event, args) => {
 });
 
 ipcMain.handle('stream-audio', async (event, arg) => {
-  /*  const track = await requestedFile(arg);
-  console.log('track: ', track); */
-  /* const picture = await parseFile(track.audiofile); */
   const file = await fs.promises.readFile(arg);
   const filebuf = Buffer.from(file);
-  /* return { filebuf, picture: picture.common.picture[0].data }; */
   return filebuf;
 });
 
@@ -288,8 +281,6 @@ ipcMain.handle('get-cover', async (event, arg) => {
   const meta = await parseFile(track.audiofile);
   if (!meta.common.picture) return 0;
   return meta.common.picture[0].data;
-  /* return meta.common.picture[0].data; */
-  /* return meta.common.picture[0].data; */
 });
 
 ipcMain.handle('file-update-details', async (event, ...args) => {
@@ -300,40 +291,23 @@ ipcMain.handle('file-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('folder-update-details', async (event, ...args) => {
-  /*   const mainWindow = BrowserWindow.getFocusedWindow();
-  const child = new BrowserWindow({ parent: mainWindow });
-  child.show();
-  child.loadFile(`${updatesFolder}/folder-updates.txt`); */
-
   const folderupdates = await fs.promises.readFile(`${updatesFolder}\\folder-updates.txt`, {
     encoding: 'utf8'
   });
-  /*   const parsedFolderUpdate = folderupdates.split('\n');
-  console.log(parsedFolderUpdate); */
   return folderupdates;
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
   console.log(args);
   if (args[0] === 'mini') {
-    /* console.log('confirmed mini'); */
     await mainWindow.setMinimumSize(380, 320);
     await mainWindow.setSize(380, 320, false);
   }
   if (args[0] === 'default') {
-    /* console.log('confirmed default'); */
-    /* const [width, height] = await mainWindow.getMinimumSize(); */
-    /* console.log(width, height, width === 660, height === 680); */
-    /* if (width === 660 && height === 600) return; */
-    /* await mainWindow.setMinimumSize(660, 600); */
     await mainWindow.setMinimumSize(660, 600);
     await mainWindow.setSize(660, 600, false);
   }
   if (args[0] === 'mini-expanded') {
-    /* console.log('confirmed default'); */
-    /* const [width, height] = await mainWindow.getMinimumSize(); */
-    /* console.log(width, height, width === 660, height === 680); */
-    /* await mainWindow.setMinimumSize(580, 320); */
     await mainWindow.setMinimumSize(380, 550);
     await mainWindow.setSize(380, 550, false);
   }
@@ -341,7 +315,6 @@ ipcMain.handle('screen-mode', async (event, ...args) => {
 
 ipcMain.handle('update-like', async (event, ...args) => {
   const updateTrackLike = likeTrack(args[0]);
-  /* return updateTrackLike; */
   return true;
 });
 
@@ -352,19 +325,13 @@ ipcMain.handle('is-liked', async (event, arg) => {
 
 ipcMain.on('open-child', async (event, ...args) => {
   const child = new BrowserWindow({ parent: mainWindow });
-  /*  console.log('dirname: ', __dirname); */
   child.loadFile(path.join(__dirname, '../renderer/index.html'));
   child.show();
   return true;
 });
 
-ipcMain.on('send-state', async (event, ...args) => {
-  console.log('----->', args);
-});
-
 ipcMain.handle('total-tracks-stat', async () => {
   const totaltracks = await totalTracks();
-  /* console.log(totaltracks.count(*)); */
   const total = Object.values(totaltracks).join();
   return total;
 });
@@ -397,17 +364,14 @@ ipcMain.handle('last-100Tracks-stat', async () => {
 });
 
 ipcMain.handle('open-playlist', async () => {
-  let result;
   const open = await dialog.showOpenDialog(mainWindow, {
     defaultPath: playlistsFolder,
     properties: ['openFile'],
     filters: [{ name: 'Playlist', extensions: ['m3u'] }]
   });
-  fs.readFile(open.filePaths.join(), 'utf8', (err, f) => {
-    if (err) return console.log(err);
-    const plfiles = f.replaceAll('\\', '/').split('\n');
-    const result = getPlaylist(plfiles);
-  });
+  const plfiles = await fs.promises.readFile(open.filePaths.join(), 'utf8');
+  const parsedPlFiles = plfiles.replaceAll('\\', '/').split('\n');
+  return getPlaylist(parsedPlFiles);
 });
 
 ipcMain.handle('save-playlist', async (_, args) => {
@@ -433,4 +397,10 @@ ipcMain.handle('save-playlist', async (_, args) => {
     message: `Saved playlist ${path.basename(save.filePath)}`,
     buttons: []
   });
+});
+
+ipcMain.handle('get-playlists', async () => {
+  console.log('get playlists');
+  const playlists = fs.promises.readdir(playlistsFolder);
+  return playlists;
 });

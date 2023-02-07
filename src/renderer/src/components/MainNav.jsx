@@ -25,17 +25,16 @@ const MainNav = ({ onClick, home, update, player, minimalmode }) => {
           </ul>
           <ul className="main-nav--center">
             <li onClick={onClick} id="home" className={home ? 'highlight' : ''}>
-              <AiOutlineHome />
+              <span>Home</span>
             </li>
             <li onClick={onClick} id="update" className={update ? 'highlight' : ''}>
-              <AiOutlineScan />
+              <span>Update</span>
             </li>
             <li onClick={onClick} id="player" className={player ? 'highlight' : ''}>
-              <BsMusicPlayer />
+              <span>Player</span>
             </li>
             <li onClick={onClick} id="mini-mode" className="">
-              {/*  <AiOutlineMobile /> */}
-              <CgMiniPlayer />
+              <span>Miniplayer</span>
             </li>
           </ul>
           <ul className="main-nav--right">
@@ -54,7 +53,7 @@ const MainNav = ({ onClick, home, update, player, minimalmode }) => {
 
       {minimalmode && (
         <ul className="main-nav--left">
-          <li onClick={onClick} id="mini-mode" className="">
+          <li onClick={onClick} id="mini-mode" className="mini">
             <CgMiniPlayer />
           </li>
           <li onClick={onClick} id="mini-mode-playlist" className="">

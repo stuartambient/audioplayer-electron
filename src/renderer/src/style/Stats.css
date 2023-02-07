@@ -1,0 +1,17 @@
+.stats {
+  grid-column: 2 / 3;
+  grid-row: 2 / 4;
+  color: white;
+  display: grid;
+}
+
+.stats ul {
+  list-style: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  padding-inline-start: 0;
+}
+
+.stats-label {
+  background: var(--blue2);
+}

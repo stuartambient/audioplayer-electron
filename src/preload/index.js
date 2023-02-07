@@ -26,7 +26,8 @@ const api = {
   last10AlbumsStat: () => ipcRenderer.invoke('last-10Albums-stat'),
   last100TracksStat: () => ipcRenderer.invoke('last-100Tracks-stat'),
   openPlaylist: () => ipcRenderer.invoke('open-playlist'),
-  savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks)
+  savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks),
+  getPlaylists: () => ipcRenderer.invoke('get-playlists')
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

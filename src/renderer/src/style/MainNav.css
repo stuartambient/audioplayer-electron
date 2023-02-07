@@ -1,8 +1,12 @@
 .main-nav {
   grid-column: 1 / -1;
   grid-row: 1 /2;
-  border: 1px solid white;
-  display: flex;
+  border-top: 1px solid white;
+  border-bottom: 1px solid var(--blue1);
+  display: grid;
+  grid-template-columns: repeat(5, 20%);
+  grid-template-rows: 2rem;
+  align-items: center;
   background: #2d2d2d;
   -webkit-app-region: drag;
   -webkit-user-select: none;
@@ -17,50 +21,88 @@
 .main-nav ul {
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  /* justify-content: space-evenly; */
   margin-block-start: 0;
   margin-block-end: 0;
   padding-inline-start: 0;
   list-style: none;
+  /* margin: 0 5px; */
+  -webkit-app-region: no-drag;
 }
 
 .main-nav--left {
   margin-left: 2%;
+  transition: all 1s;
 }
 
+.main-nav--left li svg {
+  fill: white;
+}
+
+.main-nav--right li svg {
+  fill: white;
+}
+
+/* .main-nav--left:hover {
+  transform: rotate(90deg);
+} */
+
 .main-nav--center {
-  margin-left: 20%;
+  /* margin-left: 10%; */
+  grid-column: 2 / 5;
 }
 
 .main-nav--center li {
   margin: 0 0.8rem;
+  background: #424242;
+  height: 1.8rem;
+
+  /* width: 3rem; */
+  color: var(--blue1);
+  text-align: center;
+  padding: 0 0.5rem;
+  /* background: #1d1b1b; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border-radius: 5px; */
+}
+
+.main-nav--center li:hover {
+  cursor: pointer;
 }
 
 .main-nav--right {
-  width: 20%;
+  /* width: 100$; */
   margin-left: 30%;
+  grid-column: 5 /6;
+  min-width: 100%;
 }
 
-.main-nav ul li :hover {
+.main-nav--right li {
+  padding-right: 0.8rem;
+}
+
+/* .main-nav--center li:hover {
+  border-left: 5px solid var(--blue2);
+} */
+
+.main-nav ul li:hover {
   cursor: pointer;
-  color: var(--blue2);
+  /* color: var(--blue2); */
+  /* border-left: 1px solid white; */
+  /* border: 1px solid white; */
 }
 
 .main-nav ul li svg:hover {
   fill: var(--blue2);
 }
 
-.main-nav ul li div > svg:hover {
+.main-nav--left li div > svg:hover {
   fill: var(--blue2);
 }
 
-.main-nav ul {
-  display: flex;
-  align-items: center;
-  -webkit-app-region: no-drag;
-}
-
-.main-nav ul li svg {
+.main-nav--left ul li svg {
   fill: white;
   stroke: white;
   stroke-width: 1px;
@@ -73,6 +115,12 @@
 }
 
 /* MAIN NAV MINIMAL */
-#mini-mode {
+/* #mini-mode {
+  padding-right: 10px;
+  color: white;
+}
+ */
+.mini {
+  color: white;
   padding-right: 10px;
 }

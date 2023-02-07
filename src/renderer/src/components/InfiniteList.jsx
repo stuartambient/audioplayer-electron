@@ -61,7 +61,7 @@ const InfiniteList = ({
 
   usePlaylist(checkbox[checkbox.length - 1]?.id, dispatch);
 
-  usePlaylistDialog(playlistReq, playlistTracks);
+  usePlaylistDialog(playlistReq, playlistTracks, setPlaylistReq, dispatch);
 
   /*   useEffect(() => {
     console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);
@@ -79,6 +79,7 @@ const InfiniteList = ({
   const scrollRef = useRef();
   const searchRef = useRef();
 
+  /* HERE */
   useEffect(() => {
     if (currentTrack >= 0 && tracks[currentTrack + 1]) {
       dispatch({
@@ -94,6 +95,8 @@ const InfiniteList = ({
       });
     }
   }, [currentTrack, tracks, dispatch]);
+
+  /* HERE */
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
@@ -228,6 +231,7 @@ const InfiniteList = ({
 
   const filesObserver = useRef();
   const albumsObserver = useRef();
+  const playlistObserver = useRef();
 
   const lastTrackElement = useCallback(
     (node) => {
@@ -348,7 +352,7 @@ const InfiniteList = ({
         key={getKey()}
         divId={`${item.afid}--item-div`}
         className={`${active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'}
-        ref={tracks.length === index + 1 ? lastTrackElement : scrollToView}
+        /* ref={tracks.length === index + 1 ? lastTrackElement : scrollToView} */
         href={item.afid}
         id={item.afid}
         like={item.like}

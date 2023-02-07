@@ -12,8 +12,8 @@ const topTenArtists = () => {
     'SELECT artist , COUNT(*) FROM tracks GROUP BY artist ORDER BY COUNT(*) DESC LIMIT 11'
   );
   const result = stmt.all();
-  console.log(result);
-  return result;
+
+  return result.slice(1, -1);
 };
 
 const last10Albums = () => {

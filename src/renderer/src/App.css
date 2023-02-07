@@ -27,7 +27,7 @@ textarea {
 .container {
   display: grid;
   grid-template-columns: 45vw 55vw;
-  grid-template-rows: 2.5rem;
+  grid-template-rows: 2rem;
   grid-auto-rows: 50px;
   justify-content: center;
   align-content: center;
@@ -67,7 +67,7 @@ textarea {
 }
 
 .container-home {
-  grid-template-rows: 2.5rem 0.5fr 0.5fr 2.5rem;
+  grid-template-rows: 2rem 0.5fr 0.5fr 2.5rem;
   grid-template-columns: 25% 75%;
   align-content: start;
 }

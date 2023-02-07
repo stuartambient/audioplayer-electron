@@ -116,7 +116,6 @@ const usePlaylist = (id, dispatch) => {
 };
 
 const useTotalTracksStat = () => {
-  console.log('hit');
   const [totalTracks, setTotalTracks] = useState();
   const [error, setError] = useState([]);
 
@@ -125,7 +124,7 @@ const useTotalTracksStat = () => {
     const getTotalTracks = async () => {
       const totalTracksRequest = await window.api.totalTracksStat();
       if (totalTracksRequest && subscribed) {
-        console.log(totalTracksRequest);
+        console.log('------>', totalTracksRequest);
         setTotalTracks(totalTracksRequest);
       } else {
         return;
@@ -139,7 +138,6 @@ const useTotalTracksStat = () => {
 };
 
 const useTopTenArtistsStat = () => {
-  console.log('hit top 10');
   const [topTenArtists, setTopTenArtists] = useState([]);
   useEffect(() => {
     let subscribed = true;
@@ -195,27 +193,62 @@ const useLast100TracksStat = () => {
   return { last100Tracks };
 };
 
-const usePlaylistDialog = (req, playlistTracks = null) => {
-  let isSubscribed = true;
+const usePlaylistDialog = (req, playlistTracks, reset, dispatch) => {
   useEffect(() => {
+    let isSubscribed = true;
     const openplaylist = async () => {
-      console.log('opening');
-      const openpl = await window.api.openPlaylist();
-      if (openpl && isSubscribed) {
-        console.log(openpl);
+      try {
+        const openpl = await window.api.openPlaylist();
+        if (openpl && isSubscribed) {
+          dispatch({
+            type: 'load-playlist',
+            playlistTracks: openpl
+          });
+          reset('');
+        }
+      } catch (e) {
+        console.log(e.message);
       }
     };
-    if (req === 'playlist-open') openplaylist();
-    return () => (isSubscribed = false);
-  }, [req, playlistTracks]);
 
-  /*   if (req === 'playlist-open') {
-    const open = await window.api.openPlaylist();
-    console.log('open: ', open);
-  } */
-  /*  if (req === 'playlist-save') {
-    const save = await window.api.savePlaylist(playlistTracks);
-  } */
+    const saveplaylist = async () => {
+      try {
+        const savepl = await window.api.savePlaylist(playlistTracks);
+        if (savepl && isSubscribed) {
+          console.log(savepl);
+          reset('');
+        }
+      } catch (e) {
+        console.log(e.message);
+      }
+    };
+    if (req === 'playlist-open') {
+      openplaylist();
+      return () => (isSubscribed = false);
+    }
+    if (req === 'playlist-save') {
+      saveplaylist();
+      return () => (isSubscribed = false);
+    }
+  }, [req]);
+};
+
+const useGetPlaylists = () => {
+  const [myPlaylists, setMyPlaylists] = useState(['no playlists']);
+
+  useEffect(() => {
+    let subscribed = true;
+    const getmyplaylists = async () => {
+      console.log('go');
+      const myplaylists = await window.api.getPlaylists();
+      if (myplaylists) {
+        setMyPlaylists(myplaylists);
+      }
+    };
+    getmyplaylists();
+    return () => (subscribed = false);
+  }, []);
+  return { myPlaylists };
 };
 
 export {
@@ -227,5 +260,6 @@ export {
   useLast10AlbumsStat,
   useLast100TracksStat,
   usePlaylist,
-  usePlaylistDialog
+  usePlaylistDialog,
+  useGetPlaylists
 };
