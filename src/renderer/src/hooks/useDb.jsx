@@ -124,7 +124,6 @@ const useTotalTracksStat = () => {
     const getTotalTracks = async () => {
       const totalTracksRequest = await window.api.totalTracksStat();
       if (totalTracksRequest && subscribed) {
-        console.log('------>', totalTracksRequest);
         setTotalTracks(totalTracksRequest);
       } else {
         return;
@@ -193,7 +192,7 @@ const useLast100TracksStat = () => {
   return { last100Tracks };
 };
 
-const usePlaylistDialog = (req, playlistTracks, reset, dispatch) => {
+const usePlaylistDialog = (req, playlistTracks, dispatch) => {
   useEffect(() => {
     let isSubscribed = true;
     const openplaylist = async () => {
@@ -204,7 +203,6 @@ const usePlaylistDialog = (req, playlistTracks, reset, dispatch) => {
             type: 'load-playlist',
             playlistTracks: openpl
           });
-          reset('');
         }
       } catch (e) {
         console.log(e.message);
@@ -216,7 +214,6 @@ const usePlaylistDialog = (req, playlistTracks, reset, dispatch) => {
         const savepl = await window.api.savePlaylist(playlistTracks);
         if (savepl && isSubscribed) {
           console.log(savepl);
-          reset('');
         }
       } catch (e) {
         console.log(e.message);
@@ -224,10 +221,12 @@ const usePlaylistDialog = (req, playlistTracks, reset, dispatch) => {
     };
     if (req === 'playlist-open') {
       openplaylist();
+      /* setPlaylistReq(''); */
       return () => (isSubscribed = false);
     }
     if (req === 'playlist-save') {
       saveplaylist();
+      /* setPlaylistReq(''); */
       return () => (isSubscribed = false);
     }
   }, [req]);
@@ -239,7 +238,6 @@ const useGetPlaylists = () => {
   useEffect(() => {
     let subscribed = true;
     const getmyplaylists = async () => {
-      console.log('go');
       const myplaylists = await window.api.getPlaylists();
       if (myplaylists) {
         setMyPlaylists(myplaylists);

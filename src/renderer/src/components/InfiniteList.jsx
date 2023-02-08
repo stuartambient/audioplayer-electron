@@ -61,7 +61,7 @@ const InfiniteList = ({
 
   usePlaylist(checkbox[checkbox.length - 1]?.id, dispatch);
 
-  usePlaylistDialog(playlistReq, playlistTracks, setPlaylistReq, dispatch);
+  usePlaylistDialog(playlistReq, playlistTracks, dispatch);
 
   /*   useEffect(() => {
     console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);

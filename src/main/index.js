@@ -369,6 +369,7 @@ ipcMain.handle('open-playlist', async () => {
     properties: ['openFile'],
     filters: [{ name: 'Playlist', extensions: ['m3u'] }]
   });
+  if (open.canceled) return;
   const plfiles = await fs.promises.readFile(open.filePaths.join(), 'utf8');
   const parsedPlFiles = plfiles.replaceAll('\\', '/').split('\n');
   return getPlaylist(parsedPlFiles);
@@ -379,6 +380,8 @@ ipcMain.handle('save-playlist', async (_, args) => {
     defaultPath: playlistsFolder,
     filters: [{ name: 'Playlist', extensions: ['m3u'] }]
   });
+
+  if (save.canceled) return;
 
   args.forEach((a, index) => {
     const tmp = a.audiofile.replaceAll('/', '\\');
@@ -403,4 +406,28 @@ ipcMain.handle('get-playlists', async () => {
   console.log('get playlists');
   const playlists = fs.promises.readdir(playlistsFolder);
   return playlists;
+});
+
+ipcMain.handle('homepage-playlists', async (_m, ...args) => {
+  /* const folderupdates = await fs.promises.readFile(`${updatesFolder}\\folder-updates.txt`, {
+    encoding: 'utf8'
+  });
+  return folderupdates; */
+  const [type, value] = args;
+  console.log(type, value);
+  switch (type) {
+    case 'edit':
+      const editplfile = await fs.promises.readFile(`${playlistsFolder}\\${value}`, {
+        encoding: 'utf8'
+      });
+      console.log('plfile: ', editplfile);
+      break;
+    case 'delete':
+      const delplfile = await fs.promises.unlink(`${playlistsFolder}\\${value}`);
+      console.log('del: plfile: ', delplfile);
+      break;
+    case 'play':
+    default:
+      return;
+  }
 });
