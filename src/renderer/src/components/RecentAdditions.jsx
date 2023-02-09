@@ -1,6 +1,7 @@
 /* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
 import { Buffer } from 'buffer';
 import { useLast10AlbumsStat, useLast100TracksStat } from '../hooks/useDb';
+import NoImage from '../assets/noimage.jpg';
 
 const RecentAdditions = () => {
   const { last10Albums } = useLast10AlbumsStat();
@@ -18,9 +19,10 @@ const RecentAdditions = () => {
           return (
             <li key={idx}>
               {album.img && <img src={handlePicture(album.img)} alt="" />}
-              <div className="overlay">
+              {!album.img && <img src={NoImage} alt="" />}
+              {/* <div className="overlay">
                 <span>{album.foldername}</span>
-              </div>
+              </div> */}
             </li>
           );
         })}

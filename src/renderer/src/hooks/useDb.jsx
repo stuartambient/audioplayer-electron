@@ -154,6 +154,37 @@ const useTopTenArtistsStat = () => {
   return { topTenArtists };
 };
 
+const useAllAlbumsCover = (coversPageNumber, resetKey) => {
+  const [coversLoading, setCoversLoading] = useState(true);
+  const [coversError, setCoversError] = useState(false);
+  const [covers, setCovers] = useState([]);
+  const [hasMoreCovers, setHasMoreCovers] = useState(false);
+
+  useEffect(() => {
+    let isSubscribed = true;
+    const loadCovers = async () => {
+      let success = true;
+      setCoversLoading(true);
+      setCoversError(false);
+      let coversRequest = await window.api.getCovers(coversPageNumber);
+      if (coversRequest && isSubscribed) {
+        setCovers([...covers, ...coversRequest]);
+        /* dispatch({
+          type: 'tracks-playlist',
+          tracks: trackRequest
+        }); */
+        setHasMoreCovers(coversRequest.length > 0);
+        setCoversLoading(false);
+      }
+    };
+
+    loadCovers();
+    return () => (isSubscribed = false);
+  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey]);
+
+  return { coversLoading, covers, setCovers, hasMoreCovers, coversError };
+};
+
 const useLast10AlbumsStat = () => {
   const [last10Albums, setLast10Albums] = useState([]);
   useEffect(() => {
