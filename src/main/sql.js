@@ -139,6 +139,16 @@ const allAlbumsByScroll = (offsetNum) => {
   return stmt.all();
 };
 
+const allCoversByScroll = (offsetNum) => {
+  console.log('OSNUM: ', offsetNum);
+  const stmt = db.prepare(
+    `SELECT foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET ${
+      offsetNum * 50
+    }`
+  );
+  return stmt.all();
+};
+
 const allAlbumsBySearchTerm = (offsetNum, text) => {
   const term = `%${text}%`;
   const stmt = db.prepare(
@@ -203,7 +213,8 @@ export {
   isLiked,
   createFoldersTable,
   createFilesTable,
-  getPlaylist
+  getPlaylist,
+  allCoversByScroll
 };
 
 /*

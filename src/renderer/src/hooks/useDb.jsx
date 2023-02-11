@@ -154,7 +154,7 @@ const useTopTenArtistsStat = () => {
   return { topTenArtists };
 };
 
-const useAllAlbumsCover = (coversPageNumber, resetKey) => {
+const useAllAlbumsCovers = (coversPageNumber) => {
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [covers, setCovers] = useState([]);
@@ -180,7 +180,7 @@ const useAllAlbumsCover = (coversPageNumber, resetKey) => {
 
     loadCovers();
     return () => (isSubscribed = false);
-  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey]);
+  }, [coversPageNumber]);
 
   return { coversLoading, covers, setCovers, hasMoreCovers, coversError };
 };
@@ -290,5 +290,6 @@ export {
   useLast100TracksStat,
   usePlaylist,
   usePlaylistDialog,
-  useGetPlaylists
+  useGetPlaylists,
+  useAllAlbumsCovers
 };

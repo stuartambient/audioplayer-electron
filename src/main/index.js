@@ -11,7 +11,7 @@ import {
 } from 'electron';
 import * as path from 'path';
 import fs from 'fs';
-import url from 'url';
+import url, { pathToFileURL } from 'url';
 import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -22,6 +22,7 @@ import {
   allTracksBySearchTerm,
   allAlbumsByScroll,
   allAlbumsBySearchTerm,
+  allCoversByScroll,
   filesByAlbum,
   requestedFile,
   likeTrack,
@@ -107,7 +108,8 @@ function createWindow() {
       : {}),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
-      sandbox: false
+      sandbox: false,
+      webSecurity: false
     }
   });
 
@@ -260,6 +262,7 @@ ipcMain.handle('get-albums', async (event, ...args) => {
 });
 
 ipcMain.handle('get-album', async (_, args) => {
+  console.log('...', args);
   const album = getAlbum(args);
   return album;
 });
@@ -349,9 +352,11 @@ ipcMain.handle('last-10Albums-stat', async () => {
       const checkImg = tmp.find((t) => t.endsWith('.jpg'));
       if (!checkImg) return l;
       const imgPath = `${l.fullpath}/${checkImg}`;
+      const imgurl = url.pathToFileURL(imgPath);
+      console.log(imgurl.href);
       const file = await fs.promises.readFile(imgPath);
       const filebuf = Buffer.from(file);
-      const imageobj = { img: filebuf };
+      const imageobj = { img: imgurl.href /* filebuf */ };
       return { ...l, ...imageobj };
     })
   );
@@ -430,4 +435,27 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
     default:
       return;
   }
+});
+
+ipcMain.handle('get-covers', async (_, ...args) => {
+  console.log('get-covers');
+  const albums = await allCoversByScroll(args.join());
+  const albumsWithImages = await Promise.all(
+    albums.map(async (l) => {
+      let tmp = await fs.promises.readdir(l.fullpath);
+      const checkImg = tmp.find(
+        (t) => t.endsWith('.jpg') || t.endsWith('.png') || t.endsWith('.jpeg')
+      );
+      if (!checkImg) return l;
+      const imgPath = `${l.fullpath}/${checkImg}`;
+      const imgUrl = url.pathToFileURL(imgPath);
+      const file = await fs.promises.readFile(imgPath);
+      const imgurl = url.pathToFileURL(imgPath);
+      const filebuf = Buffer.from(file);
+      const imageobj = { img: imgUrl.href /* filebuf */ };
+
+      return { ...l, ...imageobj };
+    })
+  );
+  return albumsWithImages;
 });

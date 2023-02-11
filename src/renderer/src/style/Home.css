@@ -34,23 +34,38 @@
 }
 
 .recent-additions--albums {
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 100px));
   grid-auto-rows: 100px;
-  grid-gap: 5px;
+  grid-gap: 10px;
   grid-auto-flow: dense;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-/* .recent-additions--albums li {
-  width: 100%;
-  height: 100%;
-} */
-
 .recent-additions--albums li .overlay {
-  width: 100%;
-  height: 100%;
   grid-column: span 1;
   grid-row: span 1;
+  background: rgba(57, 5, 2, 0.8);
+  transform: scale(0);
+  transition: all 0.2s 0.1s ease-in-out;
+  color: #fff;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 106%;
+  font-size: 0.8rem;
+}
+
+.recent-additions--albums li .overlay span {
+  text-align: center;
+  margin: 0 0.1rem;
+}
+
+.recent-additions--albums li:hover .overlay {
+  transform: scale(1) translateY(-100%);
 }
 
 .recent-additions--albums li img {
@@ -59,3 +74,27 @@
   width: 100px;
   object-position: center;
 }
+
+.recent-additions--view-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: white;
+  background: black;
+  font-size: 1.2rem;
+  justify-content: center;
+  min-height: 100px;
+}
+
+.recent-additions--view-more:hover {
+  cursor: pointer;
+}
+
+#view-more-logo {
+  color: var(--blue2);
+}
+
+/* .recent-additions--albums li {
+  width: 100%;
+  height: 100%;
+} */

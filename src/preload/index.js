@@ -28,7 +28,8 @@ const api = {
   openPlaylist: () => ipcRenderer.invoke('open-playlist'),
   savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks),
   getPlaylists: () => ipcRenderer.invoke('get-playlists'),
-  homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id)
+  homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id),
+  getCovers: (coversPageNum) => ipcRenderer.invoke('get-covers', coversPageNum)
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

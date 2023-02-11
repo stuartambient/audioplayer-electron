@@ -9,7 +9,8 @@ import {
   useAlbums,
   useAlbumTracks,
   usePlaylist,
-  usePlaylistDialog
+  usePlaylistDialog,
+  useAllAlbumsCovers
 } from '../hooks/useDb';
 /* import Switch from './Switch'; */
 import '../style/InfiniteList.css';
@@ -36,6 +37,7 @@ const InfiniteList = ({
   const [type, setType] = useState('files');
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [albumsSearchTerm, setAlbumsSearchTerm] = useState('');
+
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
   const [sortType, setSortType] = useState('createdon');

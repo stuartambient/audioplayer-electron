@@ -1,15 +1,58 @@
 /* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
+import { useState, useRef, useCallback } from 'react';
 import { Buffer } from 'buffer';
-import { useLast10AlbumsStat, useLast100TracksStat } from '../hooks/useDb';
+import { v4 as uuidv4 } from 'uuid';
+import { useLast10AlbumsStat, useLast100TracksStat, useAllAlbumsCovers } from '../hooks/useDb';
 import NoImage from '../assets/noimage.jpg';
+import ViewMore from '../assets/view-more-alt.jpg';
 
 const RecentAdditions = () => {
+  const [coversPageNumber, setCoversPageNumber] = useState(1);
   const { last10Albums } = useLast10AlbumsStat();
   const { last100Tracks } = useLast100TracksStat();
+  const [viewMore, setViewMore] = useState(false);
 
-  const handlePicture = (buffer) => {
+  const { coversLoading, covers, setCovers, hasMoreCovers, coversError } =
+    useAllAlbumsCovers(coversPageNumber);
+
+  const coversObserver = useRef();
+
+  const lastCoverElement = useCallback(
+    (node) => {
+      if (coversLoading) return;
+      /*  if (!hasMoreFiles) return setSearchTermFiles(""); */
+      if (coversObserver.current) coversObserver.current.disconnect();
+      coversObserver.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasMoreCovers) {
+            setCoversPageNumber(coversPageNumber + 1);
+          }
+        },
+        {
+          root: document.querySelector('.recent-additions--albums'),
+          rootMargin: '0px',
+          threshold: 1.0
+        }
+      );
+      if (node) coversObserver.current.observe(node);
+    },
+    [coversLoading, hasMoreCovers]
+  );
+
+  /*   const handlePicture = (buffer) => {
     const bufferToString = Buffer.from(buffer).toString('base64');
     return `data:${buffer.format};base64,${bufferToString}`;
+  }; */
+
+  const handleAlbumToPlaylist = async (e) => {
+    e.preventDefault();
+    const albumTracks = await window.api.getAlbumTracks(e.target.id);
+    console.log(albumTracks);
+  };
+
+  const handleViewMoreCovers = () => {
+    if (!viewMore) setViewMore(true);
+    setCoversPageNumber(coversPageNumber + 1);
   };
 
   return (
@@ -17,15 +60,40 @@ const RecentAdditions = () => {
       <ul className="recent-additions--albums">
         {last10Albums.map((album, idx) => {
           return (
-            <li key={idx}>
-              {album.img && <img src={handlePicture(album.img)} alt="" />}
+            <li
+              key={idx}
+              /* ref={covers.length === index + 1 ? lastCoverElement : null} */
+            >
+              {album.img && <img src={album.img} alt="" />}
               {!album.img && <img src={NoImage} alt="" />}
-              {/* <div className="overlay">
-                <span>{album.foldername}</span>
-              </div> */}
+              <div className="overlay">
+                <span onClick={handleAlbumToPlaylist} id={album.fullpath}>
+                  {album.foldername}
+                </span>
+              </div>
             </li>
           );
         })}
+        {viewMore &&
+          covers.map((cover, idx) => {
+            return (
+              <li key={idx}>
+                {cover.img && <img src={cover.img} alt="" />}
+                {!cover.img && <img src={NoImage} alt="" />}
+                <div className="overlay">
+                  <span>{cover.foldername}</span>
+                </div>
+              </li>
+            );
+          })}
+
+        <li>
+          <div className="recent-additions--view-more" onClick={handleViewMoreCovers}>
+            <p>View</p>
+            <p>More</p>
+            <p id="view-more-logo">&#8853;</p>
+          </div>
+        </li>
       </ul>
     </section>
   );
