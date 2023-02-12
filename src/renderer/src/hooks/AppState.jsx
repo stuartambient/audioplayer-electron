@@ -29,7 +29,14 @@ const AppState = () => {
     /* filesPageNumber: 0, */
     albums: [],
     albumsPageNumber: 0,
-    type: 'files',
+    tracks: [],
+    tracksPageNumber: 0,
+    covers: [],
+    coversPageNumber: undefined,
+    playlistTracks: [],
+
+    listType: 'files',
+    selectedTrackListType: 'file',
     searchTermFiles: '',
     searchTermAlbums: '',
     randomize: false,
@@ -37,9 +44,7 @@ const AppState = () => {
     showMore: null,
     delay: false,
     isLiked: false,
-    tracks: [],
-    playlistTracks: [],
-    tracksPageNumber: 0,
+
     playlistMode: false
   };
 
@@ -71,7 +76,8 @@ const AppState = () => {
           active: action.active,
           nextTrack: action.nextTrack,
           prevTrack: action.prevTrack,
-          isLiked: action.isLiked
+          isLiked: action.isLiked,
+          selectedTrackListType: action.selectedTrackListType
         };
       }
       case 'duration': {
@@ -215,6 +221,33 @@ const AppState = () => {
           playlistTracks: action.playlistTracks
         };
       }
+      case 'play-album': {
+        return {
+          ...state,
+          playlistTracks: [...state.playlistTracks, ...action.playlistTracks]
+        };
+      }
+
+      case 'set-covers': {
+        return {
+          ...state,
+          covers: [...state.covers, ...action.covers]
+        };
+      }
+      case 'set-covers-pagenumber': {
+        return {
+          ...state,
+          coversPageNumber: action.coversPageNumber
+        };
+      }
+
+      case 'set-list-type': {
+        return {
+          ...state,
+          listType: action.listType
+        };
+      }
+
       default:
         return;
     }

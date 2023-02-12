@@ -12,19 +12,20 @@ import {
   usePlaylistDialog,
   useAllAlbumsCovers
 } from '../hooks/useDb';
-/* import Switch from './Switch'; */
 import '../style/InfiniteList.css';
 
 const InfiniteList = ({
   handleTrackSelection,
   currentTrack,
-  setCurrentTrack,
+  /* setCurrentTrack, */
   playNext,
   playPrev,
   nextTrack,
   prevTrack,
   active,
+  state,
   dispatch,
+  listType,
   library,
   tracks,
   tracksPageNumber,
@@ -34,7 +35,6 @@ const InfiniteList = ({
   albums,
   albumsPageNumber
 }) => {
-  const [type, setType] = useState('files');
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [albumsSearchTerm, setAlbumsSearchTerm] = useState('');
 
@@ -75,7 +75,6 @@ const InfiniteList = ({
     } else {
       <li key={track.afid}>{track.audiofile}</li>;
     }
-    console.log('---> at: ', albumsTracks);
   });
 
   const scrollRef = useRef();
@@ -83,20 +82,35 @@ const InfiniteList = ({
 
   /* HERE */
   useEffect(() => {
-    if (currentTrack >= 0 && tracks[currentTrack + 1]) {
-      dispatch({
-        type: 'set-next-track',
-        nextTrack: tracks[currentTrack + 1].afid
-      });
+    if (state.selectedTrackListType === 'file') {
+      if (currentTrack >= 0 && tracks[currentTrack + 1]) {
+        dispatch({
+          type: 'set-next-track',
+          nextTrack: tracks[currentTrack + 1].afid
+        });
+      }
+      if (currentTrack >= 1 && tracks[currentTrack - 1]) {
+        dispatch({
+          type: 'set-prev-track',
+          prevTrack: tracks[currentTrack - 1].afid
+        });
+      }
     }
-
-    if (currentTrack >= 1 && tracks[currentTrack - 1]) {
-      dispatch({
-        type: 'set-prev-track',
-        prevTrack: tracks[currentTrack - 1].afid
-      });
+    if (state.selectedTrackListType === 'playlist') {
+      if (currentTrack >= 0 && playlistTracks[currentTrack + 1]) {
+        dispatch({
+          type: 'set-next-track',
+          nextTrack: playlistTracks[currentTrack + 1].afid
+        });
+      }
+      if (currentTrack >= 1 && playlistTracks[currentTrack - 1]) {
+        dispatch({
+          type: 'set-prev-track',
+          prevTrack: playlistTracks[currentTrack - 1].afid
+        });
+      }
     }
-  }, [currentTrack, tracks, dispatch]);
+  }, [currentTrack, tracks, playlistTracks, state.selectedTrackListType, dispatch]);
 
   /* HERE */
 
@@ -130,7 +144,7 @@ const InfiniteList = ({
     if (e.currentTarget.textsearch.value === '') {
       setResetKey(getKey());
     }
-    if (type === 'files') {
+    if (listType === 'files') {
       dispatch({
         type: 'reset-tracks',
         tracks: []
@@ -149,7 +163,7 @@ const InfiniteList = ({
       });
       setTracksSearchTerm(e.currentTarget.textsearch.value);
     }
-    if (type === 'albums') {
+    if (listType === 'albums') {
       dispatch({
         type: 'reset-albums',
         albums: []
@@ -386,24 +400,24 @@ const InfiniteList = ({
         <MediaMenu
           isSortSelected={isSortSelected}
           handleSortClick={handleSortClick}
-          type={type}
-          setType={setType}
+          listType={state.listType}
           handleTextSearch={handleTextSearch}
           miniModePlaylist={miniModePlaylist}
           handlePlaylistFiles={handlePlaylistFiles}
+          dispatch={dispatch}
         />
       ) : null}
       <div className={listClassNames()}>
-        {type === 'files' && !tracks.length && !tracksLoading ? (
+        {listType === 'files' && !tracks.length && !tracksLoading ? (
           <div className="noresults">No results</div>
         ) : null}
-        {type === 'albums' && !albums.length && !albumsLoading ? (
+        {listType === 'albums' && !albums.length && !albumsLoading ? (
           <div className="noresults">No results</div>
         ) : null}
-        {type === 'playlist' && !playlistTracks.length ? (
+        {listType === 'playlist' && !playlistTracks.length ? (
           <div className="noresults">No current playlist</div>
         ) : null}
-        {type === 'files' && (
+        {listType === 'files' && (
           <>
             <div className="files">{byFiles}</div>
             <div className="albums" style={{ display: 'none' }}>
@@ -414,7 +428,7 @@ const InfiniteList = ({
             </div>
           </>
         )}
-        {type === 'albums' && (
+        {listType === 'albums' && (
           <>
             <div className="albums">{byAlbums}</div>
             <div className="files" style={{ display: 'none' }}>
@@ -425,7 +439,7 @@ const InfiniteList = ({
             </div>
           </>
         )}
-        {type === 'playlist' && (
+        {listType === 'playlist' && (
           <>
             <div className="playlist">{byPlaylist}</div>
             <div className="albums" style={{ display: 'none' }}>
@@ -436,10 +450,10 @@ const InfiniteList = ({
             </div>
           </>
         )}
-        {type === 'files'
+        {listType === 'files'
           ? tracksLoading && <div className="item itemloading">...Loading</div>
           : null}
-        {type === 'albums'
+        {listType === 'albums'
           ? albumsLoading && <div className="item itemloading">...Loading</div>
           : null}
       </div>

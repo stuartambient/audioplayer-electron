@@ -139,7 +139,6 @@ function App() {
 
   const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
     e.preventDefault();
-    console.log('track selection: ', e.target.id);
     /*  console.log(artist, title, album, audiofile); */
     state.audioRef.current.src = '';
 
@@ -147,6 +146,7 @@ function App() {
       type: 'newtrack',
       pause: false,
       newtrack: +e.target.getAttribute('val'),
+      selectedTrackListType: e.target.getAttribute('fromlisttype'),
       artist,
       title,
       album,
@@ -307,7 +307,7 @@ function App() {
         player={state.player}
         minimalmode={state.minimalmode}
       />
-      {state.home && !state.minimalmode && <Home />}
+      {state.home && !state.minimalmode && <Home state={state} dispatch={dispatch} />}
       {state.update && <Update />}
       {state.player || state.home ? (
         <Player
@@ -338,6 +338,8 @@ function App() {
           prevTrack={state.prevTrack}
           active={state.active}
           dispatch={dispatch}
+          state={state}
+          listType={state.listType}
           handlePicture={handlePicture}
           tracks={state.tracks}
           tracksPageNumber={state.tracksPageNumber}

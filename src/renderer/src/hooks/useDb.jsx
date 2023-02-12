@@ -154,10 +154,10 @@ const useTopTenArtistsStat = () => {
   return { topTenArtists };
 };
 
-const useAllAlbumsCovers = (coversPageNumber) => {
+const useAllAlbumsCovers = (coversPageNumber, dispatch) => {
+  console.log('CPN: ', coversPageNumber);
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
-  const [covers, setCovers] = useState([]);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
 
   useEffect(() => {
@@ -168,21 +168,22 @@ const useAllAlbumsCovers = (coversPageNumber) => {
       setCoversError(false);
       let coversRequest = await window.api.getCovers(coversPageNumber);
       if (coversRequest && isSubscribed) {
-        setCovers([...covers, ...coversRequest]);
-        /* dispatch({
-          type: 'tracks-playlist',
-          tracks: trackRequest
-        }); */
+        /* setCovers([...covers, ...coversRequest]); */
+        dispatch({
+          type: 'set-covers',
+          covers: coversRequest
+        });
         setHasMoreCovers(coversRequest.length > 0);
         setCoversLoading(false);
       }
     };
 
+    if (!coversPageNumber) return;
     loadCovers();
     return () => (isSubscribed = false);
   }, [coversPageNumber]);
 
-  return { coversLoading, covers, setCovers, hasMoreCovers, coversError };
+  return { coversLoading, /* covers, setCovers, */ hasMoreCovers, coversError };
 };
 
 const useLast10AlbumsStat = () => {

@@ -262,7 +262,7 @@ ipcMain.handle('get-albums', async (event, ...args) => {
 });
 
 ipcMain.handle('get-album', async (_, args) => {
-  console.log('...', args);
+  /* console.log('...', args); */
   const album = getAlbum(args);
   return album;
 });
@@ -353,10 +353,7 @@ ipcMain.handle('last-10Albums-stat', async () => {
       if (!checkImg) return l;
       const imgPath = `${l.fullpath}/${checkImg}`;
       const imgurl = url.pathToFileURL(imgPath);
-      console.log(imgurl.href);
-      const file = await fs.promises.readFile(imgPath);
-      const filebuf = Buffer.from(file);
-      const imageobj = { img: imgurl.href /* filebuf */ };
+      const imageobj = { img: imgurl.href };
       return { ...l, ...imageobj };
     })
   );
@@ -438,7 +435,6 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 });
 
 ipcMain.handle('get-covers', async (_, ...args) => {
-  console.log('get-covers');
   const albums = await allCoversByScroll(args.join());
   const albumsWithImages = await Promise.all(
     albums.map(async (l) => {
@@ -449,10 +445,7 @@ ipcMain.handle('get-covers', async (_, ...args) => {
       if (!checkImg) return l;
       const imgPath = `${l.fullpath}/${checkImg}`;
       const imgUrl = url.pathToFileURL(imgPath);
-      const file = await fs.promises.readFile(imgPath);
-      const imgurl = url.pathToFileURL(imgPath);
-      const filebuf = Buffer.from(file);
-      const imageobj = { img: imgUrl.href /* filebuf */ };
+      const imageobj = { img: imgUrl.href };
 
       return { ...l, ...imageobj };
     })

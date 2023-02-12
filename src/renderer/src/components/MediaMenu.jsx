@@ -4,12 +4,19 @@ import '../style/MediaMenu.css';
 const MediaMenu = ({
   isSortSelected,
   handleSortClick,
-  type,
-  setType,
+  listType,
   handleTextSearch,
   miniModePlaylist,
-  handlePlaylistFiles
+  handlePlaylistFiles,
+  dispatch
 }) => {
+  const handleListType = (listtype) => {
+    dispatch({
+      type: 'set-list-type',
+      listType: listtype
+    });
+  };
+
   return (
     <ul className={miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
       {!miniModePlaylist && (
@@ -77,7 +84,7 @@ const MediaMenu = ({
             </div>
           </form>
         </li>
-        {type === 'playlist' && (
+        {listType === 'playlist' && (
           <li className="playlist-dialogs">
             <span id="playlist-open" onClick={handlePlaylistFiles}>
               Open
@@ -88,22 +95,28 @@ const MediaMenu = ({
           </li>
         )}
         <li className="tabs" style={{ color: 'white' }}>
-          <div className={type === 'files' ? 'tab active' : 'tab'} onClick={() => setType('files')}>
+          <div
+            className={listType === 'files' ? 'tab active' : 'tab'}
+            onClick={() => handleListType('files')}
+          >
             <span>files</span>
           </div>
           <div
-            className={type === 'albums' ? 'tab active' : 'tab'}
-            onClick={() => setType('albums')}
+            className={listType === 'albums' ? 'tab active' : 'tab'}
+            onClick={() => handleListType('albums')}
           >
             <span>albums</span>
           </div>
           <div
-            className={type === 'playlist' ? 'tab active' : 'tab'}
-            onClick={() => setType('playlist')}
+            className={listType === 'playlist' ? 'tab active' : 'tab'}
+            onClick={() => handleListType('playlist')}
           >
             <span>playlist</span>
           </div>
-          <div className={type === 'other' ? 'tab active' : 'tab'} onClick={() => setType('other')}>
+          <div
+            className={listType === 'other' ? 'tab active' : 'tab'}
+            onClick={() => handleListType('other')}
+          >
             <span>other</span>
           </div>
         </li>

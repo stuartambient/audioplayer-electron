@@ -66,6 +66,7 @@
 
 .recent-additions--albums li:hover .overlay {
   transform: scale(1) translateY(-100%);
+  cursor: pointer;
 }
 
 .recent-additions--albums li img {

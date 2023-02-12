@@ -39,6 +39,7 @@ const Item = forwardRef(
             href={href}
             id={id}
             val={val}
+            fromlisttype={type}
             onClick={(e) => handleTrackSelection(e, artist, title, album, audiofile, like)}
           >
             Artist: {artist}
@@ -83,6 +84,7 @@ const Item = forwardRef(
             href={href}
             id={id}
             val={val}
+            fromlisttype={type}
             onClick={(e) => handleTrackSelection(e, artist, title, album, audiofile, like)}
           >
             Artist: {artist}

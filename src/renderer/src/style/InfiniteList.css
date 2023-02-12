@@ -101,7 +101,8 @@
   background: red;
 }
 
-.results .files .active {
+.results .files .active,
+.results .playlist .active {
   background-color: #203c56;
   border: 5px solid var(--blue1);
 }

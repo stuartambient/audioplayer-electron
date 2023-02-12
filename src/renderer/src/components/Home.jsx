@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import Stats from './Stats';
 import Playlists from './Playlists';
-import AppState from '../hooks/AppState';
+/* import AppState from '../hooks/AppState'; */
 import '../style/Home.css';
 import RecentAdditions from './RecentAdditions';
 import Player from './Player';
 
-const Home = () => {
+const Home = ({ state, dispatch }) => {
   const [homepage, setHomePage] = useState('recent-additions');
+  /*   const { state, dispatch } = AppState(); */
 
   const handleHomePage = (e) => {
     setHomePage(e.currentTarget.id);
@@ -32,7 +33,13 @@ const Home = () => {
         <li className="home-cards--item">6</li>
       </ul>
 
-      {homepage === 'recent-additions' && <RecentAdditions />}
+      {homepage === 'recent-additions' && (
+        <RecentAdditions
+          dispatch={dispatch}
+          covers={state.covers}
+          coversPageNumber={state.coversPageNumber}
+        />
+      )}
       {homepage === 'stats' && <Stats />}
       {homepage === 'playlists' && <Playlists />}
     </>
