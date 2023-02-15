@@ -247,6 +247,12 @@ const AppState = () => {
           listType: action.listType
         };
       }
+      case 'playlist-clear': {
+        return {
+          ...state,
+          playlistTracks: action.playlistTracks
+        };
+      }
 
       default:
         return;

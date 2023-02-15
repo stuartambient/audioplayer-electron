@@ -46,6 +46,7 @@ console.log(db); */
 const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`;
 const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`;
 const playlistsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\playlists`;
+const coversFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\covers`;
 if (!fs.existsSync(updatesFolder)) {
   fs.mkdirSync(updatesFolder);
 }
@@ -54,6 +55,9 @@ if (!fs.existsSync(metaErrorsFolder)) {
 }
 if (!fs.existsSync(playlistsFolder)) {
   fs.mkdirSync(playlistsFolder);
+}
+if (!fs.existsSync(coversFolder)) {
+  fs.mkdirSync(coversFolder);
 }
 
 /* console.log('df: ', documentsFolder); */
@@ -442,7 +446,14 @@ ipcMain.handle('get-covers', async (_, ...args) => {
       const checkImg = tmp.find(
         (t) => t.endsWith('.jpg') || t.endsWith('.png') || t.endsWith('.jpeg')
       );
-      if (!checkImg) return l;
+      if (!checkImg) {
+        const [artist, album] = l.foldername.split('-');
+        writeFile(
+          `artist: ${artist}, album: ${album}, album-path: ${l.fullpath}\n`,
+          `${coversFolder}\\missingcovers.txt`
+        );
+        return l;
+      }
       const imgPath = `${l.fullpath}/${checkImg}`;
       const imgUrl = url.pathToFileURL(imgPath);
       const imageobj = { img: imgUrl.href };

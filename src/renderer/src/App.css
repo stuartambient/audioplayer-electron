@@ -49,7 +49,7 @@ textarea {
 }
 
 .container-mini-expanded {
-  grid-template-rows: 30px 290px 30px 200px;
+  grid-template-rows: 30px 290px 60px 200px;
   grid-template-columns: 380px;
   width: 380px;
   height: 550px;

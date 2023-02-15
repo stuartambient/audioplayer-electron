@@ -87,7 +87,9 @@ const Player = ({
 
   return (
     <div className={playerClassNames()}>
-      <div className="title">{title ? <>{title.slice(0, 20)}</> : null}</div>
+      <div className={title.length > 35 ? 'title transform' : 'title'}>
+        {title ? <>{title /* .slice(0, 20) */}</> : null}
+      </div>
 
       {cover && cover !== 'not available' && (
         <>

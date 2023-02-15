@@ -205,10 +205,20 @@ const InfiniteList = ({
   };
 
   const handlePlaylistFiles = (e) => {
-    if (e.target.id === 'playlist-save') {
-      setPlaylistReq('playlist-save');
-    } else {
-      setPlaylistReq('playlist-open');
+    switch (e.target.id) {
+      case 'playlist-save':
+        return setPlaylistReq('playlist-save');
+      case 'playlist-open': {
+        return setPlaylistReq('playlist-open');
+      }
+      case 'playlist-clear': {
+        return dispatch({
+          type: 'playlist-clear',
+          playlistTracks: []
+        });
+      }
+      default:
+        return;
     }
   };
 
