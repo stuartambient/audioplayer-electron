@@ -120,7 +120,25 @@
   color: white;
 }
  */
+
+.main-nav--minimal .main-nav--left {
+  justify-content: space-around;
+}
+
+.main-nav--minimal div svg {
+  fill: white;
+}
+
+.minimode-info {
+  -webkit-app-region: no-drag;
+  width: min-content;
+}
+
+.minimode-info:hover {
+  cursor: pointer;
+}
+
 .mini {
   color: white;
-  padding-right: 10px;
+  /* padding-right: 10px; */
 }

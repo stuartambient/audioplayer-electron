@@ -35,15 +35,19 @@
 .audio-player .title {
   grid-area: title;
   white-space: nowrap;
+  width: 90%;
+  overflow: hidden;
+  text-align: center;
   /* width: 90%;
   text-align: center; */
 }
 
-.transform {
+.title-transform {
   animation-duration: 9s;
   animation-name: slidein;
   animation-iteration-count: infinite;
   animation-direction: alternate;
+  animation-timing-function: linear;
 }
 
 @keyframes slidein {
@@ -51,7 +55,24 @@
     margin-left: -50%;
   }
   to {
-    margin-left: 90%;
+    margin-left: 50%;
+  }
+}
+
+.album-transform {
+  animation-duration: 7s;
+  animation-name: albumslidein;
+  animation-iteration-count: infinite;
+  animation-direction: reverse;
+  animation-timing-function: linear;
+}
+
+@keyframes albumslidein {
+  from {
+    margin-left: -100%;
+  }
+  to {
+    margin-left: 100%;
   }
 }
 
@@ -74,6 +95,30 @@
 
 .audio-player .metadata .label {
   color: var(--blue1);
+}
+
+.audio-player .metadata .real-time {
+  white-space: nowrap;
+  width: 200px;
+  overflow: hidden;
+  position: fixed;
+  margin-left: 0.2rem;
+}
+
+.minimal-player .metadata .metadata-album .real-time {
+  width: 275px;
+}
+
+.minimal-player .image {
+  width: 100%;
+  height: 100%;
+  grid-area: inherit;
+}
+
+.minimal-player .image img {
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .audio-player .time {
@@ -182,6 +227,11 @@
     'sliders sliders';
 }
 
+.minimal-player {
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
 .slider-group {
   grid-area: sliders;
   width: 100%;
@@ -208,7 +258,7 @@
   justify-self: center;
   grid-area: meta;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
 }
 
 /* .minimal-player .metadata-artist,

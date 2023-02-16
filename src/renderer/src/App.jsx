@@ -207,6 +207,7 @@ function App() {
   }, [state.minimalmode, state.player, state.miniModePlaylist]);
 
   const handleMainNav = (e) => {
+    console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'close':
         window.api.appClose();
@@ -220,6 +221,12 @@ function App() {
           maximized: !state.maximized
         });
         window.api.appMaximize();
+        break;
+      case 'minimodeinfo':
+        dispatch({
+          type: 'mini-mode-info',
+          minimalmodeInfo: !state.minimalmodeInfo
+        });
         break;
       case 'home':
         dispatch({
@@ -262,10 +269,15 @@ function App() {
             minimalmode: (state.minimalmode = true)
           });
         }
+
         dispatch({
           type: 'player-minimode',
-          minimalmode: !state.minimalmode
+          minimalmode: !state.minimalmode,
+          home: false,
+          update: false,
+          player: true
         });
+
         break;
       case 'mini-mode-playlist':
         console.log(e.currentTarget.id);
@@ -325,6 +337,7 @@ function App() {
           isLiked={state.isLiked}
           minimalmode={state.minimalmode}
           home={state.home}
+          minimalmodeInfo={state.minimalmodeInfo}
         />
       ) : null}
       {state.player || state.miniModePlaylist || state.home ? (

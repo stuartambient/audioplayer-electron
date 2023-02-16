@@ -5,7 +5,8 @@ import {
   AiOutlineMinus,
   AiOutlineFullscreen,
   AiOutlineClose,
-  AiOutlineMobile
+  AiOutlineMobile,
+  AiOutlineInfoCircle
 } from 'react-icons/ai';
 import { FaListUl } from 'react-icons/fa';
 import { BsMusicPlayer } from 'react-icons/bs';
@@ -52,14 +53,27 @@ const MainNav = ({ onClick, home, update, player, minimalmode }) => {
       )}
 
       {minimalmode && (
-        <ul className="main-nav--left">
-          <li onClick={onClick} id="mini-mode" className="mini">
-            <CgMiniPlayer />
-          </li>
-          <li onClick={onClick} id="mini-mode-playlist" className="">
-            <FaListUl />
-          </li>
-        </ul>
+        <>
+          <ul className="main-nav--left">
+            <li onClick={onClick} id="mini-mode" className="mini">
+              <CgMiniPlayer />
+            </li>
+            <li onClick={onClick} id="mini-mode-playlist" className="">
+              <FaListUl />
+            </li>
+            <li onClick={onClick} id="close">
+              <AiOutlineClose />
+            </li>
+          </ul>
+          <div
+            className="minimode-info"
+            id="minimodeinfo"
+            onClick={onClick}
+            style={{ gridRow: '1 / 2', gridColumn: '5 / 6' }}
+          >
+            <AiOutlineInfoCircle />
+          </div>
+        </>
       )}
     </nav>
   );

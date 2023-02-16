@@ -26,6 +26,7 @@ const Player = ({
   active,
   isLiked,
   minimalmode,
+  minimalmodeInfo,
   home
 }) => {
   useEffect(() => {
@@ -80,54 +81,84 @@ const Player = ({
     if (!library && minimalmode) {
       return 'audio-player minimal-player';
     }
+    if (minimalmode) {
+      return 'audio-player minimal-player';
+    }
     if (library && minimalmode) {
       return 'audio-player minimal-player--expanded';
     }
   };
 
   return (
-    <div className={playerClassNames()}>
-      <div className={title.length > 35 ? 'title transform' : 'title'}>
-        {title ? <>{title /* .slice(0, 20) */}</> : null}
-      </div>
+    <div
+      className={playerClassNames()}
+      style={minimalmode ? { backgroundImage: `url(${cover})` } : { backgroundImage: 'none' }}
+    >
+      {!minimalmodeInfo && (
+        <div className="title">
+          <p className={title.length > 35 /* && !minimalmode */ ? 'title-transform' : 'title-text'}>
+            {title}
+          </p>
+        </div>
+      )}
 
       {cover && cover !== 'not available' && (
         <>
-          <div className="image">
-            <img src={cover} alt="" />
+          <div style={{ backgroundImage: `url` }} className="image">
+            {!minimalmode && <img src={cover} alt="" />}
           </div>
         </>
       )}
       {cover === 'not available' && delay === true && <p>No available image</p>}
 
-      <div className="metadata">
-        <>
-          {artist ? (
-            <div className="metadata-artist">
-              {!home && <span className="label">Artist: </span>}
-              <span className="real-time">{artist.slice(0, 25)}</span>
-            </div>
-          ) : null}
-          {album ? (
-            <div className="metadata-album">
-              {!home && <span className="label">Album: </span>}
-              <span className="real-time">{album.slice(0, 25)}</span>
-            </div>
-          ) : null}
-        </>
-      </div>
+      {!minimalmodeInfo && (
+        <div className="metadata">
+          <>
+            {artist ? (
+              <div className="metadata-artist">
+                {!home && <span className="label">Artist: </span>}
+                <span className="real-time">
+                  <span
+                    className={
+                      artist.length > 35 /* && !minimalmode */ ? 'artist-transform' : 'artist-text'
+                    }
+                  >
+                    {artist}
+                  </span>
+                </span>
+              </div>
+            ) : null}
+            {album ? (
+              <div className="metadata-album">
+                {!home && <span className="label">Album: </span>}
+                <span className="real-time">
+                  <span
+                    className={
+                      album.length > 25 /* && !minimalmode */ ? 'album-transform' : 'album-text'
+                    }
+                  >
+                    {album}
+                  </span>
+                </span>
+              </div>
+            ) : null}
+          </>
+        </div>
+      )}
 
-      <div className="time">
-        <div className="duration">
-          {!home && <span className="label">Duration: </span>}
-          <span className="real-time">{duration}</span>
+      {!minimalmodeInfo && (
+        <div className="time">
+          <div className="duration">
+            {!home && <span className="label">Duration: </span>}
+            <span className="real-time">{duration}</span>
+          </div>
+          <div className="elapsed">
+            {!home && <span className="label">Elapsed: </span>}
+            <span className="real-time">{currentTime}</span>
+          </div>
         </div>
-        <div className="elapsed">
-          {!home && <span className="label">Elapsed: </span>}
-          <span className="real-time">{currentTime}</span>
-        </div>
-      </div>
-      {minimalmode ? (
+      )}
+      {minimalmode && !minimalmodeInfo ? (
         <div className="slider-group">
           <>
             <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>

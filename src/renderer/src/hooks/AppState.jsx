@@ -9,6 +9,7 @@ const AppState = () => {
     library: false,
 
     minimalmode: false,
+    minimalmodeInfo: false,
     miniModePlaylist: false,
     maximized: false,
     active: '',
@@ -49,7 +50,7 @@ const AppState = () => {
   };
 
   const reducer = (state, action) => {
-    /* console.log(action); */
+    console.log(action);
     switch (action.type) {
       case 'library': {
         return { ...state, library: !state.library };
@@ -132,7 +133,10 @@ const AppState = () => {
       case 'player-minimode': {
         return {
           ...state,
-          minimalmode: action.minimalmode
+          minimalmode: action.minimalmode,
+          home: action.home,
+          update: action.update,
+          player: action.player
         };
       }
       case 'tracks-playlist': {
@@ -251,6 +255,12 @@ const AppState = () => {
         return {
           ...state,
           playlistTracks: action.playlistTracks
+        };
+      }
+      case 'mini-mode-info': {
+        return {
+          ...state,
+          minimalmodeInfo: action.minimalmodeInfo
         };
       }
 
