@@ -19,6 +19,7 @@ import Switch from './Components/Switch';
 import Home from './Components/Home';
 import Update from './Components/Update';
 import MainNav from './Components/MainNav';
+import Controls from './Components/Controls';
 
 import './App.css';
 
@@ -338,8 +339,30 @@ function App() {
           minimalmode={state.minimalmode}
           home={state.home}
           minimalmodeInfo={state.minimalmodeInfo}
-        />
+        >
+          {!state.minimalmode && (
+            <Controls
+              isLiked={state.isLiked}
+              handlePlayerControls={handlePlayerControls}
+              pause={state.pause}
+              minimalmode={state.minimalmode}
+              player={state.player}
+              home={state.home}
+            />
+          )}
+        </Player>
       ) : null}
+      {state.minimalmode && (
+        <Controls
+          isLiked={state.isLiked}
+          handlePlayerControls={handlePlayerControls}
+          pause={state.pause}
+          minimalmode={state.minimalmode}
+          player={state.player}
+          home={state.home}
+        />
+      )}
+
       {state.player || state.miniModePlaylist || state.home ? (
         <InfiniteList
           handleTrackSelection={handleTrackSelection}

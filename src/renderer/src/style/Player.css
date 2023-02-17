@@ -166,7 +166,7 @@
   width: 100%;
 }
 
-.audio-player .controls {
+/* .audio-player .controls {
   grid-area: controls;
   display: flex;
   justify-content: space-between;
@@ -174,17 +174,17 @@
   list-style: none;
   margin: auto 0;
   padding: 0;
-}
+} */
 
-.audio-player .controls .btn {
+/* .audio-player .controls .btn {
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 12px;
-  /* position: relative; */
+
   background: var(--blue4);
-  /* z-index: 0; */
+
   border-bottom: 1px inset var(--blue1);
   border-right: 1px inset var(--blue1);
 }
@@ -194,7 +194,7 @@
 }
 .audio-player .controls .btn:active {
   transform: translateX(2px) translateY(2px);
-}
+} */
 
 /* .audio-player .controls .btn .icon {
   font-size: 1.2rem;
@@ -217,7 +217,6 @@
   grid-template-columns: 100%;
 
   grid-template-areas:
-    'controls controls'
     'image image'
     'image image'
     'image image'
@@ -228,8 +227,9 @@
 }
 
 .minimal-player {
-  background-size: cover;
+  background-size: contain;
   background-repeat: no-repeat;
+  background-position: center;
 }
 
 .slider-group {
@@ -279,7 +279,7 @@
 .minimal-player .image,
 .minimal-player--expanded .image {
   justify-self: center;
-  margin-top: -1rem;
+  /* margin-top: -1rem; */
 }
 
 .minimal-player .image img,
@@ -288,21 +288,20 @@
   height: 150px;
 }
 
-.minimal-player .controls,
+/* .minimal-player .controls,
 .minimal-player--expanded .controls {
-  /* margin: 0.8rem 0; */
-  width: 175px;
+  width: 125px;
   margin: 0;
-  margin-top: -55px;
-  -webkit-app-region: no-drag;
-}
 
-.minimal-player .controls li,
+  -webkit-app-region: no-drag;
+} */
+
+/* .minimal-player .controls li,
 .minimal-player--expanded li {
   padding: 0;
-}
+} */
 
-.minimal-player .controls .btn,
+/* .minimal-player .controls .btn,
 .minimal-player--expanded .controls .btn {
   border-radius: 5px;
   display: flex;
@@ -311,7 +310,6 @@
   padding: 6px;
   position: relative;
   background: none;
-  /* background: var(--blue4); */
   z-index: 0;
   border-bottom: none;
   border-right: none;
@@ -320,7 +318,7 @@
 .minimal-player .controls .btn svg:hover,
 .minimal-player--expanded .controls .btn svg:hover {
   fill: var(--blue1);
-}
+} */
 
 .audio-player--homepage {
   grid-row: 4 / 5;

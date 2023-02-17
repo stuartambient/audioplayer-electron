@@ -34,6 +34,7 @@ textarea {
   justify-content: center;
   /* align-content: center; */
   row-gap: 10px;
+  overflow: hidden;
 }
 
 .container-minimal {
@@ -41,18 +42,19 @@ textarea {
   grid-template-columns: none; */
   /* min-width: 100%; */
   /* row-gap: 0px; */
-  grid-template-rows: 30px 290px;
-  grid-template-columns: 380px;
-  width: 380px;
+  grid-template-rows: 30px 290px 30px;
+  grid-template-columns: 290px;
+  width: 290px;
   height: 320px;
   row-gap: 0;
+  overflow: hidden;
 }
 
 .container-mini-expanded {
-  grid-template-rows: 30px 290px 60px 200px;
+  grid-template-rows: 30px 290px 30px 60px 200px;
   grid-template-columns: 380px;
   width: 380px;
-  height: 550px;
+  height: 610px;
   row-gap: 0;
 }
 

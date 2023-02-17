@@ -27,7 +27,8 @@ const Player = ({
   isLiked,
   minimalmode,
   minimalmodeInfo,
-  home
+  home,
+  children
 }) => {
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -183,7 +184,7 @@ const Player = ({
         </>
       )}
 
-      <ul className="controls">
+      {/* <ul className="controls">
         <li className={isLiked ? 'btn isliked' : 'btn'} id="like" onClick={onClick}>
           <FaHeart />
         </li>
@@ -209,7 +210,8 @@ const Player = ({
             <FaListUl />
           </li>
         )}
-      </ul>
+      </ul> */}
+      {children}
     </div>
   );
 };

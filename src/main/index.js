@@ -100,6 +100,7 @@ function createWindow() {
     height: 600,
     frame: false,
     backgroundColor: '#1D1B1B',
+    /* transparent: true, */
 
     resizable: false,
     /* rgb(9, 0, 7) */
@@ -307,16 +308,16 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 ipcMain.handle('screen-mode', async (event, ...args) => {
   console.log(args);
   if (args[0] === 'mini') {
-    await mainWindow.setMinimumSize(380, 320);
-    await mainWindow.setSize(380, 320, false);
+    await mainWindow.setMinimumSize(290, 350);
+    await mainWindow.setSize(290, 350, false);
   }
   if (args[0] === 'default') {
     await mainWindow.setMinimumSize(660, 600);
     await mainWindow.setSize(660, 600, false);
   }
   if (args[0] === 'mini-expanded') {
-    await mainWindow.setMinimumSize(380, 550);
-    await mainWindow.setSize(380, 550, false);
+    await mainWindow.setMinimumSize(380, 610);
+    await mainWindow.setSize(380, 610, false);
   }
 });
 

@@ -1,0 +1,95 @@
+.controls {
+  grid-area: controls;
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  list-style: none;
+  margin: auto 0;
+  padding: 0;
+}
+
+.controls .btn {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  /* position: relative; */
+  background: var(--blue4);
+  /* z-index: 0; */
+  border-bottom: 1px inset var(--blue1);
+  border-right: 1px inset var(--blue1);
+}
+
+.controls .btn:hover {
+  cursor: pointer;
+}
+.controls .btn:active {
+  transform: translateX(2px) translateY(2px);
+}
+
+.controls--minimalmode {
+  margin: 0.8rem 0;
+  grid-row: 3 / 4;
+  grid-column: 1 / 2;
+  padding: 2px;
+  margin: 0;
+  height: 25px;
+  width: 50%;
+  justify-self: center;
+  justify-content: space-evenly;
+  margin-block-start: 0em;
+  margin-block-end: 0em;
+  padding-inline-start: 0px;
+}
+
+.controls--minimalmode .btn {
+  border-radius: 5px;
+  display: flex;
+  /*   align-items: center; */
+  justify-content: center;
+  /* padding: 6px; */
+  position: relative;
+  background: none;
+  /* background: var(--blue4); */
+  z-index: 1;
+  border-bottom: none;
+  border-right: none;
+}
+
+.controls--minimalmode .btn svg {
+  fill: white;
+  position: relative;
+  z-index: 2;
+}
+
+.controls--minimalmode .btn svg:hover {
+  fill: var(--blue1);
+}
+
+.controls-home {
+  grid-area: controls;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  padding-inline-start: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.controls-home .btn {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  /* position: relative; */
+  background: none;
+  /* z-index: 0; */
+  border-bottom: none;
+  border-right: none;
+}
+
+.controls-home .btn svg {
+  fill: white;
+}

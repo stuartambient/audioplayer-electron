@@ -16,7 +16,7 @@
 }
 
 .media-menu--minimal {
-  grid-row: 3 / 4;
+  grid-row: 4 / 5;
   /* grid-auto-rows: 20px; */
   grid-template-columns: 100%;
   grid-template-areas:

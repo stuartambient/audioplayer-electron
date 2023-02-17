@@ -50,7 +50,6 @@ const AppState = () => {
   };
 
   const reducer = (state, action) => {
-    console.log(action);
     switch (action.type) {
       case 'library': {
         return { ...state, library: !state.library };
