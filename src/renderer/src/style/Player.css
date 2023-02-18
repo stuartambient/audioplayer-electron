@@ -43,7 +43,7 @@
 }
 
 .title-transform {
-  animation-duration: 9s;
+  animation-duration: 8s;
   animation-name: slidein;
   animation-iteration-count: infinite;
   animation-direction: alternate;
@@ -52,15 +52,15 @@
 
 @keyframes slidein {
   from {
-    margin-left: -50%;
+    margin-left: -120%;
   }
   to {
-    margin-left: 50%;
+    margin-left: 120%;
   }
 }
 
 .album-transform {
-  animation-duration: 7s;
+  animation-duration: 12s;
   animation-name: albumslidein;
   animation-iteration-count: infinite;
   animation-direction: reverse;
@@ -69,10 +69,10 @@
 
 @keyframes albumslidein {
   from {
-    margin-left: -100%;
+    margin-left: -120%;
   }
   to {
-    margin-left: 100%;
+    margin-left: 120%;
   }
 }
 
@@ -338,6 +338,11 @@
   grid-area: title;
   color: white;
   justify-self: center;
+  overflow: hidden;
+}
+
+.audio-player--homepage .title-transform {
+  overflow: hidden;
 }
 
 .audio-player--homepage .metadata {

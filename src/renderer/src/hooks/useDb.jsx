@@ -155,7 +155,6 @@ const useTopTenArtistsStat = () => {
 };
 
 const useAllAlbumsCovers = (coversPageNumber, dispatch) => {
-  console.log('CPN: ', coversPageNumber);
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);

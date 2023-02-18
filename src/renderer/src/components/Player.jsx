@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-
+import { BsVolumeMute } from 'react-icons/bs';
+import { BiVolumeFull } from 'react-icons/bi';
 import {
   convertDuration,
   convertDurationSeconds,
@@ -38,6 +39,10 @@ const Player = ({
   }, [duration, currentTime]);
   const [progbarInc, setProgbarInc] = useState(0);
 
+  useEffect(() => {
+    console.log('volume: ', audioRef.current.volume);
+  }, [audioRef.current.volume]);
+
   const seekbarOutline = useRef();
   const volumebarOutline = useRef();
   const volumeslider = useRef();
@@ -68,6 +73,10 @@ const Player = ({
 
     audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
   };
+
+  useEffect(() => {
+    console.log('lengths: ', title.length, artist.length, album.length);
+  }, [title, artist, album]);
 
   const playerClassNames = () => {
     if (!library && !minimalmode && !home) {
@@ -110,7 +119,9 @@ const Player = ({
           </div>
         </>
       )}
-      {cover === 'not available' && delay === true && <p>No available image</p>}
+      {cover === 'not available' && delay === true && (
+        <p style={{ gridRow: '2 / 3' }}>No available image</p>
+      )}
 
       {!minimalmodeInfo && (
         <div className="metadata">
@@ -178,6 +189,7 @@ const Player = ({
           <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
             <div className="volumebar" ref={volumeslider}></div>
           </div>
+
           <div className="seekbar-outline" ref={seekbarOutline} onClick={handleSeekTime}>
             <div className="seekbar" style={{ width: progbarInc ? `${progbarInc}px` : null }}></div>
           </div>

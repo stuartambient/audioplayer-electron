@@ -45,7 +45,7 @@ textarea {
   grid-template-rows: 30px 290px 30px;
   grid-template-columns: 290px;
   width: 290px;
-  height: 320px;
+  height: 350px;
   row-gap: 0;
   overflow: hidden;
 }

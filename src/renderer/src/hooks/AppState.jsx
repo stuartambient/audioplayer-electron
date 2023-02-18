@@ -26,7 +26,7 @@ const AppState = () => {
     currentTime: '',
     pause: false,
     progbarInc: 0,
-    currentVolume: 1.0,
+    /* currentVolume: 1.0, */
     /* filesPageNumber: 0, */
     albums: [],
     albumsPageNumber: 0,

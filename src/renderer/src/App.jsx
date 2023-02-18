@@ -186,6 +186,57 @@ function App() {
     state.audioRef.current.load();
   };
 
+  useEffect(() => {
+    const loadPlaylistTrack = async (track) => {
+      state.audioRef.current.src = '';
+
+      dispatch({
+        type: 'newtrack',
+        pause: false,
+        newtrack: 0,
+        selectedTrackListType: 'playlist',
+        artist: track.artist,
+        title: track.title,
+        album: track.album,
+        active: track.afid,
+        nextTrack: '',
+        prevTrack: '',
+        isLiked: track.like === 1 ? true : false
+      });
+
+      dispatch({
+        type: 'direction',
+        playNext: false,
+        playPrev: false
+      });
+      const filebuffer = await window.api.streamAudio(track.audiofile);
+
+      const blob = new Blob([filebuffer], { type: 'audio/wav' });
+      const url = window.URL.createObjectURL(blob);
+
+      state.audioRef.current.src = url;
+
+      const picture = await window.api.getCover(track.afid);
+      if (picture === 0) {
+        dispatch({
+          type: 'set-cover',
+          cover: 'not available'
+        });
+      } else {
+        dispatch({
+          type: 'set-cover',
+          cover: handlePicture(picture)
+        });
+      }
+      state.audioRef.current.load();
+    };
+
+    if (state.playlistTracks[0]) {
+      const autoplaytrack = state.playlistTracks[0];
+      loadPlaylistTrack(autoplaytrack);
+    }
+  }, [state.playlistTracks[0]]);
+
   /* const handleMinimalMode = async () => { */
   /* state.minimalmode
       ? await window.api.screenMode('mini', 50)
@@ -208,10 +259,9 @@ function App() {
   }, [state.minimalmode, state.player, state.miniModePlaylist]);
 
   const handleMainNav = (e) => {
-    console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'close':
-        window.api.appClose();
+        /* window.api.appClose(); */
         break;
       case 'minimize':
         window.api.appMinimize();
@@ -281,7 +331,6 @@ function App() {
 
         break;
       case 'mini-mode-playlist':
-        console.log(e.currentTarget.id);
         dispatch({
           type: 'mini-mode-playlist',
           miniModePlaylist: !state.miniModePlaylist,

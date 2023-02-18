@@ -54,25 +54,32 @@ const MainNav = ({ onClick, home, update, player, minimalmode }) => {
 
       {minimalmode && (
         <>
-          <ul className="main-nav--left">
+          <ul className="main-nav--left-minimal">
             <li onClick={onClick} id="mini-mode" className="mini">
               <CgMiniPlayer />
             </li>
             <li onClick={onClick} id="mini-mode-playlist" className="">
               <FaListUl />
             </li>
+          </ul>
+          <ul className="main-nav--center-minimal">
+            <li
+              className="minimode-info"
+              id="minimodeinfo"
+              onClick={onClick}
+              style={{ gridRow: '1 / 2', gridColumn: '5 / 6' }}
+            >
+              <AiOutlineInfoCircle />
+            </li>
+          </ul>
+          <ul className="main-nav--right-minimal">
+            <li onClick={onClick} id="maximize">
+              <AiOutlineFullscreen />
+            </li>
             <li onClick={onClick} id="close">
               <AiOutlineClose />
             </li>
           </ul>
-          <div
-            className="minimode-info"
-            id="minimodeinfo"
-            onClick={onClick}
-            style={{ gridRow: '1 / 2', gridColumn: '5 / 6' }}
-          >
-            <AiOutlineInfoCircle />
-          </div>
         </>
       )}
     </nav>
