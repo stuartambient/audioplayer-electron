@@ -99,8 +99,8 @@ function createWindow() {
     width: 660,
     height: 600,
     frame: false,
-    backgroundColor: '#1D1B1B',
-    /* transparent: true, */
+    /* backgroundColor: '#1D1B1B', */
+    transparent: true,
 
     resizable: false,
     /* rgb(9, 0, 7) */

@@ -5,6 +5,7 @@
   display: grid;
   grid-template-rows: auto 200px repeat(5, auto);
   /* margin-left: 50px; */
+  -webkit-app-region: drag;
 
   grid-template-areas:
     'title'
@@ -38,6 +39,8 @@
   width: 90%;
   overflow: hidden;
   text-align: center;
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
   /* width: 90%;
   text-align: center; */
 }
@@ -134,10 +137,12 @@
 
 .audio-player .volume-outline {
   grid-area: volumebar;
+  -webkit-app-region: no-drag;
 }
 
 .audio-player .seekbar-outline {
   grid-area: seekbar;
+  -webkit-app-region: no-drag;
 }
 
 .audio-player .seekbar-outline,
@@ -164,6 +169,7 @@
 
 .audio-player .volume-outline .volumebar {
   width: 100%;
+  -webkit-app-region: no-drag;
 }
 
 /* .audio-player .controls {
@@ -243,6 +249,7 @@
 .slider-group .volume-outline,
 .slider-group .seekbar-outline {
   width: 40%;
+  -webkit-app-region: no-drag;
 }
 .minimal-player .time,
 .minimal-player--expanded .time {

@@ -27,7 +27,9 @@ const Item = forwardRef(
       term,
       fullpath,
       handleListCheckboxes,
-      checked
+      checked,
+      state,
+      dispatch
     },
     ref
   ) => {
@@ -40,7 +42,9 @@ const Item = forwardRef(
             id={id}
             val={val}
             fromlisttype={type}
-            onClick={(e) => handleTrackSelection(e, artist, title, album, audiofile, like)}
+            onClick={(e) =>
+              handleTrackSelection(e, state, dispatch, artist, title, album, audiofile, like)
+            }
           >
             Artist: {artist}
             <br></br>
@@ -85,7 +89,9 @@ const Item = forwardRef(
             id={id}
             val={val}
             fromlisttype={type}
-            onClick={(e) => handleTrackSelection(e, artist, title, album, audiofile, like)}
+            onClick={(e) =>
+              handleTrackSelection(e, state, dispatch, artist, title, album, audiofile, like)
+            }
           >
             Artist: {artist}
             <br></br>

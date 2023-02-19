@@ -35,6 +35,7 @@ textarea {
   /* align-content: center; */
   row-gap: 10px;
   overflow: hidden;
+  background: black;
 }
 
 .container-minimal {
@@ -74,4 +75,9 @@ textarea {
   grid-template-rows: 2rem 0.5fr 0.5fr 2.5rem;
   grid-template-columns: 25% 75%;
   align-content: start;
+  background-color: black;
+}
+
+.container-player {
+  background: none;
 }

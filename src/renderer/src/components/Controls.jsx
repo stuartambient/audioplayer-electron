@@ -1,4 +1,4 @@
-import { FaHeart, FaBackward, FaForward, FaListUl } from 'react-icons/fa';
+import { FaHeart, FaBackward, FaForward, FaListUl, FaRandom } from 'react-icons/fa';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import '../style/Controls.css';
 
@@ -35,6 +35,9 @@ const Controls = ({ isLiked, handlePlayerControls, pause, minimalmode, player, h
 
       <li className="btn" id="forward" onClick={handlePlayerControls}>
         <FaForward />
+      </li>
+      <li className="btn" id="random" onClick={handlePlayerControls}>
+        <FaRandom />
       </li>
       {!minimalmode && (
         <li className="btn" id="playlist" onClick={handlePlayerControls}>

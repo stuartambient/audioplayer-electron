@@ -14,7 +14,7 @@ import { CgMiniPlayer } from 'react-icons/cg';
 
 import '../style/MainNav.css';
 
-const MainNav = ({ onClick, home, update, player, minimalmode }) => {
+const MainNav = ({ onClick, home, update, player, minimalmode, library }) => {
   return (
     <nav className={!minimalmode ? 'main-nav' : 'main-nav main-nav--minimal'}>
       {!minimalmode && (

@@ -74,9 +74,9 @@ const Player = ({
     audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log('lengths: ', title.length, artist.length, album.length);
-  }, [title, artist, album]);
+  }, [title, artist, album]); */
 
   const playerClassNames = () => {
     if (!library && !minimalmode && !home) {

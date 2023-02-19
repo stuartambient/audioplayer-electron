@@ -13,6 +13,7 @@
     'sortmenu buttons form form'
     'sortmenu buttons tabs tabs';
   row-gap: 5px;
+  background-color: black;
 }
 
 .media-menu--minimal {

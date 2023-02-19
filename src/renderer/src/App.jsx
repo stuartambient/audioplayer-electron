@@ -4,6 +4,7 @@ import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
 import { Buffer } from 'buffer';
+import TrackSelector from './hooks/TrackSelector';
 import AppState from './hooks/AppState';
 /* import useAudio from './hooks/useAudio'; */
 
@@ -70,6 +71,9 @@ function App() {
       case 'like':
         sendToMain();
         handleUpdateLike(state.active);
+        break;
+      case 'random':
+        console.log(e.currentTarget.id);
         break;
       default:
         return;
@@ -139,6 +143,7 @@ function App() {
   };
 
   const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
+    console.log(e.target);
     e.preventDefault();
     /*  console.log(artist, title, album, audiofile); */
     state.audioRef.current.src = '';
@@ -163,7 +168,6 @@ function App() {
       playPrev: false
     });
 
-    /* const filebuffer = await window.api.streamAudio(e.target.id); */
     const filebuffer = await window.api.streamAudio(audiofile);
 
     const blob = new Blob([filebuffer], { type: 'audio/wav' });
@@ -187,53 +191,8 @@ function App() {
   };
 
   useEffect(() => {
-    const loadPlaylistTrack = async (track) => {
-      state.audioRef.current.src = '';
-
-      dispatch({
-        type: 'newtrack',
-        pause: false,
-        newtrack: 0,
-        selectedTrackListType: 'playlist',
-        artist: track.artist,
-        title: track.title,
-        album: track.album,
-        active: track.afid,
-        nextTrack: '',
-        prevTrack: '',
-        isLiked: track.like === 1 ? true : false
-      });
-
-      dispatch({
-        type: 'direction',
-        playNext: false,
-        playPrev: false
-      });
-      const filebuffer = await window.api.streamAudio(track.audiofile);
-
-      const blob = new Blob([filebuffer], { type: 'audio/wav' });
-      const url = window.URL.createObjectURL(blob);
-
-      state.audioRef.current.src = url;
-
-      const picture = await window.api.getCover(track.afid);
-      if (picture === 0) {
-        dispatch({
-          type: 'set-cover',
-          cover: 'not available'
-        });
-      } else {
-        dispatch({
-          type: 'set-cover',
-          cover: handlePicture(picture)
-        });
-      }
-      state.audioRef.current.load();
-    };
-
     if (state.playlistTracks[0]) {
-      const autoplaytrack = state.playlistTracks[0];
-      loadPlaylistTrack(autoplaytrack);
+      TrackSelector(state.playlistTracks[0], state, dispatch);
     }
   }, [state.playlistTracks[0]]);
 
@@ -355,20 +314,27 @@ function App() {
     if (state.minimalmode && state.player) {
       return 'container container-minimal';
     }
-    if (!state.minimalmode) {
-      return 'container';
+
+    if (state.player || state.minimalmode) {
+      return 'container container-player';
     }
+    /*  if (!state.minimalmode) {
+      return 'container';
+    } */
   };
 
   return (
     <div className={containerClassNames()}>
-      <MainNav
-        onClick={handleMainNav}
-        home={state.home}
-        update={state.update}
-        player={state.player}
-        minimalmode={state.minimalmode}
-      />
+      {state.home || state.update || state.library || state.minimalmode ? (
+        <MainNav
+          onClick={handleMainNav}
+          home={state.home}
+          update={state.update}
+          player={state.player}
+          minimalmode={state.minimalmode}
+          library={state.library}
+        />
+      ) : null}
       {state.home && !state.minimalmode && <Home state={state} dispatch={dispatch} />}
       {state.update && <Update />}
       {state.player || state.home ? (
@@ -414,7 +380,7 @@ function App() {
 
       {state.player || state.miniModePlaylist || state.home ? (
         <InfiniteList
-          handleTrackSelection={handleTrackSelection}
+          handleTrackSelection={TrackSelector}
           library={state.library}
           currentTrack={state.newtrack}
           playNext={state.playNext}
