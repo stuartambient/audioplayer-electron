@@ -34,6 +34,8 @@ const AppState = () => {
     tracksPageNumber: 0,
     covers: [],
     coversPageNumber: undefined,
+    shuffledTracks: [],
+    shuffledTracksPageNumber: 0,
     playlistTracks: [],
 
     listType: 'files',
@@ -45,7 +47,7 @@ const AppState = () => {
     showMore: null,
     delay: false,
     isLiked: false,
-
+    shuffle: false,
     playlistMode: false
   };
 
@@ -260,6 +262,18 @@ const AppState = () => {
         return {
           ...state,
           minimalmodeInfo: action.minimalmodeInfo
+        };
+      }
+      case 'shuffle': {
+        return {
+          ...state,
+          shuffle: action.shuffle
+        };
+      }
+      case 'shuffled-tracks': {
+        return {
+          ...state,
+          shuffledTracks: action.shuffledTracks
         };
       }
 

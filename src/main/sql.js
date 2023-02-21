@@ -98,6 +98,14 @@ const getFiles = () => {
   return files;
 };
 
+const getAllTracks = (rows) => {
+  /* const tracks = db.prepare('SELECT * FROM tracks ORDER BY RANDOM() LIMIT 50000'); */
+  const tracks = db.prepare('SELECT * FROM tracks WHERE rowid = ?');
+
+  const shuffledTracks = rows.map((r) => tracks.get(r));
+  return shuffledTracks;
+};
+
 const searchAlbums = async () => {
   const stmt = db.prepare(
     "SELECT rootloc, foldername FROM albums WHERE foldername LIKE '%braxton%'"
@@ -214,7 +222,8 @@ export {
   createFoldersTable,
   createFilesTable,
   getPlaylist,
-  allCoversByScroll
+  allCoversByScroll,
+  getAllTracks
 };
 
 /*

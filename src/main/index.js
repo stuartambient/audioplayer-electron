@@ -28,7 +28,9 @@ import {
   likeTrack,
   isLiked,
   getAlbum,
-  getPlaylist
+  getPlaylist,
+  getFiles,
+  getAllTracks
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
@@ -60,6 +62,8 @@ if (!fs.existsSync(coversFolder)) {
   fs.mkdirSync(coversFolder);
 }
 
+/* RANDOM ARRAY FOR TRACKS SHUFFLE */
+let shuffled = new Array();
 /* console.log('df: ', documentsFolder); */
 
 /* const updatesFolder = `${app.getPath('appData')}/musicplayer-electron/updatelogs`; */
@@ -463,4 +467,30 @@ ipcMain.handle('get-covers', async (_, ...args) => {
     })
   );
   return albumsWithImages;
+});
+
+ipcMain.handle('get-all-tracks', async (_, arg) => {
+  if (!shuffled.length) {
+    let array = [...Array(+arg).keys()];
+    let shuffle = [...array];
+
+    const getRandomValue = (i, N) => Math.floor(Math.random() * (N - i) + i);
+
+    shuffle.forEach(
+      (elem, i, arr, j = getRandomValue(i, arr.length)) => ([arr[i], arr[j]] = [arr[j], arr[i]])
+    );
+    /* console.log(shuffle[0], shuffle.length); */
+    /* const alltracks = await getAllTracks();
+    
+  return alltracks; */
+    shuffled = shuffle;
+  }
+  return true;
+});
+
+ipcMain.handle('test-global', async (_, ...args) => {
+  const [start, end] = args;
+  const fifty = shuffled.slice(start, end);
+  const tracks = getAllTracks(fifty);
+  return tracks;
 });

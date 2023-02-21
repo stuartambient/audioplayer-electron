@@ -445,6 +445,10 @@
 .audio-player--homepage .controls .btn svg {
   fill: white;
 }
+
+.audio-player--homepage .controls .on svg {
+  fill: red;
+}
 .audio-player--homepage .seekbar-outline:hover {
   cursor: pointer;
 }

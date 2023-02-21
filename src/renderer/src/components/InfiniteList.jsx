@@ -10,7 +10,8 @@ import {
   useAlbumTracks,
   usePlaylist,
   usePlaylistDialog,
-  useAllAlbumsCovers
+  useAllAlbumsCovers,
+  useRandomTracks
 } from '../hooks/useDb';
 import '../style/InfiniteList.css';
 
@@ -30,6 +31,9 @@ const InfiniteList = ({
   tracks,
   tracksPageNumber,
   playlistTracks,
+  shuffle,
+  shuffledTracks,
+  shuffledTracksPageNumber,
   minimalmode,
   miniModePlaylist,
   albums,
@@ -65,9 +69,15 @@ const InfiniteList = ({
 
   usePlaylistDialog(playlistReq, playlistTracks, dispatch);
 
+  useRandomTracks(shuffledTracksPageNumber, state, dispatch);
+
   /*   useEffect(() => {
     console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);
   }, [checkbox]); */
+
+  useEffect(() => {
+    console.log(shuffledTracks);
+  }, [shuffledTracks]);
 
   const albumsTracks = albumTracks.map((track) => {
     if (track.title) {

@@ -280,6 +280,33 @@ const useGetPlaylists = () => {
   return { myPlaylists };
 };
 
+const useRandomTracks = (shuffledTracksPageNumber, state, dispatch) => {
+  console.log(shuffledTracksPageNumber);
+  useEffect(() => {
+    const shuffleTracks = async () => {
+      let start, end;
+      if (!state.shuffleTracks) {
+        start = 0;
+        end = 49;
+      } else {
+        start = state.shuffledTracks.length - 1;
+        const end = start + 49;
+      }
+
+      const test = await window.api.testGlobal(start, end);
+      dispatch({
+        type: 'reset-tracks',
+        tracks: []
+      });
+      dispatch({
+        type: 'shuffled-tracks',
+        shuffledTracks: [...state.tracks, ...test]
+      });
+    };
+    if (shuffledTracksPageNumber) shuffleTracks();
+  }, [shuffledTracksPageNumber]);
+};
+
 export {
   useTracks,
   useAlbums,
@@ -291,5 +318,6 @@ export {
   usePlaylist,
   usePlaylistDialog,
   useGetPlaylists,
-  useAllAlbumsCovers
+  useAllAlbumsCovers,
+  useRandomTracks
 };

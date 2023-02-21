@@ -38,6 +38,21 @@ function App() {
     console.log('update like: ', updatelike);
   };
 
+  useEffect(() => {
+    const setRandomArray = async () => {
+      const totaltracks = await window.api.totalTracksStat();
+      const allTracks = await window.api.getAllTracks(totaltracks);
+    };
+    if (state.shuffle) setRandomArray();
+  }, [state.shuffle]);
+
+  const handleShuffle = async () => {
+    dispatch({
+      type: 'shuffle',
+      shuffle: !state.shuffle
+    });
+  };
+
   /*   const sendToMain = async () => {
     await window.api.sendState(state.active, state.currentTrack).then((r) => console.log(r));
   }; */
@@ -72,8 +87,10 @@ function App() {
         sendToMain();
         handleUpdateLike(state.active);
         break;
-      case 'random':
-        console.log(e.currentTarget.id);
+      case 'shuffle':
+        /* window.api.getAllTracks(); */
+        handleShuffle();
+
         break;
       default:
         return;
@@ -363,6 +380,7 @@ function App() {
               minimalmode={state.minimalmode}
               player={state.player}
               home={state.home}
+              shuffle={state.shuffle}
             />
           )}
         </Player>
@@ -375,6 +393,7 @@ function App() {
           minimalmode={state.minimalmode}
           player={state.player}
           home={state.home}
+          shuffle={state.shuffle}
         />
       )}
 
@@ -394,6 +413,9 @@ function App() {
           handlePicture={handlePicture}
           tracks={state.tracks}
           tracksPageNumber={state.tracksPageNumber}
+          shuffle={state.shuffle}
+          shuffledTracks={state.shuffledTracks}
+          shuffledTracksPageNumber={state.shuffledTracksPageNumber}
           playlistTracks={state.playlistTracks}
           minimalmode={state.minimalmode}
           miniModePlaylist={state.miniModePlaylist}

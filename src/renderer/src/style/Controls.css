@@ -22,6 +22,10 @@
   border-right: 1px inset var(--blue1);
 }
 
+.controls .on svg {
+  fill: red;
+}
+
 .controls .btn:hover {
   cursor: pointer;
 }
@@ -64,6 +68,10 @@
   z-index: 2;
 }
 
+.controls--minimalmode .on svg {
+  fill: red;
+}
+
 .controls--minimalmode .btn svg:hover {
   fill: var(--blue1);
 }
@@ -93,4 +101,8 @@
 
 .controls-home .btn svg {
   fill: white;
+}
+
+.controls-home .on svg {
+  fill: red;
 }
