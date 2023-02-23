@@ -38,18 +38,26 @@ function App() {
     console.log('update like: ', updatelike);
   };
 
-  useEffect(() => {
-    const setRandomArray = async () => {
-      const totaltracks = await window.api.totalTracksStat();
-      const allTracks = await window.api.getAllTracks(totaltracks);
-    };
-    if (state.shuffle) setRandomArray();
-  }, [state.shuffle]);
-
   const handleShuffle = async () => {
     dispatch({
       type: 'shuffle',
       shuffle: !state.shuffle
+    });
+    dispatch({
+      type: 'reset-tracks',
+      tracks: []
+    });
+    dispatch({
+      type: 'tracks-pagenumber',
+      tracksPageNumber: 0
+    });
+    const totaltracks = await window.api.totalTracksStat();
+    const setRandArray = await window.api.getAllTracks(totaltracks);
+
+    const shuffledTracks = await window.api.testGlobal(0, 50);
+    dispatch({
+      type: 'tracks-playlist',
+      tracks: shuffledTracks
     });
   };
 
@@ -154,15 +162,14 @@ function App() {
     }
   }; */
 
-  const handlePicture = (buffer) => {
+  /*   const handlePicture = (buffer) => {
     const bufferToString = Buffer.from(buffer).toString('base64');
     return `data:${buffer.format};base64,${bufferToString}`;
-  };
+  }; */
 
-  const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
+  /*  const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
     console.log(e.target);
     e.preventDefault();
-    /*  console.log(artist, title, album, audiofile); */
     state.audioRef.current.src = '';
 
     dispatch({
@@ -211,7 +218,7 @@ function App() {
     if (state.playlistTracks[0]) {
       TrackSelector(state.playlistTracks[0], state, dispatch);
     }
-  }, [state.playlistTracks[0]]);
+  }, [state.playlistTracks[0]]); */
 
   /* const handleMinimalMode = async () => { */
   /* state.minimalmode
@@ -410,12 +417,10 @@ function App() {
           dispatch={dispatch}
           state={state}
           listType={state.listType}
-          handlePicture={handlePicture}
+          /* handlePicture={handlePicture} */
           tracks={state.tracks}
           tracksPageNumber={state.tracksPageNumber}
           shuffle={state.shuffle}
-          shuffledTracks={state.shuffledTracks}
-          shuffledTracksPageNumber={state.shuffledTracksPageNumber}
           playlistTracks={state.playlistTracks}
           minimalmode={state.minimalmode}
           miniModePlaylist={state.miniModePlaylist}

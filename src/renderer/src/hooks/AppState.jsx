@@ -34,9 +34,9 @@ const AppState = () => {
     tracksPageNumber: 0,
     covers: [],
     coversPageNumber: undefined,
+    playlistTracks: [],
     shuffledTracks: [],
     shuffledTracksPageNumber: 0,
-    playlistTracks: [],
 
     listType: 'files',
     selectedTrackListType: 'file',

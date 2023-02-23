@@ -66,8 +66,6 @@ if (!fs.existsSync(coversFolder)) {
 let shuffled = new Array();
 /* console.log('df: ', documentsFolder); */
 
-/* const updatesFolder = `${app.getPath('appData')}/musicplayer-electron/updatelogs`; */
-
 /* let splashWindow;
 
 function createSplashWindow() {
@@ -118,7 +116,8 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
-      webSecurity: false
+      webSecurity: false,
+      nodeIntegration: true
     }
   });
 
@@ -172,7 +171,8 @@ app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
   console.log('getAppPath() - ', app.getAppPath());
-  console.log(
+
+  /*   console.log(
     'HOME : ',
     app.getPath('home'),
     'APPDATE : ',
@@ -183,7 +183,7 @@ app.whenReady().then(() => {
     app.getPath('documents'),
     'LOGS: ',
     app.getPath('logs')
-  );
+  ); */
 
   // Default open or close DevTools by F12 in development
   // and ignore CommandOrControl + R in production.
@@ -479,18 +479,20 @@ ipcMain.handle('get-all-tracks', async (_, arg) => {
     shuffle.forEach(
       (elem, i, arr, j = getRandomValue(i, arr.length)) => ([arr[i], arr[j]] = [arr[j], arr[i]])
     );
-    /* console.log(shuffle[0], shuffle.length); */
-    /* const alltracks = await getAllTracks();
-    
-  return alltracks; */
+
     shuffled = shuffle;
   }
   return true;
 });
 
 ipcMain.handle('test-global', async (_, ...args) => {
-  const [start, end] = args;
-  const fifty = shuffled.slice(start, end);
-  const tracks = getAllTracks(fifty);
-  return tracks;
+  try {
+    const [start, end] = args;
+    const fifty = shuffled.slice(start, end);
+    const tracks = getAllTracks(fifty);
+
+    return tracks;
+  } catch (err) {
+    console.log(err.message);
+  }
 });

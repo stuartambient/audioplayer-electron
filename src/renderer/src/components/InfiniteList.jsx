@@ -10,8 +10,8 @@ import {
   useAlbumTracks,
   usePlaylist,
   usePlaylistDialog,
-  useAllAlbumsCovers,
-  useRandomTracks
+  useAllAlbumsCovers
+  /*   useRandomTracks */
 } from '../hooks/useDb';
 import '../style/InfiniteList.css';
 
@@ -32,8 +32,6 @@ const InfiniteList = ({
   tracksPageNumber,
   playlistTracks,
   shuffle,
-  shuffledTracks,
-  shuffledTracksPageNumber,
   minimalmode,
   miniModePlaylist,
   albums,
@@ -53,7 +51,9 @@ const InfiniteList = ({
     tracksSearchTerm,
     sortType,
     resetKey,
-    dispatch
+    state,
+    dispatch,
+    shuffle
   );
   const { albumsLoading, hasMoreAlbums, albumsError } = useAlbums(
     albumsPageNumber,
@@ -69,15 +69,16 @@ const InfiniteList = ({
 
   usePlaylistDialog(playlistReq, playlistTracks, dispatch);
 
-  useRandomTracks(shuffledTracksPageNumber, state, dispatch);
+  /*   const { shuffledLoading, hasMoreShuffled, shuffledError } = useRandomTracks(
+    shuffledTracksPageNumber,
+    state,
+    dispatch,
+    shuffle
+  ); */
 
   /*   useEffect(() => {
     console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);
   }, [checkbox]); */
-
-  useEffect(() => {
-    console.log(shuffledTracks);
-  }, [shuffledTracks]);
 
   const albumsTracks = albumTracks.map((track) => {
     if (track.title) {
@@ -123,6 +124,18 @@ const InfiniteList = ({
   }, [currentTrack, tracks, playlistTracks, state.selectedTrackListType, dispatch]);
 
   /* HERE */
+  /*   useEffect(() => {
+    if (shuffle) {
+      dispatch({
+        type: 'reset-tracks',
+        tracks: []
+      });
+      dispatch({
+        type: 'tracks-pagenumber',
+        tracksPageNumber: 0
+      });
+    }
+  }, [shuffle]); */
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {

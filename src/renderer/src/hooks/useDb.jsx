@@ -1,3 +1,4 @@
+/* import { is } from '@electron-toolkit/utils'; */
 import { useState, useEffect, useMemo } from 'react';
 /* import axios from "axios"; */
 
@@ -7,7 +8,16 @@ import { useState, useEffect, useMemo } from 'react';
 
 }); */
 
-const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, resetKey, dispatch) => {
+const useTracks = (
+  tracksPageNumber,
+  tracksSearchTerm,
+  sortType,
+  resetKey,
+  state,
+  dispatch,
+  shuffle
+) => {
+  /* console.log('useTracks: ', tracksPageNumber, shuffle); */
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
   /*  const [tracks, setTracks] = useState([]); */
@@ -16,8 +26,8 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, resetKey, dispa
 
   useEffect(() => {
     let isSubscribed = true;
+    /* if (shuffle) return; */
     const loadTracks = async () => {
-      let success = true;
       setTracksLoading(true);
       setTracksError(false);
       let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm);
@@ -29,13 +39,40 @@ const useTracks = (tracksPageNumber, tracksSearchTerm, sortType, resetKey, dispa
         setHasMoreTracks(trackRequest.length > 0);
         setTracksLoading(false);
       }
-      return () => console.log('files found');
     };
 
-    loadTracks();
+    const loadShuffledTracks = async () => {
+      setTracksLoading(true);
+      setTracksError(false);
+      /////////////////
+      let start, end;
+      if (state.tracks.length === 0) {
+        start = 0;
+        end = 50;
+      } else {
+        start = state.tracks.length + 1;
+        end = start + 49;
+      }
+      console.log('start: ', start, 'end: ', end);
+      /*    const totaltracks = await window.api.totalTracksStat();
+      const setRandArray = await window.api.getAllTracks(totaltracks); */
+      const shuffledTracks = await window.api.testGlobal(start, end);
+      /* console.log(totaltracks, setRandArray, shuffledTracks); */
+      if (shuffledTracks && isSubscribed) {
+        dispatch({
+          type: 'tracks-playlist',
+          tracks: shuffledTracks
+        });
+        setHasMoreTracks(shuffledTracks.length > 0);
+        setTracksLoading(false);
+      }
+    };
+
+    shuffle ? loadShuffledTracks() : loadTracks();
+
+    /*  loadTracks(); */
     return () => (isSubscribed = false);
   }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey]);
-
   return { tracksLoading, /* tracks, setTracks, */ hasMoreTracks, tracksError };
 };
 
@@ -280,9 +317,12 @@ const useGetPlaylists = () => {
   return { myPlaylists };
 };
 
-const useRandomTracks = (shuffledTracksPageNumber, state, dispatch) => {
-  console.log(shuffledTracksPageNumber);
+const useRandomTracks = (shuffledTracksPageNumber, state, dispatch, shuffle) => {
+  const [shuffledLoading, setShuffledLoading] = useState(true);
+  const [shuffledError, setShuffledError] = useState(false);
+  const [hasMoreShuffled, setHasMoreShuffled] = useState(false);
   useEffect(() => {
+    let isSubscribed = true;
     const shuffleTracks = async () => {
       let start, end;
       if (!state.shuffleTracks) {
@@ -294,17 +334,20 @@ const useRandomTracks = (shuffledTracksPageNumber, state, dispatch) => {
       }
 
       const test = await window.api.testGlobal(start, end);
-      dispatch({
-        type: 'reset-tracks',
-        tracks: []
-      });
-      dispatch({
-        type: 'shuffled-tracks',
-        shuffledTracks: [...state.tracks, ...test]
-      });
+      if (test && isSubscribed) {
+        console.log('test: ', test);
+        dispatch({
+          type: 'shuffled-tracks',
+          shuffledTracks: [...state.shuffledTracks, ...test]
+        });
+        setHasMoreShuffled(test.length > 0);
+        setShuffledLoading(false);
+      }
     };
     if (shuffledTracksPageNumber) shuffleTracks();
+    return () => (isSubscribed = false);
   }, [shuffledTracksPageNumber]);
+  return { shuffledLoading, hasMoreShuffled, shuffledError };
 };
 
 export {
@@ -318,6 +361,6 @@ export {
   usePlaylist,
   usePlaylistDialog,
   useGetPlaylists,
-  useAllAlbumsCovers,
-  useRandomTracks
+  useAllAlbumsCovers
+  /* useRandomTracks */
 };
