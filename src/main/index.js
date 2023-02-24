@@ -469,9 +469,10 @@ ipcMain.handle('get-covers', async (_, ...args) => {
   return albumsWithImages;
 });
 
-ipcMain.handle('get-all-tracks', async (_, arg) => {
+ipcMain.handle('get-all-tracks', async (_, ...args) => {
+  shuffled = [];
   if (!shuffled.length) {
-    let array = [...Array(+arg).keys()];
+    let array = [...Array(+args[0]).keys()];
     let shuffle = [...array];
 
     const getRandomValue = (i, N) => Math.floor(Math.random() * (N - i) + i);

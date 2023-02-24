@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useReducer, useContext, createContext } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
@@ -6,6 +7,7 @@ import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
 import { Buffer } from 'buffer';
 import TrackSelector from './hooks/TrackSelector';
 import AppState from './hooks/AppState';
+
 /* import useAudio from './hooks/useAudio'; */
 
 import {
@@ -21,6 +23,7 @@ import Home from './Components/Home';
 import Update from './Components/Update';
 import MainNav from './Components/MainNav';
 import Controls from './Components/Controls';
+import Extras from './Components/Extras';
 
 import './App.css';
 
@@ -51,14 +54,23 @@ function App() {
       type: 'tracks-pagenumber',
       tracksPageNumber: 0
     });
-    const totaltracks = await window.api.totalTracksStat();
-    const setRandArray = await window.api.getAllTracks(totaltracks);
 
-    const shuffledTracks = await window.api.testGlobal(0, 50);
-    dispatch({
-      type: 'tracks-playlist',
-      tracks: shuffledTracks
-    });
+    if (!state.shuffle) {
+      const totaltracks = await window.api.totalTracksStat();
+      const refreshkey = uuidv4();
+      const setRandArray = await window.api.getAllTracks(totaltracks, refreshkey);
+      const shuffledTracks = await window.api.testGlobal(0, 50);
+      dispatch({
+        type: 'tracks-playlist',
+        tracks: shuffledTracks
+      });
+    } else {
+      const allTracks = await window.api.getTracks(state.tracksPageNumber, '');
+      dispatch({
+        type: 'tracks-playlist',
+        tracks: allTracks
+      });
+    }
   };
 
   /*   const sendToMain = async () => {
@@ -100,6 +112,30 @@ function App() {
         handleShuffle();
 
         break;
+      case 'miniplayer':
+        if (state.miniModePlaylist) {
+          return dispatch({
+            type: 'exit-mini-to-full',
+            miniModePlaylist: !state.miniModePlaylist,
+            minimalmode: !state.minimalmode
+          });
+        }
+        if (state.library && !state.minimalmode) {
+          return dispatch({
+            type: 'enter-mini-from-fullplaylist',
+            miniModePlaylist: (state.miniModePlaylist = true),
+            minimalmode: (state.minimalmode = true)
+          });
+        }
+
+        dispatch({
+          type: 'player-minimode',
+          minimalmode: !state.minimalmode,
+          home: false,
+          update: false,
+          player: true
+        });
+        break;
       default:
         return;
     }
@@ -129,6 +165,22 @@ function App() {
   }, [state.audioRef]);
 
   useEffect(() => {
+    state.audioRef.current.onseeking = () => {
+      dispatch({
+        type: 'seeking',
+        seeking: true
+      });
+      setTimeout(() => dispatch({ type: 'seeking', seeking: false }), 2000);
+    };
+  }, [state.audioRef.onseeking]);
+
+  useEffect(() => {
+    state.audioRef.current.onvolumechange = () => {
+      console.log(state.audioRef.current.volume);
+    };
+  });
+
+  useEffect(() => {
     state.audioRef.current.onended = () => {
       dispatch({
         type: 'direction',
@@ -145,86 +197,6 @@ function App() {
     if (state.pause) state.audioRef.current.pause();
     if (!state.pause) state.audioRef.current.play();
   }, [state.pause, state.audioRef.current]);
-
-  /*   const handleLikeStatus = async () => {
-    const liked = await window.api.isLiked(state.active);
-
-    if (liked === 1) {
-      dispatch({
-        type: 'like-status',
-        isLiked: true
-      });
-    } else {
-      dispatch({
-        type: 'like-status',
-        isLiked: false
-      });
-    }
-  }; */
-
-  /*   const handlePicture = (buffer) => {
-    const bufferToString = Buffer.from(buffer).toString('base64');
-    return `data:${buffer.format};base64,${bufferToString}`;
-  }; */
-
-  /*  const handleTrackSelection = async (e, artist, title, album, audiofile, like) => {
-    console.log(e.target);
-    e.preventDefault();
-    state.audioRef.current.src = '';
-
-    dispatch({
-      type: 'newtrack',
-      pause: false,
-      newtrack: +e.target.getAttribute('val'),
-      selectedTrackListType: e.target.getAttribute('fromlisttype'),
-      artist,
-      title,
-      album,
-      active: e.target.id,
-      nextTrack: '',
-      prevTrack: '',
-      isLiked: like === 1 ? true : false
-    });
-
-    dispatch({
-      type: 'direction',
-      playNext: false,
-      playPrev: false
-    });
-
-    const filebuffer = await window.api.streamAudio(audiofile);
-
-    const blob = new Blob([filebuffer], { type: 'audio/wav' });
-    const url = window.URL.createObjectURL(blob);
-
-    state.audioRef.current.src = url;
-
-    const picture = await window.api.getCover(e.target.id);
-    if (picture === 0) {
-      dispatch({
-        type: 'set-cover',
-        cover: 'not available'
-      });
-    } else {
-      dispatch({
-        type: 'set-cover',
-        cover: handlePicture(picture)
-      });
-    }
-    state.audioRef.current.load();
-  };
-
-  useEffect(() => {
-    if (state.playlistTracks[0]) {
-      TrackSelector(state.playlistTracks[0], state, dispatch);
-    }
-  }, [state.playlistTracks[0]]); */
-
-  /* const handleMinimalMode = async () => { */
-  /* state.minimalmode
-      ? await window.api.screenMode('mini', 50)
-      : await window.api.screenMode('default'); */
-  /*  }; */
 
   useEffect(() => {
     const changeMode = async () => {
@@ -380,15 +352,26 @@ function App() {
           minimalmodeInfo={state.minimalmodeInfo}
         >
           {!state.minimalmode && (
-            <Controls
-              isLiked={state.isLiked}
-              handlePlayerControls={handlePlayerControls}
-              pause={state.pause}
-              minimalmode={state.minimalmode}
-              player={state.player}
-              home={state.home}
-              shuffle={state.shuffle}
-            />
+            <>
+              <Controls
+                isLiked={state.isLiked}
+                handlePlayerControls={handlePlayerControls}
+                pause={state.pause}
+                minimalmode={state.minimalmode}
+                player={state.player}
+                home={state.home}
+                shuffle={state.shuffle}
+                library={state.library}
+              />
+              <Extras
+                handlePlayerControls={handlePlayerControls}
+                volume={state.audioRef.current.volume}
+                seeking={state.seeking}
+                library={state.library}
+                shuffle={state.shuffle}
+                home={state.home}
+              />
+            </>
           )}
         </Player>
       ) : null}

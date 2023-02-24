@@ -48,7 +48,8 @@ const AppState = () => {
     delay: false,
     isLiked: false,
     shuffle: false,
-    playlistMode: false
+    playlistMode: false,
+    seeking: false
   };
 
   const reducer = (state, action) => {
@@ -275,6 +276,9 @@ const AppState = () => {
           ...state,
           shuffledTracks: action.shuffledTracks
         };
+      }
+      case 'seeking': {
+        return { ...state, seeking: action.seeking };
       }
 
       default:

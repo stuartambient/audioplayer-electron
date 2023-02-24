@@ -3,7 +3,7 @@
   grid-column: 1 / 2;
   grid-row: 3 / 11;
   display: grid;
-  grid-template-rows: auto 200px repeat(5, auto);
+  grid-template-rows: auto 200px repeat(6, auto);
   /* margin-left: 50px; */
   -webkit-app-region: drag;
 
@@ -14,6 +14,7 @@
     'volumebar'
     'time'
     'seekbar'
+    'extras'
     'controls';
 
   /* grid-row-gap: 1rem; */

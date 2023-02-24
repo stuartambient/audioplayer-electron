@@ -30,7 +30,8 @@ const api = {
   getPlaylists: () => ipcRenderer.invoke('get-playlists'),
   homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id),
   getCovers: (coversPageNum) => ipcRenderer.invoke('get-covers', coversPageNum),
-  getAllTracks: (numofTracks) => ipcRenderer.invoke('get-all-tracks', numofTracks),
+  getAllTracks: (numofTracks, refreshKey) =>
+    ipcRenderer.invoke('get-all-tracks', numofTracks, refreshKey),
   testGlobal: (start, end) => ipcRenderer.invoke('test-global', start, end)
 };
 

@@ -2,7 +2,16 @@ import { FaHeart, FaBackward, FaForward, FaListUl, FaRandom } from 'react-icons/
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import '../style/Controls.css';
 
-const Controls = ({ isLiked, handlePlayerControls, pause, minimalmode, player, home, shuffle }) => {
+const Controls = ({
+  isLiked,
+  handlePlayerControls,
+  pause,
+  minimalmode,
+  player,
+  home,
+  library,
+  shuffle
+}) => {
   const controlsClassNames = () => {
     if (player && !minimalmode) {
       return 'controls';
@@ -40,7 +49,7 @@ const Controls = ({ isLiked, handlePlayerControls, pause, minimalmode, player, h
         <FaRandom />
       </li>
       {!minimalmode && (
-        <li className="btn" id="playlist" onClick={handlePlayerControls}>
+        <li className={library ? 'btn on' : 'btn'} id="playlist" onClick={handlePlayerControls}>
           <FaListUl />
         </li>
       )}

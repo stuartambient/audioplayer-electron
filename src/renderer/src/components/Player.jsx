@@ -39,9 +39,9 @@ const Player = ({
   }, [duration, currentTime]);
   const [progbarInc, setProgbarInc] = useState(0);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log('volume: ', audioRef.current.volume);
-  }, [audioRef.current.volume]);
+  }, [audioRef.current.volume]); */
 
   const seekbarOutline = useRef();
   const volumebarOutline = useRef();
