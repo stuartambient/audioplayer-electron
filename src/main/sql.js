@@ -143,7 +143,9 @@ const getPlaylist = (playlist) => {
 };
 
 const allAlbumsByScroll = (offsetNum) => {
-  const stmt = db.prepare(`SELECT * FROM albums LIMIT 50 OFFSET ${offsetNum * 50}`);
+  const stmt = db.prepare(
+    `SELECT * FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET ${offsetNum * 50}`
+  );
   return stmt.all();
 };
 

@@ -20,7 +20,7 @@ const api = {
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
   updateLike: (id) => ipcRenderer.invoke('update-like', id),
   isLiked: (id) => ipcRenderer.invoke('is-liked', id),
-  openChild: () => ipcRenderer.send('open-child'),
+
   totalTracksStat: () => ipcRenderer.invoke('total-tracks-stat'),
   topTenArtistsStat: () => ipcRenderer.invoke('top-ten-artists-stat'),
   last10AlbumsStat: () => ipcRenderer.invoke('last-10Albums-stat'),
@@ -32,8 +32,19 @@ const api = {
   getCovers: (coversPageNum) => ipcRenderer.invoke('get-covers', coversPageNum),
   getAllTracks: (numofTracks, refreshKey) =>
     ipcRenderer.invoke('get-all-tracks', numofTracks, refreshKey),
-  testGlobal: (start, end) => ipcRenderer.invoke('test-global', start, end)
+  testGlobal: (start, end) => ipcRenderer.invoke('test-global', start, end),
+  showTracksMenu: () => ipcRenderer.invoke('show-tracks-menu'),
+  showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
+  showPlaylistsMenu: () => ipcRenderer.invoke('show-playlists-menu'),
+  onTrackToPlaylist: (cb) => ipcRenderer.once('track-to-playlist', (event, ...args) => cb(args)),
+  onAlbumToPlaylist: (cb) => ipcRenderer.once('album-to-playlist', (event, ...args) => cb(args)),
+  onRemoveFromPlaylist: (cb) =>
+    ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args))
 };
+
+/* ipcRenderer.on('track-to-playlist', (_event, arg) => {
+  console.log(arg);
+}); */
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

@@ -43,6 +43,7 @@ const RecentAdditions = ({ dispatch, covers, coversPageNumber }) => {
   const handleAlbumToPlaylist = async (e) => {
     e.preventDefault();
     const albumTracks = await window.api.getAlbumTracks(e.target.id);
+    console.log(albumTracks);
     if (albumTracks) {
       dispatch({
         type: 'play-album',

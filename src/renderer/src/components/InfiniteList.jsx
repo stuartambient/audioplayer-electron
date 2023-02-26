@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
-
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
 import MediaMenu from './MediaMenu';
@@ -14,6 +13,8 @@ import {
   /*   useRandomTracks */
 } from '../hooks/useDb';
 import '../style/InfiniteList.css';
+/* import { electronAPI } from '@electron-toolkit/preload'; */
+/* import { ipcRenderer } from 'electron'; */
 
 const InfiniteList = ({
   handleTrackSelection,
@@ -93,7 +94,7 @@ const InfiniteList = ({
 
   /* HERE */
   useEffect(() => {
-    if (state.selectedTrackListType === 'file') {
+    if (listType === 'file') {
       if (currentTrack >= 0 && tracks[currentTrack + 1]) {
         dispatch({
           type: 'set-next-track',
@@ -107,7 +108,7 @@ const InfiniteList = ({
         });
       }
     }
-    if (state.selectedTrackListType === 'playlist') {
+    if (listType === 'playlist') {
       if (currentTrack >= 0 && playlistTracks[currentTrack + 1]) {
         dispatch({
           type: 'set-next-track',
@@ -247,6 +248,54 @@ const InfiniteList = ({
 
   const handleListScroll = (e) => {};
 
+  const handleContextMenuOption = async (option, id) => {
+    console.log('id: ', id);
+    /*  const evnt = Object.keys(option.sender._events);
+    const selection = evnt.pop(); */
+    console.log(option[0] === 'track-to-playlist', option[0]);
+
+    if (option[0] === 'add track to playlist') {
+      const track = tracks.find((item) => item.afid === id);
+      if (track) {
+        dispatch({
+          type: 'track-to-playlist',
+          playlistTracks: [...playlistTracks, track]
+        });
+      }
+    }
+    if (option === 'add album to playlist') {
+      console.log('album-to-playlist');
+    }
+    if (option === 'remove from playlist') {
+      console.log('remove-from-playlist');
+    }
+  };
+
+  const handleContextMenu = async (e) => {
+    const type = e.target.getAttribute('fromlisttype');
+    if (type === null) return;
+    const splitid = e.target.id.split('--')[0];
+    const id = splitid;
+    switch (type) {
+      case 'file':
+        await window.api.showTracksMenu();
+        await window.api.onTrackToPlaylist((e) => handleContextMenuOption(e, id));
+
+        break;
+      case 'folder':
+        await window.api.showAlbumsMenu();
+        await window.api.onAlbumToPlaylist((e) => handleContextMenuOption(e, id));
+        break;
+      case 'playlist':
+        await window.api.showPlaylistsMenu();
+        await window.api.onRemoveFromPlaylist((e) => handleContextMenuOption(e, id));
+
+        break;
+      default:
+        return;
+    }
+  };
+
   useEffect(() => {
     /* console.log('show more: ', showMore, 'albumPattern: ', albumPattern); */
   }, [showMore, albumPattern]);
@@ -364,6 +413,7 @@ const InfiniteList = ({
         like={item.like}
         audiofile={item.audiofile}
         val={index}
+        showContextMenu={handleContextMenu}
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
@@ -386,6 +436,7 @@ const InfiniteList = ({
         term={item.fullpath}
         fullpath={item.fullpath}
         handleAlbumTracksRequest={handleAlbumTracksRequest}
+        showContextMenu={handleContextMenu}
         showMore={showMore}
         albumPattern={albumPattern}
         albumTracksLength={albumTracks.length}
@@ -411,6 +462,7 @@ const InfiniteList = ({
         like={item.like}
         audiofile={item.audiofile}
         val={index}
+        showContextMenu={handleContextMenu}
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}

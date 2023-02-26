@@ -176,7 +176,7 @@ function App() {
 
   useEffect(() => {
     state.audioRef.current.onvolumechange = () => {
-      console.log(state.audioRef.current.volume);
+      console.log('onvolumechange: ', state.audioRef.current.volume);
     };
   });
 
@@ -212,6 +212,12 @@ function App() {
     if (state.player && state.minimalmode && state.miniModePlaylist) changeExpandMini();
     if (!state.minimalmode && state.player) changeDefault();
   }, [state.minimalmode, state.player, state.miniModePlaylist]);
+
+  /*   useEffect(() => {
+    if (state.playlistTracks[0]) {
+      TrackSelector(state.playlistTracks[0], state, dispatch);
+    }
+  }, [state.playlistTracks[0]]); */
 
   const handleMainNav = (e) => {
     switch (e.currentTarget.id) {

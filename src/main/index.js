@@ -497,3 +497,42 @@ ipcMain.handle('test-global', async (_, ...args) => {
     console.log(err.message);
   }
 });
+
+ipcMain.handle('show-tracks-menu', (event) => {
+  const template = [
+    {
+      label: 'add track to playlist',
+      click: () => {
+        return event.sender.send('track-to-playlist', 'add track to playlist');
+      }
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  menu.popup(BrowserWindow.fromWebContents(event.sender));
+});
+
+ipcMain.handle('show-albums-menu', (event) => {
+  const template = [
+    {
+      label: 'add album to playlist',
+      click: () => {
+        event.sender.send('album-to-playlist', 'add album to playlist');
+      }
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  menu.popup(BrowserWindow.fromWebContents(event.sender));
+});
+
+ipcMain.handle('show-playlists-menu', (event) => {
+  const template = [
+    {
+      label: 'remove from playlist',
+      click: () => {
+        event.sender.send('remove-from-playlist', 'remove from playlist');
+      }
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  menu.popup(BrowserWindow.fromWebContents(event.sender));
+});

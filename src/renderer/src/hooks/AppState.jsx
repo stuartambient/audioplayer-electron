@@ -156,6 +156,13 @@ const AppState = () => {
           playlistTracks: [...state.playlistTracks, ...action.playlistTracks]
         };
       }
+      case 'track-to-playlist': {
+        return {
+          ...state,
+          /*  tracks: action.tracks */
+          playlistTracks: action.playlistTracks
+        };
+      }
       case 'albums-playlist': {
         return {
           ...state,

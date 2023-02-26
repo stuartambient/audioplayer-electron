@@ -15,6 +15,7 @@ const Item = forwardRef(
       title,
       audiofile,
       like,
+      showContextMenu,
 
       /* ALBUMS */
       album,
@@ -36,7 +37,13 @@ const Item = forwardRef(
     /* console.log('checked: ', checked); */
     if (type === 'file') {
       return (
-        <div id={divId} className={className} ref={ref}>
+        <div
+          id={divId}
+          className={className}
+          ref={ref}
+          fromlisttype={type}
+          onContextMenu={showContextMenu}
+        >
           <a
             href={href}
             id={id}
@@ -58,7 +65,13 @@ const Item = forwardRef(
 
     if (type === 'folder') {
       return (
-        <div id={id} className={className} ref={ref}>
+        <div
+          id={id}
+          className={className}
+          ref={ref}
+          fromlisttype={type}
+          onContextMenu={showContextMenu}
+        >
           <a href={href} id={id} val={val} onClick={(e) => e.preventDefault()}>
             {foldername}
           </a>
@@ -83,12 +96,18 @@ const Item = forwardRef(
     }
     if (type === 'playlist') {
       return (
-        <div id={divId} className={className} ref={ref}>
+        <div
+          id={divId}
+          className={className}
+          ref={ref}
+          fromlisttype={type}
+          onContextMenu={showContextMenu}
+        >
           <a
             href={href}
             id={id}
             val={val}
-            fromlisttype={type}
+            onContextMenu={showContextMenu}
             onClick={(e) =>
               handleTrackSelection(e, state, dispatch, artist, title, album, audiofile, like)
             }

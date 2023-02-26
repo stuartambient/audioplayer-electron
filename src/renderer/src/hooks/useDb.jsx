@@ -317,7 +317,7 @@ const useGetPlaylists = () => {
   return { myPlaylists };
 };
 
-const useRandomTracks = (shuffledTracksPageNumber, state, dispatch, shuffle) => {
+/* const useRandomTracks = (shuffledTracksPageNumber, state, dispatch, shuffle) => {
   const [shuffledLoading, setShuffledLoading] = useState(true);
   const [shuffledError, setShuffledError] = useState(false);
   const [hasMoreShuffled, setHasMoreShuffled] = useState(false);
@@ -347,8 +347,8 @@ const useRandomTracks = (shuffledTracksPageNumber, state, dispatch, shuffle) => 
     if (shuffledTracksPageNumber) shuffleTracks();
     return () => (isSubscribed = false);
   }, [shuffledTracksPageNumber]);
-  return { shuffledLoading, hasMoreShuffled, shuffledError };
-};
+  return { shuffledLoading, hasMoreShuffled, shuffledError }; */
+//};
 
 export {
   useTracks,
