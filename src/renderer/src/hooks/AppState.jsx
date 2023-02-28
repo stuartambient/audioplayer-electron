@@ -37,6 +37,7 @@ const AppState = () => {
     playlistTracks: [],
     shuffledTracks: [],
     shuffledTracksPageNumber: 0,
+    albumsInPlaylist: [],
 
     listType: 'files',
     selectedTrackListType: 'file',
@@ -156,13 +157,7 @@ const AppState = () => {
           playlistTracks: [...state.playlistTracks, ...action.playlistTracks]
         };
       }
-      case 'track-to-playlist': {
-        return {
-          ...state,
-          /*  tracks: action.tracks */
-          playlistTracks: action.playlistTracks
-        };
-      }
+
       case 'albums-playlist': {
         return {
           ...state,
@@ -234,10 +229,28 @@ const AppState = () => {
           playlistTracks: action.playlistTracks
         };
       }
+
       case 'play-album': {
         return {
           ...state,
-          playlistTracks: [...state.playlistTracks, ...action.playlistTracks]
+          playlistTracks: [
+            ...state.playlistTracks,
+            ...action.playlistTracks.filter(
+              (p) => !state.playlistTracks.find((d) => d.afid === p.afid)
+            )
+          ]
+        };
+      }
+      case 'track-to-playlist': {
+        return {
+          ...state,
+          /*  tracks: action.tracks */
+          playlistTracks: [
+            ...state.playlistTracks,
+            ...action.playlistTracks.filter(
+              (p) => !state.playlistTracks.find((d) => d.afid === p.afid)
+            )
+          ]
         };
       }
 
@@ -286,6 +299,12 @@ const AppState = () => {
       }
       case 'seeking': {
         return { ...state, seeking: action.seeking };
+      }
+      case 'albums-in-playlist': {
+        return {
+          ...state,
+          albumsInPlaylist: action.albumsInPlaylist
+        };
       }
 
       default:

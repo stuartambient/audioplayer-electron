@@ -43,9 +43,12 @@ const InfiniteList = ({
 
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
-  const [sortType, setSortType] = useState('createdon');
+  const [sortType, setSortTypescrollRef] = useState('createdon');
   const [resetKey, setResetKey] = useState(null);
-  const [checkbox, setCheckbox] = useState([]);
+  const [flashDiv, setFlashDiv] = useState({ type: '', id: '' });
+  const [loadedAlbums, setLoadedAlbums] = useState([]);
+
+  /* const [albumId, setAlbumId] = useState([]); */
   const [playlistReq, setPlaylistReq] = useState('');
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
@@ -66,7 +69,7 @@ const InfiniteList = ({
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
 
-  usePlaylist(checkbox[checkbox.length - 1]?.id, dispatch);
+  /*   usePlaylist(albumId, dispatch); */
 
   usePlaylistDialog(playlistReq, playlistTracks, dispatch);
 
@@ -90,7 +93,11 @@ const InfiniteList = ({
   });
 
   const scrollRef = useRef();
-  const searchRef = useRef();
+  /*   const searchRef = useRef(); */
+
+  /*   useEffect(() => {
+    console.log('album id: ', albumId);
+  }, [albumId]); */
 
   /* HERE */
   useEffect(() => {
@@ -208,26 +215,6 @@ const InfiniteList = ({
     }
   };
 
-  const handleListCheckboxes = (e) => {
-    e.preventDefault();
-    /* e.target.checked === false ? (e.target.checked = true) : (e.target.checked = false); */
-    const datatype = e.target.getAttribute('data-type');
-
-    switch (datatype) {
-      case 'album':
-        const isExist = checkbox.find(({ id }) => id === e.target.id);
-        if (isExist) {
-          const delCurrent = checkbox.filter((i) => i.id !== e.target.id);
-          return setCheckbox(delCurrent);
-        }
-
-        setCheckbox([...checkbox, { checked: !checkbox.checked, id: e.target.id }]);
-        break;
-      default:
-        return;
-    }
-  };
-
   const handlePlaylistFiles = (e) => {
     switch (e.target.id) {
       case 'playlist-save':
@@ -248,23 +235,51 @@ const InfiniteList = ({
 
   const handleListScroll = (e) => {};
 
-  const handleContextMenuOption = async (option, id) => {
-    console.log('id: ', id);
-    /*  const evnt = Object.keys(option.sender._events);
-    const selection = evnt.pop(); */
-    console.log(option[0] === 'track-to-playlist', option[0]);
+  useEffect(() => {
+    /* const splitid = e.target.id.split('--')[0];
+    const id = splitid; */
+    let justId;
+    if (flashDiv.id !== '' && flashDiv.type !== '') {
+      if (flashDiv.id.endsWith('--item-div')) {
+        justId = flashDiv.id.split('--')[0];
+      } else {
+        justId = flashDiv.id;
+      }
+      /* if (state.playlistTracks.find((pl) => pl.afid === justId)) return; */
+      const item = document.getElementById(flashDiv.id);
+      item.classList.add('flash');
+    }
+  }, [flashDiv]);
 
+  const handleContextMenuOption = async (option, id, term = null) => {
     if (option[0] === 'add track to playlist') {
       const track = tracks.find((item) => item.afid === id);
+
       if (track) {
         dispatch({
           type: 'track-to-playlist',
           playlistTracks: [...playlistTracks, track]
         });
+        if (!playlistTracks.find((e) => e.afid === id)) {
+          setFlashDiv({ type: 'file', id: `${id}--item-div` });
+        } else {
+          return;
+        }
       }
     }
-    if (option === 'add album to playlist') {
-      console.log('album-to-playlist');
+    if (option[0] === 'add album to playlist') {
+      console.log(id);
+      const albumTracks = await window.api.getAlbumTracks(term);
+      dispatch({
+        type: 'play-album',
+        playlistTracks: albumTracks
+      });
+      if (!loadedAlbums.includes(id)) {
+        setLoadedAlbums([...loadedAlbums, id]);
+        setFlashDiv({ type: 'folder', id: id });
+      } else {
+        return;
+      }
     }
     if (option === 'remove from playlist') {
       console.log('remove-from-playlist');
@@ -272,6 +287,8 @@ const InfiniteList = ({
   };
 
   const handleContextMenu = async (e) => {
+    e.preventDefault();
+    const term = e.target.getAttribute('fullpath');
     const type = e.target.getAttribute('fromlisttype');
     if (type === null) return;
     const splitid = e.target.id.split('--')[0];
@@ -280,11 +297,10 @@ const InfiniteList = ({
       case 'file':
         await window.api.showTracksMenu();
         await window.api.onTrackToPlaylist((e) => handleContextMenuOption(e, id));
-
         break;
       case 'folder':
         await window.api.showAlbumsMenu();
-        await window.api.onAlbumToPlaylist((e) => handleContextMenuOption(e, id));
+        await window.api.onAlbumToPlaylist((e) => handleContextMenuOption(e, id, term));
         break;
       case 'playlist':
         await window.api.showPlaylistsMenu();
@@ -441,8 +457,6 @@ const InfiniteList = ({
         albumPattern={albumPattern}
         albumTracksLength={albumTracks.length}
         albumsTracks={albumsTracks}
-        handleListCheckboxes={handleListCheckboxes}
-        checked={checkbox.find((k) => k.id === item.id)}
       ></Item>
     );
   });

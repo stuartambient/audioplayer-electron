@@ -144,10 +144,10 @@ const usePlaylist = (id, dispatch) => {
         return;
       }
     };
-    if (id) {
-      loadAlbum();
-      return () => (subscribed = false);
-    }
+    if (!id) return;
+
+    loadAlbum();
+    return () => (subscribed = false);
   }, [id]);
   return;
 };

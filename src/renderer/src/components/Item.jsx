@@ -1,5 +1,6 @@
 import { forwardRef, useState } from 'react';
 import { Plus, Minus } from '../assets/icons';
+import { BsThreeDots } from 'react-icons/bs';
 
 const Item = forwardRef(
   (
@@ -27,7 +28,6 @@ const Item = forwardRef(
       handleAlbumTracksRequest,
       term,
       fullpath,
-      handleListCheckboxes,
       checked,
       state,
       dispatch
@@ -36,13 +36,14 @@ const Item = forwardRef(
   ) => {
     /* console.log('checked: ', checked); */
     if (type === 'file') {
+      /* console.log('ref: ', ref); */
       return (
         <div
           id={divId}
           className={className}
           ref={ref}
           fromlisttype={type}
-          onContextMenu={showContextMenu}
+          /* onContextMenu={showContextMenu} */
         >
           <a
             href={href}
@@ -59,30 +60,25 @@ const Item = forwardRef(
             <br></br>
             Album: {album}
           </a>
+          <div className="item-menu">
+            <BsThreeDots onContextMenu={showContextMenu} fromlisttype={type} id={divId} />
+          </div>
         </div>
       );
     }
 
     if (type === 'folder') {
       return (
-        <div
-          id={id}
-          className={className}
-          ref={ref}
-          fromlisttype={type}
-          onContextMenu={showContextMenu}
-        >
+        <div id={id} className={className} ref={ref} fromlisttype={type}>
           <a href={href} id={id} val={val} onClick={(e) => e.preventDefault()}>
             {foldername}
           </a>
-          <div>
-            <input
-              type="checkbox"
+          <div className="item-menu" fullpath={fullpath}>
+            <BsThreeDots
+              onContextMenu={showContextMenu}
+              fromlisttype={type}
               id={id}
-              checked={checked}
-              data-type="album"
-              value={fullpath}
-              onChange={handleListCheckboxes}
+              fullpath={fullpath}
             />
           </div>
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>

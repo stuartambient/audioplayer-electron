@@ -516,7 +516,7 @@ ipcMain.handle('show-albums-menu', (event) => {
     {
       label: 'add album to playlist',
       click: () => {
-        event.sender.send('album-to-playlist', 'add album to playlist');
+        return event.sender.send('album-to-playlist', 'add album to playlist');
       }
     }
   ];

@@ -7,7 +7,7 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
 
-const RecentAdditions = ({ dispatch, covers, coversPageNumber }) => {
+const RecentAdditions = ({ state, dispatch, covers, coversPageNumber }) => {
   const { last10Albums } = useLast10AlbumsStat();
   const { last100Tracks } = useLast100TracksStat();
   const [viewMore, setViewMore] = useState(false);
@@ -42,13 +42,18 @@ const RecentAdditions = ({ dispatch, covers, coversPageNumber }) => {
 
   const handleAlbumToPlaylist = async (e) => {
     e.preventDefault();
+    /* if (state.albumsInPlaylist.includes(e.target.id)) return; */
+    console.log(e.target.id);
     const albumTracks = await window.api.getAlbumTracks(e.target.id);
-    console.log(albumTracks);
     if (albumTracks) {
       dispatch({
         type: 'play-album',
         playlistTracks: albumTracks
       });
+      /*   dispatch({
+        type: 'albums-in-playlist',
+        albumsInPlaylist: [...state.albumsInPlaylist, e.target.id]
+      }); */
     }
   };
 

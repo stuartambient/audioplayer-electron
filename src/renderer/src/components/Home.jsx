@@ -35,6 +35,7 @@ const Home = ({ state, dispatch }) => {
 
       {homepage === 'recent-additions' && (
         <RecentAdditions
+          state={state}
           dispatch={dispatch}
           covers={state.covers}
           coversPageNumber={state.coversPageNumber}
