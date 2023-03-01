@@ -43,7 +43,7 @@ const InfiniteList = ({
 
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
-  const [sortType, setSortTypescrollRef] = useState('createdon');
+  const [sortType, setSortType /* scrollRef */] = useState('createdon');
   const [resetKey, setResetKey] = useState(null);
   const [flashDiv, setFlashDiv] = useState({ type: '', id: '' });
   const [loadedAlbums, setLoadedAlbums] = useState([]);
@@ -101,7 +101,7 @@ const InfiniteList = ({
 
   /* HERE */
   useEffect(() => {
-    if (listType === 'file') {
+    if (listType === 'files') {
       if (currentTrack >= 0 && tracks[currentTrack + 1]) {
         dispatch({
           type: 'set-next-track',
@@ -129,7 +129,7 @@ const InfiniteList = ({
         });
       }
     }
-  }, [currentTrack, tracks, playlistTracks, state.selectedTrackListType, dispatch]);
+  }, [currentTrack, tracks, playlistTracks, listType, dispatch]);
 
   /* HERE */
   /*   useEffect(() => {
@@ -240,11 +240,11 @@ const InfiniteList = ({
     const id = splitid; */
     let justId;
     if (flashDiv.id !== '' && flashDiv.type !== '') {
-      if (flashDiv.id.endsWith('--item-div')) {
+      /*  if (flashDiv.id.endsWith('--item-div')) {
         justId = flashDiv.id.split('--')[0];
       } else {
         justId = flashDiv.id;
-      }
+      } */
       /* if (state.playlistTracks.find((pl) => pl.afid === justId)) return; */
       const item = document.getElementById(flashDiv.id);
       item.classList.add('flash');
@@ -274,6 +274,14 @@ const InfiniteList = ({
         type: 'play-album',
         playlistTracks: albumTracks
       });
+      const incompleteAlbum = albumTracks.filter((track) =>
+        playlistTracks.find((t) => t.afid === track.afid)
+      );
+      if (incompleteAlbum.length < albumTracks.length) {
+        const removeAlbum = loadedAlbums.filter((la) => la !== id);
+        setLoadedAlbums(removeAlbum);
+        setFlashDiv({ type: 'folder', id: id });
+      }
       if (!loadedAlbums.includes(id)) {
         setLoadedAlbums([...loadedAlbums, id]);
         setFlashDiv({ type: 'folder', id: id });
@@ -281,8 +289,12 @@ const InfiniteList = ({
         return;
       }
     }
-    if (option === 'remove from playlist') {
-      console.log('remove-from-playlist');
+    if (option[0] === 'remove from playlist') {
+      const removeTrack = playlistTracks.filter((track) => track.afid !== id);
+      dispatch({
+        type: 'playlist-clear',
+        playlistTracks: removeTrack
+      });
     }
   };
 

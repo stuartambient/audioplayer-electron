@@ -251,6 +251,7 @@ ipcMain.handle('create-table', () => {
 });
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
+  console.log('sort: ', args[2]);
   if (args[1] === '') {
     const alltracks = await allTracksByScroll(args[0]);
     return alltracks;
@@ -529,7 +530,7 @@ ipcMain.handle('show-playlists-menu', (event) => {
     {
       label: 'remove from playlist',
       click: () => {
-        event.sender.send('remove-from-playlist', 'remove from playlist');
+        return event.sender.send('remove-from-playlist', 'remove from playlist');
       }
     }
   ];

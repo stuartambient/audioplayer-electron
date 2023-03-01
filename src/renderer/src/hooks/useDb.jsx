@@ -30,7 +30,7 @@ const useTracks = (
     const loadTracks = async () => {
       setTracksLoading(true);
       setTracksError(false);
-      let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm);
+      let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm, sortType);
       if (trackRequest && isSubscribed) {
         dispatch({
           type: 'tracks-playlist',

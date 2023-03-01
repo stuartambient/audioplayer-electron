@@ -38,6 +38,10 @@ textarea {
   background: black;
 }
 
+.container-maximized {
+  grid-template-columns: 25vw 75vw;
+}
+
 .container-minimal {
   /*  grid-auto-rows: 30px;
   grid-template-columns: none; */

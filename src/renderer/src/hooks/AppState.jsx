@@ -98,6 +98,7 @@ const AppState = () => {
         };
       }
       case 'set-next-track': {
+        console.log('next-track');
         return {
           ...state,
           nextTrack: action.nextTrack

@@ -219,7 +219,7 @@ function App() {
     }
   }, [state.playlistTracks[0]]); */
 
-  const handleMainNav = (e) => {
+  const handleMainNav = async (e) => {
     switch (e.currentTarget.id) {
       case 'close':
         /* window.api.appClose(); */
@@ -228,6 +228,9 @@ function App() {
         window.api.appMinimize();
         break;
       case 'maximize':
+        /* if (minimalmode) {
+          await window.api.screenMode('default');
+        } */
         dispatch({
           type: 'set-maximize',
           maximized: !state.maximized
@@ -316,6 +319,9 @@ function App() {
     if (state.minimalmode && state.player) {
       return 'container container-minimal';
     }
+    if (state.maximized) {
+      return 'container container-maximized';
+    }
 
     if (state.player || state.minimalmode) {
       return 'container container-player';
@@ -356,6 +362,7 @@ function App() {
           minimalmode={state.minimalmode}
           home={state.home}
           minimalmodeInfo={state.minimalmodeInfo}
+          maximized={state.maximized}
         >
           {!state.minimalmode && (
             <>
@@ -369,14 +376,16 @@ function App() {
                 shuffle={state.shuffle}
                 library={state.library}
               />
-              <Extras
-                handlePlayerControls={handlePlayerControls}
-                volume={state.audioRef.current.volume}
-                seeking={state.seeking}
-                library={state.library}
-                shuffle={state.shuffle}
-                home={state.home}
-              />
+              {!state.home && (
+                <Extras
+                  handlePlayerControls={handlePlayerControls}
+                  volume={state.audioRef.current.volume}
+                  seeking={state.seeking}
+                  library={state.library}
+                  shuffle={state.shuffle}
+                  home={state.home}
+                />
+              )}
             </>
           )}
         </Player>

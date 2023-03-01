@@ -22,6 +22,7 @@ const Player = ({
   currentTime,
   pause,
   onClick,
+  maximized,
   audioRef,
   library,
   active,
@@ -81,6 +82,10 @@ const Player = ({
   const playerClassNames = () => {
     if (!library && !minimalmode && !home) {
       return 'audio-player centered';
+    }
+
+    if (maximized && !home) {
+      return 'audio-player audio-player--maximized';
     }
     if (home) {
       return 'audio-player--homepage';

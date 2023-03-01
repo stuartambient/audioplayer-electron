@@ -34,6 +34,26 @@
   justify-self: center;
 }
 
+.audio-player--maximized {
+  height: 100vh;
+  /* grid-template-rows: auto 400px repeat(6, auto); */
+  grid-template-rows: 10% 20% repeat(6, 10%);
+}
+
+.audio-player .image {
+  grid-area: image;
+}
+
+.audio-player .image img {
+  width: 200px;
+  height: 200px;
+}
+
+.audio-player--maximized .image img {
+  width: 400px;
+  height: 400px;
+}
+
 .audio-player .title {
   grid-area: title;
   white-space: nowrap;
@@ -78,15 +98,6 @@
   to {
     margin-left: 120%;
   }
-}
-
-.audio-player .image {
-  grid-area: image;
-}
-
-.audio-player .image img {
-  width: 200px;
-  height: 200px;
 }
 
 .audio-player .metadata {

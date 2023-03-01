@@ -92,18 +92,11 @@ const Item = forwardRef(
     }
     if (type === 'playlist') {
       return (
-        <div
-          id={divId}
-          className={className}
-          ref={ref}
-          fromlisttype={type}
-          onContextMenu={showContextMenu}
-        >
+        <div id={divId} className={className} ref={ref} fromlisttype={type}>
           <a
             href={href}
             id={id}
             val={val}
-            onContextMenu={showContextMenu}
             onClick={(e) =>
               handleTrackSelection(e, state, dispatch, artist, title, album, audiofile, like)
             }
@@ -114,6 +107,9 @@ const Item = forwardRef(
             <br></br>
             Album: {album}
           </a>
+          <div className="item-menu">
+            <BsThreeDots onContextMenu={showContextMenu} fromlisttype={type} id={divId} />
+          </div>
         </div>
       );
     }
