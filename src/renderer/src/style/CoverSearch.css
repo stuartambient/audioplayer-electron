@@ -1,0 +1,53 @@
+.coversearch {
+  grid-column: 2 / 3;
+  grid-row: 2 / 4;
+  min-height: 100%;
+  color: white;
+  display: grid;
+  grid-template-columns: repeat(2, 50%);
+  grid-auto-rows: 3rem repeat(3, 1fr);
+}
+
+.coversearch .coversmenu {
+  grid-row: 1 / 2;
+  display: flex;
+}
+
+.coverlinks {
+  margin: 0.8rem 0.5rem;
+  grid-column: 1 / 2;
+}
+
+.coverlinks:hover {
+  cursor: pointer;
+  color: var(--blue1);
+}
+
+.missingcovers {
+  grid-column: 1 / 2;
+  grid-row: 2 / 5;
+  list-style: none;
+  margin-left: 0.5rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.missingcovers li {
+  margin: 0.2rem 0;
+  border: 1px solid var(--blue3);
+  border-radius: 5px;
+}
+
+.missingcovers li:hover {
+  cursor: pointer;
+  background: var(--blue3);
+  border: 1px solid white;
+}
+
+.searchitem {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  align-self: center;
+  border: 1px solid white;
+  background: var(--blue3);
+}

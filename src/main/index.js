@@ -30,7 +30,9 @@ import {
   getAlbum,
   getPlaylist,
   getFiles,
-  getAllTracks
+  getAllTracks,
+  insertCovers,
+  getMissingCovers
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
@@ -38,6 +40,7 @@ import {
 import { totalTracks, topTenArtists, last10Albums, last100Tracks } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
+import initCovers from './updateFolderCovers';
 
 /* const db = new Database('music.db', { verbose: console.log });
 console.log(db); */
@@ -242,6 +245,18 @@ ipcMain.handle('update-folders', async () => {
 ipcMain.handle('update-files', async () => {
   const result = await initFiles();
   processUpdateResult('file', result);
+  return result;
+});
+
+ipcMain.handle('update-covers', async () => {
+  console.log('update covers');
+  const result = await initCovers();
+  const insertresult = insertCovers(result);
+});
+
+ipcMain.handle('missing-covers', async () => {
+  const result = getMissingCovers();
+  console.log(result);
   return result;
 });
 

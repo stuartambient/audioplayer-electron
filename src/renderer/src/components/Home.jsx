@@ -5,12 +5,14 @@ import Playlists from './Playlists';
 import '../style/Home.css';
 import RecentAdditions from './RecentAdditions';
 import Player from './Player';
+import CoverSearch from './CoverSearch';
 
 const Home = ({ state, dispatch }) => {
   const [homepage, setHomePage] = useState('recent-additions');
   /*   const { state, dispatch } = AppState(); */
 
   const handleHomePage = (e) => {
+    console.log(e.currentTarget.id);
     setHomePage(e.currentTarget.id);
   };
   return (
@@ -26,8 +28,8 @@ const Home = ({ state, dispatch }) => {
         <li className="home-cards--item" id="playlists" onClick={handleHomePage}>
           <h5>Playlists</h5>
         </li>
-        <li className="home-cards--item" id="genres" onClick={handleHomePage}>
-          <h5>Genres</h5>
+        <li className="home-cards--item" id="coversearch" onClick={handleHomePage}>
+          <h5>Cover search</h5>
         </li>
         <li className="home-cards--item">5</li>
         <li className="home-cards--item">6</li>
@@ -43,6 +45,7 @@ const Home = ({ state, dispatch }) => {
       )}
       {homepage === 'stats' && <Stats />}
       {homepage === 'playlists' && <Playlists />}
+      {homepage === 'coversearch' && <CoverSearch />}
     </>
   );
 };

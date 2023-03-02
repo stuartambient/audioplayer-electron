@@ -5,6 +5,8 @@ import { electronAPI } from '@electron-toolkit/preload';
 const api = {
   updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
+  updateCovers: () => ipcRenderer.invoke('update-covers'),
+  missingCovers: () => ipcRenderer.invoke('missing-covers'),
   createTable: () => ipcRenderer.invoke('create-table'),
   getTracks: (page, term, sort) => ipcRenderer.invoke('get-tracks', page, term, sort),
   getAlbums: (page, term) => ipcRenderer.invoke('get-albums', page, term),
