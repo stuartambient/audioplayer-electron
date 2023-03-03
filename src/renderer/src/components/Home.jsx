@@ -12,24 +12,41 @@ const Home = ({ state, dispatch }) => {
   /*   const { state, dispatch } = AppState(); */
 
   const handleHomePage = (e) => {
-    console.log(e.currentTarget.id);
     setHomePage(e.currentTarget.id);
   };
   return (
     <>
       <ul className="home-cards" style={{ color: 'white' }}>
-        <li className="home-cards--item" id="recent-additions" onClick={handleHomePage}>
-          <h5>Recent additions</h5>
+        <li
+          className={
+            homepage === 'recent-additions' ? 'home-cards--item active' : 'home-cards--item'
+          }
+          id="recent-additions"
+          onClick={handleHomePage}
+        >
+          <span>Recent additions</span>
         </li>
-        <li className="home-cards--item" id="stats" onClick={handleHomePage}>
-          <h5>Stats</h5>
+        <li
+          className={homepage === 'stats' ? 'home-cards--item active' : 'home-cards--item'}
+          id="stats"
+          onClick={handleHomePage}
+        >
+          <span>Stats</span>
           {/* <Stats /> */}
         </li>
-        <li className="home-cards--item" id="playlists" onClick={handleHomePage}>
-          <h5>Playlists</h5>
+        <li
+          className={homepage === 'playlists' ? 'home-cards--item active' : 'home-cards--item'}
+          id="playlists"
+          onClick={handleHomePage}
+        >
+          <span>Playlists</span>
         </li>
-        <li className="home-cards--item" id="coversearch" onClick={handleHomePage}>
-          <h5>Cover search</h5>
+        <li
+          className={homepage === 'coversearch' ? 'home-cards--item active' : 'home-cards--item'}
+          id="coversearch"
+          onClick={handleHomePage}
+        >
+          <span>Cover search</span>
         </li>
         <li className="home-cards--item">5</li>
         <li className="home-cards--item">6</li>

@@ -64,7 +64,6 @@ const insertCovers = (covers) => {
       }
   });
   const info = insertMany(covers);
-  console.log(covers);
 };
 
 const getMissingCovers = () => {

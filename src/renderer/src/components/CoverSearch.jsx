@@ -30,17 +30,18 @@ const CoverSearch = () => {
           Missing Covers
         </span>
       </nav>
-
-      <ul className="missingcovers">
-        {missingCovers.map((c, i) => {
-          return (
-            <li key={i} id={c.coversearchname} onClick={handleItem}>
-              {c.coversearchname}
-            </li>
-          );
-        })}
-      </ul>
-      <p className="searchitem">{searchItem}</p>
+      {missingCovers && (
+        <ul className="missingcovers">
+          {missingCovers.map((c, i) => {
+            return (
+              <li key={i} id={c.coversearchname} onClick={handleItem}>
+                {c.coversearchname}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {searchItem !== '' && <p className="searchitem">{searchItem}</p>}
     </div>
   );
 };

@@ -251,12 +251,15 @@ ipcMain.handle('update-files', async () => {
 ipcMain.handle('update-covers', async () => {
   console.log('update covers');
   const result = await initCovers();
-  const insertresult = insertCovers(result);
+  /*   const insertresult = insertCovers(result); */
+  for await (const r of result) {
+    let tmp = await fs.promises.readdir(r.path);
+    console.log(tmp[0]);
+  }
 });
 
 ipcMain.handle('missing-covers', async () => {
   const result = getMissingCovers();
-  console.log(result);
   return result;
 });
 
