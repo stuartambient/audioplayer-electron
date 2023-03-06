@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { GiMagnifyingGlass } from 'react-icons/gi';
 import Stats from './Stats';
 import Playlists from './Playlists';
 /* import AppState from '../hooks/AppState'; */
@@ -14,6 +15,13 @@ const Home = ({ state, dispatch }) => {
   const handleHomePage = (e) => {
     setHomePage(e.currentTarget.id);
   };
+
+  const handleCoversSearchTerm = (e) => {
+    dispatch({
+      type: 'covers-search-term',
+      coversSearchTerm: e.target.value
+    });
+  };
   return (
     <>
       <ul className="home-cards" style={{ color: 'white' }}>
@@ -26,6 +34,21 @@ const Home = ({ state, dispatch }) => {
         >
           <span>Recent additions</span>
         </li>
+        {/* <li className="covers-search"></li> */}
+        {homepage === 'recent-additions' && (
+          <li className="covers-search-form">
+            <input
+              className={
+                homepage === 'recent-additions' ? 'search-covers search-active' : 'search-covers'
+              }
+              id="search-covers"
+              placeholder="search covers"
+              value={state.coversSearchTerm}
+              onChange={handleCoversSearchTerm}
+            />
+            <GiMagnifyingGlass />
+          </li>
+        )}
         <li
           className={homepage === 'stats' ? 'home-cards--item active' : 'home-cards--item'}
           id="stats"
@@ -48,8 +71,6 @@ const Home = ({ state, dispatch }) => {
         >
           <span>Cover search</span>
         </li>
-        <li className="home-cards--item">5</li>
-        <li className="home-cards--item">6</li>
       </ul>
 
       {homepage === 'recent-additions' && (
@@ -58,6 +79,7 @@ const Home = ({ state, dispatch }) => {
           dispatch={dispatch}
           covers={state.covers}
           coversPageNumber={state.coversPageNumber}
+          coversSearchTerm={state.coversSearchTerm}
         />
       )}
       {homepage === 'stats' && <Stats />}

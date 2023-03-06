@@ -34,6 +34,7 @@ const AppState = () => {
     tracksPageNumber: 0,
     covers: [],
     coversPageNumber: undefined,
+    coversSearchTerm: '',
     playlistTracks: [],
     shuffledTracks: [],
     shuffledTracksPageNumber: 0,
@@ -98,7 +99,6 @@ const AppState = () => {
         };
       }
       case 'set-next-track': {
-        console.log('next-track');
         return {
           ...state,
           nextTrack: action.nextTrack
@@ -305,6 +305,13 @@ const AppState = () => {
         return {
           ...state,
           albumsInPlaylist: action.albumsInPlaylist
+        };
+      }
+
+      case 'covers-search-term': {
+        return {
+          ...state,
+          coversSearchTerm: action.coversSearchTerm
         };
       }
 

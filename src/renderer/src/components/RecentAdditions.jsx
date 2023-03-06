@@ -3,18 +3,20 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 import { useLast10AlbumsStat, useLast100TracksStat, useAllAlbumsCovers } from '../hooks/useDb';
+import { BsThreeDots } from 'react-icons/bs';
 import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
 
-const RecentAdditions = ({ state, dispatch, covers, coversPageNumber }) => {
+const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSearchTerm }) => {
   const { last10Albums } = useLast10AlbumsStat();
   const { last100Tracks } = useLast100TracksStat();
   const [viewMore, setViewMore] = useState(false);
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     coversPageNumber,
-    dispatch
+    dispatch,
+    coversSearchTerm
   );
 
   /*   const coversObserver = useRef();
@@ -57,6 +59,13 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber }) => {
     }
   };
 
+  const handleContextMenuOption = async (option, id = null) => {
+    console.log('e: ', option[0]);
+    if (option[0] === 'search for cover') {
+      window.api.showChild({ random: [1, 2, 3], title: 'king', more: [{ a: 'bc', b: 'cd' }] });
+    }
+  };
+
   const handleViewMoreCovers = () => {
     if (!viewMore) setViewMore(true);
     if (!coversPageNumber)
@@ -68,6 +77,13 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber }) => {
       type: 'set-covers-pagenumber',
       coversPageNumber: coversPageNumber + 1
     });
+  };
+
+  const handleContextMenu = async (e) => {
+    e.preventDefault();
+    console.log(e.target.id);
+    await window.api.showAlbumCoverMenu();
+    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e));
   };
 
   return (
@@ -85,6 +101,14 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber }) => {
                 <span onClick={handleAlbumToPlaylist} id={album.fullpath}>
                   {album.foldername}
                 </span>
+                <div className="item-menu">
+                  <BsThreeDots
+                    onContextMenu={handleContextMenu}
+                    /* romlisttype={type} */
+                    id={album.fullpath}
+                    /* fullpath={fullpath} */
+                  />
+                </div>
               </div>
             </li>
           );
@@ -99,6 +123,14 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber }) => {
                   <span onClick={handleAlbumToPlaylist} id={cover.fullpath}>
                     {cover.foldername}
                   </span>
+                  <div className="item-menu">
+                    <BsThreeDots
+                      onContextMenu={handleContextMenu}
+                      /*fromlisttype={type}*/
+                      id={cover.fullpath}
+                      /* fullpath={fullpath} */
+                    />
+                  </div>
                 </div>
               </li>
             );

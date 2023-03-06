@@ -177,14 +177,31 @@ const allAlbumsByScroll = (offsetNum) => {
   return stmt.all();
 };
 
-const allCoversByScroll = (offsetNum) => {
-  console.log('OSNUM: ', offsetNum);
+/* const allAlbumsBySearchTerm = (offsetNum, text) => {
+  const term = `%${text}%`;
   const stmt = db.prepare(
-    `SELECT foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET ${
-      offsetNum * 50
-    }`
+    `SELECT * FROM albums WHERE fullpath LIKE ? LIMIT 50 OFFSET ${offsetNum * 50}`
   );
-  return stmt.all();
+  return stmt.all(term);
+}; */
+
+const allCoversByScroll = (offsetNum, term = null) => {
+  if (term === '') {
+    const stmt = db.prepare(
+      `SELECT foldername, fullpath FROM albums ORDER BY datecreated ASC LIMIT 50 OFFSET ${
+        offsetNum * 50
+      }`
+    );
+    return stmt.all();
+  } else {
+    const searchTerm = `%${term}%`;
+    const stmt = db.prepare(
+      `SELECT foldername, fullpath FROM albums WHERE fullpath LIKE ? ORDER BY datecreated ASC LIMIT 50 OFFSET ${
+        offsetNum * 50
+      }`
+    );
+    return stmt.all(searchTerm);
+  }
 };
 
 const allAlbumsBySearchTerm = (offsetNum, text) => {

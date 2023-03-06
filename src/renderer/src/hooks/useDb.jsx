@@ -191,7 +191,7 @@ const useTopTenArtistsStat = () => {
   return { topTenArtists };
 };
 
-const useAllAlbumsCovers = (coversPageNumber, dispatch) => {
+const useAllAlbumsCovers = (coversPageNumber, dispatch, coversSearchTerm = null) => {
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
@@ -202,7 +202,7 @@ const useAllAlbumsCovers = (coversPageNumber, dispatch) => {
       let success = true;
       setCoversLoading(true);
       setCoversError(false);
-      let coversRequest = await window.api.getCovers(coversPageNumber);
+      let coversRequest = await window.api.getCovers(coversPageNumber, coversSearchTerm);
       if (coversRequest && isSubscribed) {
         /* setCovers([...covers, ...coversRequest]); */
         dispatch({

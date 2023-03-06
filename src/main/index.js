@@ -12,8 +12,10 @@ import {
 import * as path from 'path';
 import fs from 'fs';
 import url, { pathToFileURL } from 'url';
+import http from 'node:http';
 import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
+import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile } from './utility';
 /* import Database from 'better-sqlite3'; */
@@ -248,14 +250,49 @@ ipcMain.handle('update-files', async () => {
   return result;
 });
 
+const checkMBServer = async (albums) => {
+  for await (const a of albums.slice(0, 5)) {
+    const res = await axios
+      .get(`http://musicbrainz.org/ws/2/release-group/?query=${a.folder}&limit=1`)
+      .then((response) => {
+        console.log(
+          a.folder,
+
+          'title: ',
+          response.data['release-groups'][0].title,
+          'artist-name: ',
+          response.data['release-groups'][0]['artist-credit'][0].name,
+          'releases: ',
+          response.data['release-groups'][0].releases
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+};
+
 ipcMain.handle('update-covers', async () => {
-  console.log('update covers');
   const result = await initCovers();
   /*   const insertresult = insertCovers(result); */
   for await (const r of result) {
     let tmp = await fs.promises.readdir(r.path);
-    console.log(tmp[0]);
+
+    if (!tmp[0]) continue;
+    if (tmp[0].endsWith('mp3') || tmp[0].endsWith('flac') || tmp[0].endsWith('ape')) {
+      try {
+        const f = await parseFile(`${r.path}/${tmp[0]}`);
+        if (f.common.picture) {
+          let tmppic = f.common.picture[0].data;
+          fs.promises.writeFile(`${r.path}/cover.jpg`, tmppic);
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    }
   }
+  const newResult = await initCovers();
+  checkMBServer(newResult);
 });
 
 ipcMain.handle('missing-covers', async () => {
@@ -463,7 +500,8 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 });
 
 ipcMain.handle('get-covers', async (_, ...args) => {
-  const albums = await allCoversByScroll(args.join());
+  console.log('....args: ', args[0], args[1]);
+  const albums = await allCoversByScroll(args[0], args[1]);
   const albumsWithImages = await Promise.all(
     albums.map(async (l) => {
       let tmp = await fs.promises.readdir(l.fullpath);
@@ -554,4 +592,37 @@ ipcMain.handle('show-playlists-menu', (event) => {
   ];
   const menu = Menu.buildFromTemplate(template);
   menu.popup(BrowserWindow.fromWebContents(event.sender));
+});
+
+ipcMain.handle('show-album-cover-menu', (event) => {
+  console.log('show album cover menu');
+  const template = [
+    {
+      label: 'search for cover',
+      click: () => {
+        return event.sender.send('album-menu', 'search for cover');
+      }
+    },
+    { type: 'separator' },
+    {
+      label: 'add album to playlist',
+      click: () => {
+        return event.sender.send('album-menu', 'add album to playlist');
+      }
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  menu.popup(BrowserWindow.fromWebContents(event.sender));
+});
+
+ipcMain.handle('show-child', (event, args) => {
+  console.log(args);
+  const newWin = new BrowserWindow({ width: 200, height: 200 });
+  newWin.loadFile(path.join(__dirname, '../renderer/child.html'));
+
+  newWin.on('ready-to-show', () => {
+    /* mainWindow.setMinimumSize(300, 300); */
+    newWin.show();
+    /* console.log('dirname: ', __dirname); */
+  });
 });

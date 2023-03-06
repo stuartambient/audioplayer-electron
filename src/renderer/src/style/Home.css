@@ -11,9 +11,10 @@
   row-gap: 10px;
   justify-content: center; */
   display: flex;
-  min-height: 80vh;
+  /* min-height: 80vh; */
   /* flex-direction: column; */
   justify-content: space-around;
+  align-items: center;
   /* background: #262424; */
 }
 
@@ -25,6 +26,13 @@
   align-items: center;
   padding: 0 0.4rem;
 }
+.home-cards .search-covers {
+  display: none;
+}
+
+.home-cards .search-active {
+  display: inherit;
+}
 
 .home-cards--item:hover {
   cursor: pointer;
@@ -32,6 +40,31 @@
 
 .active {
   background-color: var(--blue4);
+}
+
+.covers-search-form {
+  display: flex;
+  align-items: center;
+  background: white;
+}
+
+.covers-search-form svg {
+  fill: black;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin-right: 0.2rem;
+}
+
+.covers-search-form svg:hover {
+  cursor: pointer;
+}
+
+.covers-search-form input {
+  border-image: none;
+  border: none;
+  outline: none;
+  text-align: center;
+  padding: 0.2rem 0;
 }
 
 .recent-additions {
@@ -57,6 +90,7 @@
   grid-auto-flow: dense;
   overflow-y: scroll;
   overflow-x: hidden;
+  justify-content: center;
 }
 
 .recent-additions--albums li .overlay {
@@ -68,6 +102,7 @@
   color: #fff;
   border-radius: 5px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 106%;

@@ -23,14 +23,14 @@ export default defineConfig({
         '@renderer': resolve('src/renderer/src')
       }
     },
-    /*     build: {
+    build: {
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'src/renderer/index.html'),
           child: resolve(__dirname, 'src/renderer/child.html')
         }
       }
-    }, */
+    },
     plugins: [react()]
   }
 });

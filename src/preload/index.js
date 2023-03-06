@@ -31,17 +31,22 @@ const api = {
   savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks),
   getPlaylists: () => ipcRenderer.invoke('get-playlists'),
   homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id),
-  getCovers: (coversPageNum) => ipcRenderer.invoke('get-covers', coversPageNum),
+  getCovers: (coversPageNum, coversSearchTerm) =>
+    ipcRenderer.invoke('get-covers', coversPageNum, coversSearchTerm),
   getAllTracks: (numofTracks, refreshKey) =>
     ipcRenderer.invoke('get-all-tracks', numofTracks, refreshKey),
   testGlobal: (start, end) => ipcRenderer.invoke('test-global', start, end),
   showTracksMenu: () => ipcRenderer.invoke('show-tracks-menu'),
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
   showPlaylistsMenu: () => ipcRenderer.invoke('show-playlists-menu'),
+  showAlbumCoverMenu: () => ipcRenderer.invoke('show-album-cover-menu'),
   onTrackToPlaylist: (cb) => ipcRenderer.once('track-to-playlist', (event, ...args) => cb(args)),
   onAlbumToPlaylist: (cb) => ipcRenderer.once('album-to-playlist', (event, ...args) => cb(args)),
   onRemoveFromPlaylist: (cb) =>
-    ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args))
+    ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
+  onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
+  showChild: (arr) => ipcRenderer.invoke('show-child', arr)
+  /* onAlbumCoverMenu: (cb) => ipcRenderer.once('add-album-to-playlist', (event, ...args) => cb(args)) */
 };
 
 /* ipcRenderer.on('track-to-playlist', (_event, arg) => {
