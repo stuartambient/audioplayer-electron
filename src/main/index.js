@@ -158,9 +158,9 @@ function createWindow() {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
+    mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`);
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+    mainWindow.loadFile(`path.join(__dirname, '../renderer/index.html`);
   }
 }
 
@@ -595,7 +595,6 @@ ipcMain.handle('show-playlists-menu', (event) => {
 });
 
 ipcMain.handle('show-album-cover-menu', (event) => {
-  console.log('show album cover menu');
   const template = [
     {
       label: 'search for cover',
@@ -616,13 +615,42 @@ ipcMain.handle('show-album-cover-menu', (event) => {
 });
 
 ipcMain.handle('show-child', (event, args) => {
-  console.log(args);
-  const newWin = new BrowserWindow({ width: 200, height: 200 });
-  newWin.loadFile(path.join(__dirname, '../renderer/child.html'));
+  const createChildWindow = () => {
+    const newWin = new BrowserWindow({
+      width: 375,
+      height: 550,
+      show: false,
+      resizable: false,
+      /* title: 'covers', */
+      /* frame: false, */
 
-  newWin.on('ready-to-show', () => {
-    /* mainWindow.setMinimumSize(300, 300); */
-    newWin.show();
-    /* console.log('dirname: ', __dirname); */
-  });
+      webPreferences: {
+        preload: path.join(__dirname, '../preload/child.js'),
+        sandbox: false,
+        webSecurity: false
+        /* nodeIntegration: true */
+      }
+    });
+
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      newWin.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/child.html`);
+    } else {
+      newWin.loadFile(path.join(__dirname, '../renderer/child.html'));
+    }
+    /* newWin.loadFile(path.join(__dirname, '../renderer/child.html')); */
+
+    newWin.on('ready-to-show', () => {
+      newWin.show();
+      /* console.log('dirname: ', __dirname); */
+      newWin.webContents.send('send-to-child', args);
+      /*  const allwindows = BrowserWindow.getAllWindows();
+      allwindows.forEach((win) => console.log(win.id)); */
+    });
+  };
+  const openWindows = BrowserWindow.getAllWindows().length;
+  if (openWindows <= 1) {
+    createChildWindow();
+  } else {
+    newWin.webContents.send('send-to-child', args);
+  }
 });

@@ -2,6 +2,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import { useLast10AlbumsStat, useLast100TracksStat, useAllAlbumsCovers } from '../hooks/useDb';
 import { BsThreeDots } from 'react-icons/bs';
 import NoImage from '../assets/noimage.jpg';
@@ -12,6 +13,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
   const { last10Albums } = useLast10AlbumsStat();
   const { last100Tracks } = useLast100TracksStat();
   const [viewMore, setViewMore] = useState(false);
+  const [coverSearch, setCoverSearch] = useState({ path: '', album: '' });
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     coversPageNumber,
@@ -42,10 +44,46 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
     [coversLoading, hasMoreCovers]
   ); */
 
+  useEffect(() => {
+    const mbrainzSearch = async () => {
+      const res = await axios
+        .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`)
+        .then((response) => {
+          window.api.showChild(response.data);
+          /*  'title: ',
+            response.data['release-groups'][0].title,
+            'artist-name: ',
+            response.data['release-groups'][0]['artist-credit'][0].name,
+            'releases: ',
+            response.data['release-groups'][0].releases */
+
+          /*      console.log(coverSearch);
+
+          console.log(response.data); */
+
+          /* response.data['release-groups'][0]['artist-credit'].forEach((e) => console.log(e.name));
+
+          console.log('title: ', response.data['release-groups'][0].title);
+
+          response.data['release-groups'][0].releases.forEach((e) => console.log(e)); */
+
+          /* const artist = response.data['release-groups'][0]['artist-credit'][0].name.split(' ');
+          console.log(artist, '------', response.data['release-groups'][0]['artist-credit']); */
+          /* response.data['release-groups'][0].releases; */
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    if (coverSearch.path !== '' && coverSearch.album !== '') {
+      mbrainzSearch();
+    }
+  }, [coverSearch]);
+
   const handleAlbumToPlaylist = async (e) => {
     e.preventDefault();
     /* if (state.albumsInPlaylist.includes(e.target.id)) return; */
-    console.log(e.target.id);
+    /* console.log(e.target.id); */
     const albumTracks = await window.api.getAlbumTracks(e.target.id);
     if (albumTracks) {
       dispatch({
@@ -59,10 +97,12 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
     }
   };
 
-  const handleContextMenuOption = async (option, id = null) => {
-    console.log('e: ', option[0]);
+  const handleContextMenuOption = async (option, path, album) => {
+    /* console.log('e: ', option[0]); */
     if (option[0] === 'search for cover') {
-      window.api.showChild({ random: [1, 2, 3], title: 'king', more: [{ a: 'bc', b: 'cd' }] });
+      /* window.api.showChild({ random: [1, 2, 3], title: 'king', more: [{ a: 'bc', b: 'cd' }] }); */
+      setCoverSearch({ path: path, album: album });
+      /*     console.log(path, album); */
     }
   };
 
@@ -81,9 +121,12 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
 
   const handleContextMenu = async (e) => {
     e.preventDefault();
-    console.log(e.target.id);
+    /* console.log(e.target.id); */
+    const pathToAlbum = e.target.getAttribute('fullpath');
+    const album = e.target.getAttribute('album');
+    /* console.log(pathToAlbum, album); */
     await window.api.showAlbumCoverMenu();
-    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e));
+    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
   };
 
   return (
@@ -106,6 +149,8 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
                     onContextMenu={handleContextMenu}
                     /* romlisttype={type} */
                     id={album.fullpath}
+                    fullpath={album.fullpath}
+                    album={album.foldername}
                     /* fullpath={fullpath} */
                   />
                 </div>
@@ -128,7 +173,8 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
                       onContextMenu={handleContextMenu}
                       /*fromlisttype={type}*/
                       id={cover.fullpath}
-                      /* fullpath={fullpath} */
+                      fullpath={cover.fullpath}
+                      album={cover.foldername}
                     />
                   </div>
                 </div>
