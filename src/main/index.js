@@ -146,7 +146,7 @@ function createWindow() {
   });
 
   ipcMain.on('maximize', (events, args) => {
-    console.log('getsize: ', mainWindow.getBounds());
+    /* console.log('getsize: ', mainWindow.getBounds()); */
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize();
     } else {
@@ -175,7 +175,7 @@ app.on('ready', async () => await session.defaultSession.loadExtension(reactDevT
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
-  console.log('getAppPath() - ', app.getAppPath());
+  /* console.log('getAppPath() - ', app.getAppPath()); */
 
   /*   console.log(
     'HOME : ',
@@ -306,7 +306,7 @@ ipcMain.handle('create-table', () => {
 });
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
-  console.log('sort: ', args[2]);
+  /* console.log('sort: ', args[2]); */
   if (args[1] === '') {
     const alltracks = await allTracksByScroll(args[0]);
     return alltracks;
@@ -366,7 +366,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  console.log(args);
+  /* console.log(args); */
   if (args[0] === 'mini') {
     await mainWindow.setMinimumSize(290, 350);
     await mainWindow.setSize(290, 350, false);
@@ -470,7 +470,7 @@ ipcMain.handle('save-playlist', async (_, args) => {
 });
 
 ipcMain.handle('get-playlists', async () => {
-  console.log('get playlists');
+  /* console.log('get playlists'); */
   const playlists = fs.promises.readdir(playlistsFolder);
   return playlists;
 });
@@ -481,17 +481,17 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
   });
   return folderupdates; */
   const [type, value] = args;
-  console.log(type, value);
+  /* console.log(type, value); */
   switch (type) {
     case 'edit':
       const editplfile = await fs.promises.readFile(`${playlistsFolder}\\${value}`, {
         encoding: 'utf8'
       });
-      console.log('plfile: ', editplfile);
+      /* console.log('plfile: ', editplfile); */
       break;
     case 'delete':
       const delplfile = await fs.promises.unlink(`${playlistsFolder}\\${value}`);
-      console.log('del: plfile: ', delplfile);
+      /* console.log('del: plfile: ', delplfile); */
       break;
     case 'play':
     default:
@@ -500,7 +500,7 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 });
 
 ipcMain.handle('get-covers', async (_, ...args) => {
-  console.log('....args: ', args[0], args[1]);
+  /* console.log('....args: ', args[0], args[1]); */
   const albums = await allCoversByScroll(args[0], args[1]);
   const albumsWithImages = await Promise.all(
     albums.map(async (l) => {
@@ -615,9 +615,10 @@ ipcMain.handle('show-album-cover-menu', (event) => {
 });
 
 ipcMain.handle('show-child', (event, args) => {
+  console.log('show-child: ', args);
   const createChildWindow = () => {
     const newWin = new BrowserWindow({
-      width: 375,
+      width: 450,
       height: 550,
       show: false,
       resizable: false,
@@ -648,9 +649,11 @@ ipcMain.handle('show-child', (event, args) => {
     });
   };
   const openWindows = BrowserWindow.getAllWindows().length;
-  if (openWindows <= 1) {
+  /*  console.log('openWindows: ', openWindows); */
+  if (openWindows === 1) {
     createChildWindow();
   } else {
-    newWin.webContents.send('send-to-child', args);
+    /* BrowserWindow.getAllWindows().forEach((e) => console.log(e.id)); */
+    /* return  */ BrowserWindow.fromId(2).webContents.send('send-to-child', args);
   }
 });

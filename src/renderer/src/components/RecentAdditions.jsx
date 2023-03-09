@@ -98,6 +98,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
   };
 
   const handleContextMenuOption = async (option, path, album) => {
+    /* console.log(option, 'path: ', path, 'album: ', album); */
     /* console.log('e: ', option[0]); */
     if (option[0] === 'search for cover') {
       /* window.api.showChild({ random: [1, 2, 3], title: 'king', more: [{ a: 'bc', b: 'cd' }] }); */
@@ -121,9 +122,9 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
 
   const handleContextMenu = async (e) => {
     e.preventDefault();
-    /* console.log(e.target.id); */
-    const pathToAlbum = e.target.getAttribute('fullpath');
-    const album = e.target.getAttribute('album');
+    const pathToAlbum = e.currentTarget.getAttribute('fullpath');
+    const album = e.currentTarget.getAttribute('album');
+    console.log('--->', album, pathToAlbum);
     /* console.log(pathToAlbum, album); */
     await window.api.showAlbumCoverMenu();
     await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
@@ -144,7 +145,12 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
                 <span onClick={handleAlbumToPlaylist} id={album.fullpath}>
                   {album.foldername}
                 </span>
-                <div className="item-menu">
+                <div
+                  className="item-menu"
+                  id={album.fullpath}
+                  fullpath={album.fullpath}
+                  album={album.foldername}
+                >
                   <BsThreeDots
                     onContextMenu={handleContextMenu}
                     /* romlisttype={type} */
@@ -168,7 +174,12 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
                   <span onClick={handleAlbumToPlaylist} id={cover.fullpath}>
                     {cover.foldername}
                   </span>
-                  <div className="item-menu">
+                  <div
+                    className="item-menu"
+                    id={cover.fullpath}
+                    fullpath={cover.fullpath}
+                    album={cover.foldername}
+                  >
                     <BsThreeDots
                       onContextMenu={handleContextMenu}
                       /*fromlisttype={type}*/

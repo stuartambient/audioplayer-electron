@@ -3,7 +3,7 @@ import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
 const childapi = {
-  onSendToChild: (cb) => ipcRenderer.once('send-to-child', (event, ...args) => cb(args))
+  onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, ...args) => cb(args))
 };
 
 if (process.contextIsolated) {

@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+import './style/ChildApp.css';
 
 const ChildApp = () => {
   const [mbMeta, setMbMeta] = useState(undefined);
@@ -12,8 +14,23 @@ const ChildApp = () => {
     getArgs();
   });
 
-  const handleReleaseReq = (e) => {
-    console.log(e.target.id, e.currentTarget.id);
+  const handleReleaseReq = async (e) => {
+    /* console.log(e.target.id, e.currentTarget.id); */
+    const res = await axios
+      .get(
+        `http://musicbrainz.org/ws/2/release/${e.currentTarget.id}?inc=artist-credits+labels+discids+recordings`
+      )
+      .then((response) => {
+        const {
+          country,
+          'cover-art-archive': coverArtArchive,
+          'label-info': labelInfo,
+          media,
+          'release-events': releaseEvents
+        } = response.data;
+        console.log(country, coverArtArchive, labelInfo, media, releaseEvents);
+        console.log(response.data);
+      });
   };
 
   useEffect(() => {
@@ -21,34 +38,32 @@ const ChildApp = () => {
   }, [mbMeta]);
 
   return (
-    <div
-      className="cover-search-wrapper"
-      style={{
-        width: '100vw',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        backgroundColor: 'darkblue',
-        overflow: 'hidden',
-        color: 'white'
-      }}
-    >
-      <ul>
+    <div className="cover-search-wrapper">
+      <ul className="cover-search--releases">
         {/*  {mbMeta && <li style={{ color: 'white' }}>{mbMeta[0]['release-groups'][0].title}</li>} */}
         {mbMeta && (
           <li key={100}>
-            First release date: {mbMeta[0]['release-groups'][0]['first-release-date']}
+            <span>First release:</span> {mbMeta[0]['release-groups'][0]['first-release-date']}
           </li>
         )}
         {mbMeta &&
           mbMeta[0]['release-groups'][0]['artist-credit'].map((rg) => {
-            return <li key={rg.id}>Artist(s): {rg.artist.name}</li>;
+            return (
+              <li key={rg.id}>
+                <span>Artist(s):</span> {rg.artist.name}
+              </li>
+            );
           })}
+        <li>
+          <span className="heading">Releases</span>
+        </li>
         {mbMeta &&
           mbMeta[0]['release-groups'][0]['releases'].map((rg) => {
             return (
               <li key={rg.id} id={rg.id} onClick={handleReleaseReq}>
-                Title: {rg.title} Status: {rg.status}
+                <span>Title:</span> {rg.title}
+                {/*  <span>Status:</span>
+                {rg.status} */}
               </li>
             );
           })}
