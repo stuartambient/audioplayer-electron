@@ -13,6 +13,8 @@ import * as path from 'path';
 import fs from 'fs';
 import url, { pathToFileURL } from 'url';
 import http from 'node:http';
+import * as stream from 'stream';
+import { promisify } from 'util';
 import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
 import axios from 'axios';
@@ -339,6 +341,7 @@ ipcMain.handle('get-album-tracks', async (event, args) => {
 });
 
 ipcMain.handle('stream-audio', async (event, arg) => {
+  console.log(arg);
   const file = await fs.promises.readFile(arg);
   const filebuf = Buffer.from(file);
   return filebuf;
@@ -615,21 +618,17 @@ ipcMain.handle('show-album-cover-menu', (event) => {
 });
 
 ipcMain.handle('show-child', (event, args) => {
-  console.log('show-child: ', args);
+  /* console.log('show-child: ', 'args: ', ...args); */
   const createChildWindow = () => {
     const newWin = new BrowserWindow({
       width: 450,
       height: 550,
       show: false,
       resizable: false,
-      /* title: 'covers', */
-      /* frame: false, */
-
       webPreferences: {
         preload: path.join(__dirname, '../preload/child.js'),
         sandbox: false,
         webSecurity: false
-        /* nodeIntegration: true */
       }
     });
 
@@ -655,5 +654,21 @@ ipcMain.handle('show-child', (event, args) => {
   } else {
     /* BrowserWindow.getAllWindows().forEach((e) => console.log(e.id)); */
     /* return  */ BrowserWindow.fromId(2).webContents.send('send-to-child', args);
+  }
+});
+
+/*  */
+
+ipcMain.handle('download-file', async (event, ...args) => {
+  const [fileUrl, filePath] = args;
+
+  try {
+    const res = await axios.get(`${fileUrl}`, { responseType: 'arraybuffer' });
+    /* console.log(res); */
+    /* fs.writeFileSync(filePath, res.data); */
+    fs.writeFileSync(`${filePath}/cover.jpg`, res.data);
+    return 'download complete';
+  } catch (err) {
+    return err.message;
   }
 });

@@ -2,16 +2,24 @@
   height: 100vh;
   width: 100vw;
   display: grid;
-  grid-template-rows: repeat(2, 50%);
+  grid-template-rows: 40% 30% 30%;
   grid-template-columns: 100%;
   color: white;
   background-color: #212121;
 }
 
-.cover-search--releases {
+.cover-search--release {
   grid-row: 2 / 3;
+}
+
+.cover-search--releases {
+  grid-row: 3 / 4;
   overflow-y: scroll;
   height: 100%;
+}
+
+.cover-search--images {
+  grid-row: 1 / 2;
 }
 
 .cover-search--releases li {

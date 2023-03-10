@@ -49,6 +49,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
       const res = await axios
         .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`)
         .then((response) => {
+          response.data.savepath = coverSearch.path;
           window.api.showChild(response.data);
           /*  'title: ',
             response.data['release-groups'][0].title,
