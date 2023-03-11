@@ -5,7 +5,6 @@ import { HiOutlineCursorClick } from 'react-icons/hi';
 import './style/ChildApp.css';
 
 const ChildApp = () => {
-  const [mbMeta, setMbMeta] = useState(undefined);
   const [releaseGroups, setReleaseGroups] = useState(undefined);
   const [release, setRelease] = useState(undefined);
   const [images, setImages] = useState(undefined);
@@ -13,11 +12,16 @@ const ChildApp = () => {
   /* type? artist, album, #tracks year country format publisher, cat no >*/
 
   useEffect(() => {
+    let subscribed = true;
     const getArgs = async () => {
-      await window.childapi.onSendToChild((e) => setReleaseGroups(e));
-      /* setRelease(undefined); */
+      await window.childapi.onSendToChild((e) => {
+        setReleaseGroups(e);
+        setRelease(undefined);
+        setImages(undefined);
+      });
     };
-    getArgs();
+    if (subscribed) getArgs();
+    return () => (subscribed = false);
   });
 
   const handleImageReq = async (e) => {
@@ -55,8 +59,8 @@ const ChildApp = () => {
   };
 
   useEffect(() => {
-    if (releaseGroups) console.log(releaseGroups[0].savepath);
-  }, [releaseGroups]);
+    if (images) console.log(images.images[0].thumbnails);
+  }, [images]);
 
   /* const getKey = () => uuidv4(); */
 
@@ -77,6 +81,17 @@ const ChildApp = () => {
           </li>
         </ul>
       )}
+      {/*       {images && (
+        <ul className="cover-search--images-thumbnails">
+          {Object.entries(images.images[0].thumbnails).map((a, b) => {
+            return (
+              <li key={uuidv4()}>
+                <a href={a}>{b}</a>
+              </li>
+            );
+          })}
+        </ul>
+      )} */}
       {release && (
         <ul className="cover-search--release">
           <li key={uuidv4()}>
@@ -97,7 +112,6 @@ const ChildApp = () => {
               'NA'
             )}
           </li>
-          <li key={uuidv4()}>{release.id}</li>
           <li key={uuidv4()}>
             <span>Released</span>
             {release['release-events'][0].date}
@@ -114,11 +128,10 @@ const ChildApp = () => {
         </ul>
       )}
       <ul className="cover-search--releases">
-        {/*  {mbMeta && <li style={{ color: 'white' }}>{mbMeta[0]['release-groups'][0].title}</li>} */}
         {releaseGroups && (
           <li key={uuidv4()}>
             <span>First release:</span>{' '}
-            {releaseGroups[0]['release-groups'][0]['first-release-date']}
+            {releaseGroups[0]['release-groups'][0]['first-release-date'] || 'NA'}
           </li>
         )}
         {releaseGroups &&

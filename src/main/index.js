@@ -616,11 +616,10 @@ ipcMain.handle('show-album-cover-menu', (event) => {
   const menu = Menu.buildFromTemplate(template);
   menu.popup(BrowserWindow.fromWebContents(event.sender));
 });
-
+let newWin;
 ipcMain.handle('show-child', (event, args) => {
-  /* console.log('show-child: ', 'args: ', ...args); */
   const createChildWindow = () => {
-    const newWin = new BrowserWindow({
+    newWin = new BrowserWindow({
       width: 450,
       height: 550,
       show: false,
@@ -643,21 +642,17 @@ ipcMain.handle('show-child', (event, args) => {
       newWin.show();
       /* console.log('dirname: ', __dirname); */
       newWin.webContents.send('send-to-child', args);
-      /*  const allwindows = BrowserWindow.getAllWindows();
-      allwindows.forEach((win) => console.log(win.id)); */
     });
   };
+
   const openWindows = BrowserWindow.getAllWindows().length;
-  /*  console.log('openWindows: ', openWindows); */
   if (openWindows === 1) {
     createChildWindow();
   } else {
-    /* BrowserWindow.getAllWindows().forEach((e) => console.log(e.id)); */
-    /* return  */ BrowserWindow.fromId(2).webContents.send('send-to-child', args);
+    console.log(newWin);
+    BrowserWindow.fromId(newWin.id).webContents.send('send-to-child', args);
   }
 });
-
-/*  */
 
 ipcMain.handle('download-file', async (event, ...args) => {
   const [fileUrl, filePath] = args;

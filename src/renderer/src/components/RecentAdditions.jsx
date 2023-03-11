@@ -46,6 +46,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
 
   useEffect(() => {
     const mbrainzSearch = async () => {
+      console.log(coverSearch.album);
       const res = await axios
         .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`)
         .then((response) => {
@@ -99,12 +100,9 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
   };
 
   const handleContextMenuOption = async (option, path, album) => {
-    /* console.log(option, 'path: ', path, 'album: ', album); */
-    /* console.log('e: ', option[0]); */
+    /* console.log('context menu option: ', option, path, album); */
     if (option[0] === 'search for cover') {
-      /* window.api.showChild({ random: [1, 2, 3], title: 'king', more: [{ a: 'bc', b: 'cd' }] }); */
       setCoverSearch({ path: path, album: album });
-      /*     console.log(path, album); */
     }
   };
 
@@ -125,7 +123,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
     e.preventDefault();
     const pathToAlbum = e.currentTarget.getAttribute('fullpath');
     const album = e.currentTarget.getAttribute('album');
-    console.log('--->', album, pathToAlbum);
+    /* console.log('--->', album, pathToAlbum); */
     /* console.log(pathToAlbum, album); */
     await window.api.showAlbumCoverMenu();
     await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
