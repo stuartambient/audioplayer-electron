@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { HiOutlineCursorClick } from 'react-icons/hi';
+
 import './style/ChildApp.css';
 
 const ChildApp = () => {
@@ -11,6 +12,13 @@ const ChildApp = () => {
 
   /* type? artist, album, #tracks year country format publisher, cat no >*/
 
+  /*   useEffect(() => {
+    console.log(RENDERER_VITE_DISCOGS_KEY);
+  }); */
+
+  useEffect(() => {
+    console.log(import.meta.env.RENDERER_VITE_DISCOGS_KEY);
+  });
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {

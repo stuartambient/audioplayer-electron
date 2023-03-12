@@ -46,32 +46,18 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
 
   useEffect(() => {
     const mbrainzSearch = async () => {
-      console.log(coverSearch.album);
+      console.log(coverSearch.album.split(' '));
       const res = await axios
-        .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`)
+        /* .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`) */
+        .get(
+          `https://api.discogs.com/database/search?q=${coverSearch.album}&token=${
+            import.meta.env.RENDERER_VITE_DISCOGS_KEY
+          }`
+        )
         .then((response) => {
-          response.data.savepath = coverSearch.path;
-          window.api.showChild(response.data);
-          /*  'title: ',
-            response.data['release-groups'][0].title,
-            'artist-name: ',
-            response.data['release-groups'][0]['artist-credit'][0].name,
-            'releases: ',
-            response.data['release-groups'][0].releases */
-
-          /*      console.log(coverSearch);
-
-          console.log(response.data); */
-
-          /* response.data['release-groups'][0]['artist-credit'].forEach((e) => console.log(e.name));
-
-          console.log('title: ', response.data['release-groups'][0].title);
-
-          response.data['release-groups'][0].releases.forEach((e) => console.log(e)); */
-
-          /* const artist = response.data['release-groups'][0]['artist-credit'][0].name.split(' ');
-          console.log(artist, '------', response.data['release-groups'][0]['artist-credit']); */
-          /* response.data['release-groups'][0].releases; */
+          console.log(response.data);
+          /* response.data.savepath = coverSearch.path;
+          window.api.showChild(response.data); */
         })
         .catch((err) => {
           console.log(err);
