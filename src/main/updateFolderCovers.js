@@ -34,7 +34,15 @@ const checkDirs = async (root, results) => {
   return Promise.resolve(results);
 };
 
-const dirs = ['J:S_Music', 'F:/Music', 'D:/Music', 'D:/G_MUSIC', 'H:/Top/Music', 'I:/Music'];
+const dirs = [
+  'J:S_Music',
+  'F:/Music',
+  'D:/Music',
+  'D:/G_MUSIC',
+  'H:/Top/Music',
+  'I:/Music',
+  'E:/music'
+];
 
 const run = async (cb) => {
   const results = [];

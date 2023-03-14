@@ -44,9 +44,22 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
     [coversLoading, hasMoreCovers]
   ); */
 
+  /* GET https://api.discogs.com/database/search?release_title=nevermind&artist=nirvana&per_page=3&page=1 */
+
+  const compareStrs = (str1, str2) => {
+    let correct = { total: str2.split(' ').length, failed: 0 };
+    for (const a of str1) {
+      if (!str2.includes(a)) {
+        correct.failed += 1;
+      }
+    }
+    const percentage = 100 - (correct.failed / correct.total) * 100;
+    return percentage;
+  };
+
   useEffect(() => {
     const mbrainzSearch = async () => {
-      console.log(coverSearch.album.split(' '));
+      let validResults = { path: coverSearch.path, results: [] };
       const res = await axios
         /* .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`) */
         .get(
@@ -54,11 +67,17 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
             import.meta.env.RENDERER_VITE_DISCOGS_KEY
           }`
         )
+
         .then((response) => {
-          console.log(response.data);
-          /* response.data.savepath = coverSearch.path;
-          window.api.showChild(response.data); */
+          response.data.results.forEach((r) => {
+            let tmp = coverSearch.album.split(' ').filter((f) => f !== '-');
+            let compare = compareStrs(tmp, r.title);
+            if (compare > 75) validResults.results.push(r);
+          });
+          window.api.showChild(validResults);
         })
+
+        //})
         .catch((err) => {
           console.log(err);
         });
@@ -88,7 +107,13 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
   const handleContextMenuOption = async (option, path, album) => {
     /* console.log('context menu option: ', option, path, album); */
     if (option[0] === 'search for cover') {
-      setCoverSearch({ path: path, album: album });
+      const refAlbum = album
+        .split(' ')
+        .filter(
+          (sl) =>
+            !sl.startsWith('(') && !sl.endsWith(')') && !sl.startsWith('[') && !sl.endsWith(']')
+        );
+      setCoverSearch({ path: path, album: refAlbum.join(' ') });
     }
   };
 
