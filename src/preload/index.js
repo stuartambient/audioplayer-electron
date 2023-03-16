@@ -22,7 +22,6 @@ const api = {
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
   updateLike: (id) => ipcRenderer.invoke('update-like', id),
   isLiked: (id) => ipcRenderer.invoke('is-liked', id),
-
   totalTracksStat: () => ipcRenderer.invoke('total-tracks-stat'),
   topTenArtistsStat: () => ipcRenderer.invoke('top-ten-artists-stat'),
   last10AlbumsStat: () => ipcRenderer.invoke('last-10Albums-stat'),
@@ -45,7 +44,8 @@ const api = {
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
-  showChild: (arr) => ipcRenderer.invoke('show-child', arr)
+  showChild: (arr) => ipcRenderer.invoke('show-child', arr),
+  onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args))
   /* onAlbumCoverMenu: (cb) => ipcRenderer.once('add-album-to-playlist', (event, ...args) => cb(args)) */
 };
 

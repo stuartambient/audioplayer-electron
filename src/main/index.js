@@ -418,10 +418,14 @@ ipcMain.handle('last-10Albums-stat', async () => {
     last10.map(async (l) => {
       let tmp = await fs.promises.readdir(l.fullpath);
       const checkImg = tmp.find((t) => t.endsWith('.jpg'));
-      if (!checkImg) return l;
+      if (!checkImg) return { ...l, list: 'last10albums' };
       const imgPath = `${l.fullpath}/${checkImg}`;
       const imgurl = url.pathToFileURL(imgPath);
-      const imageobj = { img: imgurl.href };
+      /* const imageobj = { img: imgurl.href };
+      const stub = { list: 'last10albums' }; */
+      const imageobj = { img: imgurl.href, list: 'last10albums' };
+
+      /* console.log('imgPath:----> ', imgPath, 'imgurl:----> ', imgurl, 'imageobj:----> ', imageobj); */
       return { ...l, ...imageobj };
     })
   );
@@ -517,11 +521,11 @@ ipcMain.handle('get-covers', async (_, ...args) => {
           `artist: ${artist}, album: ${album}, album-path: ${l.fullpath}\n`,
           `${coversFolder}\\missingcovers.txt`
         );
-        return l;
+        return { ...l, list: 'covers' };
       }
       const imgPath = `${l.fullpath}/${checkImg}`;
       const imgUrl = url.pathToFileURL(imgPath);
-      const imageobj = { img: imgUrl.href };
+      const imageobj = { img: imgUrl.href, list: 'covers' };
 
       return { ...l, ...imageobj };
     })
@@ -656,6 +660,7 @@ ipcMain.handle('show-child', (event, args) => {
 
 ipcMain.handle('download-file', async (event, ...args) => {
   const [fileUrl, filePath] = args;
+  console.log('called');
 
   try {
     const res = await axios.get(`${fileUrl}`, { responseType: 'arraybuffer' });
@@ -666,4 +671,12 @@ ipcMain.handle('download-file', async (event, ...args) => {
   } catch (err) {
     return err.message;
   }
+});
+
+ipcMain.handle('refresh-cover', async (event, ...args) => {
+  const [file, filepath] = args;
+  const imgurl = url.pathToFileURL(file).href;
+  /* const imageobj = { img: imgurl.href }; */
+
+  BrowserWindow.fromId(mainWindow.id).webContents.send('refresh-home-cover', filepath, imgurl);
 });

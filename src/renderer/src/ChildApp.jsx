@@ -21,11 +21,18 @@ const ChildApp = () => {
     const getArgs = async () => {
       await window.childapi.onSendToChild((e) => {
         setReleases(e);
+        setPreviewImage(undefined);
       });
     };
     if (subscribed) getArgs();
     return () => (subscribed = false);
   });
+
+  const handleDownloadImage = async (e) => {
+    e.preventDefault();
+    const download = await window.childapi.downloadFile(previewImage, releases[0].path);
+    await window.childapi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
+  };
 
   return (
     <div className="cover-search-wrapper">
@@ -37,9 +44,12 @@ const ChildApp = () => {
               style={{ width: '150px', height: '150px', marginTop: '1rem' }}
             />
           </li>
+          <li className="image-download" onClick={handleDownloadImage}>
+            Download Image
+          </li>
         </ul>
       )}
-      {releases ? (
+      {releases && releases[0].results.length > 0 ? (
         <ul className="cover-search--releases">
           {releases[0].results.map((r) => {
             return (
@@ -76,7 +86,9 @@ const ChildApp = () => {
           })}
         </ul>
       ) : (
-        'no results'
+        <ul className="cover-search--releases">
+          <p>no results</p>
+        </ul>
       )}
     </div>
   );

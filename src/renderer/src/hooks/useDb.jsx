@@ -238,7 +238,7 @@ const useLast10AlbumsStat = () => {
     getLast10Albums();
     return () => (subscribed = false);
   }, []);
-  return { last10Albums };
+  return { last10Albums, setLast10Albums };
 };
 
 const useLast100TracksStat = () => {

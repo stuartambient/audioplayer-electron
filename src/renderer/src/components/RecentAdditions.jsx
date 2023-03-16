@@ -10,10 +10,11 @@ import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
 
 const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSearchTerm }) => {
-  const { last10Albums } = useLast10AlbumsStat();
+  const { last10Albums, setLast10Albums } = useLast10AlbumsStat();
   const { last100Tracks } = useLast100TracksStat();
+  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
   const [viewMore, setViewMore] = useState(false);
-  const [coverSearch, setCoverSearch] = useState({ path: '', album: '' });
+  const [coverSearch, setCoverSearch] = useState({ path: '', album: '', list: '' });
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     coversPageNumber,
@@ -46,19 +47,55 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
 
   /* GET https://api.discogs.com/database/search?release_title=nevermind&artist=nirvana&per_page=3&page=1 */
 
+  useEffect(() => {
+    const cover = async () => {
+      await window.api.onRefreshHomeCover((e) => {
+        setCoverUpdate({ path: e[0], file: e[1] });
+      });
+    };
+    cover();
+  }, [covers]);
+
+  useEffect(() => {
+    if (coverUpdate.path !== '') {
+      if (coverSearch.list === 'last10albums') {
+        last10Albums.map((c) => {
+          if (c.fullpath === coverUpdate.path) {
+            c.img = coverUpdate.file;
+          }
+        });
+      } else if (coverSearch.list === 'covers') {
+        const updateCovers = covers.map((cover) => {
+          if (cover.fullpath === coverUpdate.path) {
+            cover.img = coverUpdate.file;
+          }
+        });
+        /*  dispatch({
+          type: 'update-cover',
+          covers: updateCovers
+        }); */
+      }
+    }
+  });
+
   const compareStrs = (str1, str2) => {
+    // STR1 IS FOLDER, STR2 IS TITLE FROM API
     let correct = { total: str2.split(' ').length, failed: 0 };
     for (const a of str1) {
-      if (!str2.includes(a)) {
+      if (!str2.toLowerCase().includes(a.toLowerCase())) {
+        /* console.log(str2, '<------>', a); */
+        /* console.log(a); */
         correct.failed += 1;
       }
     }
     const percentage = 100 - (correct.failed / correct.total) * 100;
+    /* console.log('total: ', correct.total, 'failed: ', correct.failed); */
     return percentage;
   };
 
   useEffect(() => {
     const mbrainzSearch = async () => {
+      console.log(coverSearch.album);
       let validResults = { path: coverSearch.path, results: [] };
       const res = await axios
         /* .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`) */
@@ -69,10 +106,12 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
         )
 
         .then((response) => {
+          console.log('response data: ', response.data.results);
           response.data.results.forEach((r) => {
             let tmp = coverSearch.album.split(' ').filter((f) => f !== '-');
             let compare = compareStrs(tmp, r.title);
-            if (compare > 75) validResults.results.push(r);
+            console.log(compare);
+            if (compare > 40) validResults.results.push(r);
           });
           window.api.showChild(validResults);
         })
@@ -104,7 +143,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
     }
   };
 
-  const handleContextMenuOption = async (option, path, album) => {
+  const handleContextMenuOption = async (option, path, album, list) => {
     /* console.log('context menu option: ', option, path, album); */
     if (option[0] === 'search for cover') {
       const refAlbum = album
@@ -113,7 +152,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
           (sl) =>
             !sl.startsWith('(') && !sl.endsWith(')') && !sl.startsWith('[') && !sl.endsWith(']')
         );
-      setCoverSearch({ path: path, album: refAlbum.join(' ') });
+      setCoverSearch({ path: path, album: refAlbum.join(' '), list: list });
     }
   };
 
@@ -134,10 +173,11 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
     e.preventDefault();
     const pathToAlbum = e.currentTarget.getAttribute('fullpath');
     const album = e.currentTarget.getAttribute('album');
+    const list = e.currentTarget.getAttribute('type');
     /* console.log('--->', album, pathToAlbum); */
     /* console.log(pathToAlbum, album); */
     await window.api.showAlbumCoverMenu();
-    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
+    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album, list));
   };
 
   return (
@@ -146,11 +186,12 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
         {last10Albums.map((album, idx) => {
           return (
             <li
-              key={idx}
+              key={uuidv4()}
               /* ref={covers.length === index + 1 ? lastCoverElement : null} */
             >
               {album.img && <img src={album.img} alt="" />}
               {!album.img && <img src={NoImage} alt="" />}
+              {/* {album.fullpath === coverUpdate.path ? <img src={coverUpdate.file} alt="" /> : null} */}
               <div className="overlay">
                 <span onClick={handleAlbumToPlaylist} id={album.fullpath}>
                   {album.foldername}
@@ -167,6 +208,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
                     id={album.fullpath}
                     fullpath={album.fullpath}
                     album={album.foldername}
+                    type={album.list}
                     /* fullpath={fullpath} */
                   />
                 </div>
@@ -177,9 +219,11 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
         {covers.length > 0 &&
           covers.map((cover, idx) => {
             return (
-              <li key={idx}>
+              <li key={uuidv4()}>
                 {cover.img && <img src={cover.img} alt="" />}
                 {!cover.img && <img src={NoImage} alt="" />}
+                {/* {cover.fullpath === coverUpdate.fullpath && <img src={coverUpdate.file} alt="" />} */}
+                {/* {cover.fullpath === coverUpdate.path ? <img src={coverUpdate.file} alt="" /> : null} */}
                 <div className="overlay">
                   <span onClick={handleAlbumToPlaylist} id={cover.fullpath}>
                     {cover.foldername}
@@ -196,6 +240,7 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
                       id={cover.fullpath}
                       fullpath={cover.fullpath}
                       album={cover.foldername}
+                      type={cover.list}
                     />
                   </div>
                 </div>

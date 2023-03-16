@@ -242,6 +242,21 @@ const AppState = () => {
           ]
         };
       }
+
+      case 'update-cover': {
+        /*  return state.covers.map((cover) => {
+          if (cover.fullpath === action.id) {
+            return { ...cover, img: action.img };
+          } else {
+            return cover;
+          }
+        }); */
+        return {
+          ...state,
+          covers: action.covers
+        };
+      }
+
       case 'track-to-playlist': {
         return {
           ...state,
@@ -261,6 +276,7 @@ const AppState = () => {
           covers: [...state.covers, ...action.covers]
         };
       }
+
       case 'set-covers-pagenumber': {
         return {
           ...state,

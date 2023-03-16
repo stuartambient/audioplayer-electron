@@ -18,7 +18,7 @@ const topTenArtists = () => {
 
 const last10Albums = () => {
   const stmt = db.prepare(
-    'SELECT foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 10'
+    'SELECT id, foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 10'
   );
   const result = stmt.all();
   return result;

@@ -188,7 +188,7 @@ const allAlbumsByScroll = (offsetNum) => {
 const allCoversByScroll = (offsetNum, term = null) => {
   if (term === '') {
     const stmt = db.prepare(
-      `SELECT foldername, fullpath FROM albums ORDER BY datecreated ASC LIMIT 50 OFFSET ${
+      `SELECT id, foldername, fullpath FROM albums ORDER BY datecreated ASC LIMIT 50 OFFSET ${
         offsetNum * 50
       }`
     );
