@@ -53,7 +53,7 @@ const useTracks = (
         start = state.tracks.length + 1;
         end = start + 49;
       }
-      console.log('start: ', start, 'end: ', end);
+
       /*    const totaltracks = await window.api.totalTracksStat();
       const setRandArray = await window.api.getAllTracks(totaltracks); */
       const shuffledTracks = await window.api.testGlobal(start, end);
@@ -199,7 +199,6 @@ const useAllAlbumsCovers = (coversPageNumber, dispatch, coversSearchTerm = null)
   useEffect(() => {
     let isSubscribed = true;
     const loadCovers = async () => {
-      let success = true;
       setCoversLoading(true);
       setCoversError(false);
       let coversRequest = await window.api.getCovers(coversPageNumber, coversSearchTerm);

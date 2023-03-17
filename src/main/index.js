@@ -413,6 +413,7 @@ ipcMain.handle('top-ten-artists-stat', async () => {
 });
 
 ipcMain.handle('last-10Albums-stat', async () => {
+  console.log('last 10 albums');
   const last10 = await last10Albums();
   const last10withImages = await Promise.all(
     last10.map(async (l) => {
@@ -507,6 +508,7 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 });
 
 ipcMain.handle('get-covers', async (_, ...args) => {
+  console.log('get covers', args);
   /* console.log('....args: ', args[0], args[1]); */
   const albums = await allCoversByScroll(args[0], args[1]);
   const albumsWithImages = await Promise.all(

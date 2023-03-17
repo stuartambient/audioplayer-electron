@@ -14,6 +14,13 @@ const Home = ({ state, dispatch }) => {
 
   const handleHomePage = (e) => {
     setHomePage(e.currentTarget.id);
+    /* if (e.currentTarget.id === 'recent-additions') {
+      dispatch({
+        type: 'reset-albums-covers',
+        covers: [],
+        coversPageNumber: undefined
+      });
+    } */
   };
 
   const handleCoversSearchTerm = (e) => {
@@ -21,6 +28,22 @@ const Home = ({ state, dispatch }) => {
       type: 'covers-search-term',
       coversSearchTerm: e.target.value
     });
+  };
+
+  const handleSearchTerm = (e) => {
+    if (state.coversSearchTerm === '') {
+      dispatch({
+        type: 'reset-albums-covers',
+        covers: [],
+        coversPageNumber: undefined
+      });
+    } else {
+      dispatch({
+        type: 'reset-albums-covers',
+        covers: [],
+        coversPageNumber: 0
+      });
+    }
   };
   return (
     <>
@@ -46,7 +69,7 @@ const Home = ({ state, dispatch }) => {
               value={state.coversSearchTerm}
               onChange={handleCoversSearchTerm}
             />
-            <GiMagnifyingGlass />
+            <GiMagnifyingGlass onClick={handleSearchTerm} />
           </li>
         )}
         <li

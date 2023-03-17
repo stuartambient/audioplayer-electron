@@ -48,7 +48,7 @@ const Controls = ({
       <li className={shuffle ? 'btn on' : 'btn'} id="shuffle" onClick={handlePlayerControls}>
         <FaRandom />
       </li>
-      {!minimalmode && (
+      {!minimalmode && !home && (
         <li className={library ? 'btn on' : 'btn'} id="playlist" onClick={handlePlayerControls}>
           <FaListUl />
         </li>

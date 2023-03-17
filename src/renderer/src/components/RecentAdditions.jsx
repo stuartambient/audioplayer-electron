@@ -9,7 +9,14 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
 
-const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSearchTerm }) => {
+const RecentAdditions = ({
+  state,
+  dispatch,
+  covers,
+  coversPageNumber,
+  coversSearchTerm,
+  homepage
+}) => {
   const { last10Albums, setLast10Albums } = useLast10AlbumsStat();
   const { last100Tracks } = useLast100TracksStat();
   const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
@@ -98,7 +105,8 @@ const RecentAdditions = ({ state, dispatch, covers, coversPageNumber, coversSear
       console.log(coverSearch.album);
       let validResults = { path: coverSearch.path, results: [] };
       const res = await axios
-        /* .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`) */
+        /* .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`) 
+        http://api.discogs.com/database/search?artist=nero&release_title=electron */
         .get(
           `https://api.discogs.com/database/search?q=${coverSearch.album}&token=${
             import.meta.env.RENDERER_VITE_DISCOGS_KEY

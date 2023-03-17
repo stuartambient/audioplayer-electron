@@ -271,6 +271,7 @@ const AppState = () => {
       }
 
       case 'set-covers': {
+        const key = 'fullpath';
         return {
           ...state,
           covers: [...state.covers, ...action.covers]
@@ -280,6 +281,14 @@ const AppState = () => {
       case 'set-covers-pagenumber': {
         return {
           ...state,
+          coversPageNumber: action.coversPageNumber
+        };
+      }
+
+      case 'reset-albums-covers': {
+        return {
+          ...state,
+          covers: action.covers,
           coversPageNumber: action.coversPageNumber
         };
       }

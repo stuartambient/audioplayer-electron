@@ -402,7 +402,7 @@ function App() {
         />
       )}
 
-      {state.player || state.miniModePlaylist || state.home ? (
+      {state.player || state.miniModePlaylist || state.home || state.update ? (
         <InfiniteList
           handleTrackSelection={TrackSelector}
           library={state.library}
