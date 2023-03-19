@@ -47,31 +47,53 @@ function App() {
       shuffle: !state.shuffle
     });
     dispatch({
+      type: 'tracks-pagenumber',
+      tracksPageNumber: 0
+    });
+
+    /*    dispatch({
       type: 'reset-tracks',
       tracks: []
     });
     dispatch({
       type: 'tracks-pagenumber',
       tracksPageNumber: 0
-    });
+    }); */
+  };
 
-    if (!state.shuffle) {
+  /*   useEffect(() => {
+    if (state.shuffle) {
+      dispatch({
+        type: 'reset-tracks',
+        tracks: []
+      });
+    }
+  }, [state.shuffle]); */
+
+  /*   useEffect(() => {
+    const setupShuffle = async () => {
       const totaltracks = await window.api.totalTracksStat();
       const refreshkey = uuidv4();
-      const setRandArray = await window.api.getAllTracks(totaltracks, refreshkey);
-      const shuffledTracks = await window.api.testGlobal(0, 50);
-      dispatch({
-        type: 'tracks-playlist',
-        tracks: shuffledTracks
-      });
-    } else {
+      const setRandArray = await window.api.setShuffledTracksArray(totaltracks, refreshkey);
+      const shuffledTracks = await window.api.getShuffledTracks(0, 50);
+
+      if (shuffledTracks && subscribed) {
+        dispatch({
+          type: 'add-shuffled-tracks',
+          tracks: shuffledTracks
+        });
+      }
+    };
+    if (state.shuffle) setupShuffle();
+  }, [state.shuffle]); */
+
+  /*    } else {
       const allTracks = await window.api.getTracks(state.tracksPageNumber, '');
       dispatch({
         type: 'tracks-playlist',
         tracks: allTracks
       });
-    }
-  };
+    }  */
 
   /*   const sendToMain = async () => {
     await window.api.sendState(state.active, state.currentTrack).then((r) => console.log(r));
@@ -155,14 +177,14 @@ function App() {
     };
   });
 
-  useEffect(() => {
+  /*   useEffect(() => {
     state.audioRef.current.ontimeupdate = () => {
       dispatch({
         type: 'current-time',
         currentTime: convertCurrentTime(state.audioRef.current)
       });
     };
-  }, [state.audioRef]);
+  }, [state.audioRef]); */
 
   useEffect(() => {
     state.audioRef.current.onseeking = () => {
@@ -434,10 +456,8 @@ function App() {
 export default App;
 
 /*
-
  const handleReq = async () => {
     const albums = await window.api.updateFolders();
     console.log(albums);
   };
-
 */

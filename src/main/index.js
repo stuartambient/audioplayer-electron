@@ -535,7 +535,8 @@ ipcMain.handle('get-covers', async (_, ...args) => {
   return albumsWithImages;
 });
 
-ipcMain.handle('get-all-tracks', async (_, ...args) => {
+ipcMain.handle('set-shuffled-tracks-array', async (_, ...args) => {
+  console.log('set shuffled array');
   shuffled = [];
   if (!shuffled.length) {
     let array = [...Array(+args[0]).keys()];
@@ -552,12 +553,12 @@ ipcMain.handle('get-all-tracks', async (_, ...args) => {
   return true;
 });
 
-ipcMain.handle('test-global', async (_, ...args) => {
+ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   try {
     const [start, end] = args;
     const fifty = shuffled.slice(start, end);
     const tracks = getAllTracks(fifty);
-
+    /* console.log(tracks); */
     return tracks;
   } catch (err) {
     console.log(err.message);

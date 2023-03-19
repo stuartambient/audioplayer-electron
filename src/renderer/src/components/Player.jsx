@@ -205,7 +205,6 @@ const Player = ({
         <li className={isLiked ? 'btn isliked' : 'btn'} id="like" onClick={onClick}>
           <FaHeart />
         </li>
-
         {pause ? (
           <li className="btn" id="pauseplay" onClick={onClick}>
             <GiPlayButton />
@@ -218,7 +217,6 @@ const Player = ({
         <li className="btn" id="backward" onClick={onClick}>
           <FaBackward />
         </li>
-
         <li className="btn" id="forward" onClick={onClick}>
           <FaForward />
         </li>

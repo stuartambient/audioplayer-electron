@@ -1,11 +1,11 @@
 /* import { is } from '@electron-toolkit/utils'; */
 import { useState, useEffect, useMemo } from 'react';
+
 /* import axios from "axios"; */
 
 /* const client = axios.create({
   baseURL: "http://localhost:3008/",
   proxy: false,
-
 }); */
 
 const useTracks = (
@@ -17,63 +17,80 @@ const useTracks = (
   dispatch,
   shuffle
 ) => {
-  /* console.log('useTracks: ', tracksPageNumber, shuffle); */
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
-  /*  const [tracks, setTracks] = useState([]); */
-  /*   const [albums, setAlbums] = useState([]); */
   const [hasMoreTracks, setHasMoreTracks] = useState(false);
-
   useEffect(() => {
     let isSubscribed = true;
-    /* if (shuffle) return; */
     const loadTracks = async () => {
+      console.log('load tracks');
       setTracksLoading(true);
       setTracksError(false);
       let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm, sortType);
       if (trackRequest && isSubscribed) {
-        dispatch({
-          type: 'tracks-playlist',
-          tracks: trackRequest
-        });
+        if (tracksPageNumber === 0) {
+          dispatch({
+            type: 'add-shuffled-tracks',
+            tracks: trackRequest
+          });
+        }
+        if (tracksPageNumber > 0) {
+          dispatch({
+            type: 'tracks-playlist',
+            tracks: trackRequest
+          });
+        }
         setHasMoreTracks(trackRequest.length > 0);
         setTracksLoading(false);
       }
     };
 
     const loadShuffledTracks = async () => {
+      console.log('shuffled tracks');
       setTracksLoading(true);
       setTracksError(false);
       /////////////////
+
       let start, end;
-      if (state.tracks.length === 0) {
+      if (tracksPageNumber === 0) {
+        const totaltracks = await window.api.totalTracksStat();
+        const setRandArray = await window.api.setShuffledTracksArray(totaltracks);
         start = 0;
         end = 50;
       } else {
         start = state.tracks.length + 1;
         end = start + 49;
       }
-
-      /*    const totaltracks = await window.api.totalTracksStat();
-      const setRandArray = await window.api.getAllTracks(totaltracks); */
-      const shuffledTracks = await window.api.testGlobal(start, end);
-      /* console.log(totaltracks, setRandArray, shuffledTracks); */
+      const shuffledTracks = await window.api.getShuffledTracks(start, end);
+      console.log(shuffledTracks, isSubscribed);
       if (shuffledTracks && isSubscribed) {
-        dispatch({
-          type: 'tracks-playlist',
-          tracks: shuffledTracks
-        });
+        if (tracksPageNumber === 0) {
+          dispatch({
+            type: 'add-shuffled-tracks',
+            tracks: shuffledTracks
+          });
+        }
+        if (tracksPageNumber > 0) {
+          dispatch({
+            type: 'tracks-playlist',
+            tracks: shuffledTracks
+          });
+        }
         setHasMoreTracks(shuffledTracks.length > 0);
         setTracksLoading(false);
       }
     };
 
     shuffle ? loadShuffledTracks() : loadTracks();
-
-    /*  loadTracks(); */
     return () => (isSubscribed = false);
-  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey]);
-  return { tracksLoading, /* tracks, setTracks, */ hasMoreTracks, tracksError };
+  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey, shuffle]);
+  return {
+    tracksLoading,
+    hasMoreTracks,
+    tracksError,
+    shuffle,
+    resetKey
+  };
 };
 
 const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispatch) => {
@@ -331,7 +348,6 @@ const useGetPlaylists = () => {
         start = state.shuffledTracks.length - 1;
         const end = start + 49;
       }
-
       const test = await window.api.testGlobal(start, end);
       if (test && isSubscribed) {
         console.log('test: ', test);

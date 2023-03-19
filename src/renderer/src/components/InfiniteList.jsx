@@ -367,6 +367,7 @@ const InfiniteList = ({
       filesObserver.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMoreTracks) {
+            console.log('new page');
             dispatch({
               type: 'tracks-pagenumber',
               tracksPageNumber: tracksPageNumber + 1
@@ -427,6 +428,7 @@ const InfiniteList = ({
   );
 
   const byFiles = tracks.map((item, index) => {
+    if (!item) return;
     return (
       <Item
         state={state}

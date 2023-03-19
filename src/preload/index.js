@@ -32,9 +32,9 @@ const api = {
   homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id),
   getCovers: (coversPageNum, coversSearchTerm) =>
     ipcRenderer.invoke('get-covers', coversPageNum, coversSearchTerm),
-  getAllTracks: (numofTracks, refreshKey) =>
-    ipcRenderer.invoke('get-all-tracks', numofTracks, refreshKey),
-  testGlobal: (start, end) => ipcRenderer.invoke('test-global', start, end),
+  setShuffledTracksArray: (numofTracks, refreshKey) =>
+    ipcRenderer.invoke('set-shuffled-tracks-array', numofTracks, refreshKey),
+  getShuffledTracks: (start, end) => ipcRenderer.invoke('get-shuffled-tracks', start, end),
   showTracksMenu: () => ipcRenderer.invoke('show-tracks-menu'),
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
   showPlaylistsMenu: () => ipcRenderer.invoke('show-playlists-menu'),

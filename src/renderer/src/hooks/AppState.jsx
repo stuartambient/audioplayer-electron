@@ -151,6 +151,20 @@ const AppState = () => {
         };
       }
 
+      case 'add-shuffled-tracks': {
+        return {
+          ...state,
+          tracks: action.tracks
+        };
+      }
+
+      case 'slice-prev-tracks': {
+        return {
+          ...state,
+          tracks: action.tracks
+        };
+      }
+
       case 'current-playlist': {
         return {
           ...state,
