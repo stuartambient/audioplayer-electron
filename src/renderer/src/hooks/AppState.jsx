@@ -26,14 +26,14 @@ const AppState = () => {
     currentTime: '',
     pause: false,
     progbarInc: 0,
-    /* currentVolume: 1.0, */
+    volume: 1,
     /* filesPageNumber: 0, */
     albums: [],
     albumsPageNumber: 0,
     tracks: [],
     tracksPageNumber: 0,
     covers: [],
-    coversPageNumber: undefined,
+    coversPageNumber: 0,
     coversSearchTerm: '',
     playlistTracks: [],
     shuffledTracks: [],
@@ -132,6 +132,13 @@ const AppState = () => {
           update: action.update,
           player: action.player,
           library: action.library
+        };
+      }
+
+      case 'set-volume': {
+        return {
+          ...state,
+          volume: action.volume
         };
       }
       case 'player-minimode': {

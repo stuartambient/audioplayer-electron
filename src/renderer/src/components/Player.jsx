@@ -19,7 +19,6 @@ const Player = ({
   artist,
   album,
   duration,
-  currentTime,
   pause,
   onClick,
   maximized,
@@ -32,13 +31,20 @@ const Player = ({
   home,
   children
 }) => {
+  const [cTime, setCTime] = useState('00:00');
+  const [progbarInc, setProgbarInc] = useState(0);
+
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
-    const convertForProgbar = convertToSeconds(duration, currentTime);
-    /* console.log(convertForProgbar * outlineWidth); */
+    const convertForProgbar = convertToSeconds(duration, cTime);
     setProgbarInc(convertForProgbar * outlineWidth);
-  }, [duration, currentTime]);
-  const [progbarInc, setProgbarInc] = useState(0);
+  }, [duration, cTime]);
+
+  useEffect(() => {
+    audioRef.current.ontimeupdate = () => {
+      setCTime(convertCurrentTime(audioRef.current));
+    };
+  }, [audioRef]);
 
   /*   useEffect(() => {
     console.log('volume: ', audioRef.current.volume);
@@ -73,6 +79,7 @@ const Player = ({
     const seekPoint = e.clientX - seekbarOutline.current.getBoundingClientRect().left;
 
     audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
+    /* setCTime(totaltime / seekbarOutlineWidth) * seekPoint; */
   };
 
   /*   useEffect(() => {
@@ -171,7 +178,7 @@ const Player = ({
           </div>
           <div className="elapsed">
             {!home && <span className="label">Elapsed: </span>}
-            <span className="real-time">{currentTime}</span>
+            <span className="real-time">{cTime}</span>
           </div>
         </div>
       )}

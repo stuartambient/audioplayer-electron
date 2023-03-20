@@ -164,7 +164,31 @@ const RecentAdditions = ({
     }
   };
 
-  const handleViewMoreCovers = () => {
+  const coversObserver = useRef();
+  const lastCoverElement = useCallback(
+    (node) => {
+      if (coversLoading) return;
+      if (coversObserver.current) coversObserver.current.disconnect();
+      coversObserver.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasMoreCovers) {
+            dispatch({
+              type: 'set-covers-pagenumber',
+              coversPageNumber: coversPageNumber + 1
+            });
+          }
+        },
+        {
+          root: document.querySelector('.recent-additions'),
+          threshold: 1.0
+        }
+      );
+      if (node) coversObserver.current.observe(node);
+    },
+    [coversLoading, hasMoreCovers]
+  );
+
+  /*   const handleViewMoreCovers = () => {
     if (!viewMore) setViewMore(true);
     if (!coversPageNumber)
       return dispatch({
@@ -175,7 +199,7 @@ const RecentAdditions = ({
       type: 'set-covers-pagenumber',
       coversPageNumber: coversPageNumber + 1
     });
-  };
+  }; */
 
   const handleContextMenu = async (e) => {
     e.preventDefault();
@@ -227,7 +251,7 @@ const RecentAdditions = ({
         {covers.length > 0 &&
           covers.map((cover, idx) => {
             return (
-              <li key={uuidv4()}>
+              <li key={uuidv4()} ref={covers.length === idx + 1 ? lastCoverElement : null}>
                 {cover.img && <img src={cover.img} alt="" />}
                 {!cover.img && <img src={NoImage} alt="" />}
                 {/* {cover.fullpath === coverUpdate.fullpath && <img src={coverUpdate.file} alt="" />} */}
@@ -256,13 +280,13 @@ const RecentAdditions = ({
             );
           })}
 
-        <li>
+        {/* <li>
           <div className="recent-additions--view-more" onClick={handleViewMoreCovers}>
             <p>View</p>
             <p>More</p>
             <p id="view-more-logo">&#8853;</p>
           </div>
-        </li>
+        </li> */}
       </ul>
     </section>
   );

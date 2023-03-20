@@ -126,7 +126,7 @@ function App() {
         });
         break;
       case 'like':
-        sendToMain();
+        /* sendToMain(); */
         handleUpdateLike(state.active);
         break;
       case 'shuffle':
@@ -199,6 +199,10 @@ function App() {
   useEffect(() => {
     state.audioRef.current.onvolumechange = () => {
       console.log('onvolumechange: ', state.audioRef.current.volume);
+      dispatch({
+        type: 'set-volume',
+        volume: state.audioRef.current.volume
+      });
     };
   });
 
@@ -375,7 +379,7 @@ function App() {
           artist={state.artist}
           album={state.album}
           duration={state.duration}
-          currentTime={state.currentTime}
+          /* currentTime={state.currentTime} */
           pause={state.pause}
           onClick={handlePlayerControls}
           audioRef={state.audioRef}
@@ -401,7 +405,7 @@ function App() {
               {!state.home && (
                 <Extras
                   handlePlayerControls={handlePlayerControls}
-                  volume={state.audioRef.current.volume}
+                  volume={state.volume}
                   seeking={state.seeking}
                   library={state.library}
                   shuffle={state.shuffle}
