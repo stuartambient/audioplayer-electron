@@ -67,7 +67,7 @@
   padding: 0.2rem 0;
 }
 
-.recent-additions {
+.albums-coverview {
   grid-row: 3 / 4;
   grid-column: 1 / 3;
   overflow-x: hidden;
@@ -77,11 +77,11 @@
   display: none;
 }
 
-.recent-additions--albums::-webkit-scrollbar {
+.albums-coverview--albums::-webkit-scrollbar {
   display: none;
 }
 
-.recent-additions--albums {
+.albums-coverview--albums {
   height: 100%;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(100px, 100px));
@@ -93,7 +93,7 @@
   justify-content: center;
 }
 
-.recent-additions--albums li .overlay {
+.albums-coverview--albums li .overlay {
   grid-column: span 1;
   grid-row: span 1;
   background: rgba(57, 5, 2, 0.8);
@@ -109,24 +109,24 @@
   font-size: 0.8rem;
 }
 
-.recent-additions--albums li .overlay span {
+.albums-coverview--albums li .overlay span {
   text-align: center;
   margin: 0 0.1rem;
 }
 
-.recent-additions--albums li:hover .overlay {
+.albums-coverview--albums li:hover .overlay {
   transform: scale(1) translateY(-100%);
   cursor: pointer;
 }
 
-.recent-additions--albums li img {
+.albums-coverview--albums li img {
   object-fit: cover;
   height: 100px;
   width: 100px;
   object-position: center;
 }
 
-.recent-additions--view-more {
+.albums-coverview--view-more {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -136,7 +136,7 @@
   min-height: 100px;
 }
 
-.recent-additions--view-more:hover {
+.albums-coverview--view-more:hover {
   cursor: pointer;
 }
 

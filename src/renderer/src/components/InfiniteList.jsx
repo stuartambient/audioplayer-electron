@@ -350,6 +350,15 @@ const InfiniteList = ({
 
   const handleSortClick = (e) => {
     /* setSortType(e.currentTarget); */
+    if (shuffle) return;
+    dispatch({
+      type: 'tracks-pagenumber',
+      tracksPageNumber: 0
+    });
+    dispatch({
+      type: 'reset-tracks',
+      tracks: []
+    });
     setSortType(e.target.value);
   };
 
@@ -522,6 +531,7 @@ const InfiniteList = ({
           miniModePlaylist={miniModePlaylist}
           handlePlaylistFiles={handlePlaylistFiles}
           dispatch={dispatch}
+          shuffle={shuffle}
         />
       ) : null}
       <div className={listClassNames()}>

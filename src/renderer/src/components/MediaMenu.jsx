@@ -8,7 +8,8 @@ const MediaMenu = ({
   handleTextSearch,
   miniModePlaylist,
   handlePlaylistFiles,
-  dispatch
+  dispatch,
+  shuffle
 }) => {
   const handleListType = (listtype) => {
     dispatch({
@@ -19,7 +20,7 @@ const MediaMenu = ({
 
   return (
     <ul className={miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
-      {!miniModePlaylist && (
+      {!miniModePlaylist && !shuffle && (
         <div className="sort-menu">
           <fieldset>
             <li className="sort-menu--option">

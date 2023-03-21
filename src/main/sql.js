@@ -144,14 +144,16 @@ const searchAlbums = async () => {
 
 /* sort by artist, createdon, title genre */
 
-const allTracksByScroll = (offsetNum) => {
+const allTracksByScroll = (offsetNum, sort) => {
+  console.log('sort: ', sort);
   const stmt = db.prepare(
-    `SELECT * FROM tracks ORDER BY modified DESC LIMIT 50 OFFSET ${offsetNum * 50}`
+    `SELECT * FROM tracks ORDER BY ${sort} DESC LIMIT 50 OFFSET ${offsetNum * 50}`
   );
   return stmt.all();
 };
 
-const allTracksBySearchTerm = (offsetNum, text) => {
+const allTracksBySearchTerm = (offsetNum, text, sort) => {
+  console.log('sort: ', sort);
   const term = `%${text}%`;
   const stmt = db.prepare(
     `SELECT * FROM tracks WHERE audiofile LIKE ? LIMIT 50 OFFSET ${offsetNum * 50}`

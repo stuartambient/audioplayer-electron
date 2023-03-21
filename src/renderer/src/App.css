@@ -5,8 +5,11 @@
   --blue4: #2630ff;
 }
 
-body {
+* {
   box-sizing: border-box;
+}
+
+body {
   width: 100vw;
   height: 100vh;
   display: flex;

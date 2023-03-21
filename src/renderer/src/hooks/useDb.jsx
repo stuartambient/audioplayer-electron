@@ -103,7 +103,7 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispa
     const loadAlbums = async () => {
       setAlbumsLoading(true);
       setAlbumsError(false);
-      const albumRequest = await window.api.getAlbums(albumsPageNumber, albumsSearchTerm);
+      const albumRequest = await window.api.getAlbums(albumsPageNumber, albumsSearchTerm, sortType);
       if (albumRequest && isSubscribed) {
         /* console.log('album-request-length: ', albumRequest.length); */
         dispatch({

@@ -111,7 +111,7 @@ function createWindow() {
     /* backgroundColor: '#1D1B1B', */
     transparent: true,
 
-    resizable: false,
+    /* resizable: false, */
     /* rgb(9, 0, 7) */
     show: false,
     /* autoHideMenuBar: true, */
@@ -310,20 +310,21 @@ ipcMain.handle('create-table', () => {
 ipcMain.handle('get-tracks', async (event, ...args) => {
   /* console.log('sort: ', args[2]); */
   if (args[1] === '') {
-    const alltracks = await allTracksByScroll(args[0]);
+    const alltracks = await allTracksByScroll(args[0], args[2]);
     return alltracks;
   } else if (args[1]) {
-    const alltracks = await allTracksBySearchTerm(args[0], args[1]);
+    const alltracks = await allTracksBySearchTerm(args[0], args[1], args[2]);
     return alltracks;
   }
 });
 
 ipcMain.handle('get-albums', async (event, ...args) => {
+  console.log(args);
   if (args[1] === '') {
-    const allAlbums = await allAlbumsByScroll(args[0]);
+    const allAlbums = await allAlbumsByScroll(args[0], args[2]);
     return allAlbums;
   } else {
-    const allAlbums = await allAlbumsBySearchTerm(args[0], args[1]);
+    const allAlbums = await allAlbumsBySearchTerm(args[0], args[1], args[2]);
     return allAlbums;
   }
 });

@@ -19,3 +19,7 @@ if (process.contextIsolated) {
   window.electron = electronAPI;
   window.childapi = childapi;
 }
+
+/* releases.release[0].results
+releases.release[0].path
+releases.release[1].searched */

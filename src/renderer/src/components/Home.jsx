@@ -4,12 +4,12 @@ import Stats from './Stats';
 import Playlists from './Playlists';
 /* import AppState from '../hooks/AppState'; */
 import '../style/Home.css';
-import RecentAdditions from './RecentAdditions';
+import AlbumsCoverView from './AlbumsCoverView';
 import Player from './Player';
 import CoverSearch from './CoverSearch';
 
 const Home = ({ state, dispatch }) => {
-  const [homepage, setHomePage] = useState('recent-additions');
+  const [homepage, setHomePage] = useState('albums-cover-view');
   /*   const { state, dispatch } = AppState(); */
 
   const handleHomePage = (e) => {
@@ -50,19 +50,19 @@ const Home = ({ state, dispatch }) => {
       <ul className="home-cards" style={{ color: 'white' }}>
         <li
           className={
-            homepage === 'recent-additions' ? 'home-cards--item active' : 'home-cards--item'
+            homepage === 'albums-cover-view' ? 'home-cards--item active' : 'home-cards--item'
           }
-          id="recent-additions"
+          id="albums-cover-view"
           onClick={handleHomePage}
         >
-          <span>Recent additions</span>
+          <span>Albums with Cover View</span>
         </li>
         {/* <li className="covers-search"></li> */}
-        {homepage === 'recent-additions' && (
+        {homepage === 'albums-cover-view' && (
           <li className="covers-search-form">
             <input
               className={
-                homepage === 'recent-additions' ? 'search-covers search-active' : 'search-covers'
+                homepage === 'albums-cover-view' ? 'search-covers search-active' : 'search-covers'
               }
               id="search-covers"
               placeholder="search covers"
@@ -96,8 +96,8 @@ const Home = ({ state, dispatch }) => {
         </li>
       </ul>
 
-      {homepage === 'recent-additions' && (
-        <RecentAdditions
+      {homepage === 'albums-cover-view' && (
+        <AlbumsCoverView
           state={state}
           dispatch={dispatch}
           covers={state.covers}
