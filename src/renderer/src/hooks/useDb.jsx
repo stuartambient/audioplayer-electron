@@ -23,7 +23,6 @@ const useTracks = (
   useEffect(() => {
     let isSubscribed = true;
     const loadTracks = async () => {
-      console.log('load tracks');
       setTracksLoading(true);
       setTracksError(false);
       let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm, sortType);
@@ -209,7 +208,7 @@ const useTopTenArtistsStat = () => {
 };
 
 const useAllAlbumsCovers = (coversPageNumber, dispatch, coversSearchTerm = null) => {
-  console.log(coversPageNumber);
+  /*   console.log(coversPageNumber); */
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
@@ -246,7 +245,6 @@ const useLast10AlbumsStat = () => {
     const getLast10Albums = async () => {
       const last10AlbumsRequest = await window.api.last10AlbumsStat();
       if (last10AlbumsRequest && subscribed) {
-        /* console.log(last10AlbumsRequest); */
         setLast10Albums(last10AlbumsRequest);
       } else {
         return;
@@ -265,7 +263,6 @@ const useLast100TracksStat = () => {
     const getLast100Tracks = async () => {
       const last100TracksRequest = await window.api.last100TracksStat();
       if (last100TracksRequest && subscribed) {
-        /* console.log(last100TracksRequest); */
         setLast100Tracks(last100TracksRequest);
       } else {
         return;

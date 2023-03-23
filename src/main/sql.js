@@ -145,7 +145,6 @@ const searchAlbums = async () => {
 /* sort by artist, createdon, title genre */
 
 const allTracksByScroll = (offsetNum, sort) => {
-  console.log('sort: ', sort);
   const stmt = db.prepare(
     `SELECT * FROM tracks ORDER BY ${sort} DESC LIMIT 50 OFFSET ${offsetNum * 50}`
   );
@@ -153,7 +152,6 @@ const allTracksByScroll = (offsetNum, sort) => {
 };
 
 const allTracksBySearchTerm = (offsetNum, text, sort) => {
-  console.log('sort: ', sort);
   const term = `%${text}%`;
   const stmt = db.prepare(
     `SELECT * FROM tracks WHERE audiofile LIKE ? LIMIT 50 OFFSET ${offsetNum * 50}`
@@ -172,9 +170,9 @@ const getPlaylist = (playlist) => {
   return albumFiles;
 };
 
-const allAlbumsByScroll = (offsetNum) => {
+const allAlbumsByScroll = (offsetNum, sort) => {
   const stmt = db.prepare(
-    `SELECT * FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET ${offsetNum * 50}`
+    `SELECT * FROM albums ORDER BY ${sort} DESC LIMIT 50 OFFSET ${offsetNum * 50}`
   );
   return stmt.all();
 };
@@ -206,10 +204,10 @@ const allCoversByScroll = (offsetNum, term = null) => {
   }
 };
 
-const allAlbumsBySearchTerm = (offsetNum, text) => {
+const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
   const term = `%${text}%`;
   const stmt = db.prepare(
-    `SELECT * FROM albums WHERE fullpath LIKE ? LIMIT 50 OFFSET ${offsetNum * 50}`
+    `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY ${sort} LIMIT 50 OFFSET ${offsetNum * 50}`
   );
   return stmt.all(term);
 };

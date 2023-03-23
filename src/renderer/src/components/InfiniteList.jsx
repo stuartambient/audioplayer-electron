@@ -43,7 +43,8 @@ const InfiniteList = ({
 
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
-  const [sortType, setSortType /* scrollRef */] = useState('createdon');
+  const [filesSortType, setFilesSortType /* scrollRef */] = useState('createdon');
+  const [albumsSortType, setAlbumsSortType /* scrollRef */] = useState('datecreated');
   const [resetKey, setResetKey] = useState(null);
   const [flashDiv, setFlashDiv] = useState({ type: '', id: '' });
   const [loadedAlbums, setLoadedAlbums] = useState([]);
@@ -53,7 +54,7 @@ const InfiniteList = ({
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
-    sortType,
+    filesSortType,
     resetKey,
     state,
     dispatch,
@@ -62,7 +63,7 @@ const InfiniteList = ({
   const { albumsLoading, hasMoreAlbums, albumsError } = useAlbums(
     albumsPageNumber,
     albumsSearchTerm,
-    sortType,
+    albumsSortType,
     resetKey,
     dispatch
   );
@@ -215,6 +216,12 @@ const InfiniteList = ({
     }
   };
 
+  useEffect(() => {
+    if (playlistReq) {
+      setTimeout(() => setPlaylistReq(''));
+    }
+  }, [playlistReq]);
+
   const handlePlaylistFiles = (e) => {
     switch (e.target.id) {
       case 'playlist-save':
@@ -236,16 +243,8 @@ const InfiniteList = ({
   const handleListScroll = (e) => {};
 
   useEffect(() => {
-    /* const splitid = e.target.id.split('--')[0];
-    const id = splitid; */
-    let justId;
     if (flashDiv.id !== '' && flashDiv.type !== '') {
-      /*  if (flashDiv.id.endsWith('--item-div')) {
-        justId = flashDiv.id.split('--')[0];
-      } else {
-        justId = flashDiv.id;
-      } */
-      /* if (state.playlistTracks.find((pl) => pl.afid === justId)) return; */
+      /* if (flashDiv.type === file) return; */
       const item = document.getElementById(flashDiv.id);
       item.classList.add('flash');
     }
@@ -256,19 +255,18 @@ const InfiniteList = ({
       const track = tracks.find((item) => item.afid === id);
 
       if (track) {
+        if (!playlistTracks.find((e) => e.afid === id)) {
+          setFlashDiv({ type: 'file', id: `${track.afid}--item-div` });
+        } else {
+          return;
+        }
         dispatch({
           type: 'track-to-playlist',
           playlistTracks: [...playlistTracks, track]
         });
-        if (!playlistTracks.find((e) => e.afid === id)) {
-          setFlashDiv({ type: 'file', id: `${id}--item-div` });
-        } else {
-          return;
-        }
       }
     }
     if (option[0] === 'add album to playlist') {
-      console.log(id);
       const albumTracks = await window.api.getAlbumTracks(term);
       dispatch({
         type: 'play-album',
@@ -343,23 +341,40 @@ const InfiniteList = ({
     setAlbumPattern(term); */
   };
 
-  const isSortSelected = (value) => {
-    if (value !== sortType) return false;
+  const isFilesSortSelected = (value) => {
+    if (value !== filesSortType) return false;
+    return true;
+  };
+
+  const isAlbumsSortSelected = (value) => {
+    if (value !== albumsSortType) return false;
     return true;
   };
 
   const handleSortClick = (e) => {
     /* setSortType(e.currentTarget); */
     if (shuffle) return;
-    dispatch({
-      type: 'tracks-pagenumber',
-      tracksPageNumber: 0
-    });
-    dispatch({
-      type: 'reset-tracks',
-      tracks: []
-    });
-    setSortType(e.target.value);
+    if (listType === 'files') {
+      dispatch({
+        type: 'tracks-pagenumber',
+        tracksPageNumber: 0
+      });
+      dispatch({
+        type: 'reset-tracks',
+        tracks: []
+      });
+      setFilesSortType(e.target.value);
+    } else if (listType === 'albums') {
+      dispatch({
+        type: 'albums-pagenumber',
+        albumsPageNumber: 0
+      });
+      dispatch({
+        type: 'reset-albums',
+        albums: []
+      });
+      setAlbumsSortType(e.target.value);
+    }
   };
 
   const getKey = () => uuidv4();
@@ -452,6 +467,7 @@ const InfiniteList = ({
         like={item.like}
         audiofile={item.audiofile}
         val={index}
+        flashDiv={flashDiv.id}
         showContextMenu={handleContextMenu}
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
@@ -524,7 +540,8 @@ const InfiniteList = ({
     <>
       {library === true ? (
         <MediaMenu
-          isSortSelected={isSortSelected}
+          isFilesSortSelected={isFilesSortSelected}
+          isAlbumsSortSelected={isAlbumsSortSelected}
           handleSortClick={handleSortClick}
           listType={state.listType}
           handleTextSearch={handleTextSearch}

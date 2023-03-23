@@ -17,6 +17,7 @@ const Item = forwardRef(
       audiofile,
       like,
       showContextMenu,
+      flashDiv,
 
       /* ALBUMS */
       album,
@@ -40,7 +41,7 @@ const Item = forwardRef(
       return (
         <div
           id={divId}
-          className={className}
+          className={flashDiv === divId ? 'item flash' : className}
           ref={ref}
           fromlisttype={type}
           /* onContextMenu={showContextMenu} */

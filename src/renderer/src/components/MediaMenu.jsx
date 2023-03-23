@@ -2,7 +2,8 @@ import { GiMagnifyingGlass } from 'react-icons/gi';
 import '../style/MediaMenu.css';
 
 const MediaMenu = ({
-  isSortSelected,
+  isFilesSortSelected,
+  isAlbumsSortSelected,
   handleSortClick,
   listType,
   handleTextSearch,
@@ -20,7 +21,7 @@ const MediaMenu = ({
 
   return (
     <ul className={miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
-      {!miniModePlaylist && !shuffle && (
+      {!miniModePlaylist && !shuffle && listType === 'files' && (
         <div className="sort-menu">
           <fieldset>
             <li className="sort-menu--option">
@@ -30,7 +31,7 @@ const MediaMenu = ({
                 id="createdon"
                 name="sortby"
                 value="createdon"
-                checked={isSortSelected('createdon')}
+                checked={isFilesSortSelected('createdon')}
                 onChange={handleSortClick}
               />
             </li>
@@ -41,7 +42,7 @@ const MediaMenu = ({
                 id="artist"
                 name="sortby"
                 value="artist"
-                checked={isSortSelected('artist')}
+                checked={isFilesSortSelected('artist')}
                 onChange={handleSortClick}
               />
             </li>
@@ -52,7 +53,7 @@ const MediaMenu = ({
                 id="title"
                 name="sortby"
                 value="title"
-                checked={isSortSelected('title')}
+                checked={isFilesSortSelected('title')}
                 onChange={handleSortClick}
               />
             </li>
@@ -63,7 +64,46 @@ const MediaMenu = ({
                 id="genre"
                 name="sortby"
                 value="genre"
-                checked={isSortSelected('genre')}
+                checked={isFilesSortSelected('genre')}
+                onChange={handleSortClick}
+              />
+            </li>
+          </fieldset>
+        </div>
+      )}
+      {!miniModePlaylist && listType === 'albums' && (
+        <div className="sort-menu">
+          <fieldset>
+            <li className="sort-menu--option">
+              <label htmlFor="new">new</label>
+              <input
+                type="radio"
+                id="datecreated"
+                name="sortby"
+                value="datecreated"
+                checked={isAlbumsSortSelected('datecreated')}
+                onChange={handleSortClick}
+              />
+            </li>
+            <li className="sort-menu--option">
+              <label htmlFor="artist">album</label>
+              <input
+                type="radio"
+                id="foldername"
+                name="sortby"
+                value="foldername"
+                checked={isAlbumsSortSelected('foldername')}
+                onChange={handleSortClick}
+              />
+            </li>
+            <li className="sort-menu--option">
+              <label htmlFor="recent">location</label>
+              <input
+                type="radio"
+                id="rootlocation"
+                name="sortby"
+                value="rootlocation"
+                checked={isAlbumsSortSelected('rootlocation')}
                 onChange={handleSortClick}
               />
             </li>

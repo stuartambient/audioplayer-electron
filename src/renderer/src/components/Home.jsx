@@ -31,19 +31,12 @@ const Home = ({ state, dispatch }) => {
   };
 
   const handleSearchTerm = (e) => {
-    if (state.coversSearchTerm === '') {
-      dispatch({
-        type: 'reset-albums-covers',
-        covers: [],
-        coversPageNumber: undefined
-      });
-    } else {
-      dispatch({
-        type: 'reset-albums-covers',
-        covers: [],
-        coversPageNumber: 0
-      });
-    }
+    dispatch({
+      type: 'reset-albums-covers',
+      covers: [],
+      coversPageNumber: 0
+    });
+    console.log('search term: ', coversSearchTerm);
   };
   return (
     <>

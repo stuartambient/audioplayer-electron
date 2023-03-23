@@ -10,8 +10,8 @@
   display: grid;
   grid-template-columns: 36vw 10vw 27vw 27vw;
   grid-template-areas:
-    'sortmenu buttons form form'
-    'sortmenu buttons tabs tabs';
+    'sortmenu sortmenu form form'
+    'sortmenu sortmenu tabs tabs';
   row-gap: 5px;
   background-color: black;
 }
@@ -53,7 +53,7 @@
 }
 
 .media-menu .playlist-dialogs {
-  grid-area: buttons;
+  grid-area: sortmenu;
   color: white;
   justify-self: end;
   align-self: center;

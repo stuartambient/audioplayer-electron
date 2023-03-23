@@ -319,7 +319,7 @@ ipcMain.handle('get-tracks', async (event, ...args) => {
 });
 
 ipcMain.handle('get-albums', async (event, ...args) => {
-  console.log(args);
+  console.log('--->', args);
   if (args[1] === '') {
     const allAlbums = await allAlbumsByScroll(args[0], args[2]);
     return allAlbums;
