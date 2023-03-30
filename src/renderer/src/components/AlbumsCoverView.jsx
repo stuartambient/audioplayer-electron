@@ -23,8 +23,8 @@ const AlbumsCoverView = ({
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     coversPageNumber,
-    dispatch,
-    coversSearchTerm
+    coversSearchTerm,
+    dispatch
   );
 
   useEffect(() => {
@@ -74,14 +74,24 @@ const AlbumsCoverView = ({
           }`
         )
 
-        .then((response) => {
-          console.log('response data: ', response.data.results);
+        .then(async (response) => {
+          /* console.log('response data: ', response.data.results); */
           response.data.results.forEach((r) => {
             let tmp = coverSearch.album.split(' ').filter((f) => f !== '-');
             let compare = compareStrs(tmp, r.title);
             console.log(compare);
             if (compare > 60) validResults.results.push(r);
           });
+          const alt = await axios
+            .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`)
+            .then((r) => {
+              /* (r) => console.log(r.data['release-groups'][0].releases), */
+              const artist = r.data['release-groups'][0]['artist-credit'];
+              const rels = r.data['release-groups'][0].releases;
+              artist.forEach((a) => console.log(a.name));
+              rels.forEach((r) => console.log(r.id));
+            });
+
           window.api.showChild(validResults);
         })
 
@@ -95,11 +105,8 @@ const AlbumsCoverView = ({
     }
   }, [coverSearch]);
 
-  const handleAlbumToPlaylist = async (e) => {
-    e.preventDefault();
-    /* if (state.albumsInPlaylist.includes(e.target.id)) return; */
-    /* console.log(e.target.id); */
-    const albumTracks = await window.api.getAlbumTracks(e.target.id);
+  const handleAlbumToPlaylist = async (path) => {
+    const albumTracks = await window.api.getAlbumTracks(path);
     if (albumTracks) {
       dispatch({
         type: 'play-album',
@@ -113,7 +120,6 @@ const AlbumsCoverView = ({
   };
 
   const handleContextMenuOption = async (option, path, album) => {
-    /* console.log('context menu option: ', option, path, album); */
     if (option[0] === 'search for cover') {
       const refAlbum = album
         .split(' ')
@@ -122,6 +128,10 @@ const AlbumsCoverView = ({
             !sl.startsWith('(') && !sl.endsWith(')') && !sl.startsWith('[') && !sl.endsWith(']')
         );
       setCoverSearch({ path: path, album: refAlbum.join(' ') });
+    } else if (option[0] === 'add album to playlist') {
+      handleAlbumToPlaylist(path);
+    } else if (option[0] === 'open album folder') {
+      await window.api.openAlbumFolder(path);
     }
   };
 
@@ -171,7 +181,7 @@ const AlbumsCoverView = ({
                 {/* {cover.fullpath === coverUpdate.fullpath && <img src={coverUpdate.file} alt="" />} */}
                 {/* {cover.fullpath === coverUpdate.path ? <img src={coverUpdate.file} alt="" /> : null} */}
                 <div className="overlay">
-                  <span onClick={handleAlbumToPlaylist} id={cover.fullpath}>
+                  <span /* onClick={handleAlbumToPlaylist} */ id={cover.fullpath}>
                     {cover.foldername}
                   </span>
                   <div

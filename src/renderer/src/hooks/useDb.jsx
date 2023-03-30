@@ -207,7 +207,7 @@ const useTopTenArtistsStat = () => {
   return { topTenArtists };
 };
 
-const useAllAlbumsCovers = (coversPageNumber, dispatch, coversSearchTerm = null) => {
+const useAllAlbumsCovers = (coversPageNumber, coversSearchTerm, dispatch) => {
   /*   console.log(coversPageNumber); */
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
@@ -233,7 +233,7 @@ const useAllAlbumsCovers = (coversPageNumber, dispatch, coversSearchTerm = null)
     /* if (!coversPageNumber) return; */
     loadCovers();
     return () => (isSubscribed = false);
-  }, [coversPageNumber]);
+  }, [coversPageNumber, coversSearchTerm]);
 
   return { coversLoading, /* covers, setCovers, */ hasMoreCovers, coversError };
 };

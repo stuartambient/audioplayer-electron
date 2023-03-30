@@ -150,6 +150,7 @@ const AppState = () => {
           player: action.player
         };
       }
+
       case 'tracks-playlist': {
         return {
           ...state,

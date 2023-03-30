@@ -11,6 +11,7 @@ import {
 } from 'electron';
 import * as path from 'path';
 import fs from 'fs';
+/* import { spawn } from 'child_process'; */
 import url, { pathToFileURL } from 'url';
 import http from 'node:http';
 import * as stream from 'stream';
@@ -619,6 +620,13 @@ ipcMain.handle('show-album-cover-menu', (event) => {
       click: () => {
         return event.sender.send('album-menu', 'add album to playlist');
       }
+    },
+    { type: 'separator' },
+    {
+      label: 'open album folder',
+      click: () => {
+        return event.sender.send('album-menu', 'open album folder');
+      }
     }
   ];
   const menu = Menu.buildFromTemplate(template);
@@ -683,4 +691,23 @@ ipcMain.handle('refresh-cover', async (event, ...args) => {
   /* const imageobj = { img: imgurl.href }; */
 
   BrowserWindow.fromId(mainWindow.id).webContents.send('refresh-home-cover', filepath, imgurl);
+});
+
+ipcMain.handle('open-album-folder', async (_, path) => {
+  console.log(path, process.platform);
+  const properPath = path.replaceAll('/', '\\');
+  /*   let explorer;
+  switch (process.platform) {
+    case 'win32':
+      explorer = 'explorer';
+      break;
+    case 'linux':
+      explorer = 'xdg-open';
+      break;
+    case 'darwin':
+      explorer = 'open';
+      break;
+  } */
+  /*  spawn(explorer, [path], { detached: true }).unref(); */
+  shell.openPath(properPath);
 });

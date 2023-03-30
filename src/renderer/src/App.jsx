@@ -165,7 +165,12 @@ function App() {
 
   useEffect(() => {
     state.audioRef.current.onloadedmetadata = async () => {
-      state.audioRef.current.play();
+      const playProm = state.audioRef.current.play();
+
+      if (playProm !== undefined) {
+        playProm.then(() => console.log('track playing'));
+      }
+
       dispatch({
         type: 'duration',
         duration: convertDuration(state.audioRef.current)
@@ -198,7 +203,6 @@ function App() {
 
   useEffect(() => {
     state.audioRef.current.onvolumechange = () => {
-      console.log('onvolumechange: ', state.audioRef.current.volume);
       dispatch({
         type: 'set-volume',
         volume: state.audioRef.current.volume
@@ -246,6 +250,7 @@ function App() {
   }, [state.playlistTracks[0]]); */
 
   const handleMainNav = async (e) => {
+    console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'close':
         /* window.api.appClose(); */
@@ -293,6 +298,15 @@ function App() {
           home: false,
           update: false,
           player: true
+        });
+        break;
+      case 'playerplaylist':
+        dispatch({
+          type: 'set-page',
+          home: false,
+          update: false,
+          player: true,
+          library: true
         });
         break;
       case 'mini-mode':

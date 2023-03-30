@@ -248,6 +248,14 @@ const InfiniteList = ({
       const item = document.getElementById(flashDiv.id);
       item.classList.add('flash');
     }
+
+    /* return () => setTimeout(() => setFlashDiv({ type: '', id: '' }), 3000); */
+  }, [flashDiv]);
+
+  useEffect(() => {
+    if (flashDiv.type === 'file') {
+      setTimeout(() => setFlashDiv({ type: '', id: '' }), 1000);
+    }
   }, [flashDiv]);
 
   const handleContextMenuOption = async (option, id, term = null) => {

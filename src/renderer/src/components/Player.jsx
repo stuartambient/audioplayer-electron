@@ -8,7 +8,7 @@ import {
   convertToSeconds
 } from '../hooks/useTime';
 import { FaHeart, FaBackward, FaForward, FaListUl } from 'react-icons/fa';
-import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
+import { GiJetPack, GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FiVolume } from 'react-icons/fi';
 import '../style/Player.css';
 
@@ -116,7 +116,7 @@ const Player = ({
       className={playerClassNames()}
       style={minimalmode ? { backgroundImage: `url(${cover})` } : { backgroundImage: 'none' }}
     >
-      {!minimalmodeInfo && (
+      {!minimalmodeInfo && !home && (
         <div className="title">
           <p className={title.length > 35 /* && !minimalmode */ ? 'title-transform' : 'title-text'}>
             {title}
@@ -135,7 +135,7 @@ const Player = ({
         <p style={{ gridRow: '2 / 3' }}>No available image</p>
       )}
 
-      {!minimalmodeInfo && (
+      {!minimalmodeInfo && !home && (
         <div className="metadata">
           <>
             {artist ? (

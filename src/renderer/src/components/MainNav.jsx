@@ -34,7 +34,10 @@ const MainNav = ({ onClick, home, update, player, minimalmode, library }) => {
             <li onClick={onClick} id="player" className={player ? 'highlight' : ''}>
               <span>Player</span>
             </li>
-            <li onClick={onClick} id="mini-mode" className="">
+            <li onClick={onClick} id="playerplaylist" className={player ? 'highlight' : ''}>
+              <span>Player/Playlist</span>
+            </li>
+            <li onClick={onClick} id="mini-mode" className="endline">
               <span>Miniplayer</span>
             </li>
           </ul>

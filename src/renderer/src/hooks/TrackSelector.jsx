@@ -15,7 +15,6 @@ const TrackSelector = async (
   audiofile = null,
   like = null
 ) => {
-  console.log('hit');
   let track, id, val, listType, file, liked;
   if (e.target) {
     e.preventDefault();
