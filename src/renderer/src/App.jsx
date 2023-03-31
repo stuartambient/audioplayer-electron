@@ -164,12 +164,8 @@ function App() {
   };
 
   useEffect(() => {
-    state.audioRef.current.onloadedmetadata = async () => {
-      const playProm = state.audioRef.current.play();
-
-      if (playProm !== undefined) {
-        playProm.then(() => console.log('track playing'));
-      }
+    state.audioRef.current.onloadedmetadata = (e) => {
+      state.audioRef.current.play();
 
       dispatch({
         type: 'duration',
@@ -179,6 +175,18 @@ function App() {
         type: 'set-delay',
         delay: true
       });
+    };
+  });
+
+  /*   useEffect(() => {
+    state.audioRef.current.onwaiting = (e) => {
+      console.log(e.path, e.path[0].error);
+    };
+  }); */
+
+  useEffect(() => {
+    state.audioRef.current.onerror = (e) => {
+      console.log('error', e.path[0].error.code, e.path[0].error.message);
     };
   });
 

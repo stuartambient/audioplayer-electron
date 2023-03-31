@@ -36,7 +36,6 @@ const Home = ({ state, dispatch }) => {
       covers: [],
       coversPageNumber: 0
     });
-    console.log('search term: ', coversSearchTerm);
   };
   return (
     <>
