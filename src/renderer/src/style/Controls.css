@@ -26,6 +26,10 @@
   fill: red;
 }
 
+.controls .plshuffle svg {
+  fill: green;
+}
+
 .controls .btn:hover {
   cursor: pointer;
 }

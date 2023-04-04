@@ -10,7 +10,8 @@ const Controls = ({
   player,
   home,
   library,
-  shuffle
+  tracksShuffle,
+  playlistShuffle
 }) => {
   const controlsClassNames = () => {
     if (player && !minimalmode) {
@@ -45,7 +46,7 @@ const Controls = ({
       <li className="btn" id="forward" onClick={handlePlayerControls}>
         <FaForward />
       </li>
-      <li className={shuffle ? 'btn on' : 'btn'} id="shuffle" onClick={handlePlayerControls}>
+      <li className={tracksShuffle ? 'btn on' : 'btn'} id="shuffle" onClick={handlePlayerControls}>
         <FaRandom />
       </li>
       {!minimalmode && !home && (

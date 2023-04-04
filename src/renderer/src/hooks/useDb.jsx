@@ -15,7 +15,7 @@ const useTracks = (
   resetKey,
   state,
   dispatch,
-  shuffle
+  tracksShuffle
 ) => {
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
@@ -45,7 +45,6 @@ const useTracks = (
     };
 
     const loadShuffledTracks = async () => {
-      console.log('shuffled tracks');
       setTracksLoading(true);
       setTracksError(false);
       /////////////////
@@ -61,7 +60,6 @@ const useTracks = (
         end = start + 49;
       }
       const shuffledTracks = await window.api.getShuffledTracks(start, end);
-      console.log(shuffledTracks, isSubscribed);
       if (shuffledTracks && isSubscribed) {
         if (tracksPageNumber === 0) {
           dispatch({
@@ -80,14 +78,14 @@ const useTracks = (
       }
     };
 
-    shuffle ? loadShuffledTracks() : loadTracks();
+    tracksShuffle && state.listType === 'files' ? loadShuffledTracks() : loadTracks();
     return () => (isSubscribed = false);
-  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey, shuffle]);
+  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey, tracksShuffle]);
   return {
     tracksLoading,
     hasMoreTracks,
     tracksError,
-    shuffle,
+    tracksShuffle,
     resetKey
   };
 };
@@ -274,17 +272,21 @@ const useLast100TracksStat = () => {
   return { last100Tracks };
 };
 
-const usePlaylistDialog = (req, playlistTracks, dispatch) => {
+const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
   useEffect(() => {
     let isSubscribed = true;
     const openplaylist = async () => {
       try {
         const openpl = await window.api.openPlaylist();
         if (openpl && isSubscribed) {
-          dispatch({
-            type: 'load-playlist',
-            playlistTracks: openpl
-          });
+          if (openpl === 'action cancelled') {
+            return setPlaylistReq('');
+          } else {
+            dispatch({
+              type: 'load-playlist',
+              playlistTracks: openpl
+            });
+          }
         }
       } catch (e) {
         console.log(e.message);
@@ -295,7 +297,13 @@ const usePlaylistDialog = (req, playlistTracks, dispatch) => {
       try {
         const savepl = await window.api.savePlaylist(playlistTracks);
         if (savepl && isSubscribed) {
-          console.log(savepl);
+          if (savepl === 'action cancelled') {
+            console.log(savepl);
+            setPlaylistReq('');
+          } else {
+            console.log(savepl);
+          }
+          /* setPlaylistReq(''); */
         }
       } catch (e) {
         console.log(e.message);
@@ -304,12 +312,18 @@ const usePlaylistDialog = (req, playlistTracks, dispatch) => {
     if (req === 'playlist-open') {
       openplaylist();
       /* setPlaylistReq(''); */
-      return () => (isSubscribed = false);
+      return () => {
+        isSubscribed = false;
+        /* setPlaylistReq(''); */
+      };
     }
     if (req === 'playlist-save') {
       saveplaylist();
       /* setPlaylistReq(''); */
-      return () => (isSubscribed = false);
+      return () => {
+        isSubscribed = false;
+        /* setPlaylistReq(''); */
+      };
     }
   }, [req]);
 };

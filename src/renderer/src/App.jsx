@@ -30,11 +30,6 @@ import './App.css';
 function App() {
   const { state, dispatch } = AppState();
 
-  /*  const audio = new Audio();
-  const audioRef = useRef(audio); */
-  /* const { audioRef } = useAudio(); */
-  /*  const [type, setType] = useState('files'); */
-
   const handleUpdateLike = async (id) => {
     if (!id) return;
     const updatelike = await window.api.updateLike(id);
@@ -42,62 +37,38 @@ function App() {
   };
 
   const handleShuffle = async () => {
-    dispatch({
+    /*   if (state.listType === 'files') {
+      dispatch({
+        type: 'tracks-shuffle',
+        tracksShuffle: !state.tracksShuffle
+      });
+      dispatch({
+        type: 'tracks-pagenumber',
+        tracksPageNumber: 0
+      });
+    } */
+    if (state.listType === 'playlist') {
+      dispatch({
+        type: 'playlist-shuffle',
+        playlistShuffle: !state.playlistShuffle
+      });
+      console.log('plshuffle: ', state.playlistShuffle);
+      /* dispatch({
+        type: 'playlist-shuffle-on'
+      }); */
+    }
+    /*   dispatch({
       type: 'shuffle',
       shuffle: !state.shuffle
     });
-    dispatch({
-      type: 'tracks-pagenumber',
-      tracksPageNumber: 0
-    });
-
-    /*    dispatch({
-      type: 'reset-tracks',
-      tracks: []
-    });
-    dispatch({
-      type: 'tracks-pagenumber',
-      tracksPageNumber: 0
-    }); */
+    if (state.listType === 'files') {
+      dispatch({
+        type: 'tracks-pagenumber',
+        tracksPageNumber: 0
+      });
+    } */
   };
 
-  /*   useEffect(() => {
-    if (state.shuffle) {
-      dispatch({
-        type: 'reset-tracks',
-        tracks: []
-      });
-    }
-  }, [state.shuffle]); */
-
-  /*   useEffect(() => {
-    const setupShuffle = async () => {
-      const totaltracks = await window.api.totalTracksStat();
-      const refreshkey = uuidv4();
-      const setRandArray = await window.api.setShuffledTracksArray(totaltracks, refreshkey);
-      const shuffledTracks = await window.api.getShuffledTracks(0, 50);
-
-      if (shuffledTracks && subscribed) {
-        dispatch({
-          type: 'add-shuffled-tracks',
-          tracks: shuffledTracks
-        });
-      }
-    };
-    if (state.shuffle) setupShuffle();
-  }, [state.shuffle]); */
-
-  /*    } else {
-      const allTracks = await window.api.getTracks(state.tracksPageNumber, '');
-      dispatch({
-        type: 'tracks-playlist',
-        tracks: allTracks
-      });
-    }  */
-
-  /*   const sendToMain = async () => {
-    await window.api.sendState(state.active, state.currentTrack).then((r) => console.log(r));
-  }; */
   const handlePlayerControls = (e) => {
     switch (e.currentTarget.id) {
       case 'playlist':
@@ -130,8 +101,25 @@ function App() {
         handleUpdateLike(state.active);
         break;
       case 'shuffle':
-        /* window.api.getAllTracks(); */
-        handleShuffle();
+        if (state.listType === 'files') {
+          dispatch({
+            type: 'tracks-shuffle',
+            tracksShuffle: !state.tracksShuffle
+          });
+          dispatch({
+            type: 'tracks-pagenumber',
+            tracksPageNumber: 0
+          });
+        }
+        if (state.listType === 'playlist') {
+          dispatch({
+            type: 'playlist-shuffle',
+            playlistShuffle: !state.playlistShuffle
+          });
+          /* dispatch({
+            type: 'playlist-shuffle-on'
+          }); */
+        }
 
         break;
       case 'miniplayer':
@@ -258,7 +246,6 @@ function App() {
   }, [state.playlistTracks[0]]); */
 
   const handleMainNav = async (e) => {
-    console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'close':
         /* window.api.appClose(); */
@@ -421,7 +408,8 @@ function App() {
                 minimalmode={state.minimalmode}
                 player={state.player}
                 home={state.home}
-                shuffle={state.shuffle}
+                tracksShuffle={state.tracksShuffle}
+                playlistShuffle={state.playlistShuffle}
                 library={state.library}
               />
               {!state.home && (
@@ -430,7 +418,8 @@ function App() {
                   volume={state.volume}
                   seeking={state.seeking}
                   library={state.library}
-                  shuffle={state.shuffle}
+                  tracksShuffle={state.tracksShuffle}
+                  playlistShuffle={state.playlistShuffle}
                   home={state.home}
                 />
               )}
@@ -446,7 +435,8 @@ function App() {
           minimalmode={state.minimalmode}
           player={state.player}
           home={state.home}
-          shuffle={state.shuffle}
+          tracksShuffle={state.tracksShuffle}
+          playlistShuffle={state.playlistShuffle}
         />
       )}
 
@@ -466,7 +456,8 @@ function App() {
           /* handlePicture={handlePicture} */
           tracks={state.tracks}
           tracksPageNumber={state.tracksPageNumber}
-          shuffle={state.shuffle}
+          tracksShuffle={state.tracksShuffle}
+          playlistShuffle={state.playlistShuffle}
           playlistTracks={state.playlistTracks}
           minimalmode={state.minimalmode}
           miniModePlaylist={state.miniModePlaylist}

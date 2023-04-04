@@ -446,7 +446,7 @@ ipcMain.handle('open-playlist', async () => {
     properties: ['openFile'],
     filters: [{ name: 'Playlist', extensions: ['m3u'] }]
   });
-  if (open.canceled) return;
+  if (open.canceled) return 'action cancelled';
   const plfiles = await fs.promises.readFile(open.filePaths.join(), 'utf8');
   const parsedPlFiles = plfiles.replaceAll('\\', '/').split('\n');
   return getPlaylist(parsedPlFiles);
@@ -458,7 +458,7 @@ ipcMain.handle('save-playlist', async (_, args) => {
     filters: [{ name: 'Playlist', extensions: ['m3u'] }]
   });
 
-  if (save.canceled) return;
+  if (save.canceled) return 'action cancelled';
 
   args.forEach((a, index) => {
     const tmp = a.audiofile.replaceAll('/', '\\');

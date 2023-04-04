@@ -10,7 +10,8 @@ const MediaMenu = ({
   miniModePlaylist,
   handlePlaylistFiles,
   dispatch,
-  shuffle
+  playlistShuffle,
+  tracksShuffle
 }) => {
   const handleListType = (listtype) => {
     dispatch({
@@ -21,7 +22,7 @@ const MediaMenu = ({
 
   return (
     <ul className={miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
-      {!miniModePlaylist && !shuffle && listType === 'files' && (
+      {!miniModePlaylist && !tracksShuffle && listType === 'files' && (
         <div className="sort-menu">
           <fieldset>
             <li className="sort-menu--option">

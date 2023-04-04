@@ -1,7 +1,15 @@
 import { CgMiniPlayer } from 'react-icons/cg';
 import '../style/Extras.css';
 
-const Extras = ({ handlePlayerControls, library, shuffle, volume, seeking, home }) => {
+const Extras = ({
+  handlePlayerControls,
+  library,
+  tracksShuffle,
+  playlistShuffle,
+  volume,
+  seeking,
+  home
+}) => {
   return (
     <ul className="extras">
       <li className="btn" id="miniplayer" onClick={handlePlayerControls}>
@@ -10,7 +18,7 @@ const Extras = ({ handlePlayerControls, library, shuffle, volume, seeking, home 
       <li className={library ? 'library on' : 'library off'}>
         <p>library</p>
       </li>
-      <li className={shuffle ? 'shuffle on' : 'shuffle off'}>
+      <li className={playlistShuffle || tracksShuffle ? 'shuffle on' : 'shuffle off'}>
         <p>shuffle</p>
       </li>
       {volume ? (

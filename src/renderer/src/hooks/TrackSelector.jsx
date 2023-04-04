@@ -33,7 +33,7 @@ const TrackSelector = async (
     liked = track.like;
   }
 
-  /* state.audioRef.current.src = ''; */
+  state.audioRef.current.src = '';
 
   dispatch({
     type: 'newtrack',

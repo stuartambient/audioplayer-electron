@@ -37,6 +37,7 @@ const AppState = () => {
     coversSearchTerm: '',
     playlistTracks: [],
     shuffledTracks: [],
+    shuffledPlaylist: [],
     shuffledTracksPageNumber: 0,
     albumsInPlaylist: [],
 
@@ -50,6 +51,8 @@ const AppState = () => {
     delay: false,
     isLiked: false,
     shuffle: false,
+    tracksShuffle: false,
+    playlistShuffle: false,
     playlistMode: false,
     seeking: false
   };
@@ -333,12 +336,27 @@ const AppState = () => {
           minimalmodeInfo: action.minimalmodeInfo
         };
       }
-      case 'shuffle': {
+      case 'tracks-shuffle': {
         return {
           ...state,
-          shuffle: action.shuffle
+          tracksShuffle: action.tracksShuffle
         };
       }
+
+      case 'playlist-shuffle': {
+        return {
+          ...state,
+          playlistShuffle: action.playlistShuffle
+        };
+      }
+
+      case 'playlist-shuffle-on': {
+        return {
+          ...state,
+          playlistTracks: [...state.playlistTracks.sort(() => (Math.random() > 0.5 ? 1 : -1))]
+        };
+      }
+
       case 'shuffled-tracks': {
         return {
           ...state,

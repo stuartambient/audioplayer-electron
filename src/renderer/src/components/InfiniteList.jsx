@@ -32,7 +32,8 @@ const InfiniteList = ({
   tracks,
   tracksPageNumber,
   playlistTracks,
-  shuffle,
+  tracksShuffle,
+  playlistShuffle,
   minimalmode,
   miniModePlaylist,
   albums,
@@ -58,7 +59,7 @@ const InfiniteList = ({
     resetKey,
     state,
     dispatch,
-    shuffle
+    tracksShuffle
   );
   const { albumsLoading, hasMoreAlbums, albumsError } = useAlbums(
     albumsPageNumber,
@@ -72,7 +73,7 @@ const InfiniteList = ({
 
   /*   usePlaylist(albumId, dispatch); */
 
-  usePlaylistDialog(playlistReq, playlistTracks, dispatch);
+  usePlaylistDialog(playlistReq, playlistTracks, dispatch, setPlaylistReq);
 
   /*   const { shuffledLoading, hasMoreShuffled, shuffledError } = useRandomTracks(
     shuffledTracksPageNumber,
@@ -216,11 +217,11 @@ const InfiniteList = ({
     }
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (playlistReq) {
       setTimeout(() => setPlaylistReq(''));
     }
-  }, [playlistReq]);
+  }, [playlistReq]); */
 
   const handlePlaylistFiles = (e) => {
     switch (e.target.id) {
@@ -361,7 +362,7 @@ const InfiniteList = ({
 
   const handleSortClick = (e) => {
     /* setSortType(e.currentTarget); */
-    if (shuffle) return;
+    if (tracksShuffle || playlistShuffle) return;
     if (listType === 'files') {
       dispatch({
         type: 'tracks-pagenumber',
@@ -556,7 +557,8 @@ const InfiniteList = ({
           miniModePlaylist={miniModePlaylist}
           handlePlaylistFiles={handlePlaylistFiles}
           dispatch={dispatch}
-          shuffle={shuffle}
+          playlistShuffle={playlistShuffle}
+          tracksShuffle={tracksShuffle}
         />
       ) : null}
       <div className={listClassNames()}>
