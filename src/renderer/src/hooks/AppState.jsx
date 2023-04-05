@@ -37,7 +37,7 @@ const AppState = () => {
     coversSearchTerm: '',
     playlistTracks: [],
     shuffledTracks: [],
-    shuffledPlaylist: [],
+    playlistInOrder: [],
     shuffledTracksPageNumber: 0,
     albumsInPlaylist: [],
 
@@ -347,13 +347,6 @@ const AppState = () => {
         return {
           ...state,
           playlistShuffle: action.playlistShuffle
-        };
-      }
-
-      case 'playlist-shuffle-on': {
-        return {
-          ...state,
-          playlistTracks: [...state.playlistTracks.sort(() => (Math.random() > 0.5 ? 1 : -1))]
         };
       }
 

@@ -49,6 +49,7 @@ const InfiniteList = ({
   const [resetKey, setResetKey] = useState(null);
   const [flashDiv, setFlashDiv] = useState({ type: '', id: '' });
   const [loadedAlbums, setLoadedAlbums] = useState([]);
+  const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
 
   /* const [albumId, setAlbumId] = useState([]); */
   const [playlistReq, setPlaylistReq] = useState('');
@@ -71,6 +72,14 @@ const InfiniteList = ({
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
 
+  useEffect(() => {
+    const handleShuffling = () => {
+      setShuffledPlaylist(
+        playlistTracks.map((item) => item).sort((a) => (Math.random() > 0.5 ? 1 : -1))
+      );
+    };
+    if (playlistShuffle || playlistTracks) handleShuffling();
+  }, [playlistShuffle, playlistTracks]);
   /*   usePlaylist(albumId, dispatch); */
 
   usePlaylistDialog(playlistReq, playlistTracks, dispatch, setPlaylistReq);
@@ -508,8 +517,9 @@ const InfiniteList = ({
       ></Item>
     );
   });
-
-  const byPlaylist = playlistTracks.map((item, index) => {
+  let pl;
+  playlistShuffle ? (pl = shuffledPlaylist) : (pl = playlistTracks);
+  const byPlaylist = pl.map((item, index) => {
     return (
       <Item
         state={state}

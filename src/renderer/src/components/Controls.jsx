@@ -11,7 +11,8 @@ const Controls = ({
   home,
   library,
   tracksShuffle,
-  playlistShuffle
+  playlistShuffle,
+  listType
 }) => {
   const controlsClassNames = () => {
     if (player && !minimalmode) {
@@ -22,6 +23,17 @@ const Controls = ({
     }
     if (home) {
       return 'controls controls-home';
+    }
+  };
+
+  const shuffleButtonClassName = () => {
+    if (tracksShuffle && listType === 'files') {
+      return 'btn on';
+    }
+    if (playlistShuffle && listType === 'playlist') {
+      return 'btn plshuffle';
+    } else {
+      return 'btn';
     }
   };
   return (
@@ -46,7 +58,7 @@ const Controls = ({
       <li className="btn" id="forward" onClick={handlePlayerControls}>
         <FaForward />
       </li>
-      <li className={tracksShuffle ? 'btn on' : 'btn'} id="shuffle" onClick={handlePlayerControls}>
+      <li className={shuffleButtonClassName()} id="shuffle" onClick={handlePlayerControls}>
         <FaRandom />
       </li>
       {!minimalmode && !home && (

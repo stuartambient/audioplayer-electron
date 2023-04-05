@@ -36,39 +36,6 @@ function App() {
     console.log('update like: ', updatelike);
   };
 
-  const handleShuffle = async () => {
-    /*   if (state.listType === 'files') {
-      dispatch({
-        type: 'tracks-shuffle',
-        tracksShuffle: !state.tracksShuffle
-      });
-      dispatch({
-        type: 'tracks-pagenumber',
-        tracksPageNumber: 0
-      });
-    } */
-    if (state.listType === 'playlist') {
-      dispatch({
-        type: 'playlist-shuffle',
-        playlistShuffle: !state.playlistShuffle
-      });
-      console.log('plshuffle: ', state.playlistShuffle);
-      /* dispatch({
-        type: 'playlist-shuffle-on'
-      }); */
-    }
-    /*   dispatch({
-      type: 'shuffle',
-      shuffle: !state.shuffle
-    });
-    if (state.listType === 'files') {
-      dispatch({
-        type: 'tracks-pagenumber',
-        tracksPageNumber: 0
-      });
-    } */
-  };
-
   const handlePlayerControls = (e) => {
     switch (e.currentTarget.id) {
       case 'playlist':
@@ -116,9 +83,6 @@ function App() {
             type: 'playlist-shuffle',
             playlistShuffle: !state.playlistShuffle
           });
-          /* dispatch({
-            type: 'playlist-shuffle-on'
-          }); */
         }
 
         break;
@@ -411,6 +375,7 @@ function App() {
                 tracksShuffle={state.tracksShuffle}
                 playlistShuffle={state.playlistShuffle}
                 library={state.library}
+                listType={state.listType}
               />
               {!state.home && (
                 <Extras
@@ -437,6 +402,7 @@ function App() {
           home={state.home}
           tracksShuffle={state.tracksShuffle}
           playlistShuffle={state.playlistShuffle}
+          listType={state.listType}
         />
       )}
 
