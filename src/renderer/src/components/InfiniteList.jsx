@@ -78,7 +78,7 @@ const InfiniteList = ({
         playlistTracks.map((item) => item).sort((a) => (Math.random() > 0.5 ? 1 : -1))
       );
     };
-    if (playlistShuffle || playlistTracks) handleShuffling();
+    if (playlistShuffle) handleShuffling();
   }, [playlistShuffle, playlistTracks]);
   /*   usePlaylist(albumId, dispatch); */
 
@@ -126,7 +126,7 @@ const InfiniteList = ({
         });
       }
     }
-    if (listType === 'playlist') {
+    if (listType === 'playlist' && !playlistShuffle) {
       if (currentTrack >= 0 && playlistTracks[currentTrack + 1]) {
         dispatch({
           type: 'set-next-track',
@@ -140,7 +140,21 @@ const InfiniteList = ({
         });
       }
     }
-  }, [currentTrack, tracks, playlistTracks, listType, dispatch]);
+    if (playlistShuffle) {
+      if (currentTrack >= 0 && shuffledPlaylist[currentTrack + 1]) {
+        dispatch({
+          type: 'set-next-track',
+          nextTrack: shuffledPlaylist[currentTrack + 1].afid
+        });
+      }
+      if (currentTrack >= 1 && shuffledPlaylist[currentTrack - 1]) {
+        dispatch({
+          type: 'set-prev-track',
+          prevTrack: shuffledPlaylist[currentTrack - 1].afid
+        });
+      }
+    }
+  }, [currentTrack, tracks, playlistTracks, shuffledPlaylist, listType, dispatch]);
 
   /* HERE */
   /*   useEffect(() => {

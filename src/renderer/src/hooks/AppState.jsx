@@ -369,7 +369,9 @@ const AppState = () => {
       case 'covers-search-term': {
         return {
           ...state,
-          coversSearchTerm: action.coversSearchTerm
+          coversSearchTerm: action.coversSearchTerm,
+          covers: action.covers,
+          coversPageNumber: action.coversPageNumber
         };
       }
 

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import Stats from './Stats';
 import Playlists from './Playlists';
@@ -10,7 +11,9 @@ import CoverSearch from './CoverSearch';
 
 const Home = ({ state, dispatch }) => {
   const [homepage, setHomePage] = useState('albums-cover-view');
+  const [resetKey, setResetKey] = useState('');
   /*   const { state, dispatch } = AppState(); */
+  const getKey = () => uuidv4();
 
   const handleHomePage = (e) => {
     setHomePage(e.currentTarget.id);
@@ -24,19 +27,20 @@ const Home = ({ state, dispatch }) => {
   };
 
   const handleCoversSearchTerm = (e) => {
+    e.preventDefault();
+    if (!coverSearchRef.current.value) {
+      setResetKey(getKey());
+    }
+    console.log(coverSearchRef.current.value);
     dispatch({
       type: 'covers-search-term',
-      coversSearchTerm: e.target.value
-    });
-  };
-
-  const handleSearchTerm = (e) => {
-    dispatch({
-      type: 'reset-albums-covers',
+      coversSearchTerm: coverSearchRef.current.value,
       covers: [],
       coversPageNumber: 0
     });
   };
+
+  const coverSearchRef = useRef();
   return (
     <>
       <ul className="home-cards" style={{ color: 'white' }}>
@@ -52,16 +56,22 @@ const Home = ({ state, dispatch }) => {
         {/* <li className="covers-search"></li> */}
         {homepage === 'albums-cover-view' && (
           <li className="covers-search-form">
-            <input
-              className={
-                homepage === 'albums-cover-view' ? 'search-covers search-active' : 'search-covers'
-              }
-              id="search-covers"
-              placeholder="search covers"
-              value={state.coversSearchTerm}
-              onChange={handleCoversSearchTerm}
-            />
-            <GiMagnifyingGlass onClick={handleSearchTerm} />
+            <form onSubmit={handleCoversSearchTerm} className="covers-search-form">
+              <input
+                className={
+                  homepage === 'albums-cover-view' ? 'search-covers search-active' : 'search-covers'
+                }
+                id="covers-search-term"
+                name="covers-search-term"
+                ref={coverSearchRef}
+                placeholder="search covers"
+                /*  value={state.coversSearchTerm}
+              onChange={handleCoversSearchTerm} */
+              />
+              <button value="Submit">
+                <GiMagnifyingGlass />
+              </button>
+            </form>
           </li>
         )}
         <li
@@ -95,6 +105,7 @@ const Home = ({ state, dispatch }) => {
           covers={state.covers}
           coversPageNumber={state.coversPageNumber}
           coversSearchTerm={state.coversSearchTerm}
+          resetKey={resetKey}
         />
       )}
       {homepage === 'stats' && <Stats />}

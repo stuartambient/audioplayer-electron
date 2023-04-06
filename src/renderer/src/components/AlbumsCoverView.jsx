@@ -15,7 +15,8 @@ const AlbumsCoverView = ({
   covers,
   coversPageNumber,
   coversSearchTerm,
-  homepage
+  homepage,
+  resetKey
 }) => {
   const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
   const [viewMore, setViewMore] = useState(false);
@@ -24,7 +25,8 @@ const AlbumsCoverView = ({
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     coversPageNumber,
     coversSearchTerm,
-    dispatch
+    dispatch,
+    resetKey
   );
 
   useEffect(() => {
