@@ -130,26 +130,11 @@ function App() {
     };
   });
 
-  /*   useEffect(() => {
-    state.audioRef.current.onwaiting = (e) => {
-      console.log(e.path, e.path[0].error);
-    };
-  }); */
-
   useEffect(() => {
     state.audioRef.current.onerror = (e) => {
       console.log('error', e.path[0].error.code, e.path[0].error.message);
     };
   });
-
-  /*   useEffect(() => {
-    state.audioRef.current.ontimeupdate = () => {
-      dispatch({
-        type: 'current-time',
-        currentTime: convertCurrentTime(state.audioRef.current)
-      });
-    };
-  }, [state.audioRef]); */
 
   useEffect(() => {
     state.audioRef.current.onseeking = () => {

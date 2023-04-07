@@ -46,10 +46,6 @@ const Player = ({
     };
   }, [audioRef]);
 
-  /*   useEffect(() => {
-    console.log('volume: ', audioRef.current.volume);
-  }, [audioRef.current.volume]); */
-
   const seekbarOutline = useRef();
   const volumebarOutline = useRef();
   const volumeslider = useRef();
@@ -81,10 +77,6 @@ const Player = ({
     audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
     /* setCTime(totaltime / seekbarOutlineWidth) * seekPoint; */
   };
-
-  /*   useEffect(() => {
-    console.log('lengths: ', title.length, artist.length, album.length);
-  }, [title, artist, album]); */
 
   const playerClassNames = () => {
     if (!library && !minimalmode && !home) {

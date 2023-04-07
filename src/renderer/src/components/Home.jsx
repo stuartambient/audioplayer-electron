@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import Stats from './Stats';

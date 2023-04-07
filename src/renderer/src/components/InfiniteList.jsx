@@ -84,17 +84,6 @@ const InfiniteList = ({
 
   usePlaylistDialog(playlistReq, playlistTracks, dispatch, setPlaylistReq);
 
-  /*   const { shuffledLoading, hasMoreShuffled, shuffledError } = useRandomTracks(
-    shuffledTracksPageNumber,
-    state,
-    dispatch,
-    shuffle
-  ); */
-
-  /*   useEffect(() => {
-    console.log(checkbox, checkbox.length, checkbox[checkbox.length - 1]);
-  }, [checkbox]); */
-
   const albumsTracks = albumTracks.map((track) => {
     if (track.title) {
       return <li key={track.afid}>{track.title}</li>;
@@ -104,13 +93,7 @@ const InfiniteList = ({
   });
 
   const scrollRef = useRef();
-  /*   const searchRef = useRef(); */
 
-  /*   useEffect(() => {
-    console.log('album id: ', albumId);
-  }, [albumId]); */
-
-  /* HERE */
   useEffect(() => {
     if (listType === 'files') {
       if (currentTrack >= 0 && tracks[currentTrack + 1]) {
@@ -156,20 +139,6 @@ const InfiniteList = ({
     }
   }, [currentTrack, tracks, playlistTracks, shuffledPlaylist, listType, dispatch]);
 
-  /* HERE */
-  /*   useEffect(() => {
-    if (shuffle) {
-      dispatch({
-        type: 'reset-tracks',
-        tracks: []
-      });
-      dispatch({
-        type: 'tracks-pagenumber',
-        tracksPageNumber: 0
-      });
-    }
-  }, [shuffle]); */
-
   useEffect(() => {
     const handleTrackChange = (trackId) => {
       const changeTrack = new Event('click', {
@@ -188,12 +157,6 @@ const InfiniteList = ({
       handleTrackChange(prevTrack);
     }
   }, [playNext, nextTrack, playPrev, prevTrack, tracks, currentTrack]);
-
-  /*   useEffect(() => {
-    if (open) {
-      setOpen(!open);
-    }
-  }, [open]); */
 
   const handleTextSearch = (e) => {
     e.preventDefault();
@@ -239,12 +202,6 @@ const InfiniteList = ({
       setAlbumsSearchTerm(e.currentTarget.textsearch.value);
     }
   };
-
-  /*   useEffect(() => {
-    if (playlistReq) {
-      setTimeout(() => setPlaylistReq(''));
-    }
-  }, [playlistReq]); */
 
   const handlePlaylistFiles = (e) => {
     switch (e.target.id) {
@@ -354,10 +311,6 @@ const InfiniteList = ({
     }
   };
 
-  useEffect(() => {
-    /* console.log('show more: ', showMore, 'albumPattern: ', albumPattern); */
-  }, [showMore, albumPattern]);
-
   const handleAlbumTracksRequest = (e) => {
     const term = e.currentTarget.getAttribute('term');
 
@@ -369,8 +322,6 @@ const InfiniteList = ({
       setShowMore(e.currentTarget.id);
       setAlbumPattern(term);
     }
-    /*  showMore === e.currentTarget.id ? setShowMore(null) : setShowMore(e.currentTarget.id);
-    setAlbumPattern(term); */
   };
 
   const isFilesSortSelected = (value) => {
@@ -384,7 +335,6 @@ const InfiniteList = ({
   };
 
   const handleSortClick = (e) => {
-    /* setSortType(e.currentTarget); */
     if (tracksShuffle || playlistShuffle) return;
     if (listType === 'files') {
       dispatch({
@@ -418,7 +368,6 @@ const InfiniteList = ({
   const lastTrackElement = useCallback(
     (node) => {
       if (tracksLoading) return;
-      /*  if (!hasMoreFiles) return setSearchTermFiles(""); */
       if (filesObserver.current) filesObserver.current.disconnect();
       filesObserver.current = new IntersectionObserver(
         (entries) => {
@@ -448,14 +397,10 @@ const InfiniteList = ({
       albumsObserver.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMoreAlbums) {
-            /* console.log('entries: ', entries[0].isIntersecting, hasMore); */
             dispatch({
               type: 'albums-pagenumber',
               albumsPageNumber: albumsPageNumber + 1
             });
-            /*  dispatch({
-              type: "albumsPageNumber",
-            }); */
           }
         },
         {
@@ -542,7 +487,6 @@ const InfiniteList = ({
         key={getKey()}
         divId={`${item.afid}--item-div`}
         className={`${active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'}
-        /* ref={tracks.length === index + 1 ? lastTrackElement : scrollToView} */
         href={item.afid}
         id={item.afid}
         like={item.like}

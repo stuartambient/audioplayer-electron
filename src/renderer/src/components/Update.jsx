@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import Loader from './Loader';
-/* import Modal from './Modal'; */
 import { AiOutlineFolderOpen, AiOutlineFileAdd } from 'react-icons/ai';
 import TextEditor from './TextEditor';
 import '../style/Update.css';
@@ -14,17 +13,6 @@ const Update = () => {
   const [fileUpdateReq, setFileUpdateReq] = useState();
   const [showFileDetails, setShowFileDetails] = useState(false);
   const [showFolderDetails, setShowFolderDetails] = useState(false);
-  /*   const [coords, setCoords] = useState();
-
-  const modalRef = useRef(); */
-  /*   useEffect(() => {
-    if (folderUpdateRequest) {
-      setFolderUpdateRequest(false);
-    }
-    if (fileUpdateRequest) {
-      setFileUpdateRequest(false);
-    }
-  }, [folderUpdateRequest, fileUpdateRequest]); */
 
   const handleUpdates = async (e) => {
     e.preventDefault();
@@ -70,18 +58,9 @@ const Update = () => {
     switch (e.target.id) {
       case 'file':
         setShowFileDetails(!showFileDetails);
-        /* const updateFilesFile = await window.api.fileUpdateDetails();
-        setFileUpdateDetails(updateFilesFile); */
         break;
       case 'folder':
-        /*      const rect = modalRef.current.getBoundingClientRect();
-        setCoords({
-          left: rect.x + rect.width / 2,
-          top: rect.y + window.scrollY
-        }); */
         setShowFolderDetails(!showFolderDetails);
-        /* const updateFoldersFile = await window.api.folderUpdateDetails();
-        setFolderUpdateDetails(updateFoldersFile); */
         break;
       default:
         return;
