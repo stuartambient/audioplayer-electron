@@ -62,7 +62,11 @@ const Item = forwardRef(
             Album: {album}
           </a>
           <div className="item-menu">
-            <BsThreeDots onContextMenu={showContextMenu} fromlisttype={type} id={divId} />
+            <BsThreeDots
+              /* onContextMenu={showContextMenu}  */ onClick={showContextMenu}
+              fromlisttype={type}
+              id={divId}
+            />
           </div>
         </div>
       );
@@ -76,7 +80,8 @@ const Item = forwardRef(
           </a>
           <div className="item-menu" fullpath={fullpath}>
             <BsThreeDots
-              onContextMenu={showContextMenu}
+              /*  onContextMenu={showContextMenu} */
+              onClick={showContextMenu}
               fromlisttype={type}
               id={id}
               fullpath={fullpath}
@@ -109,7 +114,11 @@ const Item = forwardRef(
             Album: {album}
           </a>
           <div className="item-menu">
-            <BsThreeDots onContextMenu={showContextMenu} fromlisttype={type} id={divId} />
+            <BsThreeDots
+              /* onContextMenu={showContextMenu} */ onClick={showContextMenu}
+              fromlisttype={type}
+              id={divId}
+            />
           </div>
         </div>
       );

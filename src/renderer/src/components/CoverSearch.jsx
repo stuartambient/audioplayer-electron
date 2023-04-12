@@ -9,11 +9,10 @@ const CoverSearch = () => {
     if (e.target.id === 'updatecovers') {
       const covers = await window.api.updateCovers();
     }
-    if (e.target.id === 'missingcovers') {
+    /* if (e.target.id === 'missingcovers') {
       const missingcovers = await window.api.missingCovers();
-      /*  setMissingCovers(missingcovers); */
       setMissingCovers(missingcovers);
-    }
+    } */
   };
 
   const handleItem = async (e) => {
@@ -26,9 +25,9 @@ const CoverSearch = () => {
         <span className="coverlinks" id="updatecovers" onClick={handleCoversUpdate}>
           Update Covers
         </span>
-        <span className="coverlinks" id="missingcovers" onClick={handleCoversUpdate}>
+        {/*  <span className="coverlinks" id="missingcovers" onClick={handleCoversUpdate}>
           Missing Covers
-        </span>
+        </span> */}
       </nav>
       {missingCovers && (
         <ul className="missingcovers">

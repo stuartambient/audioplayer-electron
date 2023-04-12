@@ -64,37 +64,55 @@ const AlbumsCoverView = ({
   };
 
   useEffect(() => {
-    const mbrainzSearch = async () => {
-      console.log(coverSearch.album);
-      let validResults = { path: coverSearch.path, album: coverSearch.album, results: [] };
+    const coverSearchAPI = async () => {
+      let title, artist, url;
+      if (coverSearch.album.split(' ').includes('-')) {
+        artist = coverSearch.album.split('-')[0];
+        title = coverSearch.album.split('-')[1];
+        console.log('TITLE: ', title);
+      }
+      let discogsResults = { path: coverSearch.path, album: coverSearch.album, results: [] };
+      const mbReleases = [];
+      if (title) {
+        url = `https://api.discogs.com/database/search?title=${title}&token=${
+          import.meta.env.RENDERER_VITE_DISCOGS_KEY
+        }`;
+      } else {
+        url = `https://api.discogs.com/database/search?q=${coverSearch.album}&token=${
+          import.meta.env.RENDERER_VITE_DISCOGS_KEY
+        }`;
+      }
       const res = await axios
-        /* .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`) 
-        http://api.discogs.com/database/search?artist=nero&release_title=electron */
         .get(
-          `https://api.discogs.com/database/search?q=${coverSearch.album}&token=${
+          url
+          /* `https://api.discogs.com/database/search?q=${coverSearch.album}&token=${
             import.meta.env.RENDERER_VITE_DISCOGS_KEY
-          }`
+          }` */
         )
 
         .then(async (response) => {
-          /* console.log('response data: ', response.data.results); */
           response.data.results.forEach((r) => {
             let tmp = coverSearch.album.split(' ').filter((f) => f !== '-');
             let compare = compareStrs(tmp, r.title);
-            console.log(compare);
-            if (compare > 60) validResults.results.push(r);
+            if (compare > 60) discogsResults.results.push(r);
           });
           const alt = await axios
             .get(`http://musicbrainz.org/ws/2/release-group/?query=${coverSearch.album}&limit=1`)
             .then((r) => {
-              /* (r) => console.log(r.data['release-groups'][0].releases), */
+              console.log(r.data['release-groups'][0]);
+              /* console.log(r.data['release-groups'][0].releases); */
               const artist = r.data['release-groups'][0]['artist-credit'];
               const rels = r.data['release-groups'][0].releases;
               artist.forEach((a) => console.log(a.name));
-              rels.forEach((r) => console.log(r.id));
+              rels.forEach((r) => mbReleases.push(r.id));
             });
-
-          window.api.showChild(validResults);
+          for await (const altimg of mbReleases) {
+            axios
+              .get(`http://coverartarchive.org/release/${altimg}`)
+              .then((r) => console.log(r.data.images[0].image, r.data.images[0].thumbnails))
+              .catch((e) => e);
+          }
+          window.api.showChild(discogsResults);
         })
 
         //})
@@ -103,7 +121,7 @@ const AlbumsCoverView = ({
         });
     };
     if (coverSearch.path !== '' && coverSearch.album !== '') {
-      mbrainzSearch();
+      coverSearchAPI();
     }
   }, [coverSearch]);
 
@@ -193,7 +211,8 @@ const AlbumsCoverView = ({
                     album={cover.foldername}
                   >
                     <BsThreeDots
-                      onContextMenu={handleContextMenu}
+                      /* onContextMenu={handleContextMenu} */
+                      onClick={handleContextMenu}
                       /*fromlisttype={type}*/
                       id={cover.fullpath}
                       fullpath={cover.fullpath}
