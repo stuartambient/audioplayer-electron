@@ -9,6 +9,8 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
 
+/* adding blank comment to test github known hosts */
+
 const AlbumsCoverView = ({
   state,
   dispatch,
