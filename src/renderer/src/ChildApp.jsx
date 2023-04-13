@@ -13,13 +13,14 @@ const ChildApp = () => {
     console.log(import.meta.env.RENDERER_VITE_DISCOGS_KEY);
   }); */
 
-  useEffect(() => {
-    if (releases) console.log(releases[0].results);
-  });
+  /*  useEffect(() => {
+    if (releases) console.log(releases);
+  }); */
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
       await window.childapi.onSendToChild((e) => {
+        console.log('e: ', e);
         setReleases(e);
         setPreviewImage(undefined);
       });
@@ -84,6 +85,29 @@ const ChildApp = () => {
               </li>
             );
           })}
+          {releases[0] && releases[0].mbresults.length > 0
+            ? releases[0].mbresults.map((m) => {
+                return (
+                  <li>
+                    {m.title && (
+                      <span className="value">
+                        <span className="label">Title:</span>
+                        {m.title}
+                      </span>
+                    )}
+                    {m.images.image && (
+                      <span
+                        className="preview"
+                        id={m.images.image}
+                        onClick={() => setPreviewImage(m.images.image)}
+                      >
+                        Preview Image
+                      </span>
+                    )}
+                  </li>
+                );
+              })
+            : null}
         </ul>
       ) : (
         <ul className="cover-search--releases">
