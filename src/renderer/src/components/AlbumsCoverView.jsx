@@ -26,7 +26,8 @@ const AlbumsCoverView = ({
     coversPageNumber,
     coversSearchTerm,
     dispatch,
-    resetKey
+    resetKey,
+    covers.length
   );
 
   useEffect(() => {
@@ -111,7 +112,7 @@ const AlbumsCoverView = ({
           axios
             .get(`http://coverartarchive.org/release/${rel.id}`)
             .then((r) => {
-              console.log('mb: ', rel);
+              /* console.log('mb: ', rel); */
               musicBrainzResults.mbresults.push({ title: mbTitle, images: r.data.images[0] });
             })
             .catch((e) => e);
@@ -169,6 +170,7 @@ const AlbumsCoverView = ({
       coversObserver.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMoreCovers) {
+            /* console.log('entries[0]', entries[0].isIntersecting && hasMoreCovers); */
             dispatch({
               type: 'set-covers-pagenumber',
               coversPageNumber: coversPageNumber + 1
@@ -184,6 +186,10 @@ const AlbumsCoverView = ({
     },
     [coversLoading, hasMoreCovers]
   );
+
+  useEffect(() => {
+    console.log('co: ', coversObserver.current);
+  }, [coversObserver]);
 
   const handleContextMenu = async (e) => {
     e.preventDefault();

@@ -50,7 +50,8 @@ const ChildApp = () => {
           </li>
         </ul>
       )}
-      {releases && releases[0].results.length > 0 ? (
+      {(releases && releases[0].results.length > 0) ||
+      (releases && releases[0].mbresults.length) ? (
         <ul className="cover-search--releases">
           {releases[0].results.map((r) => {
             return (

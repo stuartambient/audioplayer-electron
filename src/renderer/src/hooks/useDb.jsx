@@ -205,13 +205,25 @@ const useTopTenArtistsStat = () => {
   return { topTenArtists };
 };
 
-const useAllAlbumsCovers = (coversPageNumber, coversSearchTerm, dispatch, resetKey) => {
+const useAllAlbumsCovers = (
+  coversPageNumber,
+  coversSearchTerm,
+  dispatch,
+  resetKey,
+  coverslength
+) => {
+  /* console.log('coversPageNumber: ', coversPageNumber, 'covers.length: ', coverslength); */
+  /* console.log(' at top pagenumber , coverslength', coversPageNumber, coverslength); */
+
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
 
   useEffect(() => {
     let isSubscribed = true;
+    /* console.log('pagenumber , coverslength', coversPageNumber, coverslength); */
+    /* if (coversPageNumber === 0 && coverslength === 50) isSubscribed = false; */
+    /* if (coversPageNumber * 50 === coverslength) isSubscribed = false; */
     const loadCovers = async () => {
       setCoversLoading(true);
       setCoversError(false);
@@ -222,17 +234,34 @@ const useAllAlbumsCovers = (coversPageNumber, coversSearchTerm, dispatch, resetK
           type: 'set-covers',
           covers: coversRequest
         });
-        setHasMoreCovers(coversRequest.length > 0);
+        if (coversRequest.length < 50) {
+          setHasMoreCovers(false);
+        } else {
+          setHasMoreCovers(true);
+        }
+        /* setHasMoreCovers(coversRequest.length > 0); */
         setCoversLoading(false);
       }
     };
 
     /* if (!coversPageNumber) return; */
-    loadCovers();
+    /* console.log('-----> ', coversPageNumber, coverslength); */
+    if (
+      (isSubscribed && coversPageNumber === 0 && coverslength === 0) ||
+      (isSubscribed && coversPageNumber * 50 === coverslength)
+    ) {
+      loadCovers();
+    } /* else if (isSubscribed && (coversPageNumber + 1) * 50 === coverslength) {
+      dispatch({
+        type: 'set-covers-pagenumber',
+        coversPageNumber: coversPageNumber + 1
+      });
+      loadCovers();
+    } */
     return () => (isSubscribed = false);
-  }, [coversPageNumber, coversSearchTerm, resetKey]);
+  }, [coversPageNumber, coversSearchTerm, resetKey, coverslength]);
 
-  return { coversLoading, /* covers, setCovers, */ hasMoreCovers, coversError };
+  return { coversLoading, hasMoreCovers, coversError };
 };
 
 const useLast10AlbumsStat = () => {
@@ -297,7 +326,6 @@ const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
         const savepl = await window.api.savePlaylist(playlistTracks);
         if (savepl && isSubscribed) {
           if (savepl === 'action cancelled') {
-            console.log(savepl);
             setPlaylistReq('');
           } else {
             console.log(savepl);

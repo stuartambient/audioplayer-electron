@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import Stats from './Stats';
@@ -106,6 +106,8 @@ const Home = ({ state, dispatch }) => {
           coversPageNumber={state.coversPageNumber}
           coversSearchTerm={state.coversSearchTerm}
           resetKey={resetKey}
+          homepage={homepage}
+          coversLoaded={state.coversLoaded}
         />
       )}
       {homepage === 'stats' && <Stats />}
