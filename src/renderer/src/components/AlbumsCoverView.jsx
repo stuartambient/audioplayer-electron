@@ -22,6 +22,8 @@ const AlbumsCoverView = ({
   const [viewMore, setViewMore] = useState(false);
   const [coverSearch, setCoverSearch] = useState();
 
+  const coversObserver = useRef();
+
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     coversPageNumber,
     coversSearchTerm,
@@ -29,6 +31,10 @@ const AlbumsCoverView = ({
     resetKey,
     covers.length
   );
+
+  /*   useEffect(() => {
+    console.log('rk: ', resetKey);
+  }, [resetKey]); */
 
   useEffect(() => {
     const cover = async () => {
@@ -39,6 +45,7 @@ const AlbumsCoverView = ({
     cover();
   }, [covers]);
 
+  /* EFECT FOR RELOADING COVER IMAGE WHEN IMAGE IS UPDATED */
   useEffect(() => {
     if (coverUpdate.path !== '') {
       const updateCovers = covers.map((cover) => {
@@ -162,7 +169,6 @@ const AlbumsCoverView = ({
     }
   };
 
-  const coversObserver = useRef();
   const lastCoverElement = useCallback(
     (node) => {
       if (coversLoading) return;
@@ -188,7 +194,13 @@ const AlbumsCoverView = ({
   );
 
   useEffect(() => {
-    console.log('co: ', coversObserver.current);
+    if (!coversObserver.current && covers.length > 0 && coversPageNumber > 0) {
+      /* console.log('covers length: ', covers.length, 'coversPageNumber: ', coversPageNumber); */
+      dispatch({
+        type: 'set-covers-pagenumber',
+        coversPageNumber: coversPageNumber + 1
+      });
+    }
   }, [coversObserver]);
 
   const handleContextMenu = async (e) => {
@@ -249,3 +261,23 @@ const AlbumsCoverView = ({
 };
 
 export default AlbumsCoverView;
+
+/* 
+This is a React component that renders an album cover view. I can offer some feedback and suggestions to improve this code:
+
+    It's a good practice to format the code to make it more readable, so consider using an auto-formatter to indent the code consistently.
+    In the second useEffect hook, it's good to add the dependency coverUpdate to prevent unnecessary executions of the code when the state doesn't change.
+    The compareStrs function could use some refactoring to make it more readable and maintainable. For example, you could break down the code into smaller, reusable functions or variables with descriptive names.
+    Consider adding comments to explain what each function does and why it exists.
+    There's a typo in the EFECT comment. It should be EFFECT.
+
+    In the third useEffect hook, the updateCovers array is created but not used. You need to assign it back to the covers state.
+In the handleCoverSearch function, it's better to use let and const instead of var to declare variables to improve readability and avoid unexpected behaviors.
+In the same function, you could use string interpolation to concatenate strings instead of using the + operator.
+In the handleCoverSearch function, there's a hardcoded timeout of one second to call the window.api.showChild function. Instead, you could use setTimeout to make it more flexible, allowing you to pass the timeout value as an argument.
+Finally, it's better to split large functions into smaller ones with a single responsibility to improve the code's maintainability and readability.
+
+
+
+
+*/

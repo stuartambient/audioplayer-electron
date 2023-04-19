@@ -31,7 +31,6 @@ const Home = ({ state, dispatch }) => {
     if (!coverSearchRef.current.value) {
       setResetKey(getKey());
     }
-    console.log(coverSearchRef.current.value);
     dispatch({
       type: 'covers-search-term',
       coversSearchTerm: coverSearchRef.current.value,
