@@ -194,7 +194,7 @@ const AlbumsCoverView = ({
   );
 
   useEffect(() => {
-    if (!coversObserver.current && covers.length > 0 && coversPageNumber > 0) {
+    if (!coversObserver.current && covers.length > 0 /* && coversPageNumber > 0 */) {
       /* console.log('covers length: ', covers.length, 'coversPageNumber: ', coversPageNumber); */
       dispatch({
         type: 'set-covers-pagenumber',

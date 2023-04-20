@@ -218,8 +218,6 @@ app.on('window-all-closed', () => {
   }
 });
 
-/* app.on('ready', createSplashWindow); */
-
 const processUpdateResult = (type, result) => {
   let filename;
   type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt');
@@ -253,31 +251,9 @@ ipcMain.handle('update-files', async () => {
   return result;
 });
 
-const checkMBServer = async (albums) => {
-  for await (const a of albums.slice(0, 5)) {
-    const res = await axios
-      .get(`http://musicbrainz.org/ws/2/release-group/?query=${a.folder}&limit=1`)
-      .then((response) => {
-        console.log(
-          a.folder,
-
-          'title: ',
-          response.data['release-groups'][0].title,
-          'artist-name: ',
-          response.data['release-groups'][0]['artist-credit'][0].name,
-          'releases: ',
-          response.data['release-groups'][0].releases
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-};
-
 ipcMain.handle('update-covers', async () => {
   const result = await initCovers();
-  /*   const insertresult = insertCovers(result); */
+  let updatedFolders = [];
   for await (const r of result) {
     let tmp = await fs.promises.readdir(r.path);
 
@@ -288,14 +264,14 @@ ipcMain.handle('update-covers', async () => {
         if (f.common.picture) {
           let tmppic = f.common.picture[0].data;
           fs.promises.writeFile(`${r.path}/cover.jpg`, tmppic);
+          updatedFolders.push(r);
         }
       } catch (err) {
         console.log(err.message);
       }
     }
   }
-  const newResult = await initCovers();
-  checkMBServer(newResult);
+  return updatedFolders;
 });
 
 ipcMain.handle('missing-covers', async () => {
@@ -510,14 +486,19 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 });
 
 ipcMain.handle('get-covers', async (_, ...args) => {
-  console.log('get covers', args);
   /* console.log('....args: ', args[0], args[1]); */
   const albums = await allCoversByScroll(args[0], args[1]);
   const albumsWithImages = await Promise.all(
     albums.map(async (l) => {
       let tmp = await fs.promises.readdir(l.fullpath);
       const checkImg = tmp.find(
-        (t) => t.endsWith('.jpg') || t.endsWith('.png') || t.endsWith('.jpeg')
+        (t) =>
+          t.endsWith('.jpg') ||
+          t.endsWith('.JPG') ||
+          t.endsWith('.jpeg') ||
+          t.endsWith('.JPEG') ||
+          t.endsWith('.png') ||
+          t.endsWith('.PNG')
       );
       if (!checkImg) {
         const [artist, album] = l.foldername.split('-');

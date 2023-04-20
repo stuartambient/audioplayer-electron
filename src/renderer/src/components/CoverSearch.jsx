@@ -8,11 +8,8 @@ const CoverSearch = () => {
   const handleCoversUpdate = async (e) => {
     if (e.target.id === 'updatecovers') {
       const covers = await window.api.updateCovers();
+      console.log('update covers: ', covers);
     }
-    /* if (e.target.id === 'missingcovers') {
-      const missingcovers = await window.api.missingCovers();
-      setMissingCovers(missingcovers);
-    } */
   };
 
   const handleItem = async (e) => {
@@ -25,21 +22,7 @@ const CoverSearch = () => {
         <span className="coverlinks" id="updatecovers" onClick={handleCoversUpdate}>
           Update Covers
         </span>
-        {/*  <span className="coverlinks" id="missingcovers" onClick={handleCoversUpdate}>
-          Missing Covers
-        </span> */}
       </nav>
-      {missingCovers && (
-        <ul className="missingcovers">
-          {missingCovers.map((c, i) => {
-            return (
-              <li key={i} id={c.coversearchname} onClick={handleItem}>
-                {c.coversearchname}
-              </li>
-            );
-          })}
-        </ul>
-      )}
       {searchItem !== '' && <p className="searchitem">{searchItem}</p>}
     </div>
   );
