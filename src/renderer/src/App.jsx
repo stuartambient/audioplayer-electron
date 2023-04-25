@@ -30,6 +30,15 @@ import './App.css';
 function App() {
   const { state, dispatch } = AppState();
 
+  /*   useEffect(() => {
+    const waitStream = async () => {
+      await window.api.onStartStream((e) => {
+        console.log(e);
+      });
+    };
+    waitStream();
+  }); */
+
   const handleUpdateLike = async (id) => {
     if (!id) return;
     const updatelike = await window.api.updateLike(id);

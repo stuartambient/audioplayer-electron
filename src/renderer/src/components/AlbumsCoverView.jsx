@@ -99,7 +99,7 @@ const AlbumsCoverView = ({
           /* console.log('discog response: ', r); */
           let tmp = search.album.split(' ').filter((f) => f !== '-');
           let compare = compareStrs(tmp, r.title);
-          if (compare > 60) discogsResults.results.push(r);
+          if (compare > 70) discogsResults.results.push(r);
         });
       })
       .catch((err) => {

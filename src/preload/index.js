@@ -46,7 +46,12 @@ const api = {
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
   showChild: (arr) => ipcRenderer.invoke('show-child', arr),
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
-  openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path)
+  openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
+  /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
+  testRealStream: async (path) =>
+    await fetch(`streaming://${path}`, { method: 'GET' }).then((res) => res.url)
+  /*   onStartStream: (stream) => ipcRenderer.on('start-stream', (args) => args) */
+
   /* onAlbumCoverMenu: (cb) => ipcRenderer.once('add-album-to-playlist', (event, ...args) => cb(args)) */
 };
 

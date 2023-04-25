@@ -7,7 +7,8 @@ import {
   Menu,
   BrowserView,
   dialog,
-  webContents
+  webContents,
+  protocol
 } from 'electron';
 import * as path from 'path';
 import fs from 'fs';
@@ -46,7 +47,16 @@ import { totalTracks, topTenArtists, last10Albums, last100Tracks } from './stats
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
-
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'streaming',
+    privileges: { stream: true, standard: true, bypassCSP: true, supportFetchAPI: true }
+  }
+]);
+/* protocol.registerStreamProtocol('streaming', async (request, callback) => {
+  console.log('streaming --> ', request.url);
+});
+ */
 /* const db = new Database('music.db', { verbose: console.log });
 console.log(db); */
 
@@ -101,6 +111,9 @@ function createSplashWindow() {
   });
 } */
 
+const capitalizeDriveLetter = (str) => {
+  return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
+};
 let mainWindow;
 
 function createWindow() {
@@ -178,6 +191,34 @@ app.on('ready', async () => await session.defaultSession.loadExtension(reactDevT
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
+
+  protocol.registerStreamProtocol('streaming', async (request, callback) => {
+    console.log('request: ', request);
+    const uri = decodeURI(request.url);
+    const filePath = uri.replace('streaming://', '');
+    const file = capitalizeDriveLetter(filePath);
+    const fileSize = fs.statSync(file).size;
+
+    const range = request.headers.range || '0';
+
+    const chunkSize = 10 * 1e6;
+    const start = Number(range.replace(/\D/g, ''));
+    const end = Math.min(start + chunkSize, fileSize - 1);
+    const contentLength = end - start + 1;
+
+    const headers = {
+      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+      'Accept-Ranges': 'bytes',
+      'Content-Length': contentLength,
+      'Content-Type': 'audio/mpeg'
+    };
+    console.log(start, end);
+    callback({
+      statusCode: 206,
+      headers,
+      data: fs.createReadStream(file, { start, end })
+    });
+  });
   /* console.log('getAppPath() - ', app.getAppPath()); */
 
   /*   console.log(
@@ -296,7 +337,6 @@ ipcMain.handle('get-tracks', async (event, ...args) => {
 });
 
 ipcMain.handle('get-albums', async (event, ...args) => {
-  console.log('--->', args);
   if (args[1] === '') {
     const allAlbums = await allAlbumsByScroll(args[0], args[2]);
     return allAlbums;
@@ -307,22 +347,59 @@ ipcMain.handle('get-albums', async (event, ...args) => {
 });
 
 ipcMain.handle('get-album', async (_, args) => {
-  /* console.log('...', args); */
   const album = getAlbum(args);
   return album;
 });
 
 ipcMain.handle('get-album-tracks', async (event, args) => {
-  /* console.log(args); */
   const allAlbumTracks = await filesByAlbum(args);
   return allAlbumTracks;
 });
 
 ipcMain.handle('stream-audio', async (event, arg) => {
-  console.log(arg);
   const file = await fs.promises.readFile(arg);
   const filebuf = Buffer.from(file);
   return filebuf;
+});
+
+ipcMain.on('test-real-stream', async (event, ...args) => {
+  let url = await `streaming://${args[0]}`;
+  return url;
+
+  /* protocol.registerStreamProtocol('streaming', async (request, callback) => {
+    console.log('request: ', request);
+    const stat = fs.statSync(request);
+    const fileSize = stat.size;
+    console.log('filesize: ', fileSize);
+    const range = request.headers.Range;
+    if (range) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const chunksize = end - start + 1;
+      const headers = {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': String(chunksize),
+        'Content-Type': 'audio/mpeg'
+      };
+
+      callback({
+        statusCode: 206,
+        headers,
+        data: fs.createReadStream(path, { start, end })
+      });
+    } else {
+      callback({
+        statusCode: 200,
+        headers: {
+          'Content-Length': String(fileSize),
+          'Content-Type': 'audio/mpeg'
+        },
+        data: fs.createReadStream(path)
+      });
+    }
+  }); */
 });
 
 ipcMain.handle('get-cover', async (event, arg) => {
@@ -347,7 +424,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  /* console.log(args); */
+  console.log('screen-mode: ', args[0]);
   if (args[0] === 'mini') {
     await mainWindow.setMinimumSize(290, 350);
     await mainWindow.setSize(290, 350, false);
@@ -391,7 +468,6 @@ ipcMain.handle('top-ten-artists-stat', async () => {
 });
 
 ipcMain.handle('last-10Albums-stat', async () => {
-  console.log('last 10 albums');
   const last10 = await last10Albums();
   const last10withImages = await Promise.all(
     last10.map(async (l) => {
@@ -456,7 +532,6 @@ ipcMain.handle('save-playlist', async (_, args) => {
 });
 
 ipcMain.handle('get-playlists', async () => {
-  /* console.log('get playlists'); */
   const playlists = fs.promises.readdir(playlistsFolder);
   return playlists;
 });
@@ -467,17 +542,14 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
   });
   return folderupdates; */
   const [type, value] = args;
-  /* console.log(type, value); */
   switch (type) {
     case 'edit':
       const editplfile = await fs.promises.readFile(`${playlistsFolder}\\${value}`, {
         encoding: 'utf8'
       });
-      /* console.log('plfile: ', editplfile); */
       break;
     case 'delete':
       const delplfile = await fs.promises.unlink(`${playlistsFolder}\\${value}`);
-      /* console.log('del: plfile: ', delplfile); */
       break;
     case 'play':
     default:
@@ -486,7 +558,6 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 });
 
 ipcMain.handle('get-covers', async (_, ...args) => {
-  /* console.log('....args: ', args[0], args[1]); */
   const albums = await allCoversByScroll(args[0], args[1]);
   const albumsWithImages = await Promise.all(
     albums.map(async (l) => {
@@ -519,7 +590,6 @@ ipcMain.handle('get-covers', async (_, ...args) => {
 });
 
 ipcMain.handle('set-shuffled-tracks-array', async (_, ...args) => {
-  console.log('set shuffled array');
   shuffled = [];
   if (!shuffled.length) {
     let array = [...Array(+args[0]).keys()];
@@ -541,7 +611,6 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
     const [start, end] = args;
     const fifty = shuffled.slice(start, end);
     const tracks = getAllTracks(fifty);
-    /* console.log(tracks); */
     return tracks;
   } catch (err) {
     console.log(err.message);
@@ -637,7 +706,6 @@ ipcMain.handle('show-child', (event, args) => {
 
     newWin.on('ready-to-show', () => {
       newWin.show();
-      /* console.log('dirname: ', __dirname); */
       newWin.webContents.send('send-to-child', args);
     });
   };
@@ -646,18 +714,15 @@ ipcMain.handle('show-child', (event, args) => {
   if (openWindows === 1) {
     createChildWindow();
   } else {
-    console.log(newWin);
     BrowserWindow.fromId(newWin.id).webContents.send('send-to-child', args);
   }
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {
   const [fileUrl, filePath] = args;
-  console.log('called');
 
   try {
     const res = await axios.get(`${fileUrl}`, { responseType: 'arraybuffer' });
-    /* console.log(res); */
     /* fs.writeFileSync(filePath, res.data); */
     fs.writeFileSync(`${filePath}/cover.jpg`, res.data);
     return 'download complete';
@@ -675,7 +740,6 @@ ipcMain.handle('refresh-cover', async (event, ...args) => {
 });
 
 ipcMain.handle('open-album-folder', async (_, path) => {
-  console.log(path, process.platform);
   const properPath = path.replaceAll('/', '\\');
   /*   let explorer;
   switch (process.platform) {

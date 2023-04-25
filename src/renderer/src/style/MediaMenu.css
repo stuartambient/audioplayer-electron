@@ -28,6 +28,7 @@
 
 .media-menu .sort-menu {
   grid-area: sortmenu;
+  align-self: center;
 }
 
 .media-menu .sort-menu fieldset {
@@ -58,9 +59,11 @@
   justify-self: end;
   align-self: center;
   display: flex;
-  flex-direction: column;
+  width: 100%;
+  justify-content: space-evenly;
+  /* flex-direction: column;
   font-size: 0.8rem;
-  margin-right: 1rem;
+  margin-right: 1rem; */
 }
 
 /* .media-menu .playlist-dialogs span:first-child {
