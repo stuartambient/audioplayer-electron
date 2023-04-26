@@ -191,34 +191,83 @@ app.on('ready', async () => await session.defaultSession.loadExtension(reactDevT
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
+  protocol.registerStreamProtocol('streaming', async (request, cb) => {
+    const uri = decodeURI(request.url);
+    const filePath = uri.replace('streaming://', '');
+    const path = capitalizeDriveLetter(filePath);
 
-  protocol.registerStreamProtocol('streaming', async (request, callback) => {
-    console.log('request: ', request);
+    const fileSize = fs.statSync(path).size;
+    const range = request.headers.Range;
+    console.log('range: ', range);
+    /*  const fileSize = fs.statSync(file).size; */
+    if (range) {
+      const parts = range.replace(/bytes=/, '').split('-');
+      const start = parseInt(parts[0], 10);
+      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+      const chunksize = end - start + 1;
+      /* const chunksize = fileSize / 10; */
+
+      const headers = {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': String(chunksize),
+        'Content-Type': 'audio/mpeg'
+      };
+      cb({
+        statusCode: 206,
+        headers,
+        data: fs.createReadStream(path, { start, end })
+      });
+    } else {
+      /* WITH NO RANGE SET IN HEADERS ON REQUEST, SET THE FIRST CHUNK TO DEFAULT 64kb. RANGE WILL BE SET
+      NOW BAED ON FILE SIZE */
+      cb({
+        statusCode: 200,
+        headers: {
+          'Content-Length': String(fileSize),
+          'Content-Type': 'audio/mpeg'
+        },
+        data: fs.createReadStream(path)
+      });
+    }
+  });
+  /*  protocol.registerStreamProtocol('streaming', async (request, callback) => {
     const uri = decodeURI(request.url);
     const filePath = uri.replace('streaming://', '');
     const file = capitalizeDriveLetter(filePath);
     const fileSize = fs.statSync(file).size;
 
-    const range = request.headers.range || '0';
+    const range = request.headers.Range || '0';
 
-    const chunkSize = 10 * 1e6;
-    const start = Number(range.replace(/\D/g, ''));
-    const end = Math.min(start + chunkSize, fileSize - 1);
-    const contentLength = end - start + 1;
+    if (range) {
+      const chunkSize = 10 * 1e6;
+      const start = Number(range.replace(/\D/g, ''));
+      const end = Math.min(start + chunkSize, fileSize - 1);
+      const contentLength = end - start + 1;
 
-    const headers = {
-      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': contentLength,
-      'Content-Type': 'audio/mpeg'
-    };
-    console.log(start, end);
-    callback({
-      statusCode: 206,
-      headers,
-      data: fs.createReadStream(file, { start, end })
-    });
-  });
+      const headers = {
+        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+        'Accept-Ranges': 'bytes',
+        'Content-Length': String(fileSize),
+        'Content-Type': 'audio/mpeg'
+      };
+      console.log(start, end, fileSize);
+      callback({
+        statusCode: 206,
+        headers,
+        data: fs.createReadStream(file, { start, end })
+      });
+    } else {
+      callback({
+        statusCode: 200,
+        headers: {
+          'Content-Length': String(fileSize),
+          'Content-Type': 'audio/mpeg'
+        },
+        data: fs.createReadStream(file)
+      });
+    }
+  }); */
   /* console.log('getAppPath() - ', app.getAppPath()); */
 
   /*   console.log(

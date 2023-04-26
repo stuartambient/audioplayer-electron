@@ -55,14 +55,20 @@ const TrackSelector = async (
     playNext: false,
     playPrev: false
   });
-  const startStream = await window.api.testRealStream(file);
+
+  try {
+    const startStream = await window.api.testRealStream(file);
+    state.audioRef.current.src = startStream;
+  } catch (e) {
+    console.log(e);
+  }
+
   /*   console.log('startstream: ', startStream);
 
   const filebuffer = await window.api.streamAudio(file);
   const blob = new Blob([filebuffer], { type: 'audio/wav' });
   const url = window.URL.createObjectURL(blob); */
 
-  state.audioRef.current.src = startStream;
   /*   state.audioRef.current.src = startStream; */
 
   const picture = await window.api.getCover(id);
