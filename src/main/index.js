@@ -38,7 +38,8 @@ import {
   getFiles,
   getAllTracks,
   insertCovers,
-  getMissingCovers
+  getMissingCovers,
+  deleteAlbum
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
@@ -402,6 +403,7 @@ ipcMain.handle('get-album', async (_, args) => {
 
 ipcMain.handle('get-album-tracks', async (event, args) => {
   const allAlbumTracks = await filesByAlbum(args);
+  console.log('all album tracks: ', allAlbumTracks);
   return allAlbumTracks;
 });
 
@@ -608,34 +610,31 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 
 ipcMain.handle('get-covers', async (_, ...args) => {
   const albums = await allCoversByScroll(args[0], args[1]);
-  const albumsWithImages = await Promise.all(
+  /* console.log(albums); */
+  const albumsWithImages = Promise.all(
     albums.map(async (l) => {
-      let tmp = await fs.promises.readdir(l.fullpath);
-      const checkImg = tmp.find(
-        (t) =>
-          t.endsWith('.jpg') ||
-          t.endsWith('.JPG') ||
-          t.endsWith('.jpeg') ||
-          t.endsWith('.JPEG') ||
-          t.endsWith('.png') ||
-          t.endsWith('.PNG')
-      );
-      if (!checkImg) {
-        const [artist, album] = l.foldername.split('-');
-        writeFile(
-          `artist: ${artist}, album: ${album}, album-path: ${l.fullpath}\n`,
-          `${coversFolder}\\missingcovers.txt`
-        );
-        return { ...l, list: 'covers' };
-      }
-      const imgPath = `${l.fullpath}/${checkImg}`;
-      const imgUrl = url.pathToFileURL(imgPath);
-      const imageobj = { img: imgUrl.href, list: 'covers' };
+      try {
+        let tmp = await fs.promises.readdir(l.fullpath);
+        const checkImg = tmp.find((t) => t.match(/\.(jpe?g|png|webp)$/i));
+        if (!checkImg) {
+          return { ...l, list: 'covers' };
+        }
+        const imgPath = `${l.fullpath}/${checkImg}`;
+        const imgUrl = url.pathToFileURL(imgPath);
+        const imageobj = { img: imgUrl.href, list: 'covers' };
 
-      return { ...l, ...imageobj };
+        return { ...l, ...imageobj };
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          console.error(`Directory not found: ${l.fullpath}`);
+          return null;
+        } else {
+          throw err;
+        }
+      }
     })
   );
-  return albumsWithImages;
+  return albumsWithImages.then((res) => res.filter((entry) => entry !== null));
 });
 
 ipcMain.handle('set-shuffled-tracks-array', async (_, ...args) => {
@@ -805,3 +804,33 @@ ipcMain.handle('open-album-folder', async (_, path) => {
   /*  spawn(explorer, [path], { detached: true }).unref(); */
   shell.openPath(properPath);
 });
+
+/* ipcMain.handle('get-covers', async (_, ...args) => {
+  const albums = await allCoversByScroll(args[0], args[1]);
+
+  const albumsWithImages = Promise.all(
+    albums.map(async (l) => {
+      try {
+        let tmp = await fs.promises.readdir(l.fullpath);
+        const checkImg = tmp.find((t) => t.match(/\.(jpe?g|png|webp)$/i));
+        if (!checkImg) {
+          return { ...l, list: 'covers' };
+        }
+        const imgPath = `${l.fullpath}/${checkImg}`;
+        const imgUrl = url.pathToFileURL(imgPath);
+        const imageobj = { img: imgUrl.href, list: 'covers' };
+
+        return { ...l, ...imageobj };
+      } catch (err) {
+        if (err.code === 'ENOENT') {
+          console.error(`Directory not found: ${l.fullpath}`);
+          return { ...l, list: 'covers' };
+        } else {
+          throw err;
+        }
+      }
+    })
+  );
+  return albumsWithImages;
+});
+*/

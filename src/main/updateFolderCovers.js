@@ -12,7 +12,8 @@ const checkDirs = async (root, results) => {
         img.endsWith('.jpeg') ||
         img.endsWith('.JPEG') ||
         img.endsWith('.png') ||
-        img.endsWith('.PNG')
+        img.endsWith('.PNG') ||
+        img.endsWith('.webp')
     );
     if (!isCover) {
       let tmp = { path: `${root}/${f}`, folder: f };

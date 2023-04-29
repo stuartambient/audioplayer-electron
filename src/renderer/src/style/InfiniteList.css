@@ -110,6 +110,11 @@
   color: var(--blue1);
 }
 
+.metadata-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .item-menu {
   border: 1px solid gray;
   display: flex;

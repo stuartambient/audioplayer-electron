@@ -450,6 +450,7 @@ const InfiniteList = ({
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
+        genre={item.genre ? item.genre : 'not available'}
       />
     );
   });

@@ -48,7 +48,7 @@ const compareDbRecords = async (files) => {
 };
 
 const glob = async (patterns) => {
-  const entries = await fg(patterns);
+  const entries = await fg(patterns, { caseSensitiveMatch: false });
   /* compareDbRecords(entries); */
   return entries;
 };

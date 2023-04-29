@@ -102,6 +102,12 @@ const deleteAlbums = async (data) => {
   deleteMany(data);
 };
 
+const deleteAlbum = async (data) => {
+  console.log(data);
+  const deleteSingleAlbum = db.prepare('DELETE FROM albums WHERE fullpath = ?');
+  deleteSingleAlbum.run();
+};
+
 const getAlbums = () => {
   const getAllAlbums = db.prepare('SELECT fullpath FROM albums');
   const albums = getAllAlbums.all();
@@ -255,6 +261,7 @@ export {
   insertFiles,
   insertAlbums,
   deleteAlbums,
+  deleteAlbum,
   deleteFiles,
   getAlbums,
   getAlbum,

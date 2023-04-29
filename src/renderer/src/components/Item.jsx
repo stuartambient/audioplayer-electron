@@ -14,6 +14,7 @@ const Item = forwardRef(
       handleTrackSelection,
       artist,
       title,
+      genre,
       audiofile,
       like,
       showContextMenu,
@@ -60,6 +61,8 @@ const Item = forwardRef(
             Title: {title}
             <br></br>
             Album: {album}
+            <br></br>
+            Genre: {genre}
           </a>
           <div className="item-menu">
             <BsThreeDots
