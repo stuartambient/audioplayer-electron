@@ -68,7 +68,6 @@ const Player = ({
   };
 
   const handleSeekTime = (e) => {
-    if (e.buttons !== 1) console.log(e.buttons !== 1);
     const totaltime = convertDurationSeconds(duration);
     /* const seekbar = document.querySelector('.seekbar'); */
     const seekbarOutlineWidth = seekbarOutline.current.clientWidth;

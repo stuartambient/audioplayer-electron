@@ -141,7 +141,9 @@ function App() {
 
   useEffect(() => {
     state.audioRef.current.onerror = (e) => {
-      console.log('error', e.path[0].error.code, e.path[0].error.message);
+      const { code, message } = e.path[0].error;
+      console.log(code, message);
+      /* if (code === 4 && message === "") */
     };
   });
 

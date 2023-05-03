@@ -1,6 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
+import axios from 'axios';
 
+const fixedEncodeURIComponent = (str) => {
+  return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {
+    return '%' + c.charCodeAt(0).toString(16);
+  });
+};
 // Custom APIs for renderer
 const api = {
   updateFiles: () => ipcRenderer.invoke('update-files'),
@@ -46,10 +52,10 @@ const api = {
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
   showChild: (arr) => ipcRenderer.invoke('show-child', arr),
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
-  openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
+  openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path)
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
-  testRealStream: async (path) =>
-    await fetch(`streaming://${path}`, { method: 'GET' }).then((res) => res.url)
+  /* testRealStream: async (path) =>
+    await fetch(`streaming://${path}`, { method: 'GET' }).then((res) => console.log(res.url)) */
   /*   onStartStream: (stream) => ipcRenderer.on('start-stream', (args) => args) */
 
   /* onAlbumCoverMenu: (cb) => ipcRenderer.once('add-album-to-playlist', (event, ...args) => cb(args)) */

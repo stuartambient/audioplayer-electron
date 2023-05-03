@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Loader from './Loader';
 import { AiOutlineFolderOpen, AiOutlineFileAdd } from 'react-icons/ai';
+import { SiMetabase } from 'react-icons/si';
 import TextEditor from './TextEditor';
 import '../style/Update.css';
 
@@ -75,6 +76,12 @@ const Update = () => {
             Update Files
           </div>
         </div>
+        {/* <div className="update-files" id="metafiles" onClick={handleUpdates}>
+          <div className="update-btns">
+            <SiMetabase />
+            Update Album Meta Files
+          </div>
+        </div> */}
 
         <div className="update-folders" id="foldersupdate" onClick={handleUpdates}>
           <div className="update-btns">

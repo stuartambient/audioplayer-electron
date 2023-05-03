@@ -57,8 +57,8 @@ const TrackSelector = async (
   });
 
   try {
-    const startStream = await window.api.testRealStream(file);
-    state.audioRef.current.src = startStream;
+    state.audioRef.current.src = await `streaming://${file}`;
+    console.log('src: ', state.audioRef.current.src);
   } catch (e) {
     console.log(e);
   }

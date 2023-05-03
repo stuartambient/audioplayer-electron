@@ -193,20 +193,18 @@ app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
-    const uri = decodeURI(request.url);
+    const uri = decodeURIComponent(request.url);
+    console.log('uri: ', uri);
     const filePath = uri.replace('streaming://', '');
     const path = capitalizeDriveLetter(filePath);
 
     const fileSize = fs.statSync(path).size;
     const range = request.headers.Range;
-    console.log('range: ', range);
-    /*  const fileSize = fs.statSync(file).size; */
     if (range) {
       const parts = range.replace(/bytes=/, '').split('-');
       const start = parseInt(parts[0], 10);
       const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
       const chunksize = end - start + 1;
-      /* const chunksize = fileSize / 10; */
 
       const headers = {
         'Content-Range': `bytes ${start}-${end}/${fileSize}`,
@@ -220,8 +218,7 @@ app.whenReady().then(() => {
         data: fs.createReadStream(path, { start, end })
       });
     } else {
-      /* WITH NO RANGE SET IN HEADERS ON REQUEST, SET THE FIRST CHUNK TO DEFAULT 64kb. RANGE WILL BE SET
-      NOW BAED ON FILE SIZE */
+      console.log('no range');
       cb({
         statusCode: 200,
         headers: {
@@ -232,43 +229,7 @@ app.whenReady().then(() => {
       });
     }
   });
-  /*  protocol.registerStreamProtocol('streaming', async (request, callback) => {
-    const uri = decodeURI(request.url);
-    const filePath = uri.replace('streaming://', '');
-    const file = capitalizeDriveLetter(filePath);
-    const fileSize = fs.statSync(file).size;
 
-    const range = request.headers.Range || '0';
-
-    if (range) {
-      const chunkSize = 10 * 1e6;
-      const start = Number(range.replace(/\D/g, ''));
-      const end = Math.min(start + chunkSize, fileSize - 1);
-      const contentLength = end - start + 1;
-
-      const headers = {
-        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-        'Accept-Ranges': 'bytes',
-        'Content-Length': String(fileSize),
-        'Content-Type': 'audio/mpeg'
-      };
-      console.log(start, end, fileSize);
-      callback({
-        statusCode: 206,
-        headers,
-        data: fs.createReadStream(file, { start, end })
-      });
-    } else {
-      callback({
-        statusCode: 200,
-        headers: {
-          'Content-Length': String(fileSize),
-          'Content-Type': 'audio/mpeg'
-        },
-        data: fs.createReadStream(file)
-      });
-    }
-  }); */
   /* console.log('getAppPath() - ', app.getAppPath()); */
 
   /*   console.log(
@@ -659,7 +620,7 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
     const [start, end] = args;
     const fifty = shuffled.slice(start, end);
     const tracks = getAllTracks(fifty);
-    return tracks;
+    return tracks.filter((ft) => ft !== undefined);
   } catch (err) {
     console.log(err.message);
   }
