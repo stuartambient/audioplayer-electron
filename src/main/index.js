@@ -39,7 +39,8 @@ import {
   getAllTracks,
   insertCovers,
   getMissingCovers,
-  deleteAlbum
+  deleteAlbum,
+  isFileMetaUpdated
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
@@ -301,6 +302,18 @@ ipcMain.handle('update-files', async () => {
   const result = await initFiles();
   processUpdateResult('file', result);
   return result;
+});
+
+ipcMain.handle('update-meta', async () => {
+  console.log('update-meta');
+  const result = await isFileMetaUpdated();
+  for (const r of result) {
+    /* console.log(new Date(r.modified)); */
+    if (fs.statSync(r.audiofile).mtimeMs > r.modified) {
+      console.log(r.audiofile);
+    }
+  }
+  return true;
 });
 
 ipcMain.handle('update-covers', async () => {

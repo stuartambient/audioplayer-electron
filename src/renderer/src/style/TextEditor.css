@@ -1,6 +1,6 @@
 .text-editor {
   grid-row: 4 / 7;
-  grid-column: 1 / 5;
+  grid-column: 1 / 4;
 }
 
 /* .text-editor .text-editor--wrapper {

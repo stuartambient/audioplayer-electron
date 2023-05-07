@@ -12,6 +12,7 @@ const Update = () => {
   const [fileUpdateDetails, setFileUpdateDetails] = useState();
   const [folderUpdateReq, setFolderUpdateReq] = useState();
   const [fileUpdateReq, setFileUpdateReq] = useState();
+  const [metaUpdateReq, setMetaUpdateReq] = useState();
   const [showFileDetails, setShowFileDetails] = useState(false);
   const [showFolderDetails, setShowFolderDetails] = useState(false);
 
@@ -31,6 +32,10 @@ const Update = () => {
         setFolderUpdateResults(foldersUpdate);
         setFolderUpdateReq(false);
         break;
+      case 'metafiles':
+        setMetaUpdateReq(true);
+        const ifModified = await window.api.updateMeta();
+        console.log(ifModified);
       default:
         return;
     }
@@ -71,22 +76,16 @@ const Update = () => {
     <div className="update-container">
       <>
         <div className="update-files" id="filesupdate" onClick={handleUpdates}>
-          <div className="update-btns">
-            <AiOutlineFileAdd />
-            Update Files
-          </div>
+          <AiOutlineFileAdd />
+          Update Files
         </div>
-        {/* <div className="update-files" id="metafiles" onClick={handleUpdates}>
-          <div className="update-btns">
-            <SiMetabase />
-            Update Album Meta Files
-          </div>
-        </div> */}
+        <div className="update-meta" id="metafiles" onClick={handleUpdates}>
+          <SiMetabase />
+          Update Meta
+        </div>
 
         <div className="update-folders" id="foldersupdate" onClick={handleUpdates}>
-          <div className="update-btns">
-            <AiOutlineFolderOpen /> Update Folders
-          </div>
+          <AiOutlineFolderOpen /> Update Folders
         </div>
       </>
       {fileUpdateReq && (

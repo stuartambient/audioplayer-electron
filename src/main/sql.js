@@ -132,6 +132,13 @@ const getFiles = () => {
   return files;
 };
 
+const isFileMetaUpdated = () => {
+  console.log('sql called');
+  const allFiles = db.prepare('SELECT audiofile, modified FROM tracks');
+  const files = allFiles.all();
+  return files;
+};
+
 const getAllTracks = (rows) => {
   /* const tracks = db.prepare('SELECT * FROM tracks ORDER BY RANDOM() LIMIT 50000'); */
   const tracks = db.prepare('SELECT * FROM tracks WHERE rowid = ?');
@@ -280,7 +287,8 @@ export {
   allCoversByScroll,
   getAllTracks,
   insertCovers,
-  getMissingCovers
+  getMissingCovers,
+  isFileMetaUpdated
 };
 
 /*

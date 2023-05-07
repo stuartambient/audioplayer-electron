@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { GiMagnifyingGlass } from 'react-icons/gi';
+import { AiFillDownSquare } from 'react-icons/ai';
 import Stats from './Stats';
 import Playlists from './Playlists';
 /* import AppState from '../hooks/AppState'; */
@@ -54,24 +55,35 @@ const Home = ({ state, dispatch }) => {
         </li>
         {/* <li className="covers-search"></li> */}
         {homepage === 'albums-cover-view' && (
-          <li className="covers-search-form">
-            <form onSubmit={handleCoversSearchTerm} className="covers-search-form">
-              <input
-                className={
-                  homepage === 'albums-cover-view' ? 'search-covers search-active' : 'search-covers'
-                }
-                id="covers-search-term"
-                name="covers-search-term"
-                ref={coverSearchRef}
-                placeholder="search covers"
-                /*  value={state.coversSearchTerm}
+          <>
+            <li className="covers-search-form">
+              <form onSubmit={handleCoversSearchTerm} className="covers-search-form">
+                <input
+                  className={
+                    homepage === 'albums-cover-view'
+                      ? 'search-covers search-active'
+                      : 'search-covers'
+                  }
+                  id="covers-search-term"
+                  name="covers-search-term"
+                  ref={coverSearchRef}
+                  placeholder="search covers"
+                  /*  value={state.coversSearchTerm}
               onChange={handleCoversSearchTerm} */
-              />
-              <button value="Submit">
-                <GiMagnifyingGlass />
-              </button>
-            </form>
-          </li>
+                />
+                <button value="Submit">
+                  <GiMagnifyingGlass />
+                </button>
+              </form>
+            </li>
+            <li>
+              {' '}
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <AiFillDownSquare style={{ transform: 'rotate(180deg)' }} />
+                <AiFillDownSquare />
+              </div>
+            </li>
+          </>
         )}
         <li
           className={homepage === 'stats' ? 'home-cards--item active' : 'home-cards--item'}

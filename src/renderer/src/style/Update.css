@@ -1,10 +1,10 @@
 .update-container {
-  margin-left: 50px;
-  margin-right: 50px;
+  /*  margin-left: 50px;
+  margin-right: 50px; */
   grid-row: 2 / 6;
   grid-column: 1 / 3;
   display: grid;
-  grid-template-columns: 10% 40% 10% 40%;
+  grid-template-columns: repeat(3, 33.3%);
   grid-template-rows: 3rem 6rem auto;
   /*   grid-auto-rows: 50px; */
   row-gap: 10px;
@@ -20,59 +20,54 @@
 } */
 
 .update-container .update-files {
-  grid-column: 1 / 3;
+  grid-column: 1 / 2;
   grid-row: 1 / 2;
-  border: 1px solid var(--blue1);
-  width: 70%;
-  height: 1.8rem;
-  /*   display: flex;
-  align-items: center;
-  justify-content: space-around; */
 }
 
 .update-container .update-folders {
-  grid-column: 3 / 5;
+  grid-column: 3 / 4;
   grid-row: 1 / 2;
-  border: 1px solid var(--blue1);
-  width: 70%;
-  height: 1.8rem;
-  /*  display: flex;
-  align-items: center;
-  justify-content: space-around; */
 }
-.update-container .update-btns {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  height: 100%;
-  width: 100%;
-  /*  display: flex;
-  align-items: center;
-  justify-content: space-around; */
+.update-container .update-meta {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
 }
 
-.update-container .update-btns:hover {
+.update-files,
+.update-folders,
+.update-meta {
+  border: 1px solid var(--blue1);
+  width: 90%;
+  height: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.update-files:hover,
+.update-meta:hover,
+.update-folders:hover {
   cursor: pointer;
 }
 
 .file-update-results {
-  grid-column: 1 / 3;
+  grid-column: 1 / 2;
   grid-row: 2 / 3;
 }
 
 .folder-update-results {
-  grid-column: 3 /5;
+  grid-column: 3 /4;
   grid-row: 2 / 3;
 }
 
 .folder-update-details {
-  grid-column: 3 / 5;
+  grid-column: 3 / 4;
 
   grid-row: 3/4;
 }
 
 .file-update-details {
-  grid-column: 1 / 3;
+  grid-column: 1 / 2;
   grid-row: 3 / 4;
 }
 
