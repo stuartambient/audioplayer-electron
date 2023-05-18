@@ -48,7 +48,13 @@ const compareDbRecords = async (files) => {
 };
 
 const glob = async (patterns) => {
-  const entries = await fg(patterns, { caseSensitiveMatch: false });
+  /* console.log(patterns); */
+  const entries = await fg(patterns, {
+    caseSensitiveMatch: false,
+    suppressErrors: true
+  })
+    .then((e) => e)
+    .catch((e) => console.error('fg error: ', e.message));
   /* compareDbRecords(entries); */
   return entries;
 };
@@ -56,6 +62,7 @@ const glob = async (patterns) => {
 const runFiles = async (roots, cb) => {
   const patterns = roots.map((root) => `${root}/**/*.${fileExtensions}`);
   await glob(patterns)
+    .catch((e) => console.log('error reading: ', e.message))
     .then((allfiles) => compareDbRecords(allfiles))
     .then((prepared) => cb(prepared));
 };

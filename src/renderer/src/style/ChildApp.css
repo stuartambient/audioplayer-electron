@@ -28,16 +28,45 @@ textarea {
   height: 100vh;
   width: 100vw;
   display: grid;
-  grid-template-rows: 40% 30% 30%;
+  grid-template-rows: 45% 25% 25%;
   grid-template-columns: 100%;
+  grid-row-gap: 1rem;
   color: white;
   background-color: #212121;
 }
 
 .cover-search-wrapper ul {
   list-style: none;
+  min-width: 100%;
 }
 
+.cover-search--images .image-ui {
+  display: flex;
+  min-width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.cover-search--images .images img {
+  margin-top: 0.2rem;
+}
+
+.cover-search--images .image-ui .image-download {
+  border: 1px solid red;
+  padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+  border-radius: 5px;
+}
+
+.cover-search--images .image-ui .image-download:hover {
+  cursor: pointer;
+  background: var(--blue4);
+}
+
+.cover-search--images .images .images--size {
+  display: flex;
+  flex-direction: column;
+}
 .cover-search--release {
   grid-row: 2 / 3;
 }
@@ -84,7 +113,7 @@ textarea {
 .cover-search--images {
   grid-row: 1 / 2;
   display: flex;
-  justify-content: center;
+  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
 }

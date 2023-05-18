@@ -113,6 +113,10 @@ function createSplashWindow() {
   });
 } */
 
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled promise rejection:', err);
+});
+
 const capitalizeDriveLetter = (str) => {
   return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
 };

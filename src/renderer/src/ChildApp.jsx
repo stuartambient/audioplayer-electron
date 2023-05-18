@@ -7,15 +7,15 @@ import './style/ChildApp.css';
 
 const ChildApp = () => {
   const [releases, setReleases] = useState(undefined);
-  const [previewImage, setPreviewImage] = useState(undefined);
+  const [previewImage, setPreviewImage] = useState({ url: '', width: '', height: '' });
 
   /*   useEffect(() => {
     console.log(import.meta.env.RENDERER_VITE_DISCOGS_KEY);
   }); */
 
-  /*  useEffect(() => {
+  useEffect(() => {
     if (releases) console.log(releases);
-  }); */
+  });
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
@@ -29,9 +29,17 @@ const ChildApp = () => {
     return () => (subscribed = false);
   });
 
+  const handleImagePreview = (url) => {
+    const img = new Image();
+    img.src = url;
+    img.onload = () => {
+      setPreviewImage({ url, width: img.width, height: img.height });
+    };
+  };
+
   const handleDownloadImage = async (e) => {
     e.preventDefault();
-    const download = await window.childapi.downloadFile(previewImage, releases[0].path);
+    const download = await window.childapi.downloadFile(previewImage.url, releases[0].path);
     await window.childapi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
   };
 
@@ -41,13 +49,18 @@ const ChildApp = () => {
         <ul className="cover-search--images">
           <li className="images">
             <img
-              src={previewImage}
-              style={{ width: '150px', height: '150px', marginTop: '1rem' }}
+              src={previewImage.url}
+              style={{ width: '175px', height: '175px', marginTop: '1rem' }}
             />
           </li>
-          <li className="image-download" onClick={handleDownloadImage}>
-            Download Image
-          </li>
+          <div className="image-ui">
+            <p>Width: {previewImage.width}</p>
+            <p> Height: {previewImage.height}</p>
+
+            <li className="image-download" onClick={handleDownloadImage}>
+              Download Image
+            </li>
+          </div>
         </ul>
       )}
       {(releases && releases[0].results.length > 0) ||
@@ -78,7 +91,8 @@ const ChildApp = () => {
                   <span
                     className="preview"
                     id={r.cover_image}
-                    onClick={() => setPreviewImage(r.cover_image)}
+                    /* onClick={() => setPreviewImage(r.cover_image)} */
+                    onClick={() => handleImagePreview(r.cover_image)}
                   >
                     Preview Image
                   </span>
@@ -100,7 +114,8 @@ const ChildApp = () => {
                       <span
                         className="preview"
                         id={m.images.image}
-                        onClick={() => setPreviewImage(m.images.image)}
+                        /* onClick={() => setPreviewImage(m.images.image)} */
+                        onClick={() => handleImagePreview(m.images.image)}
                       >
                         Preview Image
                       </span>
