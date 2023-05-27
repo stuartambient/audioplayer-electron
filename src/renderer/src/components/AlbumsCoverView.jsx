@@ -58,10 +58,17 @@ const AlbumsCoverView = ({
 
   const compareStrs = (str1, str2) => {
     // STR1 IS FOLDER, STR2 IS TITLE FROM API
-    console.log(str1, '<------->', str2);
-    let correct = { total: str2.split(' ').length, failed: 0 };
+
+    /* const b = str2.split(' '); */
+    /* console.log(str1, '<------->', a); */
+    const str2split = str2
+      .replace('-', '')
+      .split(' ')
+      .filter((s) => s !== '');
+    let correct = { total: str2split.length, failed: 0 };
     for (const a of str1) {
       const dropHyphen = a.split('-')[0].trim();
+      /*  console.log('dropHypen: ', dropHyphen); */
       /* console.log(dropHyphen); */
       if (!str2.toLowerCase().includes(dropHyphen.toLowerCase())) {
         /* console.log(str2, '<------>', a); */
@@ -71,16 +78,16 @@ const AlbumsCoverView = ({
     }
     const percentage = 100 - (correct.failed / correct.total) * 100;
     /* console.log('total: ', correct.total, 'failed: ', correct.failed); */
+    console.log('percentage: ', percentage);
     return percentage;
   };
 
   const handleCoverSearch = async (search) => {
-    console.log('search: ', search);
     let title, artist, url, mbUrl;
     if (search.album.split(' ').includes('-')) {
       artist = search.album.split('-')[0];
       title = search.album.split('-')[1];
-      console.log(artist, title);
+      /* console.log(artist, title); */
     }
 
     /*  console.log('artist: ', artist, 'title: ', title); */
@@ -102,7 +109,6 @@ const AlbumsCoverView = ({
     await axios
       .get(url)
       .then(async (response) => {
-        console.log(response);
         response.data.results.forEach((r) => {
           /*  console.log('r: ', r, r.cover_image); */
           let tmp = search.album.split(' ').filter((f) => f !== '-');
@@ -125,28 +131,35 @@ const AlbumsCoverView = ({
     }  */
     await axios
       .get(`http://musicbrainz.org/ws/2/release-group/?query=${search.album}`)
-      .then(async (r) => {
-        console.log('musicbrainz: ', r);
-        const artists = r.data['release-groups'][0]['artist-credit'];
+      .then(async (response) => {
+        const artists = response.data['release-groups'][0]['artist-credit'];
         const allartists = artists.map((a) => a.name);
-        const album = r.data['release-groups'][0].title;
+        const album = response.data['release-groups'][0].title;
         const mbTitle = `${allartists.join(',')} - ${album}`;
-        const rels = r.data['release-groups'][0].releases;
+        const rels = response.data['release-groups'][0].releases;
 
         for await (const rel of rels) {
+          console.log('mbTitle: ', mbTitle);
           axios
             .get(`http://coverartarchive.org/release/${rel.id}`)
-
-            .then((r) => {
-              /* console.log('mb: ', rel); */
-              console.log(r.data);
-              musicBrainzResults.mbresults.push({ title: mbTitle, images: r.data.images[0] });
-            })
-            .catch((e) => {
-              if (e.response.status === 404) {
-                console.log('resource not found');
+            .catch((error) => {
+              if (error.response) {
+                /* console.log('logged art error: ', error.response); */
+                return Promise.reject(error);
               }
-            });
+            })
+            .then((response) => {
+              /* console.log('mb: ', rel); */
+              console.log('mbTitle: ', mbTitle, '----', 'title: ', rel.title);
+              musicBrainzResults.mbresults.push({
+                title: mbTitle,
+                images: response.data.images[0]
+              });
+            })
+            .catch((err) => err);
+          /* .catch((e) => {
+              console.log('last error msg: ', e.message);
+            }); */
         }
       });
 
@@ -178,13 +191,10 @@ const AlbumsCoverView = ({
 
   const handleContextMenuOption = async (option, path, album) => {
     if (option[0] === 'search for cover') {
-      const refAlbum = album
-        .split(' ')
-        .filter(
-          (sl) =>
-            !sl.startsWith('(') && !sl.endsWith(')') && !sl.startsWith('[') && !sl.endsWith(']')
-        );
-      handleCoverSearch({ path: path, album: refAlbum.join(' ') });
+      const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
+      const refAlbum = album.replace(regex, '');
+      /* console.log(refAlbum); */
+      handleCoverSearch({ path: path, album: refAlbum });
       /* setCoverSearch({ path: path, album: refAlbum.join(' ') }); */
     } else if (option[0] === 'add album to playlist') {
       handleAlbumToPlaylist(path);

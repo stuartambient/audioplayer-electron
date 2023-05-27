@@ -20,6 +20,9 @@
   /* z-index: 0; */
   border-bottom: 1px inset var(--blue1);
   border-right: 1px inset var(--blue1);
+  box-shadow: transparent;
+  transition: 0.5s ease;
+  user-select: none;
 }
 
 .controls .on svg {
@@ -36,6 +39,15 @@
 .controls .btn:active {
   transform: translateX(2px) translateY(2px);
 }
+
+/* .controls .btn:hover,
+:focus {
+  color: #ffffff;
+  background: #008cff;
+  border: 1px solid #008cff;
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #ffffff, 0 0 20px #ffffff;
+  box-shadow: 0 0 5px #008cff, 0 0 20px #008cff, 0 0 50px #008cff, 0 0 100px #008cff;
+} */
 
 .controls--minimalmode {
   margin: 0.8rem 0;

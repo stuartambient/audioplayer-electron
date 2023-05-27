@@ -321,13 +321,20 @@ ipcMain.handle('update-meta', async () => {
 });
 
 ipcMain.handle('update-covers', async () => {
-  const result = await initCovers();
+  let result;
+  try {
+    result = await initCovers();
+    console.log(result, '------');
+  } catch (err) {
+    console.log(err.message, '--');
+  }
+
   let updatedFolders = [];
   for await (const r of result) {
     let tmp = await fs.promises.readdir(r.path);
 
     if (!tmp[0]) continue;
-    if (tmp[0].endsWith('mp3') || tmp[0].endsWith('flac') || tmp[0].endsWith('ape')) {
+    if (tmp[0].endsWith('.mp3') || tmp[0].endsWith('.flac') || tmp[0].endsWith('.ape')) {
       try {
         const f = await parseFile(`${r.path}/${tmp[0]}`);
         if (f.common.picture) {
@@ -336,7 +343,7 @@ ipcMain.handle('update-covers', async () => {
           updatedFolders.push(r);
         }
       } catch (err) {
-        console.log(err.message);
+        console.log('error message: ', `${err.message} --- ${r.path}/${tmp[0]}`);
       }
     }
   }

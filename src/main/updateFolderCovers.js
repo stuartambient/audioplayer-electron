@@ -4,8 +4,10 @@ const checkDirs = async (root, results) => {
   const firstLevel = await fsPromises.readdir(root);
   for await (const f of firstLevel) {
     /* firstLevel.forEach(async (f) => { */
-    const entries = await fsPromises.readdir(`${root}/${f}`);
-    const isCover = entries.find(
+    try {
+      const entries = await fsPromises.readdir(`${root}/${f}`);
+      const isCover = entries.find((img) => /\.(jpe?g|png|webp)$/i.test(img));
+      /* const isCover = entries.find(
       (img) =>
         img.endsWith('.jpg') ||
         img.endsWith('.JPG') ||
@@ -14,13 +16,16 @@ const checkDirs = async (root, results) => {
         img.endsWith('.png') ||
         img.endsWith('.PNG') ||
         img.endsWith('.webp')
-    );
-    if (!isCover) {
-      let tmp = { path: `${root}/${f}`, folder: f };
-      results.push(tmp);
+    ); */
+      if (!isCover) {
+        let tmp = { path: `${root}/${f}`, folder: f };
+        results.push(tmp);
+      }
+    } catch (error) {
+      console.error(error.message);
     }
   }
-  return Promise.resolve(results.length);
+  return Promise.resolve(results);
   /*  return results; */
 };
 
@@ -29,7 +34,8 @@ const dirs = [
   'F:/Music',
   'D:/Music',
   'D:/G_MUSIC',
-  'H:/Top/Music',
+  /* 'H:/Top/Music', */
+  'G:/H_Music_Backup',
   'I:/Music',
   'E:/music'
 ];

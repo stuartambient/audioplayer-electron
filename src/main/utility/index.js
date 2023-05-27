@@ -16,13 +16,23 @@ import { error } from 'node:console';
   writer.end();
 }; */
 
-const writeFile = async (data, filename) => {
+/* const writeFile = async (data, filename) => {
   fs.writeFileSync(filename, data, { flag: 'a', encoding: 'utf8' });
+}; */
+
+const writeFile = async (data, filename) => {
+  const writer = fs.createWriteStream(filename, { flags: 'a' });
+  writer.on('error', (err) => {
+    console.log(err);
+  });
+  await writer.write(data + '\n');
+  writer.end();
 };
 
 const parseMeta = async (files) => {
   const filesWMetadata = [];
   for (const audiofile of files) {
+    /*  writeFile(audiofile, './meta-processed.txt'); */
     let root;
     for (const r of roots) {
       if (audiofile.startsWith(r)) {
@@ -61,7 +71,7 @@ const parseMeta = async (files) => {
         `${app.getPath('appData')}/musicplayer-electron/logs/metadataErrors.txt`
       ); */
       fs.renameSync(`${audiofile}`, `${audiofile}.bad`);
-      console.error(err);
+      console.error(`${audiofile} -- ${err.message}`);
     }
   }
   return filesWMetadata;
