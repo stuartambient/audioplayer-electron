@@ -3,20 +3,10 @@ import { promises as fsPromises } from 'node:fs';
 const checkDirs = async (root, results) => {
   const firstLevel = await fsPromises.readdir(root);
   for await (const f of firstLevel) {
-    /* firstLevel.forEach(async (f) => { */
     try {
       const entries = await fsPromises.readdir(`${root}/${f}`);
       const isCover = entries.find((img) => /\.(jpe?g|png|webp)$/i.test(img));
-      /* const isCover = entries.find(
-      (img) =>
-        img.endsWith('.jpg') ||
-        img.endsWith('.JPG') ||
-        img.endsWith('.jpeg') ||
-        img.endsWith('.JPEG') ||
-        img.endsWith('.png') ||
-        img.endsWith('.PNG') ||
-        img.endsWith('.webp')
-    ); */
+
       if (!isCover) {
         let tmp = { path: `${root}/${f}`, folder: f };
         results.push(tmp);
@@ -26,7 +16,6 @@ const checkDirs = async (root, results) => {
     }
   }
   return Promise.resolve(results);
-  /*  return results; */
 };
 
 const dirs = [
@@ -46,6 +35,11 @@ const run = async (cb) => {
     const resarr = await checkDirs(dir, results);
     results.concat(resarr);
   }
+
+  /*   results.forEach((r) => {
+    setTimeout(() => console.log(r));
+  }); */
+
   return cb(results);
 };
 

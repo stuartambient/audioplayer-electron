@@ -324,13 +324,13 @@ ipcMain.handle('update-covers', async () => {
   let result;
   try {
     result = await initCovers();
-    console.log(result, '------');
   } catch (err) {
     console.log(err.message, '--');
   }
 
   let updatedFolders = [];
   for await (const r of result) {
+    console.log(r);
     let tmp = await fs.promises.readdir(r.path);
 
     if (!tmp[0]) continue;

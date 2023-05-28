@@ -1,45 +1,30 @@
 import { useState, useEffect } from 'react';
-import { useTotalTracksStat, useTopTenArtistsStat } from '../hooks/useDb';
+/* import { useTotalTracksStat, useTopTenArtistsStat } from '../hooks/useDb'; */
+import { TotalTracks, TopTenArtists } from './StatsComponents';
 /* import { AiOutlineTrophy } from 'react-icons'; */
 import '../style/Stats.css';
 
 const Stats = () => {
-  /* const { totalTracks } = shouldCallHook ? useTotalTracksStat() : {};  */
-  const [callHook, setCallHook] = useState(false);
-  const { totalTracks } = useTotalTracksStat();
-  const { topTenArtists } = useTopTenArtistsStat();
-  console.log('topTenArtists: ', topTenArtists);
+  const [req, setReq] = useState('');
 
-  const handleStatReq = (e) => {
-    console.log('stat req: ', e.target.id);
-    console.log('or ct: ', e.currentTarget.id);
-  };
+  const handleStatReq = (e) => setReq(e.currentTarget.id);
 
   return (
     <div className="stats">
-      <ul className="stats-quick-stats">
-        <li className="stats-total-tracks" id="totalTracks" onClick={handleStatReq}>
-          <span className="stats-label">Total tracks:</span>
-          {totalTracks}
-        </li>
-        <li className="stats-total-albums">
-          <span className="stats-label">
-            {' '}
-            {/* <AiOutlineTrophy /> */}
-            Total albums:
-          </span>
-        </li>
-      </ul>
-      <ul className="stats-top10artists" style={{ color: 'white' }}>
-        <span className="stats-label">Top ten artists:</span>
-        {topTenArtists.map((tta) => {
-          return (
-            <li className="stats-top10artist">
-              {tta.artist} # of tracks: {tta['COUNT(*)']}
-            </li>
-          );
-        })}
-      </ul>
+      <div className="stat" id="totalTracks" onClick={handleStatReq}>
+        <p>Total Tracks</p>
+        {req === 'totalTracks' && <TotalTracks />}
+      </div>
+      <div className="stat" id="totalAlbums" onClick={handleStatReq}>
+        <p>Total Albums</p>
+      </div>
+      <div className="stat" id="topArtists" onClick={handleStatReq}>
+        <p>Top Artists</p>
+        {req === 'topArtists' && <TopTenArtists />}
+      </div>
+      <div className="stat" id="genres" onClick={handleStatReq}>
+        <p>Genres</p>
+      </div>
     </div>
   );
 };
