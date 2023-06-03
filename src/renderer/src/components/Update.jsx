@@ -61,6 +61,7 @@ const Update = () => {
   }, [showFileDetails, showFolderDetails]);
 
   const handleDetailsRequest = async (e) => {
+    console.log(e.target.id);
     switch (e.target.id) {
       case 'file':
         setShowFileDetails(!showFileDetails);

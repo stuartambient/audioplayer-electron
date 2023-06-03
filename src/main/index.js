@@ -36,6 +36,7 @@ import {
   getAlbum,
   getPlaylist,
   getFiles,
+  getAllPkeys,
   getAllTracks,
   insertCovers,
   getMissingCovers,
@@ -45,7 +46,11 @@ import {
   createFilesTable */
 } from './sql.js';
 
-import { totalTracks, topTenArtists, last10Albums, last100Tracks } from './stats';
+import {
+  totalTracks,
+  topTenArtists,
+  genresWithCount /* last10Albums, last100Tracks */
+} from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
@@ -503,7 +508,12 @@ ipcMain.handle('top-ten-artists-stat', async () => {
   return topTen;
 });
 
-ipcMain.handle('last-10Albums-stat', async () => {
+ipcMain.handle('genres-stat', async () => {
+  const genres = await genresWithCount();
+  return genres;
+});
+
+/* ipcMain.handle('last-10Albums-stat', async () => {
   const last10 = await last10Albums();
   const last10withImages = await Promise.all(
     last10.map(async (l) => {
@@ -512,21 +522,20 @@ ipcMain.handle('last-10Albums-stat', async () => {
       if (!checkImg) return { ...l, list: 'last10albums' };
       const imgPath = `${l.fullpath}/${checkImg}`;
       const imgurl = url.pathToFileURL(imgPath);
-      /* const imageobj = { img: imgurl.href };
-      const stub = { list: 'last10albums' }; */
+  
       const imageobj = { img: imgurl.href, list: 'last10albums' };
 
-      /* console.log('imgPath:----> ', imgPath, 'imgurl:----> ', imgurl, 'imageobj:----> ', imageobj); */
+  
       return { ...l, ...imageobj };
     })
   );
   return last10withImages;
-});
+}); */
 
-ipcMain.handle('last-100Tracks-stat', async () => {
+/* ipcMain.handle('last-100Tracks-stat', async () => {
   const last100 = await last100Tracks();
   return last100;
-});
+}); */
 
 ipcMain.handle('open-playlist', async () => {
   const open = await dialog.showOpenDialog(mainWindow, {
@@ -624,6 +633,8 @@ ipcMain.handle('get-covers', async (_, ...args) => {
 
 ipcMain.handle('set-shuffled-tracks-array', async (_, ...args) => {
   shuffled = [];
+  const allTracks = getAllPkeys();
+  console.log(allTracks.length);
   if (!shuffled.length) {
     let array = [...Array(+args[0]).keys()];
     let shuffle = [...array];
@@ -644,7 +655,7 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
     const [start, end] = args;
     const fifty = shuffled.slice(start, end);
     const tracks = getAllTracks(fifty);
-    return tracks.filter((ft) => ft !== undefined);
+    return tracks; /* .filter((ft) => ft !== undefined); */
   } catch (err) {
     console.log(err.message);
   }

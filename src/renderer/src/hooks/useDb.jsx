@@ -205,6 +205,25 @@ const useTopTenArtistsStat = () => {
   return { topTenArtists };
 };
 
+const useGenres = (setGenres) => {
+  /* const [genres, setGenres] = useState([]); */
+  useEffect(() => {
+    let subscribed = true;
+    const getGenres = async () => {
+      const genresRequest = await window.api.genresStat();
+      console.log(genresRequest);
+      if (genresRequest && subscribed) {
+        setGenres(genresRequest);
+      } else {
+        return 'no results';
+      }
+    };
+    getGenres();
+    return () => (subscribed = false);
+  }, []);
+  /* return genres; */
+};
+
 const useAllAlbumsCovers = (
   coversPageNumber,
   coversSearchTerm,
@@ -264,7 +283,7 @@ const useAllAlbumsCovers = (
   return { coversLoading, hasMoreCovers, coversError };
 };
 
-const useLast10AlbumsStat = () => {
+/* const useLast10AlbumsStat = () => {
   const [last10Albums, setLast10Albums] = useState([]);
   useEffect(() => {
     let subscribed = true;
@@ -280,9 +299,9 @@ const useLast10AlbumsStat = () => {
     return () => (subscribed = false);
   }, []);
   return { last10Albums, setLast10Albums };
-};
+}; */
 
-const useLast100TracksStat = () => {
+/* const useLast100TracksStat = () => {
   const [last100Tracks, setLast100Tracks] = useState([]);
   useEffect(() => {
     let subscribed = true;
@@ -298,7 +317,7 @@ const useLast100TracksStat = () => {
     return () => (subscribed = false);
   }, []);
   return { last100Tracks };
-};
+}; */
 
 const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
   useEffect(() => {
@@ -410,8 +429,9 @@ export {
   useAlbumTracks,
   useTotalTracksStat,
   useTopTenArtistsStat,
-  useLast10AlbumsStat,
-  useLast100TracksStat,
+  useGenres,
+  /*  useLast10AlbumsStat, */
+  /*   useLast100TracksStat, */
   usePlaylist,
   usePlaylistDialog,
   useGetPlaylists,

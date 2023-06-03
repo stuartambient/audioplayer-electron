@@ -16,7 +16,13 @@ const topTenArtists = () => {
   return result.slice(1, -1);
 };
 
-const last10Albums = () => {
+const genresWithCount = () => {
+  const stmt = db.prepare('SELECT genre, COUNT(genre) FROM tracks GROUP BY genre ORDER BY genre');
+  const results = stmt.all();
+  return results;
+};
+
+/* const last10Albums = () => {
   const stmt = db.prepare(
     'SELECT id, foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 10'
   );
@@ -28,9 +34,9 @@ const last100Tracks = () => {
   const stmt = db.prepare('SELECT audiofile FROM tracks ORDER BY createdon DESC LIMIT 100');
   const result = stmt.all();
   return result;
-};
+}; */
 
-export { totalTracks, topTenArtists, last10Albums, last100Tracks };
+export { totalTracks, topTenArtists, genresWithCount /* last10Albums, last100Tracks */ };
 
 /*
 SELECT COUNT(*) FROM tracks;

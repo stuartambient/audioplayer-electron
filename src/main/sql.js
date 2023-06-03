@@ -139,11 +139,29 @@ const isFileMetaUpdated = () => {
   return files;
 };
 
+const getAllPkeys = () => {
+  const alltracks = db.prepare('SELECT afid FROM tracks');
+  /* console.log(alltracks.length); */
+  return alltracks.all();
+};
 const getAllTracks = (rows) => {
   /* const tracks = db.prepare('SELECT * FROM tracks ORDER BY RANDOM() LIMIT 50000'); */
   const tracks = db.prepare('SELECT * FROM tracks WHERE rowid = ?');
 
-  const shuffledTracks = rows.map((r) => tracks.get(r));
+  /*   const shuffledTracks = rows.map((r) => tracks.get(r));
+  console.log('shuffled length from sql.js ', shuffledTracks.length); */
+  const shuffledTracks = [];
+  for (const r of rows) {
+    try {
+      const track = tracks.get(r);
+      if (track) {
+        shuffledTracks.push(track);
+      }
+    } catch (error) {
+      console.error(`Error retrieving rowid ${r}:`, error);
+    }
+  }
+  console.log('shuffled length from sql.js ', shuffledTracks.length);
   return shuffledTracks;
 };
 
@@ -184,8 +202,9 @@ const getPlaylist = (playlist) => {
 };
 
 const allAlbumsByScroll = (offsetNum, sort) => {
+  console.log('sort : ', sort);
   const stmt = db.prepare(
-    `SELECT * FROM albums ORDER BY ${sort} DESC LIMIT 50 OFFSET ${offsetNum * 50}`
+    `SELECT * FROM albums ORDER BY ${sort} ASC LIMIT 50 OFFSET ${offsetNum * 50} `
   );
   return stmt.all();
 };
@@ -273,6 +292,7 @@ export {
   getAlbums,
   getAlbum,
   getFiles,
+  getAllPkeys,
   allTracksByScroll,
   allTracksBySearchTerm,
   allAlbumsByScroll,
