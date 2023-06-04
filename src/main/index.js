@@ -631,31 +631,35 @@ ipcMain.handle('get-covers', async (_, ...args) => {
   return albumsWithImages.then((res) => res.filter((entry) => entry !== null));
 });
 
-ipcMain.handle('set-shuffled-tracks-array', async (_, ...args) => {
-  shuffled = [];
-  const allTracks = getAllPkeys();
-  console.log(allTracks.length);
-  if (!shuffled.length) {
-    let array = [...Array(+args[0]).keys()];
-    let shuffle = [...array];
-
-    const getRandomValue = (i, N) => Math.floor(Math.random() * (N - i) + i);
-
-    shuffle.forEach(
-      (elem, i, arr, j = getRandomValue(i, arr.length)) => ([arr[i], arr[j]] = [arr[j], arr[i]])
-    );
-
-    shuffled = shuffle;
+const shuffle = (array) => {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
   }
-  return true;
+  return shuffledArray;
+};
+
+ipcMain.handle('set-shuffled-tracks-array', async () => {
+  shuffled = [];
+  const primaryKeysArray = getAllPkeys();
+  shuffled = shuffle(primaryKeysArray);
 });
 
 ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
+  const offset = args[0];
+  const limit = 50;
   try {
-    const [start, end] = args;
-    const fifty = shuffled.slice(start, end);
+    const start = offset * limit;
+    const end = start + limit - 1;
+    console.log('start: ', start, 'end: ', end);
+
+    /* const [start, end] = args;
+    console.log('s: ', start, 'e: ', end); */
+    const fifty = shuffled.slice(start, end + 1);
+    /*  console.log(fifty); */
     const tracks = getAllTracks(fifty);
-    return tracks; /* .filter((ft) => ft !== undefined); */
+    return tracks;
   } catch (err) {
     console.log(err.message);
   }

@@ -146,16 +146,18 @@ const getAllPkeys = () => {
 };
 const getAllTracks = (rows) => {
   /* const tracks = db.prepare('SELECT * FROM tracks ORDER BY RANDOM() LIMIT 50000'); */
-  const tracks = db.prepare('SELECT * FROM tracks WHERE rowid = ?');
+  const tracks = db.prepare('SELECT * FROM tracks WHERE afid = ?');
 
   /*   const shuffledTracks = rows.map((r) => tracks.get(r));
   console.log('shuffled length from sql.js ', shuffledTracks.length); */
   const shuffledTracks = [];
   for (const r of rows) {
     try {
-      const track = tracks.get(r);
+      const track = tracks.get(r.afid);
       if (track) {
         shuffledTracks.push(track);
+      } else if (!track) {
+        console.log(r.afid);
       }
     } catch (error) {
       console.error(`Error retrieving rowid ${r}:`, error);

@@ -51,15 +51,15 @@ const useTracks = (
 
       let start, end;
       if (tracksPageNumber === 0) {
-        const totaltracks = await window.api.totalTracksStat();
-        const setRandArray = await window.api.setShuffledTracksArray(totaltracks);
-        start = 0;
+        /* const totaltracks = await window.api.totalTracksStat(); */
+        const setRandArray = await window.api.setShuffledTracksArray();
+        /*         start = 0;
         end = 50;
       } else {
         start = state.tracks.length + 1;
-        end = start + 49;
+        end = start + 49; */
       }
-      const shuffledTracks = await window.api.getShuffledTracks(start, end);
+      const shuffledTracks = await window.api.getShuffledTracks(tracksPageNumber);
       if (shuffledTracks && isSubscribed) {
         if (tracksPageNumber === 0) {
           dispatch({
