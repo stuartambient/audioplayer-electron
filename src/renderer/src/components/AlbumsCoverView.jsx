@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { useAllAlbumsCovers } from '../hooks/useDb';
 import { BsThreeDots } from 'react-icons/bs';
+import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
@@ -182,10 +183,18 @@ const AlbumsCoverView = ({
         type: 'play-album',
         playlistTracks: albumTracks
       });
-      /*   dispatch({
-        type: 'albums-in-playlist',
-        albumsInPlaylist: [...state.albumsInPlaylist, e.target.id]
-      }); */
+    }
+  };
+
+  const handlePlayReq = async (e) => {
+    console.log(e.currentTarget.id);
+    const albumPath = e.currentTarget.getAttribute('fullpath');
+    const albumTracks = await window.api.getAlbumTracks(albumPath);
+    if (albumTracks) {
+      dispatch({
+        type: 'play-album',
+        playlistTracks: albumTracks
+      });
     }
   };
 
@@ -262,6 +271,7 @@ const AlbumsCoverView = ({
                   <span /* onClick={handleAlbumToPlaylist} */ id={cover.fullpath}>
                     {cover.foldername}
                   </span>
+
                   <div
                     className="item-menu"
                     id={cover.fullpath}
@@ -277,6 +287,9 @@ const AlbumsCoverView = ({
                       album={cover.foldername}
                     />
                   </div>
+                  <span id="coverplay" fullpath={cover.fullpath} onClick={handlePlayReq}>
+                    <GiPlayButton />
+                  </span>
                 </div>
               </li>
             );

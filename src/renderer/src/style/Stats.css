@@ -25,10 +25,11 @@
 
 .stats--results {
   grid-column: 2 / 3;
-  height: 90%;
-  padding: 1.2rem;
+  max-height: 50vh;
+  padding: 0.2rem;
   background: black;
   color: white;
+  border: 1px solid green;
 }
 
 .stats ul {

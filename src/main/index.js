@@ -2,6 +2,7 @@ import {
   app,
   shell,
   session,
+  screen,
   BrowserWindow,
   ipcMain,
   Menu,
@@ -130,9 +131,10 @@ let mainWindow;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 660,
-    height: 600,
+    /* width: 660,
+    height: 600, */
     frame: false,
+    useContentSize: true,
     /* backgroundColor: '#1D1B1B', */
     transparent: true,
 
@@ -194,7 +196,14 @@ function createWindow() {
 const reactDevToolsPath =
   'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.1_0';
 
-app.on('ready', async () => await session.defaultSession.loadExtension(reactDevToolsPath));
+let primaryDisplay;
+
+app.on('ready', async () => {
+  primaryDisplay = screen.getPrimaryDisplay();
+  console.log('primary display: ', primaryDisplay);
+  console.log('all displays: ', screen.getAllDisplays());
+  await session.defaultSession.loadExtension(reactDevToolsPath);
+});
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -498,9 +507,15 @@ ipcMain.on('open-child', async (event, ...args) => {
 });
 
 ipcMain.handle('total-tracks-stat', async () => {
-  const totaltracks = await totalTracks();
-  const total = Object.values(totaltracks).join();
-  return total;
+  const totals = await totalTracks();
+  const totalCounts = {
+    albums: totals.albumsInfo['COUNT(*)'],
+    tracks: totals.tracksInfo['COUNT(*)']
+  };
+  console.log('total counts: ', totalCounts);
+  /*  const total = Object.values(totaltracks).join();
+  return total; */
+  return totals.tracksInfo['COUNT(*)'];
 });
 
 ipcMain.handle('top-ten-artists-stat', async () => {

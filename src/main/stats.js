@@ -2,9 +2,11 @@ import Database from 'better-sqlite3';
 import db from './connection';
 
 const totalTracks = () => {
-  const stmt = db.prepare('SELECT COUNT(*) FROM tracks');
-  const info = stmt.get();
-  return info;
+  const tracksStmt = db.prepare('SELECT COUNT(*) FROM tracks');
+  const albumsStmt = db.prepare('SELECT COUNT(*) FROM albums');
+  const tracksInfo = tracksStmt.get();
+  const albumsInfo = albumsStmt.get();
+  return { albumsInfo, tracksInfo };
 };
 
 const topTenArtists = () => {
