@@ -42,3 +42,12 @@
 .stats-label {
   background: var(--blue2);
 }
+
+.stats--totalmedia {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 2.4rem;
+}

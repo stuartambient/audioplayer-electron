@@ -515,7 +515,8 @@ ipcMain.handle('total-tracks-stat', async () => {
   console.log('total counts: ', totalCounts);
   /*  const total = Object.values(totaltracks).join();
   return total; */
-  return totals.tracksInfo['COUNT(*)'];
+  /* return totals.tracksInfo['COUNT(*)']; */
+  return totalCounts;
 });
 
 ipcMain.handle('top-ten-artists-stat', async () => {

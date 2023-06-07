@@ -166,8 +166,8 @@ const usePlaylist = (id, dispatch) => {
   return;
 };
 
-const useTotalTracksStat = () => {
-  const [totalTracks, setTotalTracks] = useState();
+const useTotalTracksStat = (setTotalTracks) => {
+  /* const [totalTracks, setTotalTracks] = useState(); */
   const [error, setError] = useState([]);
 
   useEffect(() => {
@@ -176,6 +176,7 @@ const useTotalTracksStat = () => {
       const totalTracksRequest = await window.api.totalTracksStat();
       if (totalTracksRequest && subscribed) {
         setTotalTracks(totalTracksRequest);
+        console.log(totalTracks);
       } else {
         return;
       }
@@ -184,8 +185,9 @@ const useTotalTracksStat = () => {
     getTotalTracks();
     return () => (subscribed = false);
   }, []);
-  return { totalTracks };
 };
+/* return { totalTracks };
+}; */
 
 const useTopTenArtistsStat = () => {
   const [topTenArtists, setTopTenArtists] = useState([]);
