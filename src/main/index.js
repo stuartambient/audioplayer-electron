@@ -22,7 +22,7 @@ import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { writeFile } from './utility';
+import { writeFile, updateMeta } from './utility';
 /* import Database from 'better-sqlite3'; */
 import {
   allTracksByScroll,
@@ -323,14 +323,15 @@ ipcMain.handle('update-files', async () => {
 });
 
 ipcMain.handle('update-meta', async () => {
-  console.log('update-meta');
+  const updatedFiles = [];
   const result = await isFileMetaUpdated();
   for (const r of result) {
-    /* console.log(new Date(r.modified)); */
     if (fs.statSync(r.audiofile).mtimeMs > r.modified) {
-      console.log(r.audiofile);
+      updatedFiles.push(r);
     }
   }
+  const updatedMeta = await updateMeta(updatedFiles);
+  updatedMeta.forEach((m) => console.log(m));
   return true;
 });
 

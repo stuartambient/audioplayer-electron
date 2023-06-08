@@ -29,6 +29,29 @@ const writeFile = async (data, filename) => {
   writer.end();
 };
 
+const updateMeta = async (files) => {
+  const updatedMetadata = [];
+  for await (const file of files) {
+    let stats = await fs.promises.stat(file.audiofile);
+    let modified = stats.mtimeMs;
+    const metadata = await parseFile(file.audiofile);
+    let { year, title, artist, album, genre /*  picture */ } = metadata.common;
+    const { lossless, bitrate, sampleRate } = metadata.format;
+    updatedMetadata.push({
+      afid: file.afid,
+
+      audiofile: file.audiofile,
+      modified,
+      year,
+      title,
+      artist,
+      album,
+      genre: genre ? (genre = genre.join(',')) : null
+    });
+  }
+  return updatedMetadata;
+};
+
 const parseMeta = async (files) => {
   const filesWMetadata = [];
   for (const audiofile of files) {
@@ -77,4 +100,4 @@ const parseMeta = async (files) => {
   return filesWMetadata;
 };
 
-export { parseMeta, writeFile };
+export { parseMeta, writeFile, updateMeta };

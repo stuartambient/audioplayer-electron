@@ -35,11 +35,11 @@ export const Genres = () => {
   const genreList = genres.map((genre) => {
     if (!genre.genre) return;
     return (
-      <li>
-        {genre['COUNT(genre)']} --
-        {genre.genre}
+      <li className="stats--genres-genre">
+        <span className="genre-count">{genre['COUNT(genre)']}</span>
+        <span className="genre-name">{genre.genre}</span>
       </li>
     );
   });
-  return <ul className="stat--genres">{genreList}</ul>;
+  return <ul className="stats--genres">{genreList}</ul>;
 };

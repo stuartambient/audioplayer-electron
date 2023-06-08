@@ -134,7 +134,7 @@ const getFiles = () => {
 
 const isFileMetaUpdated = () => {
   console.log('sql called');
-  const allFiles = db.prepare('SELECT audiofile, modified FROM tracks');
+  const allFiles = db.prepare('SELECT afid, audiofile, modified FROM tracks');
   const files = allFiles.all();
   return files;
 };
