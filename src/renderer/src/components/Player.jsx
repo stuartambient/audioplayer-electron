@@ -115,6 +115,14 @@ const Player = ({
         </div>
       )}
 
+      {/*       {!minimalmodeInfo && home && (
+        <div className="title">
+          <p className={title.length > 12  ? 'title-transform' : 'title-text'}>
+            {title}
+          </p>
+        </div>
+      )} */}
+
       {cover && cover !== 'not available' && (
         <>
           <div style={{ backgroundImage: `url` }} className="image">

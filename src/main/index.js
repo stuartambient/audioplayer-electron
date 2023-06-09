@@ -42,7 +42,8 @@ import {
   insertCovers,
   getMissingCovers,
   deleteAlbum,
-  isFileMetaUpdated
+  allTracks,
+  refreshMetadata
   /* createFoldersTable,
   createFilesTable */
 } from './sql.js';
@@ -55,6 +56,7 @@ import {
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
+import initUpdateMetadata from './updateMetadata';
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'streaming',
@@ -323,16 +325,23 @@ ipcMain.handle('update-files', async () => {
 });
 
 ipcMain.handle('update-meta', async () => {
-  const updatedFiles = [];
-  const result = await isFileMetaUpdated();
+  const result = await initUpdateMetadata();
+  console.log(result);
+  /*   const updatedFiles = [];
+  const result = await allTracks();
   for (const r of result) {
     if (fs.statSync(r.audiofile).mtimeMs > r.modified) {
       updatedFiles.push(r);
     }
   }
+  if (!updatedFiles.length) {
+    console.log('no updates needed');
+    return 'no updates needed';
+  }
   const updatedMeta = await updateMeta(updatedFiles);
-  updatedMeta.forEach((m) => console.log(m));
-  return true;
+  const upDb = await refreshMetadata(updatedMeta);
+  console.log(upDb);
+  return upDb; */
 });
 
 ipcMain.handle('update-covers', async () => {

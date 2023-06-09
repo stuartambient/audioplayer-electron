@@ -132,11 +132,33 @@ const getFiles = () => {
   return files;
 };
 
-const isFileMetaUpdated = () => {
-  console.log('sql called');
-  const allFiles = db.prepare('SELECT afid, audiofile, modified FROM tracks');
-  const files = allFiles.all();
-  return files;
+const refreshMetadata = (tracks) => {
+  const transaction = db.transaction(() => {
+    const updateStmt = db.prepare(`
+      UPDATE tracks SET modified = ?, year = ?, title = ?, artist = ?, album = ?, genre = ? WHERE afid = ? AND audiofile = ?`);
+
+    for (const track of tracks) {
+      const { modified, year, title, artist, album, genre, afid, audiofile } = track;
+      updateStmt.run(modified, year, title, artist, album, genre, afid, audiofile);
+    }
+  });
+  try {
+    // Run the transaction
+    transaction();
+
+    return 'Records updated successfully!';
+  } catch (error) {
+    console.error('Error updating records:', error);
+  } /* finally {
+    
+    db.close();
+  } */
+};
+
+const allTracks = () => {
+  const alltracks = db.prepare('SELECT afid, audiofile, modified FROM tracks');
+  const tracks = alltracks.all();
+  return tracks;
 };
 
 const getAllPkeys = () => {
@@ -310,7 +332,8 @@ export {
   getAllTracks,
   insertCovers,
   getMissingCovers,
-  isFileMetaUpdated
+  allTracks,
+  refreshMetadata
 };
 
 /*

@@ -35,11 +35,10 @@ const updateMeta = async (files) => {
     let stats = await fs.promises.stat(file.audiofile);
     let modified = stats.mtimeMs;
     const metadata = await parseFile(file.audiofile);
-    let { year, title, artist, album, genre /*  picture */ } = metadata.common;
+    let { year, title, artist, album, genre } = metadata.common;
     const { lossless, bitrate, sampleRate } = metadata.format;
     updatedMetadata.push({
       afid: file.afid,
-
       audiofile: file.audiofile,
       modified,
       year,
