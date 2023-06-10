@@ -344,10 +344,10 @@
   grid-column: 1 / 3;
   display: grid;
   grid-template-rows: 1.25rem 1.25rem;
-  grid-template-columns: 150px 150px 150px 150px 50px;
+  grid-template-columns: 20% 40% 15% 15% 10%;
   grid-template-areas:
     'controls title time volume image'
-    'controls metadata metadata seekbar image';
+    'controls metadata time seekbar image';
   color: white;
   border: 1px solid white;
   align-items: center;
@@ -356,7 +356,7 @@
 .audio-player--homepage .title {
   grid-area: title;
   color: white;
-  justify-self: center;
+  justify-self: start;
   overflow: hidden;
 }
 
@@ -367,7 +367,7 @@
 .audio-player--homepage .metadata {
   grid-area: metadata;
   display: flex;
-  justify-content: start;
+  /* justify-content: start; */
 }
 
 .audio-player--homepage .metadata .metadata-album {
@@ -376,9 +376,9 @@
 
 .audio-player--homepage .time {
   grid-area: time;
-
+  justify-self: end;
   display: flex;
-  justify-content: space-evenly;
+  flex-direction: column;
 }
 
 .audio-player--homepage .image {

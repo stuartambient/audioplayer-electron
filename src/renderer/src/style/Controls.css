@@ -6,6 +6,11 @@
   list-style: none;
   margin: auto 0;
   padding: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
   -webkit-app-region: no-drag;
 }
 
@@ -21,7 +26,7 @@
   border-bottom: 1px inset var(--blue1);
   border-right: 1px inset var(--blue1);
   box-shadow: transparent;
-  transition: 0.5s ease;
+  /* transition: 0.5s ease; */
   user-select: none;
 }
 

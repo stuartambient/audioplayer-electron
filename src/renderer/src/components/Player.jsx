@@ -115,13 +115,11 @@ const Player = ({
         </div>
       )}
 
-      {/*       {!minimalmodeInfo && home && (
+      {!minimalmodeInfo && home && (
         <div className="title">
-          <p className={title.length > 12  ? 'title-transform' : 'title-text'}>
-            {title}
-          </p>
+          <p className={title.length > 20 ? 'title-transform' : 'title-text'}>{title}</p>
         </div>
-      )} */}
+      )}
 
       {cover && cover !== 'not available' && (
         <>
@@ -130,7 +128,7 @@ const Player = ({
           </div>
         </>
       )}
-      {cover === 'not available' && delay === true && (
+      {cover === 'not available' && !home && delay === true && (
         <p style={{ gridRow: '2 / 3' }}>No available image</p>
       )}
 
@@ -158,6 +156,41 @@ const Player = ({
                   <span
                     className={
                       album.length > 25 /* && !minimalmode */ ? 'album-transform' : 'album-text'
+                    }
+                  >
+                    {album}
+                  </span>
+                </span>
+              </div>
+            ) : null}
+          </>
+        </div>
+      )}
+
+      {!minimalmodeInfo && home && (
+        <div className="metadata">
+          <>
+            {artist ? (
+              <div className="metadata-artist">
+                {!home && <span className="label">Artist: </span>}
+                <span className="real-time">
+                  <span
+                    className={
+                      artist.length > 15 /* && !minimalmode */ ? 'artist-transform' : 'artist-text'
+                    }
+                  >
+                    {artist}
+                  </span>
+                </span>
+              </div>
+            ) : null}
+            {album ? (
+              <div className="metadata-album">
+                {!home && <span className="label">Album: </span>}
+                <span className="real-time">
+                  <span
+                    className={
+                      album.length > 15 /* && !minimalmode */ ? 'album-transform' : 'album-text'
                     }
                   >
                     {album}
