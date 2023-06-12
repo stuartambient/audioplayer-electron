@@ -53,7 +53,8 @@ const api = {
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
   updateMeta: () => ipcRenderer.invoke('update-meta'),
-  genresStat: () => ipcRenderer.invoke('genres-stat')
+  genresStat: () => ipcRenderer.invoke('genres-stat'),
+  nullMetadataStat: () => ipcRenderer.invoke('null-metadata-stat')
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>

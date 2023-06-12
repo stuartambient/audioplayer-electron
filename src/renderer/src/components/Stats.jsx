@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 /* import { useTotalTracksStat, useTopTenArtistsStat } from '../hooks/useDb'; */
-import { TotalMedia, TopTenArtists, Genres } from './StatsComponents';
+import { TotalMedia, TopTenArtists, Genres, NullMetadata } from './StatsComponents';
 /* import { AiOutlineTrophy } from 'react-icons'; */
 import '../style/Stats.css';
 
@@ -21,11 +21,15 @@ const Stats = () => {
         <div className="stat" id="genres" onClick={handleStatReq}>
           <p>Genres</p>
         </div>
+        <div className="stat" id="nometadata" onClick={handleStatReq}>
+          <p>Missing metadata</p>
+        </div>
       </div>
       <div className="stats--results">
         {req === 'totalmedia' && <TotalMedia />}
         {req === 'genres' && <Genres />}
         {req === 'topArtists' && <TopTenArtists />}
+        {req === 'nometadata' && <NullMetadata />}
       </div>
     </div>
   );

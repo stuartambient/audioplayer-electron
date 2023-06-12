@@ -3,6 +3,7 @@ import { allTracks, refreshMetadata } from './sql.js';
 import { updateMeta } from './utility';
 
 const run = async (cb) => {
+  let status = { deleted: '', new: '', nochange: false };
   const updatedTracks = [];
   const result = await allTracks();
 
@@ -12,13 +13,15 @@ const run = async (cb) => {
     }
   }
   if (!updatedTracks.length) {
-    return Promise.resolve(cb('no updated needed'));
+    status.nochange = true;
+    return Promise.resolve(cb(status));
   }
 
   const updatedMeta = await updateMeta(updatedTracks);
-  Promise.resolve(await refreshMetadata(updatedMeta)).then((response) =>
-    cb({ response: response, changed: updatedMeta })
-  );
+  /* Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta)); */
+  Promise.resolve(await refreshMetadata(updatedMeta))
+    .then(() => (status.new = updatedMeta.map((f) => f.audiofile)))
+    .then(() => cb(status));
 };
 
 const initUpdateMetadata = async () => {

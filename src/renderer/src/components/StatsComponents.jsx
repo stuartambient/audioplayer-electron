@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useTotalTracksStat, useTopTenArtistsStat, useGenres } from '../hooks/useDb';
+import { useTotalTracksStat, useTopTenArtistsStat, useGenres, useNullMeta } from '../hooks/useDb';
 
 export const TotalMedia = () => {
   const [totalTracks, setTotalTracks] = useState();
@@ -42,4 +42,14 @@ export const Genres = () => {
     );
   });
   return <ul className="stats--genres">{genreList}</ul>;
+};
+
+export const NullMetadata = () => {
+  const [tracks, setTracks] = useState();
+  useNullMeta(setTracks);
+  useEffect(() => {
+    if (tracks) {
+      console.log(tracks);
+    }
+  }, [tracks]);
 };

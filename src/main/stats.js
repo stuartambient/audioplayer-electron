@@ -24,21 +24,14 @@ const genresWithCount = () => {
   return results;
 };
 
-/* const last10Albums = () => {
+const nullMetadata = () => {
   const stmt = db.prepare(
-    'SELECT id, foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 10'
+    `SELECT audiofile FROM tracks WHERE artist IS NULL AND title IS NULL AND album IS NULL ORDER BY audiofile`
   );
-  const result = stmt.all();
-  return result;
+  return stmt.all();
 };
 
-const last100Tracks = () => {
-  const stmt = db.prepare('SELECT audiofile FROM tracks ORDER BY createdon DESC LIMIT 100');
-  const result = stmt.all();
-  return result;
-}; */
-
-export { totalTracks, topTenArtists, genresWithCount /* last10Albums, last100Tracks */ };
+export { totalTracks, topTenArtists, genresWithCount, nullMetadata };
 
 /*
 SELECT COUNT(*) FROM tracks;

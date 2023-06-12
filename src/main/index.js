@@ -48,11 +48,7 @@ import {
   createFilesTable */
 } from './sql.js';
 
-import {
-  totalTracks,
-  topTenArtists,
-  genresWithCount /* last10Albums, last100Tracks */
-} from './stats';
+import { totalTracks, topTenArtists, genresWithCount, nullMetadata } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
@@ -292,8 +288,22 @@ app.on('window-all-closed', () => {
 });
 
 const processUpdateResult = (type, result) => {
+  console.log('result: ', result);
   let filename;
-  type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt');
+  /*  type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt'); */
+  switch (type) {
+    case 'folder':
+      filename = 'folder-updates.txt';
+      break;
+    case 'file':
+      filename = 'file-updates.txt';
+      break;
+    case 'meta':
+      filename = 'meta-updates.txt';
+      break;
+    default:
+      return;
+  }
   /* console.log(filename); */
   if (Array.isArray(result.new)) {
     writeFile(`\nDate: ${Date()} \nAdditions:\n`, `${updatesFolder}\\${filename}`);
@@ -308,6 +318,7 @@ const processUpdateResult = (type, result) => {
       writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
     });
   } else if (result.nochange === true) {
+    console.log('result: ', result);
     writeFile(`\nDate: ${Date()} No changes`, `${updatesFolder}\\${filename}`);
   }
 };
@@ -326,22 +337,8 @@ ipcMain.handle('update-files', async () => {
 
 ipcMain.handle('update-meta', async () => {
   const result = await initUpdateMetadata();
-  console.log(result);
-  /*   const updatedFiles = [];
-  const result = await allTracks();
-  for (const r of result) {
-    if (fs.statSync(r.audiofile).mtimeMs > r.modified) {
-      updatedFiles.push(r);
-    }
-  }
-  if (!updatedFiles.length) {
-    console.log('no updates needed');
-    return 'no updates needed';
-  }
-  const updatedMeta = await updateMeta(updatedFiles);
-  const upDb = await refreshMetadata(updatedMeta);
-  console.log(upDb);
-  return upDb; */
+  processUpdateResult('meta', result);
+  return result;
 });
 
 ipcMain.handle('update-covers', async () => {
@@ -425,41 +422,6 @@ ipcMain.handle('stream-audio', async (event, arg) => {
 ipcMain.on('test-real-stream', async (event, ...args) => {
   let url = await `streaming://${args[0]}`;
   return url;
-
-  /* protocol.registerStreamProtocol('streaming', async (request, callback) => {
-    console.log('request: ', request);
-    const stat = fs.statSync(request);
-    const fileSize = stat.size;
-    console.log('filesize: ', fileSize);
-    const range = request.headers.Range;
-    if (range) {
-      const parts = range.replace(/bytes=/, '').split('-');
-      const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-      const chunksize = end - start + 1;
-      const headers = {
-        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-        'Accept-Ranges': 'bytes',
-        'Content-Length': String(chunksize),
-        'Content-Type': 'audio/mpeg'
-      };
-
-      callback({
-        statusCode: 206,
-        headers,
-        data: fs.createReadStream(path, { start, end })
-      });
-    } else {
-      callback({
-        statusCode: 200,
-        headers: {
-          'Content-Length': String(fileSize),
-          'Content-Type': 'audio/mpeg'
-        },
-        data: fs.createReadStream(path)
-      });
-    }
-  }); */
 });
 
 ipcMain.handle('get-cover', async (event, arg) => {
@@ -539,29 +501,10 @@ ipcMain.handle('genres-stat', async () => {
   return genres;
 });
 
-/* ipcMain.handle('last-10Albums-stat', async () => {
-  const last10 = await last10Albums();
-  const last10withImages = await Promise.all(
-    last10.map(async (l) => {
-      let tmp = await fs.promises.readdir(l.fullpath);
-      const checkImg = tmp.find((t) => t.endsWith('.jpg'));
-      if (!checkImg) return { ...l, list: 'last10albums' };
-      const imgPath = `${l.fullpath}/${checkImg}`;
-      const imgurl = url.pathToFileURL(imgPath);
-  
-      const imageobj = { img: imgurl.href, list: 'last10albums' };
-
-  
-      return { ...l, ...imageobj };
-    })
-  );
-  return last10withImages;
-}); */
-
-/* ipcMain.handle('last-100Tracks-stat', async () => {
-  const last100 = await last100Tracks();
-  return last100;
-}); */
+ipcMain.handle('null-metadata-stat', async () => {
+  const results = nullMetadata();
+  console.log(results);
+});
 
 ipcMain.handle('open-playlist', async () => {
   const open = await dialog.showOpenDialog(mainWindow, {
@@ -830,33 +773,3 @@ ipcMain.handle('open-album-folder', async (_, path) => {
   /*  spawn(explorer, [path], { detached: true }).unref(); */
   shell.openPath(properPath);
 });
-
-/* ipcMain.handle('get-covers', async (_, ...args) => {
-  const albums = await allCoversByScroll(args[0], args[1]);
-
-  const albumsWithImages = Promise.all(
-    albums.map(async (l) => {
-      try {
-        let tmp = await fs.promises.readdir(l.fullpath);
-        const checkImg = tmp.find((t) => t.match(/\.(jpe?g|png|webp)$/i));
-        if (!checkImg) {
-          return { ...l, list: 'covers' };
-        }
-        const imgPath = `${l.fullpath}/${checkImg}`;
-        const imgUrl = url.pathToFileURL(imgPath);
-        const imageobj = { img: imgUrl.href, list: 'covers' };
-
-        return { ...l, ...imageobj };
-      } catch (err) {
-        if (err.code === 'ENOENT') {
-          console.error(`Directory not found: ${l.fullpath}`);
-          return { ...l, list: 'covers' };
-        } else {
-          throw err;
-        }
-      }
-    })
-  );
-  return albumsWithImages;
-});
-*/

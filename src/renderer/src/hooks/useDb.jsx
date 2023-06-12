@@ -226,6 +226,23 @@ const useGenres = (setGenres) => {
   /* return genres; */
 };
 
+const useNullMeta = (setTracks) => {
+  useEffect(() => {
+    let subscribed = true;
+    const getNullMeta = async () => {
+      const nullMeta = await window.api.nullMetadataStat();
+      console.log(nullMeta);
+      if (nullMeta && subscribed) {
+        setTracks(getNullMeta);
+      } else {
+        return 'no results';
+      }
+    };
+    getNullMeta();
+    return () => (subscribed = false);
+  }, []);
+};
+
 const useAllAlbumsCovers = (
   coversPageNumber,
   coversSearchTerm,
@@ -432,6 +449,7 @@ export {
   useTotalTracksStat,
   useTopTenArtistsStat,
   useGenres,
+  useNullMeta,
   /*  useLast10AlbumsStat, */
   /*   useLast100TracksStat, */
   usePlaylist,

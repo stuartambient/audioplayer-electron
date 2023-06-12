@@ -117,7 +117,9 @@ const Player = ({
 
       {!minimalmodeInfo && home && (
         <div className="title">
-          <p className={title.length > 20 ? 'title-transform' : 'title-text'}>{title}</p>
+          <span className="real-time">
+            <span className={title.length > 50 ? 'title-transform' : 'title-text'}>{title}</span>
+          </span>
         </div>
       )}
 
@@ -168,38 +170,28 @@ const Player = ({
       )}
 
       {!minimalmodeInfo && home && (
-        <div className="metadata">
-          <>
-            {artist ? (
-              <div className="metadata-artist">
-                {!home && <span className="label">Artist: </span>}
-                <span className="real-time">
-                  <span
-                    className={
-                      artist.length > 15 /* && !minimalmode */ ? 'artist-transform' : 'artist-text'
-                    }
-                  >
-                    {artist}
-                  </span>
+        <>
+          {artist ? (
+            <div className="metadata-artist">
+              {!home && <span className="label">Artist: </span>}
+              <span className="real-time">
+                <span className={artist.length > 25 ? 'artist-transform' : 'artist-text'}>
+                  {artist}
                 </span>
-              </div>
-            ) : null}
-            {album ? (
-              <div className="metadata-album">
-                {!home && <span className="label">Album: </span>}
-                <span className="real-time">
-                  <span
-                    className={
-                      album.length > 15 /* && !minimalmode */ ? 'album-transform' : 'album-text'
-                    }
-                  >
-                    {album}
-                  </span>
+              </span>
+            </div>
+          ) : null}
+          {album ? (
+            <div className="metadata-album">
+              {!home && <span className="label">Album: </span>}
+              <span className="real-time">
+                <span className={album.length > 25 ? 'album-transform' : 'album-text'}>
+                  {album}
                 </span>
-              </div>
-            ) : null}
-          </>
-        </div>
+              </span>
+            </div>
+          ) : null}
+        </>
       )}
 
       {!minimalmodeInfo && (
@@ -240,31 +232,6 @@ const Player = ({
         </>
       )}
 
-      {/* <ul className="controls">
-        <li className={isLiked ? 'btn isliked' : 'btn'} id="like" onClick={onClick}>
-          <FaHeart />
-        </li>
-        {pause ? (
-          <li className="btn" id="pauseplay" onClick={onClick}>
-            <GiPlayButton />
-          </li>
-        ) : (
-          <li className="btn" id="pauseplay" onClick={onClick}>
-            <GiPauseButton />
-          </li>
-        )}
-        <li className="btn" id="backward" onClick={onClick}>
-          <FaBackward />
-        </li>
-        <li className="btn" id="forward" onClick={onClick}>
-          <FaForward />
-        </li>
-        {!minimalmode && (
-          <li className="btn" id="playlist" onClick={onClick}>
-            <FaListUl />
-          </li>
-        )}
-      </ul> */}
       {children}
     </div>
   );

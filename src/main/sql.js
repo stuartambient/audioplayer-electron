@@ -219,9 +219,11 @@ const getPlaylist = (playlist) => {
   /* const assocFiles = files.all(`${albumPath}%`); */
   const albumFiles = [];
   playlist.forEach((pl) => {
-    albumFiles.push(plfile.get(pl));
+    const file = plfile.get(pl);
+    if (!file) return;
+    albumFiles.push(file);
   });
-  /* console.log(albumFiles); */
+  /* albumFiles.forEach((a) => console.log(a.afid)); */
   return albumFiles;
 };
 

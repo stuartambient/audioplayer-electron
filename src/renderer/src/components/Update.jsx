@@ -8,6 +8,7 @@ import '../style/Update.css';
 const Update = () => {
   const [fileUpdateResults, setFileUpdateResults] = useState();
   const [folderUpdateResults, setFolderUpdateResults] = useState();
+  const [metaUpdateResults, setMetaUpdateResults] = useState();
   const [folderUpdateDetails, setFolderUpdateDetails] = useState();
   const [fileUpdateDetails, setFileUpdateDetails] = useState();
   const [folderUpdateReq, setFolderUpdateReq] = useState();
@@ -29,13 +30,15 @@ const Update = () => {
       case 'foldersupdate':
         setFolderUpdateReq(true);
         const foldersUpdate = await window.api.updateFolders();
+        console.log('folders update: ', foldersUpdate);
         setFolderUpdateResults(foldersUpdate);
         setFolderUpdateReq(false);
         break;
       case 'metafiles':
         setMetaUpdateReq(true);
-        const ifModified = await window.api.updateMeta();
-        console.log(ifModified);
+        const modifiedMeta = await window.api.updateMeta();
+        setMetaUpdateResults(modifiedMeta);
+        setMetaUpdateReq(false);
       default:
         return;
     }
@@ -99,6 +102,11 @@ const Update = () => {
           <Loader />
         </div>
       )}
+      {metaUpdateReq && (
+        <div className="meta-update-results">
+          <Loader />
+        </div>
+      )}
       <div className="file-update-results">
         {fileUpdateResults && (
           <>
@@ -114,6 +122,15 @@ const Update = () => {
             <p>New: {folderUpdateResults.new.length}</p>
             <p>Deleted: {folderUpdateResults.deleted.length}</p>
             {folderUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
+          </>
+        )}
+      </div>
+      <div className="meta-update-results">
+        {metaUpdateResults && (
+          <>
+            <p>Changed: {metaUpdateResults.new.length}</p>
+            {/* <p>Deleted: {folderUpdateResults.deleted.length}</p> */}
+            {metaUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
           </>
         )}
       </div>
