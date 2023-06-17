@@ -393,8 +393,8 @@ const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
   }, [req]);
 };
 
-const useGetPlaylists = () => {
-  const [myPlaylists, setMyPlaylists] = useState(['no playlists']);
+const useGetPlaylists = ({ setMyPlaylists }) => {
+  console.log('called');
 
   useEffect(() => {
     let subscribed = true;
@@ -404,10 +404,11 @@ const useGetPlaylists = () => {
         setMyPlaylists(myplaylists);
       }
     };
-    getmyplaylists();
+    if (subscribed) {
+      getmyplaylists();
+    }
     return () => (subscribed = false);
   }, []);
-  return { myPlaylists };
 };
 
 /* const useRandomTracks = (shuffledTracksPageNumber, state, dispatch, shuffle) => {

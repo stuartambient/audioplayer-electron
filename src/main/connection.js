@@ -6,5 +6,6 @@ db.pragma('synchronous = normal');
 db.pragma('page_size = 32768');
 db.pragma('mmap_size = 30000000000');
 db.pragma('temp_store = memory');
+db.loadExtension(`${process.cwd()}/src/db/extensions/unicode`);
 
 export default db;

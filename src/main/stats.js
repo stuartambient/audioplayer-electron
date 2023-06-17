@@ -26,7 +26,7 @@ const genresWithCount = () => {
 
 const nullMetadata = () => {
   const stmt = db.prepare(
-    `SELECT audiofile FROM tracks WHERE artist IS NULL AND title IS NULL AND album IS NULL ORDER BY audiofile`
+    `SELECT audiofile FROM tracks WHERE artist IS NULL OR title IS NULL OR album IS NULL ORDER BY audiofile`
   );
   return stmt.all();
 };

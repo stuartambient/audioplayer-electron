@@ -22,7 +22,7 @@ import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { writeFile, updateMeta } from './utility';
+import { writeFile, updateMeta, convertToUTC } from './utility';
 /* import Database from 'better-sqlite3'; */
 import {
   allTracksByScroll,
@@ -502,8 +502,15 @@ ipcMain.handle('genres-stat', async () => {
 });
 
 ipcMain.handle('null-metadata-stat', async () => {
-  const results = nullMetadata();
-  console.log(results);
+  const results = await nullMetadata();
+  console.log('missing meta: ', results.length);
+  for await (const result of results) {
+    try {
+      await writeFile(result.audiofile, `${updatesFolder}\\files_missing_metadata.m3u`);
+    } catch (e) {
+      console.error(e.message);
+    }
+  }
 });
 
 ipcMain.handle('open-playlist', async () => {
@@ -546,7 +553,16 @@ ipcMain.handle('save-playlist', async (_, args) => {
 });
 
 ipcMain.handle('get-playlists', async () => {
-  const playlists = fs.promises.readdir(playlistsFolder);
+  console.log('called');
+  const playlistsStats = [];
+  const playlists = await fs.promises.readdir(playlistsFolder);
+  for await (const pl of playlists) {
+    let tmp = await fs.promises.stat(`${playlistsFolder}\\${pl}`);
+    if (tmp) {
+      playlistsStats.push({ name: pl, createdon: convertToUTC(tmp.birthtimeMs) });
+    }
+  }
+  console.log(playlistsStats);
   return playlists;
 });
 

@@ -128,6 +128,21 @@ const MediaMenu = ({
           </form>
         </li>
       )}
+      {tracksShuffle && listType === 'albums' && (
+        <li className="form">
+          <form method="post" onSubmit={handleTextSearch}>
+            <div className="formelements">
+              <input type="text" className="textsearch" name="textsearch" id="textsearch" />
+
+              <button type="submit" className="submitbtn">
+                <div className="icon">
+                  <GiMagnifyingGlass />
+                </div>
+              </button>
+            </div>
+          </form>
+        </li>
+      )}
       {listType === 'playlist' && (
         <li className="playlist-dialogs">
           <span id="playlist-clear" onClick={handlePlaylistFiles}>

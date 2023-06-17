@@ -10,6 +10,8 @@ db.pragma('page_size = 32768');
 db.pragma('mmap_size = 30000000000');
 db.pragma('temp_store = memory'); */
 
+/* SELECT foldername, fullpath FROM albums where unaccent(foldername) LIKE '%Koner%' ORDER BY lower(unaccent(foldername)) */
+
 const createFoldersTable = () => {
   const ct = db.prepare(
     'CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )'
@@ -40,7 +42,7 @@ const createCoversTable = () => {
 
 const insertFiles = (files) => {
   const insert = db.prepare(
-    'INSERT INTO tracks (afid, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, sampleRate, like) VALUES (@afid, @root, @audiofile, @modified, @extension, @year, @title, @artist, @album, @genre, @lossless, @bitrate, @sampleRate, @like)'
+    'INSERT INTO tracks (afid, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, sampleRate, like, picture) VALUES (@afid, @root, @audiofile, @modified, @extension, @year, @title, @artist, @album, @genre, @lossless, @bitrate, @sampleRate, @like, @picture)'
   );
 
   const insertMany = db.transaction((files) => {
@@ -230,9 +232,18 @@ const getPlaylist = (playlist) => {
 const allAlbumsByScroll = (offsetNum, sort) => {
   console.log('sort : ', sort);
   const stmt = db.prepare(
-    `SELECT * FROM albums ORDER BY ${sort} ASC LIMIT 50 OFFSET ${offsetNum * 50} `
+    `SELECT * FROM albums ORDER BY ${sort} DESC LIMIT 50 OFFSET ${offsetNum * 50} `
   );
   return stmt.all();
+};
+
+const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
+  console.log('sort: ', sort);
+  const term = `%${text}%`;
+  const stmt = db.prepare(
+    `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY ${sort} LIMIT 50 OFFSET ${offsetNum * 50}`
+  );
+  return stmt.all(term);
 };
 
 /* const allAlbumsBySearchTerm = (offsetNum, text) => {
@@ -260,14 +271,6 @@ const allCoversByScroll = (offsetNum, term = null) => {
     );
     return stmt.all(searchTerm);
   }
-};
-
-const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
-  const term = `%${text}%`;
-  const stmt = db.prepare(
-    `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY ${sort} LIMIT 50 OFFSET ${offsetNum * 50}`
-  );
-  return stmt.all(term);
 };
 
 const requestedFile = (trackId) => {

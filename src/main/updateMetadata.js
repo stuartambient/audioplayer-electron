@@ -7,8 +7,11 @@ const run = async (cb) => {
   const updatedTracks = [];
   const result = await allTracks();
 
-  for (const r of result) {
-    if (fs.statSync(r.audiofile).mtimeMs > r.modified) {
+  for await (const r of result) {
+    if (!r) return;
+    const stats = fs.promises.stat(r.audiofile);
+    const lastModified = stats.mtimeMs;
+    if (lastModified > r.modified) {
       updatedTracks.push(r);
     }
   }

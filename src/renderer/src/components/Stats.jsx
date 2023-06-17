@@ -11,20 +11,20 @@ const Stats = () => {
 
   return (
     <div className="stats">
-      <div className="stats--nav">
-        <div className="stat" id="totalmedia" onClick={handleStatReq}>
+      <ul className="stats--nav">
+        <li className="stat" id="totalmedia" onClick={handleStatReq}>
           <p>Total media</p>
-        </div>
-        <div className="stat" id="topArtists" onClick={handleStatReq}>
+        </li>
+        <li className="stat" id="topArtists" onClick={handleStatReq}>
           <p>Top Artists</p>
-        </div>
-        <div className="stat" id="genres" onClick={handleStatReq}>
+        </li>
+        <li className="stat" id="genres" onClick={handleStatReq}>
           <p>Genres</p>
-        </div>
-        <div className="stat" id="nometadata" onClick={handleStatReq}>
+        </li>
+        <li className="stat" id="nometadata" onClick={handleStatReq}>
           <p>Missing metadata</p>
-        </div>
-      </div>
+        </li>
+      </ul>
       <div className="stats--results">
         {req === 'totalmedia' && <TotalMedia />}
         {req === 'genres' && <Genres />}

@@ -3,7 +3,8 @@ import { useGetPlaylists } from '../hooks/useDb';
 import '../style/Playlists.css';
 
 const Playlists = () => {
-  const { myPlaylists } = useGetPlaylists();
+  const [myPlaylists, setMyPlaylists] = useState(['no playlists']);
+  useGetPlaylists(setMyPlaylists);
   const [playlistRequest, setPlaylistRequest] = useState('no request');
 
   const handlePlaylistRequest = async (e) => {
@@ -11,9 +12,6 @@ const Playlists = () => {
     setPlaylistRequest(e.target.id);
     const filename = e.target.getAttribute('data-file');
     switch (e.target.id) {
-      case 'edit':
-        const editfile = window.api.homepagePlaylists('edit', filename);
-        break;
       case 'delete':
         const deletefile = window.api.homepagePlaylists('delete', filename);
         break;
@@ -34,10 +32,6 @@ const Playlists = () => {
             return (
               <li className="name">
                 <p>{mpl}</p>
-
-                <span id="edit" data-file={mpl} onClick={handlePlaylistRequest}>
-                  Edit
-                </span>
                 <span id="delete" data-file={mpl} onClick={handlePlaylistRequest}>
                   Delete
                 </span>
