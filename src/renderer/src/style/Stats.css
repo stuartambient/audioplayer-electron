@@ -13,9 +13,7 @@
 
 .stats--genres {
   height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scroll-behavior: smooth;
+
   display: inline-block;
 }
 
@@ -30,6 +28,9 @@
   background: black;
   color: white;
   border: 1px solid green;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 .stats ul {

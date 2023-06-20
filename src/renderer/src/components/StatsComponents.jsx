@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useTotalTracksStat, useTopTenArtistsStat, useGenres, useNullMeta } from '../hooks/useDb';
+import { v4 as uuidv4 } from 'uuid';
+import { VariableSizeList as List } from 'react-window';
+
+import {
+  useTotalTracksStat,
+  useTopHundredArtistsStat,
+  useGenres,
+  useNullMeta
+} from '../hooks/useDb';
 
 export const TotalMedia = () => {
   const [totalTracks, setTotalTracks] = useState();
@@ -17,10 +25,39 @@ export const TotalMedia = () => {
   );
 };
 
-export const TopTenArtists = () => {
-  const { topTenArtists } = useTopTenArtistsStat();
-  const artists = topTenArtists.map((tt) => {
-    return <li>{tt.artist}</li>;
+export const TopHundredArtists = () => {
+  const { topHundredArtists } = useTopHundredArtistsStat();
+  const [artistTracks, setArtistTracks] = useState({ artist: '', results: [] });
+
+  function itemSize(index) {
+    return index % 2 ? 50 : 25;
+  }
+
+  const getArtistTracks = async (e) => {
+    const artist = e.target.id;
+    const results = await window.api.getTracksByArtist(artist);
+    setArtistTracks({ artist, results });
+  };
+  const artists = topHundredArtists.map((tt) => {
+    return (
+      <li key={uuidv4()}>
+        <span>{tt.artist}</span>
+        <span
+          id={tt.artist}
+          onClick={getArtistTracks}
+          style={{ marginLeft: '5%', cursor: 'pointer' }}
+        >
+          {tt.count}
+        </span>
+        {artistTracks.artist === tt.artist && artistTracks.results && (
+          <ul>
+            {artistTracks.results.map((track) => {
+              return <li>{track.audiofile}</li>;
+            })}
+          </ul>
+        )}
+      </li>
+    );
   });
   return <ul>{artists}</ul>;
 };

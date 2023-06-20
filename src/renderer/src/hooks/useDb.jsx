@@ -189,22 +189,22 @@ const useTotalTracksStat = (setTotalTracks) => {
 /* return { totalTracks };
 }; */
 
-const useTopTenArtistsStat = () => {
-  const [topTenArtists, setTopTenArtists] = useState([]);
+const useTopHundredArtistsStat = () => {
+  const [topHundredArtists, setTopHundredArtists] = useState([]);
   useEffect(() => {
     let subscribed = true;
-    const getTopTenArtists = async () => {
-      const topTenArtistsRequest = await window.api.topTenArtistsStat();
-      if (topTenArtistsRequest && subscribed) {
-        setTopTenArtists(topTenArtistsRequest);
+    const getTopHundredArtists = async () => {
+      const topHundredArtistsRequest = await window.api.topHundredArtistsStat();
+      if (topHundredArtistsRequest && subscribed) {
+        setTopHundredArtists(topHundredArtistsRequest);
       } else {
         return;
       }
     };
-    getTopTenArtists();
+    getTopHundredArtists();
     return () => (subscribed = false);
   }, []);
-  return { topTenArtists };
+  return { topHundredArtists };
 };
 
 const useGenres = (setGenres) => {
@@ -393,7 +393,7 @@ const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
   }, [req]);
 };
 
-const useGetPlaylists = ({ setMyPlaylists }) => {
+const useGetPlaylists = (setMyPlaylists) => {
   console.log('called');
 
   useEffect(() => {
@@ -448,7 +448,7 @@ export {
   useAlbums,
   useAlbumTracks,
   useTotalTracksStat,
-  useTopTenArtistsStat,
+  useTopHundredArtistsStat,
   useGenres,
   useNullMeta,
   /*  useLast10AlbumsStat, */

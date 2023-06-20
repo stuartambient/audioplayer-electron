@@ -3,6 +3,7 @@ import { useGetPlaylists } from '../hooks/useDb';
 import '../style/Playlists.css';
 
 const Playlists = () => {
+  console.log('playlists called');
   const [myPlaylists, setMyPlaylists] = useState(['no playlists']);
   useGetPlaylists(setMyPlaylists);
   const [playlistRequest, setPlaylistRequest] = useState('no request');

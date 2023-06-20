@@ -28,6 +28,7 @@
     "howler": "^2.2.3",
     "music-metadata": "^7.13.0",
     "react-icons": "^4.7.1",
+    "react-window": "^1.8.9",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

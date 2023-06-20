@@ -48,7 +48,13 @@ import {
   createFilesTable */
 } from './sql.js';
 
-import { totalTracks, topTenArtists, genresWithCount, nullMetadata } from './stats';
+import {
+  totalTracks,
+  topHundredArtists,
+  genresWithCount,
+  nullMetadata,
+  allTracksByArtist
+} from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
@@ -148,8 +154,8 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
-      webSecurity: false,
-      nodeIntegration: true
+      webSecurity: false
+      /* nodeIntegration: true */
     }
   });
 
@@ -491,13 +497,24 @@ ipcMain.handle('total-tracks-stat', async () => {
   return totalCounts;
 });
 
-ipcMain.handle('top-ten-artists-stat', async () => {
-  const topTen = await topTenArtists();
-  return topTen;
+ipcMain.handle('top-hundred-artists-stat', async () => {
+  const topHundred = await topHundredArtists();
+  console.log('topHundred: ', topHundred.length);
+  return topHundred.slice(1);
+});
+
+ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
+  try {
+    const tracks = await allTracksByArtist(arg);
+    return tracks;
+  } catch (err) {
+    console.error(err.message);
+  }
 });
 
 ipcMain.handle('genres-stat', async () => {
   const genres = await genresWithCount();
+  console.log('genres: ', genres.length);
   return genres;
 });
 
