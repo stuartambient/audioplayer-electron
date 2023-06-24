@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { VariableSizeList as List } from 'react-window';
+import { FixedSizeList as List } from 'react-window';
 
 import {
   useTotalTracksStat,
@@ -29,6 +29,71 @@ export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
   const [artistTracks, setArtistTracks] = useState({ artist: '', results: [] });
 
+  const getArtistTracks = async (e) => {
+    const artist = e.target.id;
+    const results = await window.api.getTracksByArtist(artist);
+    /* setArtistTracks({ artist, results }); */
+    setTimeout(async () => await window.api.showList(results), 1000);
+  };
+
+  const Row = ({ index, style }) => {
+    const tt = topHundredArtists[index];
+
+    const rowStyles = {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      height: '50px',
+      backgroundColor: index % 2 === 0 ? 'hsl(0, 0%, 13%)' : 'rgb(55, 71, 79)'
+      // Add more styles as needed
+    };
+
+    const artistNameStyles = {
+      marginLeft: '10px',
+      fontWeight: 'bold'
+      // Add more styles as needed
+    };
+
+    const countStyles = {
+      marginRight: '10px',
+      cursor: 'pointer'
+      // Add more styles as needed
+    };
+
+    return (
+      <div style={{ ...style, ...rowStyles }}>
+        <span style={artistNameStyles}>{tt.artist}</span>
+        <span id={tt.artist} onClick={getArtistTracks} style={countStyles}>
+          {tt.count}
+        </span>
+        {artistTracks.artist === tt.artist && artistTracks.results && (
+          <ul>
+            {artistTracks.results.map((track) => {
+              return <li>{track.audiofile}</li>;
+            })}
+          </ul>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <List
+      height={600} // Specify the desired height of the list
+      itemCount={topHundredArtists.length} // Total number of items in the list
+      itemSize={50} // Specify the height of each item in the list
+      width="100%" // Specify the desired width of the list
+      className="stats--list"
+    >
+      {Row}
+    </List>
+  );
+};
+
+/* export const TopHundredArtists = () => {
+  const { topHundredArtists } = useTopHundredArtistsStat();
+  const [artistTracks, setArtistTracks] = useState({ artist: '', results: [] });
+
   function itemSize(index) {
     return index % 2 ? 50 : 25;
   }
@@ -36,7 +101,7 @@ export const TopHundredArtists = () => {
   const getArtistTracks = async (e) => {
     const artist = e.target.id;
     const results = await window.api.getTracksByArtist(artist);
-    setArtistTracks({ artist, results });
+    setTimeout(async () => await window.api.showList(results), 1000);
   };
   const artists = topHundredArtists.map((tt) => {
     return (
@@ -60,7 +125,7 @@ export const TopHundredArtists = () => {
     );
   });
   return <ul>{artists}</ul>;
-};
+}; */
 
 export const Genres = () => {
   const [genres, setGenres] = useState([]);

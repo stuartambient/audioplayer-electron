@@ -12,7 +12,9 @@ export default defineConfig({
       rollupOptions: {
         input: {
           index: resolve(__dirname, 'src/preload/index.js'),
-          child: resolve(__dirname, 'src/preload/child.js')
+          child: resolve(__dirname, 'src/preload/child.js'),
+          list: resolve(__dirname, 'src/preload/list.js')
+          /* list: resolve(__dirname, 'src/renderer/list.js') */
         }
       }
     }
@@ -27,7 +29,8 @@ export default defineConfig({
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'src/renderer/index.html'),
-          child: resolve(__dirname, 'src/renderer/child.html')
+          child: resolve(__dirname, 'src/renderer/child.html'),
+          list: resolve(__dirname, 'src/renderer/list.html')
         }
       }
     },

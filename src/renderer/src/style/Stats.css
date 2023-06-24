@@ -11,6 +11,14 @@
   grid-column: 1 / 2;
 }
 
+.stats--list::-webkit-scrollbar {
+  display: none;
+}
+
+.stats--results::-webkit-scrollbar {
+  display: none;
+}
+
 .stats--genres {
   height: 100%;
 

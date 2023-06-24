@@ -477,12 +477,12 @@ ipcMain.handle('is-liked', async (event, arg) => {
   return checkIsLiked;
 });
 
-ipcMain.on('open-child', async (event, ...args) => {
+/* ipcMain.on('open-child', async (event, ...args) => {
   const child = new BrowserWindow({ parent: mainWindow });
-  child.loadFile(path.join(__dirname, '../renderer/index.html'));
+  child.loadFile(path.join(__dirname, '../renderer/child.html'));
   child.show();
   return true;
-});
+}); */
 
 ipcMain.handle('total-tracks-stat', async () => {
   const totals = await totalTracks();
@@ -624,8 +624,11 @@ ipcMain.handle('get-covers', async (_, ...args) => {
         if (err.code === 'ENOENT') {
           console.error(`Directory not found: ${l.fullpath}`);
           return null;
+        } else if (err.code === 'ENOTDIR') {
+          console.error(`ENOTDIR: ${l.fullpath}`);
+          return null;
         } else {
-          throw err;
+          return;
         }
       }
     })
@@ -732,7 +735,7 @@ ipcMain.handle('show-album-cover-menu', (event) => {
   const menu = Menu.buildFromTemplate(template);
   menu.popup(BrowserWindow.fromWebContents(event.sender));
 });
-let newWin;
+let newWin, newList;
 ipcMain.handle('show-child', (event, args) => {
   const createChildWindow = () => {
     newWin = new BrowserWindow({
@@ -765,6 +768,41 @@ ipcMain.handle('show-child', (event, args) => {
     createChildWindow();
   } else {
     BrowserWindow.fromId(newWin.id).webContents.send('send-to-child', args);
+  }
+});
+
+ipcMain.handle('show-list', (event, args) => {
+  console.log(args);
+  const createChildWindow = () => {
+    newList = new BrowserWindow({
+      width: 600,
+      height: 500,
+      show: false,
+      resizable: false,
+      webPreferences: {
+        preload: path.join(__dirname, '../preload/list.js'),
+        sandbox: false,
+        webSecurity: false
+      }
+    });
+
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+      newList.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/list.html`);
+    } else {
+      newList.loadFile(path.join(__dirname, '../renderer/list.html'));
+    }
+
+    newList.on('ready-to-show', () => {
+      newList.show();
+      newList.webContents.send('send-to-list', args);
+    });
+  };
+
+  const openWindows = BrowserWindow.getAllWindows().length;
+  if (openWindows === 1) {
+    createChildWindow();
+  } else {
+    BrowserWindow.fromId(newList.id).webContents.send('send-to-list', args);
   }
 });
 
