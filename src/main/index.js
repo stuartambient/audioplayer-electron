@@ -203,9 +203,9 @@ const reactDevToolsPath =
 let primaryDisplay;
 
 app.on('ready', async () => {
-  primaryDisplay = screen.getPrimaryDisplay();
+  /*   primaryDisplay = screen.getPrimaryDisplay();
   console.log('primary display: ', primaryDisplay);
-  console.log('all displays: ', screen.getAllDisplays());
+  console.log('all displays: ', screen.getAllDisplays()); */
   await session.defaultSession.loadExtension(reactDevToolsPath);
 });
 
@@ -217,7 +217,7 @@ app.whenReady().then(() => {
   electronApp.setAppUserModelId('com.electron');
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
     const uri = decodeURIComponent(request.url);
-    console.log('uri: ', uri);
+    /* console.log('uri: ', uri); */
     const filePath = uri.replace('streaming://', '');
     const path = capitalizeDriveLetter(filePath);
 
@@ -294,7 +294,7 @@ app.on('window-all-closed', () => {
 });
 
 const processUpdateResult = (type, result) => {
-  console.log('result: ', result);
+  /* console.log('result: ', result); */
   let filename;
   /*  type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt'); */
   switch (type) {
@@ -324,7 +324,7 @@ const processUpdateResult = (type, result) => {
       writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
     });
   } else if (result.nochange === true) {
-    console.log('result: ', result);
+    /* console.log('result: ', result); */
     writeFile(`\nDate: ${Date()} No changes`, `${updatesFolder}\\${filename}`);
   }
 };
@@ -357,7 +357,7 @@ ipcMain.handle('update-covers', async () => {
 
   let updatedFolders = [];
   for await (const r of result) {
-    console.log(r);
+    /* console.log(r); */
     let tmp = await fs.promises.readdir(r.path);
 
     if (!tmp[0]) continue;
@@ -415,7 +415,6 @@ ipcMain.handle('get-album', async (_, args) => {
 
 ipcMain.handle('get-album-tracks', async (event, args) => {
   const allAlbumTracks = await filesByAlbum(args);
-  console.log('all album tracks: ', allAlbumTracks);
   return allAlbumTracks;
 });
 
@@ -490,7 +489,7 @@ ipcMain.handle('total-tracks-stat', async () => {
     albums: totals.albumsInfo['COUNT(*)'],
     tracks: totals.tracksInfo['COUNT(*)']
   };
-  console.log('total counts: ', totalCounts);
+  /* console.log('total counts: ', totalCounts); */
   /*  const total = Object.values(totaltracks).join();
   return total; */
   /* return totals.tracksInfo['COUNT(*)']; */
@@ -499,7 +498,7 @@ ipcMain.handle('total-tracks-stat', async () => {
 
 ipcMain.handle('top-hundred-artists-stat', async () => {
   const topHundred = await topHundredArtists();
-  console.log('topHundred: ', topHundred.length);
+  /* console.log('topHundred: ', topHundred.length); */
   return topHundred.slice(1);
 });
 
@@ -514,7 +513,7 @@ ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
 
 ipcMain.handle('genres-stat', async () => {
   const genres = await genresWithCount();
-  console.log('genres: ', genres.length);
+  /* console.log('genres: ', genres.length); */
   return genres;
 });
 
@@ -570,7 +569,7 @@ ipcMain.handle('save-playlist', async (_, args) => {
 });
 
 ipcMain.handle('get-playlists', async () => {
-  console.log('called');
+  /* console.log('called'); */
   const playlistsStats = [];
   const playlists = await fs.promises.readdir(playlistsFolder);
   for await (const pl of playlists) {
@@ -579,7 +578,7 @@ ipcMain.handle('get-playlists', async () => {
       playlistsStats.push({ name: pl, createdon: convertToUTC(tmp.birthtimeMs) });
     }
   }
-  console.log(playlistsStats);
+  /* console.log(playlistsStats); */
   return playlists;
 });
 
@@ -657,7 +656,7 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   try {
     const start = offset * limit;
     const end = start + limit - 1;
-    console.log('start: ', start, 'end: ', end);
+    /* console.log('start: ', start, 'end: ', end); */
 
     /* const [start, end] = args;
     console.log('s: ', start, 'e: ', end); */
@@ -772,7 +771,7 @@ ipcMain.handle('show-child', (event, args) => {
 });
 
 ipcMain.handle('show-list', (event, args) => {
-  console.log(args);
+  /* console.log(args); */
   const createChildWindow = () => {
     newList = new BrowserWindow({
       width: 600,

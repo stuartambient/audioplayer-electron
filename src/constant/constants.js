@@ -1,8 +1,7 @@
 const roots = [
   'J:/S_Music',
   'I:/Music',
-  /* 'H:/Top/Music', */
-  'G:/H_Music_Backup',
+  'H:/Music',
   'F:/Music',
   'E:/music',
   'D:/G_MUSIC',

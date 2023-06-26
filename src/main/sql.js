@@ -202,18 +202,53 @@ const searchAlbums = async () => {
 /* sort by artist, createdon, title genre */
 
 const allTracksByScroll = (offsetNum, sort) => {
-  const stmt = db.prepare(
-    `SELECT * FROM tracks ORDER BY ${sort} DESC LIMIT 50 OFFSET ${offsetNum * 50}`
-  );
-  return stmt.all();
+  let query;
+  switch (sort) {
+    case 'createdon':
+      query = `SELECT * FROM tracks ORDER BY createdon DESC LIMIT 50 OFFSET $offset`;
+      break;
+    case 'artist':
+      query = `SELECT * FROM tracks ORDER BY unaccent(lower(artist)) ASC LIMIT 50 OFFSET $offset`;
+      break;
+    case 'title':
+      query = `SELECT * FROM tracks ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET $offset`;
+      break;
+    case 'genre':
+      query = `SELECT * FROM tracks ORDER BY unaccent(lower(genre)) DESC LIMIT 50 OFFSET $offset`;
+      break;
+    default:
+      return;
+  }
+  const stmt = db.prepare(query);
+  return stmt.all({ offset: offsetNum * 50 });
 };
 
 const allTracksBySearchTerm = (offsetNum, text, sort) => {
   const term = `%${text}%`;
-  const stmt = db.prepare(
-    `SELECT * FROM tracks WHERE audiofile LIKE ? LIMIT 50 OFFSET ${offsetNum * 50}`
-  );
-  return stmt.all(term);
+  let query;
+  let params;
+  switch (sort) {
+    case 'createdon':
+      query = `SELECT * FROM tracks WHERE audiofile LIKE ? ORDER BY createdon DESC LIMIT 50 OFFSET ?`;
+      params = [term, offsetNum * 50];
+      break;
+    case 'artist':
+      query = `SELECT * FROM tracks WHERE artist LIKE ? ORDER BY unaccent(lower(artist)) ASC LIMIT 50 OFFSET ?`;
+      params = [term, offsetNum * 50];
+      break;
+    case 'title':
+      query = `SELECT * FROM tracks WHERE title LIKE ? ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET ?`;
+      params = [term, offsetNum * 50];
+      break;
+    case 'genre':
+      query = `SELECT * FROM tracks WHERE genre LIKE ? ORDER BY unaccent(lower(genre)) DESC LIMIT 50 OFFSET ?`;
+      params = [term, offsetNum * 50];
+      break;
+    default:
+      return;
+  }
+  const stmt = db.prepare(query);
+  return stmt.all(...params);
 };
 
 const getPlaylist = (playlist) => {
@@ -229,30 +264,63 @@ const getPlaylist = (playlist) => {
   return albumFiles;
 };
 
-const allAlbumsByScroll = (offsetNum, sort) => {
+/* SELECT foldername, fullpath FROM albums where unaccent(foldername) 
+LIKE '%Koner%' ORDER BY lower(unaccent(foldername)) */
+
+/* const allAlbumsByScroll = (offsetNum, sort) => {
   console.log('sort : ', sort);
   const stmt = db.prepare(
-    `SELECT * FROM albums ORDER BY ${sort} DESC LIMIT 50 OFFSET ${offsetNum * 50} `
+    `SELECT * FROM albums ORDER BY ${sort} ASC LIMIT 50 OFFSET ${offsetNum * 50} `
   );
   return stmt.all();
+}; */
+
+const allAlbumsByScroll = (offsetNum, sort) => {
+  let query;
+  switch (sort) {
+    case 'foldername':
+      query = `SELECT * FROM albums ORDER BY unaccent(lower(foldername)) ASC LIMIT 50 OFFSET $offset`;
+      break;
+    case 'datecreated':
+      query = `SELECT * FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET $offset`;
+      break;
+    default:
+      return;
+  }
+  try {
+    const stmt = db.prepare(query);
+    return stmt.all({ offset: offsetNum * 50 });
+  } catch (e) {
+    return e.message;
+  }
 };
 
 const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
   console.log('sort: ', sort);
   const term = `%${text}%`;
-  const stmt = db.prepare(
-    `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY ${sort} LIMIT 50 OFFSET ${offsetNum * 50}`
-  );
-  return stmt.all(term);
-};
 
-/* const allAlbumsBySearchTerm = (offsetNum, text) => {
-  const term = `%${text}%`;
-  const stmt = db.prepare(
-    `SELECT * FROM albums WHERE fullpath LIKE ? LIMIT 50 OFFSET ${offsetNum * 50}`
-  );
-  return stmt.all(term);
-}; */
+  let query;
+  let params;
+  switch (sort) {
+    case 'foldername':
+      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY unaccent(lower(foldername)) ASC LIMIT 50 OFFSET ?`;
+      params = [term, offsetNum * 50];
+      break;
+    case 'datecreated':
+      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY datecreated DESC LIMIT 50 OFFSET ?`;
+      params = [term, offsetNum * 50];
+      break;
+    default:
+      return;
+  }
+
+  try {
+    const stmt = db.prepare(query);
+    return stmt.all(...params);
+  } catch (e) {
+    return e.message;
+  }
+};
 
 const allCoversByScroll = (offsetNum, term = null) => {
   if (term === '') {

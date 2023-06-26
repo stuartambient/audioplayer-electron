@@ -97,17 +97,6 @@ const MediaMenu = ({
                 onChange={handleSortClick}
               />
             </li>
-            <li className="sort-menu--option">
-              <label htmlFor="recent">location</label>
-              <input
-                type="radio"
-                id="rootlocation"
-                name="sortby"
-                value="rootlocation"
-                checked={isAlbumsSortSelected('rootlocation')}
-                onChange={handleSortClick}
-              />
-            </li>
           </fieldset>
         </div>
       )}

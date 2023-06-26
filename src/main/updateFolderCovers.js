@@ -23,8 +23,7 @@ const dirs = [
   'F:/Music',
   'D:/Music',
   'D:/G_MUSIC',
-  /* 'H:/Top/Music', */
-  'G:/H_Music_Backup',
+  'H:/Music',
   'I:/Music',
   'E:/music'
 ];
