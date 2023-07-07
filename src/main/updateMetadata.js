@@ -9,8 +9,9 @@ const run = async (cb) => {
 
   for await (const r of result) {
     if (!r) return;
-    const stats = fs.promises.stat(r.audiofile);
+    const stats = await fs.promises.stat(r.audiofile);
     const lastModified = stats.mtimeMs;
+    console.log(lastModified);
     if (lastModified > r.modified) {
       updatedTracks.push(r);
     }

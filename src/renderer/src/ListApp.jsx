@@ -8,11 +8,14 @@ import './style/ListApp.css';
 /* import './style/ChildApp.css'; */
 
 const ListApp = () => {
+  const [listType, setListType] = useState('');
+  const [artistFiles, setArtistFiles] = useState([]);
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
       await window.listapi.onSendToList((e) => {
-        console.log('e: ', e);
+        setListType(e[0]);
+        setArtistFiles(e[1]);
         /*         setReleases(e);
         setPreviewImage(undefined); */
       });
@@ -21,7 +24,18 @@ const ListApp = () => {
     return () => (subscribed = false);
   });
 
-  return <h2>ListApp</h2>;
+  return (
+    <div>
+      {listType && <h2>{listType}</h2>}
+      {artistFiles && (
+        <ul>
+          {artistFiles.map((file) => {
+            return <li>{file.audiofile}</li>;
+          })}
+        </ul>
+      )}
+    </div>
+  );
 };
 
 export default ListApp;

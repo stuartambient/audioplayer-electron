@@ -770,14 +770,14 @@ ipcMain.handle('show-child', (event, args) => {
   }
 });
 
-ipcMain.handle('show-list', (event, args) => {
+ipcMain.handle('show-list', (event, type, args) => {
   /* console.log(args); */
   const createChildWindow = () => {
     newList = new BrowserWindow({
-      width: 600,
+      width: 800,
       height: 500,
       show: false,
-      resizable: false,
+      resizable: true,
       webPreferences: {
         preload: path.join(__dirname, '../preload/list.js'),
         sandbox: false,
@@ -793,7 +793,7 @@ ipcMain.handle('show-list', (event, args) => {
 
     newList.on('ready-to-show', () => {
       newList.show();
-      newList.webContents.send('send-to-list', args);
+      newList.webContents.send('send-to-list', type, args);
     });
   };
 

@@ -25,7 +25,9 @@ const allTracksByArtist = (artist) => {
 };
 
 const genresWithCount = () => {
-  const stmt = db.prepare('SELECT genre, COUNT(genre) FROM tracks GROUP BY genre ORDER BY genre');
+  const stmt = db.prepare(
+    'SELECT genre, COUNT(genre) FROM tracks GROUP BY genre ORDER BY lower(genre)'
+  );
   const results = stmt.all();
   return results;
 };

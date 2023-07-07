@@ -23,6 +23,39 @@
   height: 100%;
 
   display: inline-block;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stats--genres-genre {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.stats--genres span {
+  margin-right: 30px;
+}
+
+.genre-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: gray;
+  background: var(--blue1);
+  font-weight: bold;
+  padding: 0.2rem;
+  color: white;
+  border-radius: 5px;
+}
+.genre-name {
+  font-weight: bold;
+  color: blue;
 }
 
 .stats--nav .stat:hover {
@@ -64,10 +97,6 @@
 .stats--genres {
   list-style: none;
   padding: 0;
-}
-
-.genre-count {
-  border: 2px solid salmon;
 }
 
 /* .stats--genres li:nth-child(even) {
