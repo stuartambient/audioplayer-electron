@@ -14,13 +14,18 @@ const ChildApp = () => {
   }); */
 
   useEffect(() => {
+    if (previewImage) {
+      console.log(previewImage);
+    }
+  }, [previewImage]);
+
+  /*  useEffect(() => {
     if (releases) console.log(releases);
-  });
+  }); */
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
       await window.childapi.onSendToChild((e) => {
-        console.log('e: ', e);
         setReleases(e);
         setPreviewImage(undefined);
       });
@@ -30,6 +35,7 @@ const ChildApp = () => {
   });
 
   const handleImagePreview = (url) => {
+    console.log('preview: ', url);
     const img = new Image();
     img.src = url;
     img.onload = () => {
@@ -40,6 +46,7 @@ const ChildApp = () => {
   const handleDownloadImage = async (e) => {
     e.preventDefault();
     const download = await window.childapi.downloadFile(previewImage.url, releases[0].path);
+    console.log('download image: ', download);
     await window.childapi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
   };
 

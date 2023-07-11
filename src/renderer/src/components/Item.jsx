@@ -19,6 +19,9 @@ const Item = forwardRef(
       like,
       showContextMenu,
       flashDiv,
+      lossless,
+      bitrate,
+      samplerate,
 
       /* ALBUMS */
       album,
@@ -63,6 +66,9 @@ const Item = forwardRef(
             Album: {album}
             <br></br>
             Genre: {genre}
+            Lossless: {lossless}
+            Bitrate: {bitrate / 1000}
+            samplerate: {samplerate}
           </a>
           <div className="item-menu">
             <BsThreeDots

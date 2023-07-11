@@ -451,6 +451,9 @@ const InfiniteList = ({
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
         genre={item.genre ? item.genre : 'not available'}
+        lossless={item.lossless === 1 ? 'true' : 'false'}
+        bitrate={item.bitrate ? item.bitrate : 'not available'}
+        samplerate={item.samplerate ? item.samplerate : 'not available'}
       />
     );
   });

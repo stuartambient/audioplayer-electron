@@ -1,8 +1,8 @@
 import { FixedSizeList } from 'react-window';
 import Row from './Row';
 
-export const List = ({ height, data, itemSize, width, className, onClick }) => {
-  console.log(onClick);
+export const List = ({ height, data, itemSize, width, className, onClick, stat }) => {
+  console.log('data: ', data);
   return (
     <FixedSizeList
       height={height}
@@ -11,7 +11,9 @@ export const List = ({ height, data, itemSize, width, className, onClick }) => {
       width={width} // Specify the desired width of the list
       className={className}
     >
-      {({ index, style }) => <Row index={index} style={style} data={data} onClick={onClick} />}
+      {({ index, style }) => (
+        <Row index={index} style={style} data={data} onClick={onClick} stat={stat} />
+      )}
     </FixedSizeList>
   );
 };

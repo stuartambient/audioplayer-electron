@@ -1,5 +1,6 @@
-const Row = ({ index, style, data, onClick }) => {
+const Row = ({ index, style, data, onClick, stat }) => {
   const rowData = data[index];
+  console.log(stat);
 
   const rowStyles = {
     display: 'flex',
@@ -24,10 +25,24 @@ const Row = ({ index, style, data, onClick }) => {
 
   return (
     <div style={{ ...style, ...rowStyles }}>
-      <span style={itemStyles}>{rowData.artist}</span>
-      <span id={rowData.artist} onClick={onClick} style={countStyles}>
-        {rowData.count}
-      </span>
+      {stat === 'stat-artists' && (
+        <>
+          <span style={itemStyles}>{rowData.artist}</span>
+          <span id={rowData.artist} onClick={onClick} style={countStyles}>
+            {rowData.count}
+          </span>
+        </>
+      )}
+      {stat === 'stat-genres' && (
+        <>
+          <span style={itemStyles}>{!rowData.genre ? 'null' : rowData.genre}</span>
+          {rowData.genre && (
+            <span id={rowData.genre} onClick={onClick} style={countStyles}>
+              {rowData.count}
+            </span>
+          )}
+        </>
+      )}
     </div>
   );
 };
