@@ -70,11 +70,18 @@ const AlbumsCoverView = ({
     return percentage;
   };
 
+  /*   const cleanString = () => {
+    let title, artist;
+    artist = search.album.split('-')[0].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+    title = search.album.split('-')[1].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+  }; */
+
   const handleCoverSearch = async (search) => {
     let title, artist, url, mbUrl;
     if (search.album.split(' ').includes('-')) {
-      artist = search.album.split('-')[0];
-      title = search.album.split('-')[1];
+      artist = search.album.split('-')[0].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+      title = search.album.split('-')[1].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+      console.log('artist: ', artist, 'title: ', title);
     }
 
     const discogsResults = { path: search.path, album: search.album, results: [] };
@@ -95,7 +102,7 @@ const AlbumsCoverView = ({
     await axios
       .get(url)
       .then(async (response) => {
-        console.log('discogs - response: ', response);
+        /* console.log('discogs - response: ', response); */
         response.data.results.forEach((r) => {
           let tmp = search.album.split(' ').filter((f) => f !== '-');
           let compare = compareStrs(tmp, r.title);
@@ -109,7 +116,7 @@ const AlbumsCoverView = ({
     await axios
       .get(`http://musicbrainz.org/ws/2/release-group/?query=${search.album}&limit=1`)
       .then(async (response) => {
-        console.log('musicbrainz - release-group - response: ', response);
+        /* console.log('musicbrainz - release-group - response: ', response); */
         const artists = response.data['release-groups'][0]['artist-credit'];
         const allartists = artists.map((a) => a.name);
         const album = response.data['release-groups'][0].title;
@@ -117,7 +124,7 @@ const AlbumsCoverView = ({
         const rels = response.data['release-groups'][0].releases;
 
         for await (const rel of rels) {
-          console.log('rel: ', rel);
+          /* console.log('rel: ', rel); */
           axios
             .get(`http://coverartarchive.org/release/${rel.id}`)
             .catch((error) => {
@@ -126,7 +133,7 @@ const AlbumsCoverView = ({
               }
             })
             .then((response) => {
-              console.log('response status: ', response.status);
+              /* console.log('response status: ', response.status); */
               /* console.log('musicbrainz - coverart - response: ', response); */
               musicBrainzResults.mbresults.push({
                 title: mbTitle,
@@ -171,7 +178,9 @@ const AlbumsCoverView = ({
   const handleContextMenuOption = async (option, path, album) => {
     if (option[0] === 'search for cover') {
       const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
+
       const refAlbum = album.replace(regex, '');
+      console.log('album: ', album, 'refAlbum: ', refAlbum);
       handleCoverSearch({ path: path, album: refAlbum });
       /* setCoverSearch({ path: path, album: refAlbum.join(' ') }); */
     } else if (option[0] === 'add album to playlist') {

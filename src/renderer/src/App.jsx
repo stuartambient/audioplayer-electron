@@ -358,6 +358,7 @@ function App() {
           home={state.home}
           minimalmodeInfo={state.minimalmodeInfo}
           maximized={state.maximized}
+          audio={state.audioRef.current.src}
         >
           {!state.minimalmode && (
             <>

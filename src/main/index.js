@@ -21,6 +21,7 @@ import { promisify } from 'util';
 import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
 import axios from 'axios';
+import { contextMenu } from 'electron-context-menu';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, updateMeta, convertToUTC } from './utility';
 /* import Database from 'better-sqlite3'; */
@@ -733,6 +734,27 @@ ipcMain.handle('show-album-cover-menu', (event) => {
   ];
   const menu = Menu.buildFromTemplate(template);
   menu.popup(BrowserWindow.fromWebContents(event.sender));
+});
+
+ipcMain.handle('show-text-input-menu', (event) => {
+  const selectionMenu = Menu.buildFromTemplate([
+    { role: 'copy' },
+    { type: 'separator' },
+    { role: 'selectall' }
+  ]);
+
+  const inputMenu = Menu.buildFromTemplate([
+    { role: 'undo' },
+    { role: 'redo' },
+    { type: 'separator' },
+    { role: 'cut' },
+    { role: 'copy' },
+    { role: 'paste' },
+    { type: 'separator' },
+    { role: 'selectall' }
+  ]);
+
+  inputMenu.popup(BrowserWindow.fromWebContents(event.sender));
 });
 let newWin, newList;
 ipcMain.handle('show-child', (event, args) => {

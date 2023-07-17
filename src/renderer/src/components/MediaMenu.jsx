@@ -20,6 +20,12 @@ const MediaMenu = ({
     });
   };
 
+  const handleInputMenu = async (e) => {
+    console.log(e.target);
+    await window.api.showTextInputMenu();
+    await window.api.onTextInputMenu((e) => console.log(e));
+  };
+
   return (
     <ul className={miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
       {!miniModePlaylist && !tracksShuffle && listType === 'files' && (
@@ -106,7 +112,13 @@ const MediaMenu = ({
         <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
             <div className="formelements">
-              <input type="text" className="textsearch" name="textsearch" id="textsearch" />
+              <input
+                type="text"
+                className="textsearch"
+                name="textsearch"
+                id="textsearch"
+                onContextMenu={handleInputMenu}
+              />
 
               <button type="submit" className="submitbtn">
                 <div className="icon">
@@ -121,7 +133,13 @@ const MediaMenu = ({
         <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
             <div className="formelements">
-              <input type="text" className="textsearch" name="textsearch" id="textsearch" />
+              <input
+                type="text"
+                className="textsearch"
+                name="textsearch"
+                id="textsearch"
+                onContextMenu={handleInputMenu}
+              />
 
               <button type="submit" className="submitbtn">
                 <div className="icon">

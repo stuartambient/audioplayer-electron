@@ -44,11 +44,13 @@ const api = {
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
   showPlaylistsMenu: () => ipcRenderer.invoke('show-playlists-menu'),
   showAlbumCoverMenu: () => ipcRenderer.invoke('show-album-cover-menu'),
+  showTextInputMenu: () => ipcRenderer.invoke('show-text-input-menu'),
   onTrackToPlaylist: (cb) => ipcRenderer.once('track-to-playlist', (event, ...args) => cb(args)),
   onAlbumToPlaylist: (cb) => ipcRenderer.once('album-to-playlist', (event, ...args) => cb(args)),
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
+  onTextInputMenu: (cb) => ipcRenderer.once('input-menu', (event, ...args) => cb(args)),
   showChild: (arr) => ipcRenderer.invoke('show-child', arr),
   showList: (type, arr) => ipcRenderer.invoke('show-list', type, arr),
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
