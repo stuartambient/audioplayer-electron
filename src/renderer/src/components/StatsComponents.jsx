@@ -29,13 +29,16 @@ export const TotalMedia = () => {
 
 export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
-  const [artistTracks, setArtistTracks] = useState({ artist: '', results: [] });
+  /*  const [artistTracks, setArtistTracks] = useState({ artist: '', results: [] }); */
 
   const getArtistTracks = async (e) => {
-    console.log(e);
+    console.log('artist id: ', e.target.id);
     const artist = e.target.id;
     const results = await window.api.getTracksByArtist(artist);
-    setTimeout(async () => await window.api.showList('top-artists', results), 1000);
+    setTimeout(
+      async () => await window.api.showList({ listType: 'top-artists', results: results }),
+      1000
+    );
   };
 
   return (
@@ -54,8 +57,14 @@ export const TopHundredArtists = () => {
 export const Genres = () => {
   const [genres, setGenres] = useState([]);
   useGenres(setGenres);
-  const getGenres = (e) => {
-    console.log(e);
+  const getGenres = async (e) => {
+    const genre = e.target.id;
+    const results = await window.api.getTracksByGenre(genre);
+    console.log(results);
+    setTimeout(
+      async () => await window.api.showList({ listType: 'top-genres', results: results }),
+      1000
+    );
   };
 
   return (

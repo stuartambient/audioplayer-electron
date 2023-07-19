@@ -24,6 +24,12 @@ const allTracksByArtist = (artist) => {
   return result;
 };
 
+const allTracksByGenre = (genre) => {
+  const stmt = db.prepare(`SELECT audiofile FROM tracks WHERE genre = ?`);
+  const result = stmt.all(genre);
+  return result;
+};
+
 const genresWithCount = () => {
   const stmt = db.prepare(
     'SELECT genre, COUNT(*) as count FROM tracks GROUP BY genre ORDER BY lower(genre)'
@@ -39,7 +45,14 @@ const nullMetadata = () => {
   return stmt.all();
 };
 
-export { totalTracks, topHundredArtists, genresWithCount, nullMetadata, allTracksByArtist };
+export {
+  totalTracks,
+  topHundredArtists,
+  genresWithCount,
+  nullMetadata,
+  allTracksByArtist,
+  allTracksByGenre
+};
 
 /*
 SELECT COUNT(*) FROM tracks;

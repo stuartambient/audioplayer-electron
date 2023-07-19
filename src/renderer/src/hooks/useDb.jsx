@@ -207,7 +207,6 @@ const useGenres = (setGenres) => {
     let subscribed = true;
     const getGenres = async () => {
       const genresRequest = await window.api.genresStat();
-      console.log(genresRequest);
       if (genresRequest && subscribed) {
         setGenres(genresRequest);
       } else {

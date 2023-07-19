@@ -126,6 +126,7 @@ function App() {
 
   useEffect(() => {
     state.audioRef.current.onloadedmetadata = (e) => {
+      console.log('onloadedmetadata: ', e);
       state.audioRef.current.play();
 
       dispatch({

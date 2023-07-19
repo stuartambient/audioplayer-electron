@@ -1,6 +1,5 @@
 const Row = ({ index, style, data, onClick, stat }) => {
   const rowData = data[index];
-  console.log(stat);
 
   const rowStyles = {
     display: 'flex',

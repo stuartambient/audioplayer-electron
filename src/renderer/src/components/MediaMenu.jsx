@@ -23,7 +23,7 @@ const MediaMenu = ({
   const handleInputMenu = async (e) => {
     console.log(e.target);
     await window.api.showTextInputMenu();
-    await window.api.onTextInputMenu((e) => console.log(e));
+    /* await window.api.onTextInputMenu((e) => console.log(e)); */
   };
 
   return (

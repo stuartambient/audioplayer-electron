@@ -2,7 +2,6 @@ import { FixedSizeList } from 'react-window';
 import Row from './Row';
 
 export const List = ({ height, data, itemSize, width, className, onClick, stat }) => {
-  console.log('data: ', data);
   return (
     <FixedSizeList
       height={height}

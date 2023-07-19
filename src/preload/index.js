@@ -50,15 +50,15 @@ const api = {
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
-  onTextInputMenu: (cb) => ipcRenderer.once('input-menu', (event, ...args) => cb(args)),
   showChild: (arr) => ipcRenderer.invoke('show-child', arr),
-  showList: (type, arr) => ipcRenderer.invoke('show-list', type, arr),
+  showList: (arr) => ipcRenderer.invoke('show-list', arr),
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
   updateMeta: () => ipcRenderer.invoke('update-meta'),
   genresStat: () => ipcRenderer.invoke('genres-stat'),
   nullMetadataStat: () => ipcRenderer.invoke('null-metadata-stat'),
-  getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist)
+  getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
+  getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre)
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>

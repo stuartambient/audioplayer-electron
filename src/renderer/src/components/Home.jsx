@@ -68,6 +68,7 @@ const Home = ({ state, dispatch }) => {
                   name="covers-search-term"
                   ref={coverSearchRef}
                   placeholder="search covers"
+                  onContextMenu={async () => await window.api.showTextInputMenu()}
                   /*  value={state.coversSearchTerm}
               onChange={handleCoversSearchTerm} */
                 />

@@ -21,7 +21,6 @@ import { promisify } from 'util';
 import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
 import axios from 'axios';
-import { contextMenu } from 'electron-context-menu';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, updateMeta, convertToUTC } from './utility';
 /* import Database from 'better-sqlite3'; */
@@ -54,7 +53,8 @@ import {
   topHundredArtists,
   genresWithCount,
   nullMetadata,
-  allTracksByArtist
+  allTracksByArtist,
+  allTracksByGenre
 } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
@@ -512,6 +512,16 @@ ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
   }
 });
 
+ipcMain.handle('get-tracks-by-genre', async (_, arg) => {
+  try {
+    const tracks = await allTracksByGenre(arg);
+    console.log(tracks);
+    return tracks;
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
 ipcMain.handle('genres-stat', async () => {
   const genres = await genresWithCount();
   /* console.log('genres: ', genres.length); */
@@ -792,7 +802,7 @@ ipcMain.handle('show-child', (event, args) => {
   }
 });
 
-ipcMain.handle('show-list', (event, type, args) => {
+ipcMain.handle('show-list', (event, args) => {
   /* console.log(args); */
   const createChildWindow = () => {
     newList = new BrowserWindow({
@@ -815,7 +825,7 @@ ipcMain.handle('show-list', (event, type, args) => {
 
     newList.on('ready-to-show', () => {
       newList.show();
-      newList.webContents.send('send-to-list', type, args);
+      newList.webContents.send('send-to-list', args);
     });
   };
 
