@@ -19,13 +19,17 @@ const topHundredArtists = () => {
 };
 
 const allTracksByArtist = (artist) => {
-  const stmt = db.prepare(`SELECT audiofile FROM tracks WHERE artist = ?`);
+  const stmt = db.prepare(
+    `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE artist = ?`
+  );
   const result = stmt.all(artist);
   return result;
 };
 
 const allTracksByGenre = (genre) => {
-  const stmt = db.prepare(`SELECT audiofile FROM tracks WHERE genre = ?`);
+  const stmt = db.prepare(
+    `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE genre = ?`
+  );
   const result = stmt.all(genre);
   return result;
 };

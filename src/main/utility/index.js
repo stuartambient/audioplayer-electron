@@ -82,6 +82,16 @@ const parseMeta = async (files) => {
     const modified = fs.statSync(audiofile).mtimeMs;
     try {
       const metadata = await parseFile(audiofile);
+      console.log(
+        'format: ',
+        metadata.format,
+        'common: ',
+        metadata.common,
+        'trackInfo: ',
+        metadata.trackInfo,
+        'native: ',
+        metadata.native
+      );
       let { year, title, artist, album, genre, picture } = metadata.common;
       const { lossless, bitrate, sampleRate } = metadata.format;
       const afid = uuidv4();
