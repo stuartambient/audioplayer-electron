@@ -25,7 +25,7 @@ const ListApp = () => {
   return (
     <>
       <Grid data={data} />
-      <div>
+      {/*       <div>
         {listType && <h2>{listType}</h2>}
         {data && (
           <ul>
@@ -34,7 +34,7 @@ const ListApp = () => {
             })}
           </ul>
         )}
-      </div>
+      </div> */}
     </>
   );
 };

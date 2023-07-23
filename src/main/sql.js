@@ -28,12 +28,6 @@ const createFilesTable = () => {
   /* db.close(); */
 };
 
-const createCoversTable = () => {
-  const ct = db.prepare('CREATE TABLE IF NOT EXISTS covers ( coverpath, coversearchname )');
-  const createtable = ct.run();
-  /* db.close(); */
-};
-
 /* const createIndex = () => {
   const createIdx = db.prepare('CREATE INDEX audiofile_idx ON tracks(audiofile)');
   const idx = createIdx.run();
@@ -50,22 +44,6 @@ const insertFiles = (files) => {
   });
 
   const info = insertMany(files);
-};
-
-const insertCovers = (covers) => {
-  const insert = db.prepare(
-    `INSERT INTO covers (coverpath, coversearchname) VALUES (@path, @folder)`
-  );
-
-  const insertMany = db.transaction((covers) => {
-    for (const c of covers)
-      try {
-        insert.run(c);
-      } catch (err) {
-        return err;
-      }
-  });
-  const info = insertMany(covers);
 };
 
 const getMissingCovers = () => {
@@ -378,7 +356,6 @@ const isLiked = (id) => {
 
 createFoldersTable();
 createFilesTable();
-createCoversTable();
 
 export {
   insertFiles,
@@ -403,7 +380,6 @@ export {
   getPlaylist,
   allCoversByScroll,
   getAllTracks,
-  insertCovers,
   getMissingCovers,
   allTracks,
   refreshMetadata

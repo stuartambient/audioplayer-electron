@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import 'react-data-grid/lib/styles.css';
+import '../style/Grid.css';
 
 import DataGrid, {
   SelectColumn,
@@ -46,6 +48,8 @@ const Grid = ({ data }) => {
           rowKeyGetter={rowKeyGetter}
           rowsCount={data.length}
           minHeight={40}
+          className="fill-grid"
+          /* enableVirtualization={true} */
         />
       )}
     </>

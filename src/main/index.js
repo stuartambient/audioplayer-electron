@@ -39,7 +39,6 @@ import {
   getFiles,
   getAllPkeys,
   getAllTracks,
-  insertCovers,
   getMissingCovers,
   deleteAlbum,
   allTracks,
