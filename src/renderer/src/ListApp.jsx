@@ -3,6 +3,9 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { HiOutlineCursorClick } from 'react-icons/hi';
 import Grid from './components/Grid';
+import Table from './components/Table';
+import TanStackGrid from './components/TanStackGrid';
+/* import VirtualizedTable from './components/VirtualizedTable'; */
 import './style/ListApp.css';
 
 /* import './style/ChildApp.css'; */
@@ -24,7 +27,8 @@ const ListApp = () => {
 
   return (
     <>
-      <Grid data={data} />
+      {/* <Grid data={data} /> */}
+      <TanStackGrid data={data} />
       {/*       <div>
         {listType && <h2>{listType}</h2>}
         {data && (
