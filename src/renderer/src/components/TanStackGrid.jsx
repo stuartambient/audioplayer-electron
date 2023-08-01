@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import {
-  flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
+  useReactTable,
   createColumnHelper,
-  useReactTable
+  flexRender
 } from '@tanstack/react-table';
+import { columns, defaultColumn, getTableMeta } from './table/tableModels';
 import '../style/TanStackGrid.css';
 
 const TanStackGrid = ({ data }) => {
   const [columnResizeMode, setColumnResizeMode] = useState('onChange');
+  const [columnVisibility, setColumnVisibility] = useState({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnPinning, setColumnPinning] = useState({});
+  const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
   const AudioFile = {
     afid: '',
@@ -64,13 +70,24 @@ const TanStackGrid = ({ data }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     enableResizing: true,
-    columnResizeMode: 'onChange',
-    /*     state: {
-      sorting
-    }, */
+    /* columnResizeMode: 'onChange', */
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true
+    onColumnFiltersChange: setColumnFilters,
+    enableColumnResizing: true,
+    columnResizeMode: 'onChange',
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      columnFilters,
+      columnVisibility,
+      columnPinning,
+      rowSelection
+    },
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: true
   });
   return (
     <div className="p-2">
