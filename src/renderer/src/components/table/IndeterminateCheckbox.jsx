@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 
 function IndeterminateCheckbox({ indeterminate, className = '', ...rest }) {
   const ref = useRef(null);

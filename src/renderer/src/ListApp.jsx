@@ -5,6 +5,7 @@ import { HiOutlineCursorClick } from 'react-icons/hi';
 import Grid from './components/Grid';
 import Table from './components/Table';
 import TanStackGrid from './components/TanStackGrid';
+import TanstackTable from './components/table/TanstackTable';
 /* import VirtualizedTable from './components/VirtualizedTable'; */
 import './style/ListApp.css';
 
@@ -28,7 +29,7 @@ const ListApp = () => {
   return (
     <>
       {/* <Grid data={data} /> */}
-      <TanStackGrid data={data} />
+      <TanstackTable data={data} />
       {/*       <div>
         {listType && <h2>{listType}</h2>}
         {data && (

@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import {
   getCoreRowModel,
+  getFacetedMinMaxValues,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
+  getGroupedRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
-  useReactTable,
-  createColumnHelper,
-  flexRender
+  useReactTable
 } from '@tanstack/react-table';
-import { columns, defaultColumn, getTableMeta } from './table/tableModels';
+import { columns, defaultColumn, fuzzyFilter, getTableMeta } from './table/tableModels';
+import DebouncedInput from './table/DebouncedInput';
+import ActionButtons from './table/ActionButtons';
+import CustomTable from './table/CustomTable';
 import '../style/TanStackGrid.css';
 
 const TanStackGrid = ({ data }) => {
