@@ -1,19 +1,13 @@
 import { useState } from 'react';
 import {
   getCoreRowModel,
-  getFacetedMinMaxValues,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getGroupedRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
-  useReactTable
+  getFilteredRowModel,
+  useReactTable,
+  createColumnHelper,
+  flexRender
 } from '@tanstack/react-table';
-import { columns, defaultColumn, fuzzyFilter, getTableMeta } from './table/tableModels';
-import DebouncedInput from './table/DebouncedInput';
-import ActionButtons from './table/ActionButtons';
-import CustomTable from './table/CustomTable';
+import FilterFunction from './table/FilterFunction';
 import '../style/TanStackGrid.css';
 
 const TanStackGrid = ({ data }) => {
@@ -37,38 +31,30 @@ const TanStackGrid = ({ data }) => {
 
   const columns = [
     columnHelper.accessor('afid', {
-      cell: (info) => info.getValue()
+      header: 'id'
     }),
-    columnHelper.accessor((row) => row.audiofile, {
-      id: 'Audiofile',
-      cell: (info) => <i>{info.getValue()}</i>,
-      header: () => <span>audiofile</span>,
-      footer: (info) => info.column.id
+    columnHelper.accessor('audiofile', {
+      header: 'audiofile'
     }),
     columnHelper.accessor('year', {
-      header: () => 'Year',
-      enableResizing: true,
-      size: '200',
-      minSize: '100',
-      cell: (info) => info.renderValue(),
-      footer: (info) => info.column.id,
-      getResizeHandler: () => 'onMouseDown'
+      header: 'Year',
+      enableSorting: true
     }),
     columnHelper.accessor('title', {
-      header: () => <span>Title</span>,
-      footer: (info) => info.column.id
+      header: 'Title',
+      enableSorting: true
     }),
     columnHelper.accessor('artist', {
       header: 'Artist',
-      footer: (info) => info.column.id
+      enableSorting: true
     }),
     columnHelper.accessor('album', {
       header: 'Album',
-      footer: (info) => info.column.id
+      enableSorting: true
     }),
     columnHelper.accessor('genre', {
       header: 'Genre',
-      footer: (info) => info.column.id
+      enableSorting: true
     })
   ];
   const table = useReactTable({
@@ -77,19 +63,23 @@ const TanStackGrid = ({ data }) => {
     getCoreRowModel: getCoreRowModel(),
     enableResizing: true,
     /* columnResizeMode: 'onChange', */
-    getFilteredRowModel: getFilteredRowModel(),
+    /* getFilteredRowModel: getFilteredRowModel(), */
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+
     state: {
-      columnFilters,
+      /* columnFilters,
       columnVisibility,
       columnPinning,
-      rowSelection
+      rowSelection */
+      sorting: sorting,
+      columnFilters: columnFilters
     },
     debugTable: true,
     debugHeaders: true,
@@ -105,7 +95,8 @@ const TanStackGrid = ({ data }) => {
                 <th
                   {...{
                     key: header.id,
-                    colSpan: header.colSpan
+                    colSpan: header.colSpan,
+                    onClick: header.column.getToggleSortingHandler()
                   }}
                 >
                   {header.isPlaceholder
@@ -125,6 +116,12 @@ const TanStackGrid = ({ data }) => {
                       }
                     }}
                   />
+                  {{ asc: '   up', desc: '   down' }[header.column.getIsSorted() ?? null]}
+                  {header.column.getCanFilter() ? (
+                    <div>
+                      <FilterFunction column={header.column} table={table} />
+                    </div>
+                  ) : null}
                 </th>
               ))}
             </tr>
