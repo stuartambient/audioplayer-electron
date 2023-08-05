@@ -8,6 +8,7 @@ import {
   flexRender
 } from '@tanstack/react-table';
 import FilterFunction from './table/FilterFunction';
+import IndeterminateCheckbox from './table/IndeterminateCheckbox';
 import '../style/TanStackGrid.css';
 
 const TanStackGrid = ({ data }) => {
@@ -30,6 +31,28 @@ const TanStackGrid = ({ data }) => {
   const columnHelper = createColumnHelper(AudioFile);
 
   const columns = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <IndeterminateCheckbox
+          {...{
+            checked: table.getIsAllRowsSelected(),
+            indeterminate: table.getIsSomeRowsSelected(),
+            onChange: table.getToggleAllRowsSelectedHandler()
+          }}
+        />
+      ),
+      cell: ({ row }) => (
+        <IndeterminateCheckbox
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected(),
+            onChange: row.getToggleSelectedHandler()
+          }}
+        />
+      )
+    },
     columnHelper.accessor('afid', {
       header: 'id'
     }),
@@ -69,89 +92,128 @@ const TanStackGrid = ({ data }) => {
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     enableColumnResizing: true,
+    enableRowSelection: true,
     columnResizeMode: 'onChange',
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
 
     state: {
       /* columnFilters,
-      columnVisibility,
+      
       columnPinning,
       rowSelection */
+      columnVisibility: columnVisibility,
       sorting: sorting,
-      columnFilters: columnFilters
+      columnFilters: columnFilters,
+      rowSelection: rowSelection
     },
     debugTable: true,
     debugHeaders: true,
     debugColumns: true
   });
   return (
-    <div className="p-2">
-      <table>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  {...{
-                    key: header.id,
-                    colSpan: header.colSpan,
-                    onClick: header.column.getToggleSortingHandler()
-                  }}
-                >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+    <>
+      <div
+        className="p-2 inline-block border border-black shadow rounded"
+        style={{ display: 'flex' }}
+      >
+        <div className="px-1 border-b border-black">
+          <label>
+            <input
+              type="checkbox"
+              checked={table.getIsAllColumnsVisible()}
+              onChange={table.getToggleAllColumnsVisibilityHandler()}
+              className="mr-1"
+            />
+            Toggle All
+          </label>
+        </div>
+        {table.getAllLeafColumns().map((column) => {
+          return (
+            <div key={column.id} className="px-1">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={column.getIsVisible()}
+                  onChange={column.getToggleVisibilityHandler()}
+                  className="mr-1"
+                />
+                {column.id}
+              </label>
+            </div>
+          );
+        })}
+      </div>
 
-                  <div
+      <div className="p-2">
+        <table>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th
                     {...{
-                      onMouseDown: header.getResizeHandler(),
-                      onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${header.column.getIsResizing() ? 'isResizing' : ''}`,
+                      key: header.id,
+                      colSpan: header.colSpan,
+                      onClick: header.column.getToggleSortingHandler()
+                    }}
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(header.column.columnDef.header, header.getContext())}
+
+                    <div
+                      {...{
+                        onMouseDown: header.getResizeHandler(),
+                        onTouchStart: header.getResizeHandler(),
+                        className: `resizer ${header.column.getIsResizing() ? 'isResizing' : ''}`,
+                        style: {
+                          transform:
+                            columnResizeMode === 'onEnd' && header.column.getIsResizing()
+                              ? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
+                              : ''
+                        }
+                      }}
+                    />
+                    {{ asc: '   up', desc: '   down' }[header.column.getIsSorted() ?? null]}
+                    {header.column.getCanFilter() ? (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <FilterFunction column={header.column} table={table} />
+                      </div>
+                    ) : null}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td
+                    {...{
+                      key: cell.id,
                       style: {
-                        transform:
-                          columnResizeMode === 'onEnd' && header.column.getIsResizing()
-                            ? `translateX(${table.getState().columnSizingInfo.deltaOffset}px)`
-                            : ''
+                        width: cell.column.getSize()
                       }
                     }}
-                  />
-                  {{ asc: '   up', desc: '   down' }[header.column.getIsSorted() ?? null]}
-                  {header.column.getCanFilter() ? (
-                    <div>
-                      <FilterFunction column={header.column} table={table} />
-                    </div>
-                  ) : null}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  {...{
-                    key: cell.id,
-                    style: {
-                      width: cell.column.getSize()
-                    }
-                  }}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <hr />
+        <div>{console.log(table.getSelectedRowModel())}</div>
 
-      <div className="h-4" />
-      <button onClick={() => rerender()} className="border p-2">
-        Rerender
-      </button>
-    </div>
+        <div className="h-4" />
+        <button onClick={() => rerender()} className="border p-2">
+          Rerender
+        </button>
+      </div>
+    </>
   );
 };
 
