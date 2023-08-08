@@ -12,7 +12,7 @@ import './style/ListApp.css';
 /* import './style/ChildApp.css'; */
 
 const ListApp = () => {
-  const [listType, setListType] = useState('');
+  const [listType, setListType] = useState([]);
   const [data, setData] = useState([]);
   useEffect(() => {
     let subscribed = true;
@@ -29,7 +29,7 @@ const ListApp = () => {
   return (
     <>
       {/* <Grid data={data} /> */}
-      <TanStackGrid data={data} />
+      <TanStackGrid data={data} setData={setData} />
       {/*       <div>
         {listType && <h2>{listType}</h2>}
         {data && (

@@ -1,84 +1,120 @@
+
 import {
-  ColumnFiltersState,
+  Column,
+  Table,
+  ColumnDef,
+  useReactTable,
   getCoreRowModel,
-  getFacetedMinMaxValues,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
   getFilteredRowModel,
-  getGroupedRowModel,
   getPaginationRowModel,
-  getSortedRowModel,
-  GroupingState,
-  useReactTable
-} from '@tanstack/react-table';
-import React from 'react';
-import { makeData } from './makeData';
+  flexRender,
+  RowData,
+} from '@tanstack/react-table'
 
-import styled from '@emotion/styled';
-import { useSkipper } from './hooks';
-import { columns, defaultColumn, fuzzyFilter, getTableMeta } from './tableModels';
-import DebouncedInput from './components/DebouncedInput';
-import ActionButtons from './components/ActionButtons';
-import { faker } from '@faker-js/faker';
-import CustomTable from './components/CustomTable';
 
-const Styles = styled.div`
-  padding: 1rem;
+// Give our default column cell renderer editing superpowers!
+const defaultColumn: Partial<ColumnDef<Person>> = {
+  cell: ({ getValue, row: { index }, column: { id }, table }) => {
+    const initialValue = getValue()
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = React.useState(initialValue)
 
-  table {
-    border-spacing: 0;
-    border: 1px solid black;
-
-    tr {
-      :last-child {
-        td {
-          border-bottom: 0;
-        }
-      }
+    // When the input is blurred, we'll call our table meta's updateData function
+    const onBlur = () => {
+      table.options.meta?.updateData(index, id, value)
     }
 
-    th,
-    td {
-      margin: 0;
-      padding: 0.5rem;
-      border-bottom: 1px solid black;
-      border-right: 1px solid black;
+    // If the initialValue is changed external, sync it up with our state
+    React.useEffect(() => {
+      setValue(initialValue)
+    }, [initialValue])
 
-      :last-child {
-        border-right: 0;
-      }
-    }
+    return (
+      <input
+        value={value as string}
+        onChange={e => setValue(e.target.value)}
+        onBlur={onBlur}
+      />
+    )
+  },
+}
 
-    td {
-      input {
-        font-size: 1rem;
-        padding: 0;
-        margin: 0;
-        border: 0;
-      }
-    }
-  }
+function useSkipper() {
+  const shouldSkipRef = React.useRef(true)
+  const shouldSkip = shouldSkipRef.current
 
-  .pagination {
-    padding: 0.5rem;
-  }
-`;
+  // Wrap a function with this to skip a pagination reset temporarily
+  const skip = React.useCallback(() => {
+    shouldSkipRef.current = false
+  }, [])
 
-export const App = () => {
-  const rerender = React.useReducer(() => ({}), {})[1];
+  React.useEffect(() => {
+    shouldSkipRef.current = true
+  })
 
-  const [data, setData] = React.useState(makeData(1000));
-  const refreshData = () => setData(makeData(1000));
+  return [shouldSkip, skip] as const
+}
 
-  const [columnVisibility, setColumnVisibility] = React.useState({});
-  const [grouping, setGrouping] = React.useState < GroupingState > [];
-  const [isSplit, setIsSplit] = React.useState(false);
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [columnPinning, setColumnPinning] = React.useState({});
-  const [columnFilters, setColumnFilters] = React.useState < ColumnFiltersState > [];
-  const [globalFilter, setGlobalFilter] = React.useState('');
+function App() {
+  const rerender = React.useReducer(() => ({}), {})[1]
 
-  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper();
+  const columns = React.useMemo<ColumnDef<Person>[]>(
+    () => [
+      {
+        header: 'Name',
+        footer: props => props.column.id,
+        columns: [
+          {
+            accessorKey: 'firstName',
+            footer: props => props.column.id,
+          },
+          {
+            accessorFn: row => row.lastName,
+            id: 'lastName',
+            header: () => <span>Last Name</span>,
+            footer: props => props.column.id,
+          },
+        ],
+      },
+      {
+        header: 'Info',
+        footer: props => props.column.id,
+        columns: [
+          {
+            accessorKey: 'age',
+            header: () => 'Age',
+            footer: props => props.column.id,
+          },
+          {
+            header: 'More Info',
+            columns: [
+              {
+                accessorKey: 'visits',
+                header: () => <span>Visits</span>,
+                footer: props => props.column.id,
+              },
+              {
+                accessorKey: 'status',
+                header: 'Status',
+                footer: props => props.column.id,
+              },
+              {
+                accessorKey: 'progress',
+                header: 'Profile Progress',
+                footer: props => props.column.id,
+              },
+            ],
+          },
+        ],
+      },
+    ],
+    []
+  )
+
+  const [data, setData] = React.useState(() => makeData(1000))
+  const refreshData = () => setData(() => makeData(1000))
+
+  const [autoResetPageIndex, skipAutoResetPageIndex] = useSkipper()
 
   const table = useReactTable({
     data,
@@ -87,127 +123,145 @@ export const App = () => {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getGroupedRowModel: getGroupedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    getFacetedMinMaxValues: getFacetedMinMaxValues(),
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: fuzzyFilter,
     autoResetPageIndex,
-    enableColumnResizing: true,
-    columnResizeMode: 'onChange',
-    onColumnVisibilityChange: setColumnVisibility,
-    onGroupingChange: setGrouping,
-    onColumnPinningChange: setColumnPinning,
-    onRowSelectionChange: setRowSelection,
     // Provide our updateData function to our table meta
-    meta: getTableMeta(setData, skipAutoResetPageIndex),
-    state: {
-      grouping,
-      columnFilters,
-      globalFilter,
-      columnVisibility,
-      columnPinning,
-      rowSelection
+    meta: {
+      updateData: (rowIndex, columnId, value) => {
+        // Skip page index reset until after next rerender
+        skipAutoResetPageIndex()
+        setData(old =>
+          old.map((row, index) => {
+            if (index === rowIndex) {
+              return {
+                ...old[rowIndex]!,
+                [columnId]: value,
+              }
+            }
+            return row
+          })
+        )
+      },
     },
     debugTable: true,
-    debugHeaders: true,
-    debugColumns: true
-  });
-
-  React.useEffect(() => {
-    if (table.getState().columnFilters[0]?.id === 'fullName') {
-      if (table.getState().sorting[0]?.id !== 'fullName') {
-        table.setSorting([{ id: 'fullName', desc: false }]);
-      }
-    }
-  }, [table.getState().columnFilters[0]?.id]);
-
-  const randomizeColumns = () => {
-    table.setColumnOrder(faker.helpers.shuffle(table.getAllLeafColumns().map((d) => d.id)));
-  };
+  })
 
   return (
-    <Styles>
-      <div className="p-2 grid grid-cols-4 gap-4">
-        <div className="p-2">
-          Search:
-          <DebouncedInput
-            value={globalFilter ?? ''}
-            onChange={(value) => setGlobalFilter(String(value))}
-            className="mx-1 p-2 font-lg shadow border border-block"
-            placeholder="Search all columns..."
-          />
-        </div>
-        <div className="p-2 inline-block border border-black shadow rounded">
-          <div className="px-1 border-b border-black">
-            <label>
-              <input
-                type="checkbox"
-                checked={table.getIsAllColumnsVisible()}
-                onChange={table.getToggleAllColumnsVisibilityHandler()}
-                className="mr-1"
-              />
-              Toggle All
-            </label>
-          </div>
-          {table.getAllLeafColumns().map((column) => {
+    <div className="p-2">
+      <div className="h-2" />
+      <table>
+        <thead>
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map(header => {
+                return (
+                  <th key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder ? null : (
+                      <div>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {header.column.getCanFilter() ? (
+                          <div>
+                            <Filter column={header.column} table={table} />
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+                  </th>
+                )
+              })}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map(row => {
             return (
-              <div key={column.id} className="px-1">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={column.getIsVisible()}
-                    onChange={column.getToggleVisibilityHandler()}
-                    className="mr-1"
-                  />
-                  {column.id}
-                </label>
-              </div>
-            );
+              <tr key={row.id}>
+                {row.getVisibleCells().map(cell => {
+                  return (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  )
+                })}
+              </tr>
+            )
           })}
-        </div>
-        <div className="p-2">
-          <div>
-            <input
-              type="checkbox"
-              checked={isSplit}
-              onChange={(e) => setIsSplit(e.target.checked)}
-              className="mx-1"
-            />
-            Split Mode
-          </div>
-          <button onClick={randomizeColumns} className="border rounded p-1">
-            Shuffle Columns
-          </button>
-        </div>
+        </tbody>
+      </table>
+      <div className="h-2" />
+      <div className="flex items-center gap-2">
+        <button
+          className="border rounded p-1"
+          onClick={() => table.setPageIndex(0)}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<<'}
+        </button>
+        <button
+          className="border rounded p-1"
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          {'<'}
+        </button>
+        <button
+          className="border rounded p-1"
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>'}
+        </button>
+        <button
+          className="border rounded p-1"
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+          disabled={!table.getCanNextPage()}
+        >
+          {'>>'}
+        </button>
+        <span className="flex items-center gap-1">
+          <div>Page</div>
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </strong>
+        </span>
+        <span className="flex items-center gap-1">
+          | Go to page:
+          <input
+            type="number"
+            defaultValue={table.getState().pagination.pageIndex + 1}
+            onChange={e => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0
+              table.setPageIndex(page)
+            }}
+            className="border p-1 rounded w-16"
+          />
+        </span>
+        <select
+          value={table.getState().pagination.pageSize}
+          onChange={e => {
+            table.setPageSize(Number(e.target.value))
+          }}
+        >
+          {[10, 20, 30, 40, 50].map(pageSize => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
       </div>
-      <div className={`flex ${isSplit ? 'gap-4' : ''}`}>
-        {isSplit ? <CustomTable table={table} tableGroup="left" /> : null}
-        <CustomTable table={table} tableGroup={isSplit ? 'center' : undefined} />
-        {isSplit ? <CustomTable table={table} tableGroup="right" /> : null}
+      <div>{table.getRowModel().rows.length} Rows</div>
+      <div>
+        <button onClick={() => rerender()}>Force Rerender</button>
       </div>
-      <div className="p-2" />
-      <ActionButtons
-        getSelectedRowModel={table.getSelectedRowModel}
-        hasNextPage={table.getCanNextPage()}
-        hasPreviousPage={table.getCanPreviousPage()}
-        nextPage={table.nextPage}
-        pageCount={table.getPageCount()}
-        pageIndex={table.getState().pagination.pageIndex}
-        pageSize={table.getState().pagination.pageSize}
-        previousPage={table.previousPage}
-        refreshData={refreshData}
-        rerender={rerender}
-        rowSelection={rowSelection}
-        setPageIndex={table.setPageIndex}
-        setPageSize={table.setPageSize}
-        totalRows={table.getPrePaginationRowModel().rows.length}
-      />
-      <div className="p-2" />
-      <pre>{JSON.stringify(table.getState(), null, 2)}</pre>
-    </Styles>
-  );
-};
+      <div>
+        <button onClick={() => refreshData()}>Refresh Data</button>
+      </div>
+    </div>
+  )
+}

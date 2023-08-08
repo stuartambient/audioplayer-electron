@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   getCoreRowModel,
   getSortedRowModel,
@@ -11,13 +11,14 @@ import FilterFunction from './table/FilterFunction';
 import IndeterminateCheckbox from './table/IndeterminateCheckbox';
 import '../style/TanStackGrid.css';
 
-const TanStackGrid = ({ data }) => {
+const TanStackGrid = ({ data, setData }) => {
   const [columnResizeMode, setColumnResizeMode] = useState('onChange');
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
   const [columnPinning, setColumnPinning] = useState({});
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
+  const [editedRows, setEditedRows] = useState({});
   const AudioFile = {
     afid: '',
     audiofile: '',
@@ -30,9 +31,46 @@ const TanStackGrid = ({ data }) => {
 
   const columnHelper = createColumnHelper(AudioFile);
 
+  const TableCell = ({ getValue, row, column, table }) => {
+    const initialValue = getValue();
+    const [value, setValue] = useState(initialValue);
+
+    useEffect(() => {
+      setValue(initialValue);
+    }, [initialValue]);
+
+    const onBlur = () => {
+      table.options.meta?.updateData(row.index, column.id, value);
+    };
+
+    return <input value={value} onChange={(e) => setValue(e.target.value)} onBlur={onBlur} />;
+  };
+
+  const EditCell = ({ row, table }) => {
+    const meta = table.options.meta;
+
+    const setEditedRows = (e) => {
+      meta?.setEditedRows((old) => ({
+        ...old,
+        [row.id]: !old[row.id]
+      }));
+    };
+
+    return meta?.editedRows[row.id] ? (
+      <>
+        <button>X</button> <button onClick={setEditedRows}>✔</button>
+      </>
+    ) : (
+      <button onClick={setEditedRows}>✐</button>
+    );
+  };
+
   const columns = [
     {
       id: 'select',
+      size: 20,
+      minSize: 15,
+      maxSize: 30,
       header: ({ table }) => (
         <IndeterminateCheckbox
           {...{
@@ -53,9 +91,9 @@ const TanStackGrid = ({ data }) => {
         />
       )
     },
-    columnHelper.accessor('afid', {
+    /* columnHelper.accessor('afid', {
       header: 'id'
-    }),
+    }), */
     columnHelper.accessor('audiofile', {
       header: 'audiofile'
     }),
@@ -65,11 +103,13 @@ const TanStackGrid = ({ data }) => {
     }),
     columnHelper.accessor('title', {
       header: 'Title',
-      enableSorting: true
+      enableSorting: true,
+      cell: TableCell
     }),
     columnHelper.accessor('artist', {
       header: 'Artist',
-      enableSorting: true
+      enableSorting: true,
+      onClick: (e) => console.log('clicked')
     }),
     columnHelper.accessor('album', {
       header: 'Album',
@@ -78,6 +118,10 @@ const TanStackGrid = ({ data }) => {
     columnHelper.accessor('genre', {
       header: 'Genre',
       enableSorting: true
+    }),
+    columnHelper.display({
+      id: 'edit',
+      cell: EditCell
     })
   ];
   const table = useReactTable({
@@ -85,8 +129,6 @@ const TanStackGrid = ({ data }) => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     enableResizing: true,
-    /* columnResizeMode: 'onChange', */
-    /* getFilteredRowModel: getFilteredRowModel(), */
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
@@ -98,15 +140,29 @@ const TanStackGrid = ({ data }) => {
     onRowSelectionChange: setRowSelection,
 
     state: {
-      /* columnFilters,
-      
-      columnPinning,
-      rowSelection */
       columnVisibility: columnVisibility,
       sorting: sorting,
       columnFilters: columnFilters,
       rowSelection: rowSelection
     },
+    meta: {
+      editedRows,
+      setEditedRows,
+      updateData: (rowIndex, columnId, value) => {
+        setData((old) =>
+          old.map((row, index) => {
+            if (index === rowIndex) {
+              return {
+                ...old[rowIndex],
+                [columnId]: value
+              };
+            }
+            return row;
+          })
+        );
+      }
+    },
+
     debugTable: true,
     debugHeaders: true,
     debugColumns: true
