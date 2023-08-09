@@ -95,7 +95,7 @@ const TanStackGrid = ({ data, setData }) => {
       header: 'id'
     }), */
     columnHelper.accessor('audiofile', {
-      header: 'audiofile'
+      header: 'File Path'
     }),
     columnHelper.accessor('year', {
       header: 'Year',
@@ -165,7 +165,8 @@ const TanStackGrid = ({ data, setData }) => {
 
     debugTable: true,
     debugHeaders: true,
-    debugColumns: true
+    debugColumns: true,
+    debugRows: true
   });
   return (
     <>
