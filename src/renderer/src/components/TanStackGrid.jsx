@@ -19,6 +19,7 @@ const TanStackGrid = ({ data, setData }) => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
   const [editedRows, setEditedRows] = useState({});
+  const [editedCells, setEditedCells] = useState({});
   const AudioFile = {
     afid: '',
     audiofile: '',
@@ -33,35 +34,27 @@ const TanStackGrid = ({ data, setData }) => {
 
   const TableCell = ({ getValue, row, column, table }) => {
     const initialValue = getValue();
+    const columnMeta = column.columnDef.meta;
+    const tableMeta = table.options.meta;
     const [value, setValue] = useState(initialValue);
+    const [open, setOpen] = useState(false);
 
     useEffect(() => {
       setValue(initialValue);
     }, [initialValue]);
 
-    const onBlur = () => {
-      table.options.meta?.updateData(row.index, column.id, value);
+    /* const onBlur = () => {
+      tableMeta?.updateData(row.index, column.id, value);
+    }; */
+
+    const onClick = (e) => {
+      setOpen(() => !open);
     };
 
-    return <input value={value} onChange={(e) => setValue(e.target.value)} onBlur={onBlur} />;
-  };
-
-  const EditCell = ({ row, table }) => {
-    const meta = table.options.meta;
-
-    const setEditedRows = (e) => {
-      meta?.setEditedRows((old) => ({
-        ...old,
-        [row.id]: !old[row.id]
-      }));
-    };
-
-    return meta?.editedRows[row.id] ? (
-      <>
-        <button>X</button> <button onClick={setEditedRows}>✔</button>
-      </>
+    return open ? (
+      <input value={value} onChange={(e) => setValue(e.target.value)} onClick={onClick} />
     ) : (
-      <button onClick={setEditedRows}>✐</button>
+      <span onClick={onClick}>{value}</span>
     );
   };
 
@@ -118,15 +111,17 @@ const TanStackGrid = ({ data, setData }) => {
     columnHelper.accessor('genre', {
       header: 'Genre',
       enableSorting: true
-    }),
-    columnHelper.display({
+    })
+    /*   columnHelper.display({
       id: 'edit',
       cell: EditCell
-    })
+    }) */
   ];
+
   const table = useReactTable({
     data,
     columns,
+
     getCoreRowModel: getCoreRowModel(),
     enableResizing: true,
     onSortingChange: setSorting,
@@ -148,6 +143,8 @@ const TanStackGrid = ({ data, setData }) => {
     meta: {
       editedRows,
       setEditedRows,
+      editedCells,
+      setEditedCells,
       updateData: (rowIndex, columnId, value) => {
         setData((old) =>
           old.map((row, index) => {
@@ -161,12 +158,12 @@ const TanStackGrid = ({ data, setData }) => {
           })
         );
       }
-    },
+    }
 
-    debugTable: true,
+    /*    debugTable: true,
     debugHeaders: true,
     debugColumns: true,
-    debugRows: true
+    debugRows: true */
   });
   return (
     <>
@@ -250,6 +247,8 @@ const TanStackGrid = ({ data, setData }) => {
                   <td
                     {...{
                       key: cell.id,
+                      /* console.log(cell.getValue(), '----', cell.column.id, '----', cell.id), */
+                      /* onClick: table.options.meta.setEditedCells(cell.id), */
                       style: {
                         width: cell.column.getSize()
                       }
@@ -263,7 +262,7 @@ const TanStackGrid = ({ data, setData }) => {
           </tbody>
         </table>
         <hr />
-        <div>{console.log(table.getSelectedRowModel())}</div>
+        <div>{/* {console.log(table.getSelectedRowModel()) */}}</div>
 
         <div className="h-4" />
         <button onClick={() => rerender()} className="border p-2">
