@@ -330,11 +330,8 @@ const filesByAlbum = (albumPath) => {
   /* const stmt = db.prepare("SELECT audioFile FROM files WHERE "); */
   /* const albumpath = getAlbum.fullpath; */
   const files = db.prepare('SELECT * FROM tracks WHERE audiofile LIKE ?');
-  const assocFiles = files.all(`${albumPath}%`);
-  const albumFiles = [];
-  assocFiles.forEach((a) => {
-    albumFiles.push(a);
-  });
+  const albumFiles = files.all(`${albumPath}%`);
+  console.log('albumFiles: ', albumFiles.length);
   return albumFiles;
 };
 

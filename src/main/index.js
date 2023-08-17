@@ -451,7 +451,6 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  console.log('screen-mode: ', args[0]);
   if (args[0] === 'mini') {
     await mainWindow.setMinimumSize(290, 350);
     await mainWindow.setSize(290, 350, false);
@@ -514,7 +513,6 @@ ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
 ipcMain.handle('get-tracks-by-genre', async (_, arg) => {
   try {
     const tracks = await allTracksByGenre(arg);
-    console.log(tracks);
     return tracks;
   } catch (err) {
     console.error(err.message);
@@ -529,7 +527,6 @@ ipcMain.handle('genres-stat', async () => {
 
 ipcMain.handle('null-metadata-stat', async () => {
   const results = await nullMetadata();
-  console.log('missing meta: ', results.length);
   for await (const result of results) {
     try {
       await writeFile(result.audiofile, `${updatesFolder}\\files_missing_metadata.m3u`);

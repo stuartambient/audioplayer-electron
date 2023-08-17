@@ -39,91 +39,6 @@ function App() {
     waitStream();
   }); */
 
-  const handleUpdateLike = async (id) => {
-    if (!id) return;
-    const updatelike = await window.api.updateLike(id);
-    console.log('update like: ', updatelike);
-  };
-
-  const handlePlayerControls = (e) => {
-    switch (e.currentTarget.id) {
-      case 'playlist':
-        /* if (state.minimalmode) return; */
-        dispatch({
-          type: 'library'
-        });
-        break;
-      case 'pauseplay':
-        dispatch({
-          type: 'pauseplay'
-        });
-        break;
-      case 'backward':
-        dispatch({
-          type: 'direction',
-          playNext: false,
-          playPrev: true
-        });
-        break;
-      case 'forward':
-        dispatch({
-          type: 'direction',
-          playPrev: false,
-          playNext: true
-        });
-        break;
-      case 'like':
-        /* sendToMain(); */
-        handleUpdateLike(state.active);
-        break;
-      case 'shuffle':
-        if (state.listType === 'files') {
-          dispatch({
-            type: 'tracks-shuffle',
-            tracksShuffle: !state.tracksShuffle
-          });
-          dispatch({
-            type: 'tracks-pagenumber',
-            tracksPageNumber: 0
-          });
-        }
-        if (state.listType === 'playlist') {
-          dispatch({
-            type: 'playlist-shuffle',
-            playlistShuffle: !state.playlistShuffle
-          });
-        }
-
-        break;
-      case 'miniplayer':
-        if (state.miniModePlaylist) {
-          return dispatch({
-            type: 'exit-mini-to-full',
-            miniModePlaylist: !state.miniModePlaylist,
-            minimalmode: !state.minimalmode
-          });
-        }
-        if (state.library && !state.minimalmode) {
-          return dispatch({
-            type: 'enter-mini-from-fullplaylist',
-            miniModePlaylist: (state.miniModePlaylist = true),
-            minimalmode: (state.minimalmode = true)
-          });
-        }
-
-        dispatch({
-          type: 'player-minimode',
-          minimalmode: !state.minimalmode,
-          home: false,
-          update: false,
-          player: true
-        });
-        break;
-      default:
-        return;
-    }
-  };
-
   useEffect(() => {
     state.audioRef.current.onloadedmetadata = (e) => {
       console.log('onloadedmetadata: ', e);
@@ -199,6 +114,89 @@ function App() {
     if (state.player && state.minimalmode && state.miniModePlaylist) changeExpandMini();
     if (!state.minimalmode && state.player) changeDefault();
   }, [state.minimalmode, state.player, state.miniModePlaylist]);
+
+  const handleUpdateLike = async (id) => {
+    if (!id) return;
+    const updatelike = await window.api.updateLike(id);
+    console.log('update like: ', updatelike);
+  };
+
+  const handlePlayerControls = (e) => {
+    switch (e.currentTarget.id) {
+      case 'playlist':
+        dispatch({
+          type: 'library'
+        });
+        break;
+      case 'pauseplay':
+        dispatch({
+          type: 'pauseplay'
+        });
+        break;
+      case 'backward':
+        dispatch({
+          type: 'direction',
+          playNext: false,
+          playPrev: true
+        });
+        break;
+      case 'forward':
+        dispatch({
+          type: 'direction',
+          playPrev: false,
+          playNext: true
+        });
+        break;
+      case 'like':
+        handleUpdateLike(state.active);
+        break;
+      case 'shuffle':
+        if (state.listType === 'files') {
+          dispatch({
+            type: 'tracks-shuffle',
+            tracksShuffle: !state.tracksShuffle
+          });
+          dispatch({
+            type: 'tracks-pagenumber',
+            tracksPageNumber: 0
+          });
+        }
+        if (state.listType === 'playlist') {
+          dispatch({
+            type: 'playlist-shuffle',
+            playlistShuffle: !state.playlistShuffle
+          });
+        }
+
+        break;
+      case 'miniplayer':
+        if (state.miniModePlaylist) {
+          return dispatch({
+            type: 'exit-mini-to-full',
+            miniModePlaylist: !state.miniModePlaylist,
+            minimalmode: !state.minimalmode
+          });
+        }
+        if (state.library && !state.minimalmode) {
+          return dispatch({
+            type: 'enter-mini-from-fullplaylist',
+            miniModePlaylist: (state.miniModePlaylist = true),
+            minimalmode: (state.minimalmode = true)
+          });
+        }
+
+        dispatch({
+          type: 'player-minimode',
+          minimalmode: !state.minimalmode,
+          home: false,
+          update: false,
+          player: true
+        });
+        break;
+      default:
+        return;
+    }
+  };
 
   /*   useEffect(() => {
     if (state.playlistTracks[0]) {

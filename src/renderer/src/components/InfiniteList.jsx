@@ -85,10 +85,11 @@ const InfiniteList = ({
   usePlaylistDialog(playlistReq, playlistTracks, dispatch, setPlaylistReq);
 
   const albumsTracks = albumTracks.map((track) => {
+    console.log('mapped: ', track);
     if (track.title) {
       return <li key={track.afid}>{track.title}</li>;
     } else {
-      <li key={track.afid}>{track.audiofile}</li>;
+      return <li key={track.afid}>{track.audiofile}</li>;
     }
   });
 
@@ -257,6 +258,7 @@ const InfiniteList = ({
     }
     if (option[0] === 'add album to playlist') {
       const albumTracks = await window.api.getAlbumTracks(term);
+      console.log('albumTracks: ', albumTracks);
       dispatch({
         type: 'play-album',
         playlistTracks: albumTracks

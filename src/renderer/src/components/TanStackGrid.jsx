@@ -19,7 +19,14 @@ const TanStackGrid = ({ data, setData }) => {
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
   const [editedRows, setEditedRows] = useState({});
-  const [editedCells, setEditedCells] = useState({});
+
+  /*   <svg width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path
+      fill="currentColor"
+      d="M13 9h5.5L13 3.5V9M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4c0-1.11.89-2 2-2m6.16 12.31c-1.56 0-2.97.58-4.05 1.52L6 13.72V19h5.28l-2.13-2.12c.82-.68 1.85-1.1 3.01-1.1c2.07 0 3.84 1.35 4.45 3.22l1.39-.46c-.81-2.45-3.12-4.23-5.84-4.23Z"
+    />
+  </svg>; */
+
   const AudioFile = {
     afid: '',
     audiofile: '',
@@ -43,19 +50,30 @@ const TanStackGrid = ({ data, setData }) => {
       setValue(initialValue);
     }, [initialValue]);
 
-    /* const onBlur = () => {
+    const onBlur = () => {
       tableMeta?.updateData(row.index, column.id, value);
-    }; */
+    };
 
     const onClick = (e) => {
       setOpen(() => !open);
     };
 
     return open ? (
-      <input value={value} onChange={(e) => setValue(e.target.value)} onClick={onClick} />
+      <input
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={onBlur}
+        onClick={onClick}
+      />
     ) : (
       <span onClick={onClick}>{value}</span>
     );
+  };
+
+  const defaultColumn = {
+    size: 20,
+    minSize: 20,
+    maxSize: Number.MAX_SAFE_INTEGER
   };
 
   const columns = [
@@ -143,8 +161,7 @@ const TanStackGrid = ({ data, setData }) => {
     meta: {
       editedRows,
       setEditedRows,
-      editedCells,
-      setEditedCells,
+
       updateData: (rowIndex, columnId, value) => {
         setData((old) =>
           old.map((row, index) => {
@@ -262,7 +279,7 @@ const TanStackGrid = ({ data, setData }) => {
           </tbody>
         </table>
         <hr />
-        <div>{/* {console.log(table.getSelectedRowModel()) */}}</div>
+        <div>{/* {console.log(table.getSelectedRowModel()) */}</div>
 
         <div className="h-4" />
         <button onClick={() => rerender()} className="border p-2">

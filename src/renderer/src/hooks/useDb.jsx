@@ -121,6 +121,7 @@ const useAlbumTracks = (pattern) => {
     const loadAlbumTracks = async () => {
       const albumTracksRequest = await window.api.getAlbumTracks(pattern);
       if (albumTracksRequest && subscribed) {
+        console.log('albums tracks request: ', albumTracksRequest);
         setAlbumTracks(albumTracksRequest);
       } else {
         return;

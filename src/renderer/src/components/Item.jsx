@@ -39,7 +39,6 @@ const Item = forwardRef(
     },
     ref
   ) => {
-    /* console.log('checked: ', checked); */
     if (type === 'file') {
       /* console.log('ref: ', ref); */
       return (

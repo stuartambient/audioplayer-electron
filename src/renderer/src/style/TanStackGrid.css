@@ -12,6 +12,8 @@ tr,
 .tr {
   width: fit-content;
   height: 30px;
+  /*   white-space: nowrap;
+  overflow: hidden; */
 }
 
 th,
