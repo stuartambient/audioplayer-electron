@@ -45,8 +45,8 @@ const ChildApp = () => {
 
   const handleDownloadImage = async (e) => {
     e.preventDefault();
-    const download = await window.childapi.downloadFile(previewImage.url, releases[0].path);
-    console.log('download image: ', download);
+    const download = await window.childapi.downloadFile(`${previewImage.url}`, releases[0].path);
+    console.log('download image: ', download, releases[0].path);
     await window.childapi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
   };
 

@@ -835,6 +835,7 @@ ipcMain.handle('show-list', (event, args) => {
 
 ipcMain.handle('download-file', async (event, ...args) => {
   const [fileUrl, filePath] = args;
+  console.log(fileUrl, '----', filePath);
 
   try {
     const res = await axios.get(`${fileUrl}`, { responseType: 'arraybuffer' });

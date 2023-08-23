@@ -79,9 +79,9 @@ const TanStackGrid = ({ data, setData }) => {
   const columns = [
     {
       id: 'select',
-      size: 20,
+      size: 15,
       minSize: 15,
-      maxSize: 30,
+      maxSize: 15,
       header: ({ table }) => (
         <IndeterminateCheckbox
           {...{
@@ -184,17 +184,14 @@ const TanStackGrid = ({ data, setData }) => {
   });
   return (
     <>
-      <div
-        className="p-2 inline-block border border-black shadow rounded"
-        style={{ display: 'flex' }}
-      >
-        <div className="px-1 border-b border-black">
+      <div className="columns-list" style={{ display: 'flex' }}>
+        <div>
           <label>
             <input
               type="checkbox"
               checked={table.getIsAllColumnsVisible()}
               onChange={table.getToggleAllColumnsVisibilityHandler()}
-              className="mr-1"
+              className="columns-list--chkbox"
             />
             Toggle All
           </label>
@@ -268,6 +265,8 @@ const TanStackGrid = ({ data, setData }) => {
                       /* onClick: table.options.meta.setEditedCells(cell.id), */
                       style: {
                         width: cell.column.getSize()
+                        /* whiteSpace: 'nowrap',
+                        overflowX: 'hidden' */
                       }
                     }}
                   >
@@ -279,12 +278,12 @@ const TanStackGrid = ({ data, setData }) => {
           </tbody>
         </table>
         <hr />
-        <div>{/* {console.log(table.getSelectedRowModel()) */}</div>
-
+        {/*<div>{console.log(table.getSelectedRowModel())}</div>
+         
         <div className="h-4" />
         <button onClick={() => rerender()} className="border p-2">
           Rerender
-        </button>
+        </button> */}
       </div>
     </>
   );
