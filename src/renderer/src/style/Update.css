@@ -33,9 +33,16 @@
   grid-row: 1 / 2;
 }
 
+.update-container .configure {
+  grid-column: 1 / -1;
+  grid-row: 3 / 4;
+  display: flex;
+}
+
 .update-files,
 .update-folders,
-.update-meta {
+.update-meta,
+.configure {
   border: 1px solid var(--blue1);
   width: 90%;
   height: 1.8rem;
@@ -62,13 +69,19 @@
 
 .folder-update-details {
   grid-column: 3 / 4;
-
-  grid-row: 3/4;
+  grid-row: 2/3;
+  align-self: end;
 }
 
 .file-update-details {
   grid-column: 1 / 2;
-  grid-row: 3 / 4;
+  grid-row: 2/3;
+  align-self: end;
+}
+
+#config-icon {
+  fill: black;
+  stroke: ;
 }
 
 .folder-update-details:hover,

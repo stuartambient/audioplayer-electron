@@ -19,7 +19,7 @@ const checkDirs = async (root, results) => {
 };
 
 const dirs = [
-  'J:/S_Music',
+  /* 'J:/S_Music', */
   'F:/Music',
   'D:/Music',
   'D:/G_MUSIC',

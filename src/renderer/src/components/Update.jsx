@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Loader from './Loader';
-import { AiOutlineFolderOpen, AiOutlineFileAdd } from 'react-icons/ai';
+import { AiOutlineFolderOpen, AiOutlineFileAdd, AiOutlineDeploymentUnit } from 'react-icons/ai';
+import { GrConfigure } from 'react-icons/gr';
 import { SiMetabase } from 'react-icons/si';
 import TextEditor from './TextEditor';
 import '../style/Update.css';
@@ -87,19 +88,30 @@ const Update = () => {
           <SiMetabase />
           Update Meta
         </div>
-
         <div className="update-folders" id="foldersupdate" onClick={handleUpdates}>
           <AiOutlineFolderOpen /> Update Folders
         </div>
+        <div className="configure" id="configure" /* onClick={handleUpdates} */>
+          <AiOutlineDeploymentUnit />
+          Configure
+        </div>
       </>
-      {fileUpdateReq && (
+      {fileUpdateReq ? (
         <div className="file-update-results">
           <Loader />
         </div>
+      ) : (
+        <div className="file-update-details" onClick={handleDetailsRequest} id="file">
+          File update details
+        </div>
       )}
-      {folderUpdateReq && (
+      {folderUpdateReq ? (
         <div className="folder-update-results">
           <Loader />
+        </div>
+      ) : (
+        <div className="folder-update-details" onClick={handleDetailsRequest} id="folder">
+          Folder update details
         </div>
       )}
       {metaUpdateReq && (
@@ -134,9 +146,9 @@ const Update = () => {
           </>
         )}
       </div>
-      <div className="file-update-details" onClick={handleDetailsRequest} id="file">
+      {/* <div className="file-update-details" onClick={handleDetailsRequest} id="file">
         File update details
-      </div>
+      </div> */}
       {showFileDetails && fileUpdateDetails && (
         <TextEditor
           title="File - updates"
@@ -144,9 +156,9 @@ const Update = () => {
           closeFileDetails={setShowFileDetails}
         />
       )}
-      <div className="folder-update-details" onClick={handleDetailsRequest} id="folder">
+      {/* <div className="folder-update-details" onClick={handleDetailsRequest} id="folder">
         Folder update details
-      </div>{' '}
+      </div>{' '} */}
       {showFolderDetails && folderUpdateDetails && (
         <TextEditor
           title="Folder - updates"
