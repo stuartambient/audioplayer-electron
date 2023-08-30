@@ -802,7 +802,7 @@ ipcMain.handle('show-list', (event, args) => {
   /* console.log(args); */
   const createChildWindow = () => {
     newList = new BrowserWindow({
-      width: 800,
+      width: 1200,
       height: 500,
       show: false,
       resizable: true,
