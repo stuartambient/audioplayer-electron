@@ -50,22 +50,28 @@ const AGGrid = ({ data }) => {
   const handleCellEditingStarted = (event) => {
     /* const rowData = event.data;
     console.log('Editing started for row data:', rowData); */
-    console.log(event.data, '====', gridRef.current.api.getEditingCells());
+    /* console.log(event.data, '====', gridRef.current.api.getEditingCells()); */
     // Perform your actions here
+    return;
   };
 
-  const handleCellEditingStopped = (event) => {
-    /* console.log('editing has stopped: ', event); */
-    gridRef.current.api.stopEditing();
+  const handleCellValueChanged = (event) => {
+    const { api, node, colDef, newValue } = event;
 
-    // print details of editing cell
-    const cellDefs = gridRef.current.api.getEditingCells();
-    console.log(cellDefs);
+    console.log('field: ', colDef.field);
+    console.log('old value: ', event.oldValue);
+    console.log('new value: ', event.newValue);
+    console.log(event);
+    /* const getRowId = (event) => event.rowIndex; */
+    const rowNode = gridRef.current.api.getRowNode(event.node.id);
+    console.log('event data: ', rowNode);
 
-    cellDefs.forEach((cellDef) => {
-      console.log('rowIndex: ', cellDef.rowIndex);
-      console.log('id: ', cellDef.column.getId());
-      console.log('floating: ', cellDef.floating);
+    // Flash the edited cell
+    api.flashCells({
+      rowNodes: [node], // Array of rowNodes to flash
+      columns: [colDef.field], // Array of column IDs to flash
+      flashDelay: 200, // Duration in milliseconds
+      fadeDelay: 500 // Duration in milliseconds
     });
   };
 
@@ -139,6 +145,7 @@ const AGGrid = ({ data }) => {
     resizable: true,
     sortable: true,
     editable: true
+    /* enableCellChangeFlash: true */
   }));
 
   /*   const sideBar = useMemo(() => {
@@ -167,16 +174,16 @@ const AGGrid = ({ data }) => {
           columnDefs={columnDefs} // Column Defs for Columns
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}
-          enableCellChangeFlash={true}
           onFirstDataRendered={() => console.log('first data rendered')}
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
-          onCellClicked={cellClickedListener} // Optional - registering for Grid Event
+          /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
           headerHeight={25}
           /* valueCache={true} */
           onCellEditingStarted={handleCellEditingStarted}
-          onCellEditingStopped={handleCellEditingStopped}
+          /*  onCellEditingStopped={handleCellEditingStopped} */
+          onCellValueChanged={handleCellValueChanged}
           undoRedoCellEditing={undoRedoCellEditing}
           undoRedoCellEditingLimit={undoRedoCellEditingLimit}
         />
