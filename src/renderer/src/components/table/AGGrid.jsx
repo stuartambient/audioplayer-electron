@@ -17,30 +17,14 @@ const AGGrid = ({ data }) => {
     if (data) setRowData(data);
   }, [data]);
 
-  /*   useEffect(() => {
-    if (gridApi) {
-      gridApi.sizeColumnsToFit();
-    }
-  }, []); */
-
   let gridApi;
 
   const onGridReady = (params) => {
     gridApi = params.api;
-    /* console.log('params: ', params, 'current: ', gridRef.current); */
   };
 
-  /*   useEffect(() => {
-    if (gridRef.current) {
-      console.log(gridRef.current);
-    }
-  }, [gridRef.current]); */
-
   const handleColumnPanel = (e) => {
-    /* console.log('checkbox: ', e.target.name, gridRef.current.columnApi); */
-
     const col = e.target.name;
-
     const column = gridRef.current.columnApi.getColumn(col);
     if (column) {
       gridRef.current.columnApi.setColumnVisible(column, !column.visible);
@@ -89,7 +73,7 @@ const AGGrid = ({ data }) => {
   };
 
   const handleCancel = () => {
-    console.log('cancel');
+    gridRef.current.api.undoCellEditing();
   };
 
   const handleSave = () => {

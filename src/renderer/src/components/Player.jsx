@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import WaveSurfer from 'wavesurfer.js';
 import { BsVolumeMute } from 'react-icons/bs';
 import { BiVolumeFull } from 'react-icons/bi';
 import {
@@ -35,24 +34,6 @@ const Player = ({
 }) => {
   const [cTime, setCTime] = useState('00:00');
   const [progbarInc, setProgbarInc] = useState(0);
-  const [waveSurfer, setWaveSurfer] = useState();
-
-  /*   useEffect(() => {
-    const audioUrl = decodeURI(audio);
-    if (audioUrl) {
-      const ws = WaveSurfer.create({
-        container: '#waveform',
-        waveColor: '#4F4A85',
-        progressColor: '#383351',
-        url: audio
-      });
-      setWaveSurfer(ws);
-    }
-  }, [audio]);
-
-  useEffect(() => {
-    if (waveSurfer) console.log(waveSurfer);
-  }, [waveSurfer]); */
 
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -242,7 +223,6 @@ const Player = ({
                 className="seekbar"
                 style={{ width: progbarInc ? `${progbarInc}px` : null }}
               ></div>
-              {/* {waveSurfer} */}
             </div>
           </>
         </div>

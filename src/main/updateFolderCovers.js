@@ -24,7 +24,7 @@ const dirs = [
   'D:/Music',
   'D:/G_MUSIC',
   'H:/Music',
-  'I:/Music',
+  /* 'I:/Music', */
   'E:/music'
 ];
 

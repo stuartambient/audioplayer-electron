@@ -1,5 +1,4 @@
 import { useReducer, useRef } from 'react';
-import { Howl, Howler } from 'howler';
 
 const AppState = () => {
   const audioPlayer = {
