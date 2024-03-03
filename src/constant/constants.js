@@ -1,9 +1,9 @@
 const roots = [
   /* 'J:/S_Music', */
-  /* 'I:/Music', */
+  'I:/Music',
   'H:/Music',
   'F:/Music',
-  'E:/music',
+  /* 'E:/music', */
   'D:/G_MUSIC',
   'D:/music'
 ];

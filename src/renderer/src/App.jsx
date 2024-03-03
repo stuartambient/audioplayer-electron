@@ -42,6 +42,9 @@ function App() {
   useEffect(() => {
     state.audioRef.current.onloadedmetadata = (e) => {
       console.log('onloadedmetadata: ', e);
+      /* const arrayBuffer = state.audioRef.current.src.arrayBuffer();
+      const audioBuffer = audioContext.decodeAudioData(arrayBuffer);
+      console.log(arrayBuffer, audioBuffer); */
       state.audioRef.current.play();
 
       dispatch({

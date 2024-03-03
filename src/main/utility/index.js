@@ -120,7 +120,7 @@ const parseMeta = async (files) => {
         audiofile,
         `${app.getPath('appData')}/musicplayer-electron/logs/metadataErrors.txt`
       ); */
-      fs.renameSync(`${audiofile}`, `${audiofile}.bad`);
+      /* fs.renameSync(`${audiofile}`, `${audiofile}.bad`); */
       console.error(`${audiofile} -- ${err.message}`);
     }
   }

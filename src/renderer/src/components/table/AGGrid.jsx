@@ -45,7 +45,7 @@ const AGGrid = ({ data }) => {
     console.log('field: ', colDef.field);
     console.log('old value: ', event.oldValue);
     console.log('new value: ', event.newValue);
-    console.log(event);
+    console.log('event: ', event);
     /* const getRowId = (event) => event.rowIndex; */
     const rowNode = gridRef.current.api.getRowNode(event.node.id);
     console.log('event data: ', rowNode);
@@ -112,7 +112,15 @@ const AGGrid = ({ data }) => {
       { field: 'title', filter: true, hide: false },
       { field: 'artist', filter: true, hide: false },
       { field: 'album', filter: true, hide: false },
-      { field: 'genre', filter: true, hide: false },
+      {
+        field: 'genre',
+        filter: true,
+        hide: false,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+          values: ['Option 1', 'Option 2', 'Option 3'] // Define your options here
+        }
+      },
       {
         headerName: 'Actions',
         cellRenderer: ActionCellRenderer,
@@ -151,14 +159,14 @@ const AGGrid = ({ data }) => {
       <button onClick={buttonListener}>Push Me</button>
       <CustomToolPanel onChange={handleColumnPanel} onClick={handleGridMenu} />
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-      <div className="ag-theme-alpine" style={{ width: '100%', height: 1200 }}>
+      <div className="ag-theme-alpine-dark" style={{ width: '100%', height: 1200 }}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
           rowData={rowData} // Row Data for Rows
           columnDefs={columnDefs} // Column Defs for Columns
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}
-          onFirstDataRendered={() => console.log('first data rendered')}
+          onFirstDataRendered={() => console.log('Data Rendered')}
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows

@@ -29,19 +29,7 @@ const ListApp = () => {
 
   return (
     <>
-      {/* <Grid data={data} /> */}
-      {/* <TanStackGrid data={data} setData={setData} /> */}
       <AGGrid data={data} />
-      {/*       <div>
-        {listType && <h2>{listType}</h2>}
-        {data && (
-          <ul>
-            {data.map((file) => {
-              return <li>{file.audiofile}</li>;
-            })}
-          </ul>
-        )}
-      </div> */}
     </>
   );
 };

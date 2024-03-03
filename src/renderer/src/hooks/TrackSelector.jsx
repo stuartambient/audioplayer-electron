@@ -6,6 +6,8 @@ const handlePicture = (buffer) => {
   return `data:${buffer.format};base64,${bufferToString}`;
 };
 
+const mediaSource = new MediaSource();
+
 const TrackSelector = async (
   e,
   state,
@@ -59,6 +61,7 @@ const TrackSelector = async (
 
   try {
     state.audioRef.current.src = await `streaming://${file}`;
+    /* const buf = await state.audioRef.current.src.arrayBuffer(); */
   } catch (e) {
     console.log(e);
   }

@@ -24,8 +24,8 @@ const dirs = [
   'D:/Music',
   'D:/G_MUSIC',
   'H:/Music',
-  /* 'I:/Music', */
-  'E:/music'
+  'I:/Music'
+  /* 'E:/music' */
 ];
 
 const run = async (cb) => {
