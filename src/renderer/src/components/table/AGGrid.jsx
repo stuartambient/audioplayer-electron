@@ -12,6 +12,7 @@ const AGGrid = ({ data }) => {
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = true;
   const undoRedoCellEditingLimit = 20;
+  let editedRows = new Map(); // Temporary store for edited rows
 
   useEffect(() => {
     if (data) setRowData(data);
@@ -41,14 +42,33 @@ const AGGrid = ({ data }) => {
 
   const handleCellValueChanged = (event) => {
     const { api, node, colDef, newValue } = event;
+    let rowNode = event.node;
+    let data = { ...rowNode.data };
+    console.log('rowNode: ', rowNode, 'data: ', data);
+    editedRows.set(rowNode.id, data);
 
+    /*     const rowNode = api.getRowNode(node.id);
+    const dataId = rowNode.data.afid;
+    editedRows.set(rowNode.id, data); */
+    console.log(editedRows);
+
+    /* console.log('Row data ID: ', dataId);
+    console.log('Full row data: ', rowNode.data); */
+
+    /*     console.log('Row data ID: ', dataId);
+    console.log('Full row data: ', rowNode.data);
     console.log('field: ', colDef.field);
     console.log('old value: ', event.oldValue);
     console.log('new value: ', event.newValue);
-    console.log('event: ', event);
+    console.log('event: ', event); */
+
     /* const getRowId = (event) => event.rowIndex; */
-    const rowNode = gridRef.current.api.getRowNode(event.node.id);
-    console.log('event data: ', rowNode);
+    //const rowNode = gridRef.current.api.getRowNode(event.node.id);
+    /*  console.log('event data: ', rowNode);
+    console.log('field: ', colDef.field);
+    console.log('old value: ', event.oldValue);
+    console.log('new value: ', event.newValue);
+    console.log('event: ', event); */
 
     // Flash the edited cell
     api.flashCells({
@@ -59,7 +79,7 @@ const AGGrid = ({ data }) => {
     });
   };
 
-  const ActionCellRenderer = ({ data, onCancel, onSave }) => {
+  /*   const ActionCellRenderer = ({ data, onCancel, onSave }) => {
     return (
       <div className="action-cell">
         <span onClick={() => onCancel(data)}>
@@ -68,6 +88,15 @@ const AGGrid = ({ data }) => {
         <span onClick={() => onSave(data)}>
           <FaSave />
         </span>
+      </div>
+    );
+  }; */
+
+  const ActionCellRenderer = ({ data, onCancel, onSave }) => {
+    return (
+      <div className="action-cell">
+        <button onClick={() => onCancel(data)}>Cancel</button>
+        <button onClick={() => onSave(data)}>Save</button>
       </div>
     );
   };
@@ -104,6 +133,13 @@ const AGGrid = ({ data }) => {
     }
   };
 
+  const defaultColDef = useMemo(() => ({
+    resizable: true,
+    sortable: true,
+    editable: true
+    /* enableCellChangeFlash: true */
+  }));
+
   const columnDefs = useMemo(
     () => [
       { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false },
@@ -122,23 +158,17 @@ const AGGrid = ({ data }) => {
         }
       },
       {
-        headerName: 'Actions',
+        field: 'actions',
         cellRenderer: ActionCellRenderer,
-        cellRendererParams: {
+        editable: false
+        /* cellRendererParams: {
           onCancel: handleCancel,
           onSave: handleSave
-        }
+        } */
       }
     ],
     []
   );
-
-  const defaultColDef = useMemo(() => ({
-    resizable: true,
-    sortable: true,
-    editable: true
-    /* enableCellChangeFlash: true */
-  }));
 
   /*   const sideBar = useMemo(() => {
     toolPanels: ['columns'];
