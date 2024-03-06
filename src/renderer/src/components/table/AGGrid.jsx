@@ -8,14 +8,17 @@ import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 
 const AGGrid = ({ data }) => {
-  const [rowData, setRowData] = useState();
+  const [originalData, setOriginalData] = useState([]);
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = true;
   const undoRedoCellEditingLimit = 20;
   let editedRows = new Map(); // Temporary store for edited rows
 
   useEffect(() => {
-    if (data) setRowData(data);
+    if (data) {
+      setOriginalData(data);
+      console.log(data);
+    }
   }, [data]);
 
   let gridApi;
@@ -42,33 +45,21 @@ const AGGrid = ({ data }) => {
 
   const handleCellValueChanged = (event) => {
     const { api, node, colDef, newValue } = event;
-    let rowNode = event.node;
-    let data = { ...rowNode.data };
-    console.log('rowNode: ', rowNode, 'data: ', data);
-    editedRows.set(rowNode.id, data);
+    /*   let rowNode = event.node;
+    let data = { ...rowNode.data }; */
 
-    /*     const rowNode = api.getRowNode(node.id);
-    const dataId = rowNode.data.afid;
-    editedRows.set(rowNode.id, data); */
-    console.log(editedRows);
-
-    /* console.log('Row data ID: ', dataId);
-    console.log('Full row data: ', rowNode.data); */
-
-    /*     console.log('Row data ID: ', dataId);
-    console.log('Full row data: ', rowNode.data);
-    console.log('field: ', colDef.field);
+    const rowId = node.id;
+    const rowData = node.data;
+    if (editedRows.has(rowId)) {
+      const existingEntry = editedRows.get(rowId);
+      editedRows.set(rowId, { ...existingEntry, [colDef.field]: newValue });
+    } else {
+      const newDataEntry = { ...rowData, [colDef.field]: newValue };
+      editedRows.set(rowId, newDataEntry);
+    }
+    console.log('edited rows: ', editedRows);
+    console.log('row-data: ', rowData);
     console.log('old value: ', event.oldValue);
-    console.log('new value: ', event.newValue);
-    console.log('event: ', event); */
-
-    /* const getRowId = (event) => event.rowIndex; */
-    //const rowNode = gridRef.current.api.getRowNode(event.node.id);
-    /*  console.log('event data: ', rowNode);
-    console.log('field: ', colDef.field);
-    console.log('old value: ', event.oldValue);
-    console.log('new value: ', event.newValue);
-    console.log('event: ', event); */
 
     // Flash the edited cell
     api.flashCells({
@@ -82,27 +73,22 @@ const AGGrid = ({ data }) => {
   /*   const ActionCellRenderer = ({ data, onCancel, onSave }) => {
     return (
       <div className="action-cell">
-        <span onClick={() => onCancel(data)}>
-          <ImCancelCircle />
-        </span>
-        <span onClick={() => onSave(data)}>
-          <FaSave />
-        </span>
-      </div>
-    );
-  }; */
-
-  const ActionCellRenderer = ({ data, onCancel, onSave }) => {
-    return (
-      <div className="action-cell">
         <button onClick={() => onCancel(data)}>Cancel</button>
         <button onClick={() => onSave(data)}>Save</button>
       </div>
     );
-  };
+  }; */
 
-  const handleCancel = () => {
-    gridRef.current.api.undoCellEditing();
+  const handleCancel = (e) => {
+    /* gridRef.current.api.undoCellEditing(); */
+    console.log(originalData);
+    /*   console.log(gridRef.current);
+    if (gridRef.current && gridRef.current.api) {
+      gridRef.current.api.setRowData(rowData);
+      editedRows.clear();
+    } else {
+      console.warn('Grid API not available or rowData is incorrect');
+    } */
   };
 
   const handleSave = () => {
@@ -122,12 +108,14 @@ const AGGrid = ({ data }) => {
   }, []);
 
   const handleGridMenu = (e) => {
-    console.log(e.target.id);
+    console.log('target id: ', e.target.id);
     switch (e.target.id) {
       case 'auto-size-all':
         return autoSize();
       case 'reset-window':
         return sizeToFit();
+      case 'cancel-all':
+        return handleCancel();
       default:
         return;
     }
@@ -156,16 +144,16 @@ const AGGrid = ({ data }) => {
         cellEditorParams: {
           values: ['Option 1', 'Option 2', 'Option 3'] // Define your options here
         }
-      },
-      {
+      }
+      /* {
         field: 'actions',
         cellRenderer: ActionCellRenderer,
         editable: false
-        /* cellRendererParams: {
+         cellRendererParams: {
           onCancel: handleCancel,
           onSave: handleSave
-        } */
-      }
+        } 
+      } */
     ],
     []
   );
@@ -192,7 +180,7 @@ const AGGrid = ({ data }) => {
       <div className="ag-theme-alpine-dark" style={{ width: '100%', height: 1200 }}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
-          rowData={rowData} // Row Data for Rows
+          rowData={originalData} // Row Data for Rows
           columnDefs={columnDefs} // Column Defs for Columns
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}

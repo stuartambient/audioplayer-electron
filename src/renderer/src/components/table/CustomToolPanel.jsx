@@ -3,7 +3,7 @@ import { useState } from 'react';
 const CustomToolPanel = ({ onChange, onClick }) => {
   return (
     <div className="column-panel">
-      <fieldset style={{ display: 'flex', justifyContent: 'space-around' }}>
+      <fieldset style={{ display: 'flex' /* , justifyContent: 'space-around' */ }}>
         <div>
           <input
             type="checkbox"
@@ -78,6 +78,14 @@ const CustomToolPanel = ({ onChange, onClick }) => {
         <div>
           <button id="reset-window" onClick={onClick}>
             Reset Window
+          </button>
+        </div>
+        <div>
+          <button id="save-all" onClick={onClick}>
+            Save all
+          </button>
+          <button id="cancel-all" onClick={onClick}>
+            Cancel all
           </button>
         </div>
       </fieldset>
