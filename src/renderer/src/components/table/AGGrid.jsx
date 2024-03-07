@@ -9,10 +9,12 @@ import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 
 const AGGrid = ({ data }) => {
   const [originalData, setOriginalData] = useState([]);
+  const [undoStack, setUndoStack] = useState([]);
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = true;
   const undoRedoCellEditingLimit = 20;
-  let editedRows = new Map(); // Temporary store for edited rows
+  //et editedRows = new Map(); // Temporary store for edited rows
+  const editsRef = useRef([]);
 
   useEffect(() => {
     if (data) {
@@ -20,6 +22,12 @@ const AGGrid = ({ data }) => {
       console.log(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (undoStack) {
+      console.log(undoStack);
+    }
+  }, [undoStack]);
 
   let gridApi;
 
@@ -35,14 +43,6 @@ const AGGrid = ({ data }) => {
     }
   };
 
-  const handleCellEditingStarted = (event) => {
-    /* const rowData = event.data;
-    console.log('Editing started for row data:', rowData); */
-    /* console.log(event.data, '====', gridRef.current.api.getEditingCells()); */
-    // Perform your actions here
-    return;
-  };
-
   const handleCellValueChanged = (event) => {
     const { api, node, colDef, newValue } = event;
     /*   let rowNode = event.node;
@@ -50,16 +50,35 @@ const AGGrid = ({ data }) => {
 
     const rowId = node.id;
     const rowData = node.data;
-    if (editedRows.has(rowId)) {
+    const oldValue = event.oldValue;
+    /*     if (editedRows.has(rowId)) {
       const existingEntry = editedRows.get(rowId);
       editedRows.set(rowId, { ...existingEntry, [colDef.field]: newValue });
     } else {
       const newDataEntry = { ...rowData, [colDef.field]: newValue };
       editedRows.set(rowId, newDataEntry);
-    }
-    console.log('edited rows: ', editedRows);
+    } */
+
+    /*     editedRows.set('row', rowId);
+    editedRows.set('field', colDef.field);
+    editedRows.set('newVal', newValue);
+    editedRows.set('oldVal', oldValue); */
+
+    const edit = {
+      rowId,
+      field: colDef.field,
+      newValue,
+      oldValue
+    };
+
+    /* editsRef.current.push(edit); */
+    setUndoStack((currentStack) => [...currentStack, edit]);
+
+    /*     console.log('edited rows: ', editedRows);
     console.log('row-data: ', rowData);
     console.log('old value: ', event.oldValue);
+    console.log('changed field: ', colDef.field);
+    console.log('og', originalData[rowId]); */
 
     // Flash the edited cell
     api.flashCells({
@@ -79,8 +98,22 @@ const AGGrid = ({ data }) => {
     );
   }; */
 
+  const handleUndoLastEdit = () => {
+    setUndoStack((currentStack) => {
+      const lastEdit = currentStack.pop();
+      if (lastEdit) {
+        // Update the data to revert the last edit
+        const newData = data.map((row) =>
+          row.id === lastEdit.rowId ? { ...row, [lastEdit.field]: lastEdit.oldValue } : row
+        );
+        setData(newData);
+      }
+      return [...currentStack];
+    });
+  };
+
   const handleCancel = (e) => {
-    /* gridRef.current.api.undoCellEditing(); */
+    gridRef.current.api.undoCellEditing();
     console.log(originalData);
     /*   console.log(gridRef.current);
     if (gridRef.current && gridRef.current.api) {
@@ -116,6 +149,11 @@ const AGGrid = ({ data }) => {
         return sizeToFit();
       case 'cancel-all':
         return handleCancel();
+      case 'undo-last':
+        /* return () => console.log('undo-last'); */
+        return handleUndoLastEdit();
+      case 'redo-last':
+        return () => console.log('redo-last');
       default:
         return;
     }
@@ -191,7 +229,7 @@ const AGGrid = ({ data }) => {
           /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
           headerHeight={25}
           /* valueCache={true} */
-          onCellEditingStarted={handleCellEditingStarted}
+          //onCellEditingStarted={handleCellEditingStarted}
           /*  onCellEditingStopped={handleCellEditingStopped} */
           onCellValueChanged={handleCellValueChanged}
           undoRedoCellEditing={undoRedoCellEditing}

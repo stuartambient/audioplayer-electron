@@ -88,6 +88,14 @@ const CustomToolPanel = ({ onChange, onClick }) => {
             Cancel all
           </button>
         </div>
+        <div>
+          <button id="undo-last" onClick={onClick}>
+            Undo
+          </button>
+          <button id="redo-last" onClick={onClick}>
+            Redo
+          </button>
+        </div>
       </fieldset>
     </div>
   );
