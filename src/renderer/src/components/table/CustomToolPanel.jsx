@@ -81,6 +81,16 @@ const CustomToolPanel = ({ onChange, onClick }) => {
           </button>
         </div>
         <div>
+          <button id="deselect-all" onClick={onClick}>
+            Deselect All
+          </button>
+        </div>
+        <div>
+          <button id="selected-nodes" onClick={onClick}>
+            Selected Nodes
+          </button>
+        </div>
+        <div>
           <button id="save-all" onClick={onClick}>
             Save all
           </button>

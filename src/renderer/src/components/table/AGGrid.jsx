@@ -9,12 +9,10 @@ import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 
 const AGGrid = ({ data }) => {
   const [originalData, setOriginalData] = useState([]);
-  const [undoStack, setUndoStack] = useState([]);
   const gridRef = useRef(); // Optional - for accessing Grid's API
-  const undoRedoCellEditing = true;
-  const undoRedoCellEditingLimit = 20;
-  //et editedRows = new Map(); // Temporary store for edited rows
+  const undoRedoCellEditing = false;
   const editsRef = useRef([]);
+  const isUndoAction = useRef(false);
 
   useEffect(() => {
     if (data) {
@@ -22,12 +20,6 @@ const AGGrid = ({ data }) => {
       console.log(data);
     }
   }, [data]);
-
-  useEffect(() => {
-    if (undoStack) {
-      console.log(undoStack);
-    }
-  }, [undoStack]);
 
   let gridApi;
 
@@ -45,42 +37,19 @@ const AGGrid = ({ data }) => {
 
   const handleCellValueChanged = (event) => {
     const { api, node, colDef, newValue } = event;
-    /*   let rowNode = event.node;
-    let data = { ...rowNode.data }; */
+    if (isUndoAction.current) {
+      return (isUndoAction.current = true);
+    }
 
-    const rowId = node.id;
-    const rowData = node.data;
-    const oldValue = event.oldValue;
-    /*     if (editedRows.has(rowId)) {
-      const existingEntry = editedRows.get(rowId);
-      editedRows.set(rowId, { ...existingEntry, [colDef.field]: newValue });
-    } else {
-      const newDataEntry = { ...rowData, [colDef.field]: newValue };
-      editedRows.set(rowId, newDataEntry);
-    } */
-
-    /*     editedRows.set('row', rowId);
-    editedRows.set('field', colDef.field);
-    editedRows.set('newVal', newValue);
-    editedRows.set('oldVal', oldValue); */
-
-    const edit = {
-      rowId,
-      field: colDef.field,
-      newValue,
-      oldValue
+    const change = {
+      rowId: node.id, // Ensure this is how you access the ID correctly
+      field: event.colDef.field,
+      newValue: event.newValue,
+      oldValue: event.oldValue
     };
 
-    /* editsRef.current.push(edit); */
-    setUndoStack((currentStack) => [...currentStack, edit]);
+    editsRef.current.push(change);
 
-    /*     console.log('edited rows: ', editedRows);
-    console.log('row-data: ', rowData);
-    console.log('old value: ', event.oldValue);
-    console.log('changed field: ', colDef.field);
-    console.log('og', originalData[rowId]); */
-
-    // Flash the edited cell
     api.flashCells({
       rowNodes: [node], // Array of rowNodes to flash
       columns: [colDef.field], // Array of column IDs to flash
@@ -89,39 +58,22 @@ const AGGrid = ({ data }) => {
     });
   };
 
-  /*   const ActionCellRenderer = ({ data, onCancel, onSave }) => {
-    return (
-      <div className="action-cell">
-        <button onClick={() => onCancel(data)}>Cancel</button>
-        <button onClick={() => onSave(data)}>Save</button>
-      </div>
-    );
-  }; */
+  const selectedNodes = () => {
+    console.log(gridRef.current.api.getSelectedNodes());
+  };
 
   const handleUndoLastEdit = () => {
-    setUndoStack((currentStack) => {
-      const lastEdit = currentStack.pop();
-      if (lastEdit) {
-        // Update the data to revert the last edit
-        const newData = data.map((row) =>
-          row.id === lastEdit.rowId ? { ...row, [lastEdit.field]: lastEdit.oldValue } : row
-        );
-        setData(newData);
-      }
-      return [...currentStack];
-    });
+    /* console.log('ref', editsRef.current); */
+    if (editsRef.current.length === 0) return;
+    const lastEdit = editsRef.current.pop();
+    const rowNode = gridRef.current.api.getRowNode(lastEdit.rowId);
+    rowNode.setDataValue(lastEdit.field, lastEdit.oldValue);
+    console.log('ref', editsRef.current);
   };
 
   const handleCancel = (e) => {
     gridRef.current.api.undoCellEditing();
     console.log(originalData);
-    /*   console.log(gridRef.current);
-    if (gridRef.current && gridRef.current.api) {
-      gridRef.current.api.setRowData(rowData);
-      editedRows.clear();
-    } else {
-      console.warn('Grid API not available or rowData is incorrect');
-    } */
   };
 
   const handleSave = () => {
@@ -150,10 +102,15 @@ const AGGrid = ({ data }) => {
       case 'cancel-all':
         return handleCancel();
       case 'undo-last':
-        /* return () => console.log('undo-last'); */
+        isUndoAction.current = true;
+
         return handleUndoLastEdit();
       case 'redo-last':
         return () => console.log('redo-last');
+      case 'deselect-all':
+        return deselectAll();
+      case 'selected-nodes':
+        return selectedNodes();
       default:
         return;
     }
@@ -183,36 +140,22 @@ const AGGrid = ({ data }) => {
           values: ['Option 1', 'Option 2', 'Option 3'] // Define your options here
         }
       }
-      /* {
-        field: 'actions',
-        cellRenderer: ActionCellRenderer,
-        editable: false
-         cellRendererParams: {
-          onCancel: handleCancel,
-          onSave: handleSave
-        } 
-      } */
     ],
     []
   );
-
-  /*   const sideBar = useMemo(() => {
-    toolPanels: ['columns'];
-  }, []); */
 
   // Example of consuming Grid Event
   const cellClickedListener = useCallback((event) => {
     console.log('cellClicked', /* event, */ gridRef.current.api.getEditingCells());
   }, []);
 
-  const buttonListener = useCallback((e) => {
+  const deselectAll = useCallback((e) => {
     gridRef.current.api.deselectAll();
   }, []);
 
   return (
     <div>
       {/* Example using Grid's API */}
-      <button onClick={buttonListener}>Push Me</button>
       <CustomToolPanel onChange={handleColumnPanel} onClick={handleGridMenu} />
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
       <div className="ag-theme-alpine-dark" style={{ width: '100%', height: 1200 }}>
@@ -227,13 +170,15 @@ const AGGrid = ({ data }) => {
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
           /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
+          enableRangeSelection={true}
           headerHeight={25}
+          rowMultiSelectWithClick={true}
           /* valueCache={true} */
           //onCellEditingStarted={handleCellEditingStarted}
           /*  onCellEditingStopped={handleCellEditingStopped} */
           onCellValueChanged={handleCellValueChanged}
-          undoRedoCellEditing={undoRedoCellEditing}
-          undoRedoCellEditingLimit={undoRedoCellEditingLimit}
+          //undoRedoCellEditing={undoRedoCellEditing}
+          //undoRedoCellEditingLimit={undoRedoCellEditingLimit}
         />
       </div>
     </div>
