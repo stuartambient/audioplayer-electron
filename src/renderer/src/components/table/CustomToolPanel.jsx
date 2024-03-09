@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import EditForm from './EditForm';
 
-const CustomToolPanel = ({ onChange, onClick }) => {
+const CustomToolPanel = ({ onChange, onClick, nodesSelected }) => {
+  const [onForm, setOnForm] = useState(false);
   return (
     <div className="column-panel">
       <fieldset style={{ display: 'flex' /* , justifyContent: 'space-around' */ }}>
@@ -107,6 +109,9 @@ const CustomToolPanel = ({ onChange, onClick }) => {
           </button>
         </div>
       </fieldset>
+      {nodesSelected.length > 0 && (
+        <EditForm onUpdate={(e) => console.log('updated')} nodesSelected={nodesSelected} />
+      )}
     </div>
   );
 };

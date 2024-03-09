@@ -3,8 +3,8 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { HiOutlineCursorClick } from 'react-icons/hi';
 import Grid from './components/Grid';
-import Table from './components/Table';
-import TanStackGrid from './components/TanStackGrid';
+/* import Table from './components/Table';
+import TanStackGrid from './components/TanStackGrid'; */
 import AGGrid from './components/table/AGGrid';
 /* import TanstackTable from './components/table/TanstackTable'; */
 /* import VirtualizedTable from './components/VirtualizedTable'; */

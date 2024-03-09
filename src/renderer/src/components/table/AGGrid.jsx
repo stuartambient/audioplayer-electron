@@ -4,15 +4,19 @@ import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
 import { FaSave } from 'react-icons/fa';
 import { ImCancelCircle } from 'react-icons/im';
 import CustomToolPanel from './CustomToolPanel';
+
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 
 const AGGrid = ({ data }) => {
   const [originalData, setOriginalData] = useState([]);
+  const [nodesSelected, setNodesSelected] = useState([]);
+
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
   const editsRef = useRef([]);
   const isUndoAction = useRef(false);
+  const isRowsSelected = useRef([]);
 
   useEffect(() => {
     if (data) {
@@ -20,6 +24,12 @@ const AGGrid = ({ data }) => {
       console.log(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (nodesSelected.length > 0) {
+      console.log('rows selected');
+    }
+  }, [nodesSelected]);
 
   let gridApi;
 
@@ -58,9 +68,19 @@ const AGGrid = ({ data }) => {
     });
   };
 
-  const selectedNodes = () => {
+  /*   const selectedNodes = () => {
     console.log(gridRef.current.api.getSelectedNodes());
-  };
+  }; */
+
+  const onSelectionChanged = useCallback(() => {
+    const selectedNodes = gridRef.current.api.getSelectedNodes();
+    /* console.log('selected nodes: ', typeof selectedNodes, selectedNodes); */
+    if (selectedNodes.length > 1) {
+      console.log(selectedNodes);
+      /* isRowsSelected.current.push(selectedNodes); */
+      setNodesSelected(selectedNodes);
+    }
+  }, []);
 
   const handleUndoLastEdit = () => {
     /* console.log('ref', editsRef.current); */
@@ -151,12 +171,18 @@ const AGGrid = ({ data }) => {
 
   const deselectAll = useCallback((e) => {
     gridRef.current.api.deselectAll();
+    /* isRowsSelected.current = []; */
+    setNodesSelected([]);
   }, []);
 
   return (
     <div>
       {/* Example using Grid's API */}
-      <CustomToolPanel onChange={handleColumnPanel} onClick={handleGridMenu} />
+      <CustomToolPanel
+        onChange={handleColumnPanel}
+        onClick={handleGridMenu}
+        nodesSelected={nodesSelected}
+      />
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
       <div className="ag-theme-alpine-dark" style={{ width: '100%', height: 1200 }}>
         <AgGridReact
@@ -166,6 +192,7 @@ const AGGrid = ({ data }) => {
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}
           onFirstDataRendered={() => console.log('Data Rendered')}
+          onSelectionChanged={onSelectionChanged}
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
@@ -181,6 +208,12 @@ const AGGrid = ({ data }) => {
           //undoRedoCellEditingLimit={undoRedoCellEditingLimit}
         />
       </div>
+      {/*       {isRowsSelected.current && isRowsSelected.current.length > 0 && (
+        <EditForm
+          onUpdate={() => console.log('updating')}
+          selectedRowData={isRowsSelected.current}
+        />
+      )} */}
     </div>
   );
 };
