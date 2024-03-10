@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import EditForm from './EditForm';
 
-const CustomToolPanel = ({ onChange, onClick, nodesSelected }) => {
+const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
   const [onForm, setOnForm] = useState(false);
   return (
     <div className="column-panel">
@@ -109,9 +109,7 @@ const CustomToolPanel = ({ onChange, onClick, nodesSelected }) => {
           </button>
         </div>
       </fieldset>
-      {nodesSelected.length > 0 && (
-        <EditForm onUpdate={(e) => console.log('updated')} nodesSelected={nodesSelected} />
-      )}
+      {nodesSelected.length > 0 && <EditForm onUpdate={onUpdate} nodesSelected={nodesSelected} />}
     </div>
   );
 };

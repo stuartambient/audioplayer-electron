@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function EditForm({ onUpdate, selectedRowData, nodesSelected }) {
+function EditForm({ onUpdate, nodesSelected }) {
   const [formData, setFormData] = useState({
     year: '',
     title: '',
@@ -10,14 +10,14 @@ function EditForm({ onUpdate, selectedRowData, nodesSelected }) {
   });
 
   // Populate form data when selectedRowData changes
-  useEffect(() => {
+  /*   useEffect(() => {
     if (nodesSelected && nodesSelected.length > 0) {
-      // Optionally pre-fill form with data from the first selected row as an example
-      /* const { year, title, artist, album, genre } = selectedRowData[0];
-      setFormData({ year, title, artist, album, genre }); */
+      Optionally pre-fill form with data from the first selected row as an example
+      const { year, title, artist, album, genre } = selectedRowData[0];
+      setFormData({ year, title, artist, album, genre }); 
       console.log(nodesSelected);
     }
-  }, [selectedRowData]);
+  }, [selectedRowData]); */
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -25,14 +25,23 @@ function EditForm({ onUpdate, selectedRowData, nodesSelected }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onUpdate(formData); // Call the onUpdate function passed as a prop
-    setFormData({
-      year: '',
-      title: '',
-      artist: '',
-      album: '',
-      genre: ''
-    }); // Reset form
+    const multiRowChanges = [];
+    nodesSelected.forEach((node) => {
+      //console.log(node.id, node.data); // Assuming you always want to print this regardless
+
+      Object.keys(formData).forEach((key) => {
+        if (formData[key]) {
+          const changeObj = {
+            rowId: node.rowIndex,
+            field: key,
+            newValue: formData[key],
+            oldValue: node.data[key]
+          };
+          multiRowChanges.push(changeObj);
+        }
+      });
+    });
+    if (multiRowChanges.length) return onUpdate(multiRowChanges);
   };
 
   return (

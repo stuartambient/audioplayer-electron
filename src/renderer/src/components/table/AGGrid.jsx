@@ -21,7 +21,6 @@ const AGGrid = ({ data }) => {
   useEffect(() => {
     if (data) {
       setOriginalData(data);
-      console.log(data);
     }
   }, [data]);
 
@@ -43,6 +42,15 @@ const AGGrid = ({ data }) => {
     if (column) {
       gridRef.current.columnApi.setColumnVisible(column, !column.visible);
     }
+  };
+
+  const handleMultiRowUpdate = (edits) => {
+    edits.forEach((edit) => {
+      const rowNode = gridRef.current.api.getRowNode(edit.rowId);
+      rowNode.setDataValue(edit.field, edit.newValue);
+    });
+    editsRef.current = [...editsRef.current, ...edits];
+    console.log(editsRef.current);
   };
 
   const handleCellValueChanged = (event) => {
@@ -181,6 +189,7 @@ const AGGrid = ({ data }) => {
       <CustomToolPanel
         onChange={handleColumnPanel}
         onClick={handleGridMenu}
+        onUpdate={handleMultiRowUpdate}
         nodesSelected={nodesSelected}
       />
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
