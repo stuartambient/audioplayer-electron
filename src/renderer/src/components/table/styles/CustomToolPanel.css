@@ -1,0 +1,106 @@
+/* Main container for the custom tool panel */
+.column-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 2px;
+  background-color: #d3d3d3;
+  border: 1px solid #d1d5db;
+  /* border-radius: 8px; */
+  position: sticky;
+  top: 0; /* Adjust this value if you have a navbar or other elements at the top */
+  z-index: 1000; /* Ensure the panel stays on top of other content */
+}
+
+.column-panel.hidden {
+  display: none; /* Or other animation/transition effects */
+}
+
+/* Style adjustments for fieldset to better fit a horizontal layout */
+.column-panel fieldset {
+  border: 1px solid #e5e7eb; /* Light grey border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap; /* Allows internal elements to wrap */
+  align-items: center; /* Aligns items vertically */
+  gap: 10px; /* Space between checkboxes/buttons */
+}
+
+/* Adjustments for internal divs might not be necessary with flex layout,
+     but you can use this to further style individual checkbox wrappers if needed */
+.column-panel fieldset div {
+  display: flex;
+  align-items: center; /* Ensures vertical alignment for checkbox labels */
+}
+
+/* Style for checkboxes */
+.column-panel input[type='checkbox'] {
+  accent-color: #3b82f6; /* Custom color for the checkbox */
+  margin-right: 4px; /* Space between checkbox and its label */
+}
+
+/* General style for buttons */
+.column-panel button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* Specific styles for buttons for differentiation */
+.column-panel .auto-size-all {
+  background-color: #34d399;
+  color: white;
+}
+.column-panel .reset-window {
+  background-color: #60a5fa;
+  color: white;
+}
+.column-panel .deselect-all,
+.column-panel .save-all,
+.column-panel .cancel-all {
+  background-color: #f9a8d4;
+  color: white;
+}
+
+.column-panel .undo-last,
+.column-panel .redo-last {
+  background-color: #f4a460;
+  color: white;
+}
+
+/* Hover effect for buttons */
+.column-panel button:hover {
+  opacity: 0.8;
+  color: black;
+}
+
+.hamburger-btn {
+  cursor: pointer;
+  height: 16px;
+  width: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.hamburger-btn span {
+  height: 2px;
+  width: 24px;
+  background-color: #333; /* Dark color for contrast */
+  border-radius: 2px;
+  transition: all 0.3s linear;
+}
+
+/* Optional: Change appearance when hovered */
+.hamburger-btn:hover span {
+  background-color: #007bff; /* Bright color for visibility */
+}

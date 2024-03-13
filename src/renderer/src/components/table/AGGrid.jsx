@@ -11,11 +11,13 @@ import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 const AGGrid = ({ data }) => {
   const [originalData, setOriginalData] = useState([]);
   const [nodesSelected, setNodesSelected] = useState([]);
+  const [isUndoAction, setIsUndoAction] = useState(false);
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
-  const editsRef = useRef([]);
-  const isUndoAction = useRef(false);
+  const undosRef = useRef([]);
+  const redosRef = useRef([]);
+
   const isRowsSelected = useRef([]);
 
   useEffect(() => {
@@ -24,11 +26,11 @@ const AGGrid = ({ data }) => {
     }
   }, [data]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (nodesSelected.length > 0) {
       console.log('rows selected');
     }
-  }, [nodesSelected]);
+  }, [nodesSelected]); */
 
   let gridApi;
 
@@ -49,32 +51,35 @@ const AGGrid = ({ data }) => {
       const rowNode = gridRef.current.api.getRowNode(edit.rowId);
       rowNode.setDataValue(edit.field, edit.newValue);
     });
-    editsRef.current = [...editsRef.current, ...edits];
-    console.log(editsRef.current);
+    undosRef.current = [...undosRef.current, ...edits];
+    console.log(undosRef.current);
   };
 
-  const handleCellValueChanged = (event) => {
-    const { api, node, colDef, newValue } = event;
-    if (isUndoAction.current) {
-      return (isUndoAction.current = true);
-    }
+  const handleCellValueChanged = useCallback(
+    (event) => {
+      if (!isUndoAction) {
+        const { api, node, colDef, newValue } = event;
+        const change = {
+          rowId: node.id, // Ensure this is how you access the ID correctly
+          field: event.colDef.field,
+          newValue: event.newValue,
+          oldValue: event.oldValue
+        };
 
-    const change = {
-      rowId: node.id, // Ensure this is how you access the ID correctly
-      field: event.colDef.field,
-      newValue: event.newValue,
-      oldValue: event.oldValue
-    };
+        undosRef.current.push(change);
 
-    editsRef.current.push(change);
-
-    api.flashCells({
-      rowNodes: [node], // Array of rowNodes to flash
-      columns: [colDef.field], // Array of column IDs to flash
-      flashDelay: 200, // Duration in milliseconds
-      fadeDelay: 500 // Duration in milliseconds
-    });
-  };
+        api.flashCells({
+          rowNodes: [node], // Array of rowNodes to flash
+          columns: [colDef.field], // Array of column IDs to flash
+          flashDelay: 200, // Duration in milliseconds
+          fadeDelay: 500 // Duration in milliseconds
+        });
+      } else {
+        setIsUndoAction(false);
+      }
+    },
+    [isUndoAction]
+  );
 
   /*   const selectedNodes = () => {
     console.log(gridRef.current.api.getSelectedNodes());
@@ -84,19 +89,20 @@ const AGGrid = ({ data }) => {
     const selectedNodes = gridRef.current.api.getSelectedNodes();
     /* console.log('selected nodes: ', typeof selectedNodes, selectedNodes); */
     if (selectedNodes.length > 1) {
-      console.log(selectedNodes);
+      /* console.log(selectedNodes); */
       /* isRowsSelected.current.push(selectedNodes); */
       setNodesSelected(selectedNodes);
     }
   }, []);
 
   const handleUndoLastEdit = () => {
-    /* console.log('ref', editsRef.current); */
-    if (editsRef.current.length === 0) return;
-    const lastEdit = editsRef.current.pop();
+    /* console.log('ref', undosRef.current); */
+    setIsUndoAction(true);
+    if (undosRef.current.length === 0) return;
+    const lastEdit = undosRef.current.pop();
     const rowNode = gridRef.current.api.getRowNode(lastEdit.rowId);
     rowNode.setDataValue(lastEdit.field, lastEdit.oldValue);
-    console.log('ref', editsRef.current);
+    console.log('ref', undosRef.current);
   };
 
   const handleCancel = (e) => {
@@ -130,8 +136,8 @@ const AGGrid = ({ data }) => {
       case 'cancel-all':
         return handleCancel();
       case 'undo-last':
-        isUndoAction.current = true;
-
+        /* isUndoAction.current = true;
+        console.log(undosRef.current); */
         return handleUndoLastEdit();
       case 'redo-last':
         return () => console.log('redo-last');
@@ -162,11 +168,11 @@ const AGGrid = ({ data }) => {
       {
         field: 'genre',
         filter: true,
-        hide: false,
-        cellEditor: 'agSelectCellEditor',
+        hide: false
+        /* cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
           values: ['Option 1', 'Option 2', 'Option 3'] // Define your options here
-        }
+        } */
       }
     ],
     []
@@ -206,7 +212,7 @@ const AGGrid = ({ data }) => {
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
           /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
-          enableRangeSelection={true}
+          //enableRangeSelection={true}
           headerHeight={25}
           rowMultiSelectWithClick={true}
           /* valueCache={true} */

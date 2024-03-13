@@ -30,47 +30,71 @@ import './App.css';
 function App() {
   const { state, dispatch } = AppState();
 
+  /*   useEffect(() => {
+    const waitStream = async () => {
+      await window.api.onStartStream((e) => {
+        console.log(e);
+      });
+    };
+    waitStream();
+  }); */
+
   useEffect(() => {
-    const audio = state.audioRef.current;
-
-    const handleLoadedMetadata = (e) => {
+    state.audioRef.current.onloadedmetadata = (e) => {
       console.log('onloadedmetadata: ', e);
-      audio.play();
-      dispatch({ type: 'duration', duration: convertDuration(audio) });
-      dispatch({ type: 'set-delay', delay: true });
-    };
+      /* const arrayBuffer = state.audioRef.current.src.arrayBuffer();
+      const audioBuffer = audioContext.decodeAudioData(arrayBuffer);
+      console.log(arrayBuffer, audioBuffer); */
+      state.audioRef.current.play();
 
-    const handleError = (e) => {
-      const { code, message } = e.target.error; // Note: Adjusted for potential cross-browser compatibility
+      dispatch({
+        type: 'duration',
+        duration: convertDuration(state.audioRef.current)
+      });
+      dispatch({
+        type: 'set-delay',
+        delay: true
+      });
+    };
+  });
+
+  useEffect(() => {
+    state.audioRef.current.onerror = (e) => {
+      const { code, message } = e.path[0].error;
       console.log(code, message);
+      /* if (code === 4 && message === "") */
     };
+  });
 
-    const handleSeeking = () => {
-      dispatch({ type: 'seeking', seeking: true });
+  useEffect(() => {
+    state.audioRef.current.onseeking = () => {
+      dispatch({
+        type: 'seeking',
+        seeking: true
+      });
       setTimeout(() => dispatch({ type: 'seeking', seeking: false }), 2000);
     };
+  }, [state.audioRef.onseeking]);
 
-    const handleVolumeChange = () => {
-      dispatch({ type: 'set-volume', volume: audio.volume });
+  useEffect(() => {
+    state.audioRef.current.onvolumechange = () => {
+      dispatch({
+        type: 'set-volume',
+        volume: state.audioRef.current.volume
+      });
     };
+  });
 
-    const handleEnded = () => {
-      dispatch({ type: 'direction', playNext: true });
-      dispatch({ type: 'set-delay', delay: false });
-    };
-
-    audio.onloadedmetadata = handleLoadedMetadata;
-    audio.onerror = handleError;
-    audio.onseeking = handleSeeking;
-    audio.onvolumechange = handleVolumeChange;
-    audio.onended = handleEnded;
-
-    return () => {
-      audio.onloadedmetadata = null;
-      audio.onerror = null;
-      audio.onseeking = null;
-      audio.onvolumechange = null;
-      audio.onended = null;
+  useEffect(() => {
+    state.audioRef.current.onended = () => {
+      dispatch({
+        type: 'direction',
+        playNext: true
+      });
+      dispatch({
+        type: 'set-delay',
+        delay: false
+      });
     };
   }, [state.audioRef]);
 
@@ -79,7 +103,7 @@ function App() {
     if (!state.pause) state.audioRef.current.play();
   }, [state.pause, state.audioRef.current]);
 
-  /*   useEffect(() => {
+  useEffect(() => {
     const changeMode = async () => {
       await window.api.screenMode('mini');
     };
@@ -92,17 +116,6 @@ function App() {
     if (state.minimalmode && state.player) changeMode();
     if (state.player && state.minimalmode && state.miniModePlaylist) changeExpandMini();
     if (!state.minimalmode && state.player) changeDefault();
-  }, [state.minimalmode, state.player, state.miniModePlaylist]); */
-
-  useEffect(() => {
-    const changeScreenMode = async () => {
-      if (state.minimalmode && state.player) {
-        await window.api.screenMode(state.miniModePlaylist ? 'mini-expanded' : 'mini');
-      } else if (!state.minimalmode && state.player) {
-        await window.api.screenMode('default');
-      }
-    };
-    changeScreenMode();
   }, [state.minimalmode, state.player, state.miniModePlaylist]);
 
   const handleUpdateLike = async (id) => {
