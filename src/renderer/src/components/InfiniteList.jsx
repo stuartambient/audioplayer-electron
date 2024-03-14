@@ -258,7 +258,6 @@ const InfiniteList = ({
     }
     if (option[0] === 'add album to playlist') {
       const albumTracks = await window.api.getAlbumTracks(term);
-      console.log('albumTracks: ', albumTracks);
       dispatch({
         type: 'play-album',
         playlistTracks: albumTracks

@@ -4,7 +4,7 @@ const AppState = () => {
   const audioPlayer = {
     audioRef: useRef(new Audio()),
     /* audioRef: useRef(new Howl({ src: '' })), */
-    audioContextRef: useRef(new (window.AudioContext || window.webkitAudioContext)()),
+    /* audioContextRef: useRef(new (window.AudioContext || window.webkitAudioContext)()), */
     trackRef: useRef(null),
     home: true,
     update: false,
