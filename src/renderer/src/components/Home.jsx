@@ -112,14 +112,14 @@ const Home = ({ state, dispatch }) => {
 
       {homepage === 'albums-cover-view' && (
         <AlbumsCoverView
-          state={state}
+          /* state={state}
           dispatch={dispatch}
           covers={state.covers}
           coversPageNumber={state.coversPageNumber}
-          coversSearchTerm={state.coversSearchTerm}
+          coversSearchTerm={state.coversSearchTerm} */
           resetKey={resetKey}
           homepage={homepage}
-          coversLoaded={state.coversLoaded}
+          /* coversLoaded={state.coversLoaded} */
         />
       )}
       {homepage === 'stats' && <Stats />}
