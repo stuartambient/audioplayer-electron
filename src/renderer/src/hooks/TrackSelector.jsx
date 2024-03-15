@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { Buffer } from 'buffer';
 
 const handlePicture = (buffer) => {

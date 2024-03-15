@@ -34,7 +34,7 @@ function App() {
     const audio = state.audioRef.current;
 
     const handleLoadedMetadata = (e) => {
-      console.log('onloadedmetadata: ', e);
+      /* console.log('onloadedmetadata: ', e); */
       audio.play();
       dispatch({ type: 'duration', duration: convertDuration(audio) });
       dispatch({ type: 'set-delay', delay: true });
