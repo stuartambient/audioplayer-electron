@@ -6,7 +6,8 @@ import { GiMagnifyingGlass } from 'react-icons/gi';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
 import { Buffer } from 'buffer';
 import TrackSelector from './hooks/TrackSelector';
-import AppState from './hooks/AppState';
+/* import AppState from './hooks/AppState'; */
+import { useAudioPlayer } from './AudioPlayerContext';
 
 /* import useAudio from './hooks/useAudio'; */
 
@@ -28,7 +29,7 @@ import Extras from './Components/Extras';
 import './App.css';
 
 function App() {
-  const { state, dispatch } = AppState();
+  const { state, dispatch } = useAudioPlayer();
 
   useEffect(() => {
     const audio = state.audioRef.current;

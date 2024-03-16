@@ -1,5 +1,6 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, useState, useEffect } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
+import { Buffer } from 'buffer';
 import { Plus, Minus } from '../assets/icons';
 import { BsThreeDots } from 'react-icons/bs';
 
@@ -41,20 +42,90 @@ const Item = forwardRef(
     ref
   ) => {
     const { state, dispatch } = useAudioPlayer();
+
+    const handlePicture = (buffer) => {
+      const bufferToString = Buffer.from(buffer).toString('base64');
+      return `data:${buffer.format};base64,${bufferToString}`;
+    };
+
+    /*     const useServer = (state, file) => {
+      useEffect(() => {
+        const startStream = async () => {
+          try {
+            state.audioRef.current.src = `streaming://${file}`;
+          } catch (e) {
+            console.log('error: ', e);
+          }
+        };
+
+        if (state && file) {
+          startStream();
+        }
+
+        return () => {};
+      }, [state, file]);
+    }; */
+
+    const loadFile = async (state, file) => {
+      console.log('file: ', file, 'state: ', state);
+      try {
+        state.audioRef.current.src = await `streaming://${file}`;
+        /* const buf = await state.audioRef.current.src.arrayBuffer(); */
+      } catch (e) {
+        console.log(e);
+      }
+      const picture = await window.api.getCover(event.target.id);
+      if (picture === 0) {
+        dispatch({
+          type: 'set-cover',
+          cover: 'not available'
+        });
+      } else {
+        dispatch({
+          type: 'set-cover',
+          cover: handlePicture(picture)
+        });
+      }
+      state.audioRef.current.load();
+    };
+
     const handleTrackSelect = (event, params) => {
       event.preventDefault();
-      const trackInfo = {
-        track: event.target,
-        id: event.target.id,
-        val: event.target.getAttribute('val'),
-        listType: event.target.getAttribute('fromlisttype'),
+      console.log('event: ', event.target, 'params: ', params);
+      //const trackInfo = {
+      //track: event.target,
+      //id: event.target.id,
+      //val: event.target.getAttribute('val'),
+      //listType: event.target.getAttribute('fromlisttype'),
+      //artist: params.artist,
+      //title: params.title,
+      //album: params.album,
+      //file: params.audiofile
+      //liked: params.like
+      //};
+      state.audioRef.current.src = '';
+
+      dispatch({
+        type: 'newtrack',
+        pause: false,
+        newtrack: event.target.getAttribute('val'),
+        selectedTrackListType: event.target.getAttribute('fromlisttype'),
         artist: params.artist,
         title: params.title,
         album: params.album,
-        file: params.audiofile,
-        liked: params.like
-      };
-      handleTrackSelection(trackInfo);
+        active: event.target.id,
+        nextTrack: '',
+        prevTrack: '',
+        isLiked: params.like === 1 ? true : false
+      });
+
+      dispatch({
+        type: 'direction',
+        playNext: false,
+        playPrev: false
+      });
+
+      loadFile(state, params.audiofile);
     };
 
     if (type === 'file') {

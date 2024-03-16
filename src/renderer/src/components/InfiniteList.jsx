@@ -433,8 +433,8 @@ const InfiniteList = ({
     if (!item) return;
     return (
       <Item
-        state={state}
-        dispatch={dispatch}
+        //state={state}
+        //dispatch={dispatch}
         type="file"
         key={getKey()}
         divId={`${item.afid}--item-div`}
@@ -486,8 +486,8 @@ const InfiniteList = ({
   const byPlaylist = pl.map((item, index) => {
     return (
       <Item
-        state={state}
-        dispatch={dispatch}
+        //state={state}
+        //dispatch={dispatch}
         type="playlist"
         key={getKey()}
         divId={`${item.afid}--item-div`}
