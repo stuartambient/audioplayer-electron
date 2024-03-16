@@ -39,6 +39,22 @@ const Item = forwardRef(
     },
     ref
   ) => {
+    const handleTrackSelect = (event, params) => {
+      event.preventDefault();
+      const trackInfo = {
+        track: event.target,
+        id: event.target.id,
+        val: event.target.getAttribute('val'),
+        listType: event.target.getAttribute('fromlisttype'),
+        artist: params.artist,
+        title: params.title,
+        album: params.album,
+        file: params.audiofile,
+        liked: params.like
+      };
+      handleTrackSelection(trackInfo);
+    };
+
     if (type === 'file') {
       /* console.log('ref: ', ref); */
       return (
@@ -54,9 +70,8 @@ const Item = forwardRef(
             id={id}
             val={val}
             fromlisttype={type}
-            onClick={(e) =>
-              handleTrackSelection(e, state, dispatch, artist, title, album, audiofile, like)
-            }
+            /* onClick={(e) => handleTrackSelection(e, { artist, title, album, audiofile, like })} */
+            onClick={(e) => handleTrackSelect(e, { artist, title, album, audiofile, like })}
           >
             Artist: {artist}
             <br></br>

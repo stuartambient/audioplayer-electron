@@ -9,35 +9,7 @@ const handlePicture = (buffer) => {
 
 const mediaSource = new MediaSource();
 
-const TrackSelector = async (
-  e,
-  state,
-  dispatch,
-  artist = null,
-  title = null,
-  album = null,
-  audiofile = null,
-  like = null
-) => {
-  console.log('trackSelector "e"', e.target);
-  let track, id, val, listType, file, liked;
-  if (e.target) {
-    e.preventDefault();
-    track = e.target;
-    id = e.target.id;
-    val = +e.target.getAttribute('val');
-    listType = e.target.getAttribute('fromlisttype');
-    file = audiofile;
-    liked = like;
-  } else {
-    track = e;
-    id = track.afid;
-    val = 0;
-    listType = 'playlist';
-    file = track.audiofile;
-    liked = track.like;
-  }
-
+const TrackSelector = async (trackInfo) => {
   state.audioRef.current.src = '';
 
   dispatch({
@@ -45,13 +17,13 @@ const TrackSelector = async (
     pause: false,
     newtrack: val,
     selectedTrackListType: listType,
-    artist: artist || track.artist,
-    title: title || track.title,
-    album: album || track.album,
-    active: id,
+    artist: trackInfo.artist,
+    title: trackInfo.title,
+    album: trackInfo.album,
+    active: trackInfo.id,
     nextTrack: '',
     prevTrack: '',
-    isLiked: liked === 1 ? true : false
+    isLiked: trackInfo.liked === 1 ? true : false
   });
 
   dispatch({
@@ -61,7 +33,7 @@ const TrackSelector = async (
   });
 
   try {
-    state.audioRef.current.src = await `streaming://${file}`;
+    state.audioRef.current.src = await `streaming://${trackInfo.file}`;
     /* const buf = await state.audioRef.current.src.arrayBuffer(); */
   } catch (e) {
     console.log(e);
@@ -75,7 +47,7 @@ const TrackSelector = async (
 
   /*   state.audioRef.current.src = startStream; */
 
-  const picture = await window.api.getCover(id);
+  const picture = await window.api.getCover(trackInfo.id);
   if (picture === 0) {
     dispatch({
       type: 'set-cover',
