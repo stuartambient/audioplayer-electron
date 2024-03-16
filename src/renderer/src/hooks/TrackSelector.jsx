@@ -18,7 +18,6 @@ const TrackSelector = async (
   audiofile = null,
   like = null
 ) => {
-  console.log('trackSelector "e"', e.target);
   let track, id, val, listType, file, liked;
   if (e.target) {
     e.preventDefault();
@@ -36,7 +35,7 @@ const TrackSelector = async (
     file = track.audiofile;
     liked = track.like;
   }
-
+  console.log('track: ', track, 'listType: ', listType);
   state.audioRef.current.src = '';
 
   dispatch({
