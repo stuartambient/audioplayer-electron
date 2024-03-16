@@ -1,4 +1,5 @@
 import { forwardRef, useState } from 'react';
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { Plus, Minus } from '../assets/icons';
 import { BsThreeDots } from 'react-icons/bs';
 
@@ -33,12 +34,13 @@ const Item = forwardRef(
       handleAlbumTracksRequest,
       term,
       fullpath,
-      checked,
-      state,
-      dispatch
+      checked
+      //state,
+      //dispatch
     },
     ref
   ) => {
+    const { state, dispatch } = useAudioPlayer();
     const handleTrackSelect = (event, params) => {
       event.preventDefault();
       const trackInfo = {
