@@ -66,7 +66,7 @@ const Item = forwardRef(
       }, [state, file]);
     }; */
 
-    const loadFile = async (state, file) => {
+    const loadFile = async (state, file, id) => {
       console.log('file: ', file, 'state: ', state);
       try {
         state.audioRef.current.src = await `streaming://${file}`;
@@ -74,7 +74,7 @@ const Item = forwardRef(
       } catch (e) {
         console.log(e);
       }
-      const picture = await window.api.getCover(event.target.id);
+      const picture = await window.api.getCover(id);
       if (picture === 0) {
         dispatch({
           type: 'set-cover',
@@ -91,18 +91,6 @@ const Item = forwardRef(
 
     const handleTrackSelect = (event, params) => {
       event.preventDefault();
-      console.log('event: ', event.target, 'params: ', params);
-      //const trackInfo = {
-      //track: event.target,
-      //id: event.target.id,
-      //val: event.target.getAttribute('val'),
-      //listType: event.target.getAttribute('fromlisttype'),
-      //artist: params.artist,
-      //title: params.title,
-      //album: params.album,
-      //file: params.audiofile
-      //liked: params.like
-      //};
       state.audioRef.current.src = '';
 
       dispatch({
@@ -125,7 +113,7 @@ const Item = forwardRef(
         playPrev: false
       });
 
-      loadFile(state, params.audiofile);
+      loadFile(state, params.audiofile, event.target.id);
     };
 
     if (type === 'file') {
@@ -200,7 +188,7 @@ const Item = forwardRef(
             id={id}
             val={val}
             onClick={(e) =>
-              handleTrackSelection(e, state, dispatch, artist, title, album, audiofile, like)
+              handleTrackSelect(e, state, dispatch, artist, title, album, audiofile, like)
             }
           >
             Artist: {artist}

@@ -5,7 +5,7 @@ import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
 import { Buffer } from 'buffer';
-import TrackSelector from './hooks/TrackSelector';
+/* import TrackSelector from './hooks/TrackSelector'; */
 /* import AppState from './hooks/AppState'; */
 import { useAudioPlayer } from './AudioPlayerContext';
 
@@ -395,27 +395,27 @@ function App() {
 
       {state.player || state.miniModePlaylist || state.home || state.update ? (
         <InfiniteList
-          handleTrackSelection={TrackSelector}
-          library={state.library}
-          currentTrack={state.newtrack}
-          playNext={state.playNext}
+        /* handleTrackSelection={TrackSelector} */
+        /* library={state.library} */
+        /* currentTrack={state.newtrack} */
+        /* playNext={state.playNext}
           playPrev={state.playPrev}
           nextTrack={state.nextTrack}
           prevTrack={state.prevTrack}
-          active={state.active}
-          dispatch={dispatch}
-          state={state}
-          listType={state.listType}
-          /* handlePicture={handlePicture} */
-          tracks={state.tracks}
-          tracksPageNumber={state.tracksPageNumber}
-          tracksShuffle={state.tracksShuffle}
-          playlistShuffle={state.playlistShuffle}
-          playlistTracks={state.playlistTracks}
-          minimalmode={state.minimalmode}
+          active={state.active} */
+        /*  dispatch={dispatch}
+          state={state} */
+        /* listType={state.listType} */
+        /* handlePicture={handlePicture} */
+        /* tracks={state.tracks} */
+        /*  tracksPageNumber={state.tracksPageNumber} */
+        /* tracksShuffle={state.tracksShuffle} */
+        /* playlistShuffle={state.playlistShuffle} */
+        /* playlistTracks={state.playlistTracks} */
+        /*  minimalmode={state.minimalmode}
           miniModePlaylist={state.miniModePlaylist}
           albums={state.albums}
-          albumsPageNumber={state.albumsPageNumber}
+          albumsPageNumber={state.albumsPageNumber} */
         />
       ) : null}
       {/*       ) : null} */}

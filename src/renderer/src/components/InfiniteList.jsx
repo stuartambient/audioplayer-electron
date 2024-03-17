@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
 import MediaMenu from './MediaMenu';
@@ -16,29 +17,32 @@ import '../style/InfiniteList.css';
 /* import { electronAPI } from '@electron-toolkit/preload'; */
 /* import { ipcRenderer } from 'electron'; */
 
-const InfiniteList = ({
-  handleTrackSelection,
-  currentTrack,
-  /* setCurrentTrack, */
-  playNext,
-  playPrev,
-  nextTrack,
-  prevTrack,
-  active,
-  state,
-  dispatch,
-  listType,
-  library,
-  tracks,
-  tracksPageNumber,
-  playlistTracks,
-  tracksShuffle,
-  playlistShuffle,
-  minimalmode,
-  miniModePlaylist,
-  albums,
-  albumsPageNumber
-}) => {
+const InfiniteList = (
+  {
+    /* handleTrackSelection, */
+    /* currentTrack, */
+    /* setCurrentTrack, */
+    /*  playNext,
+  playPrev, */
+    /*  nextTrack,
+  prevTrack, */
+    /* active, */
+    /*   state,
+  dispatch, */
+    /* listType */
+    /* library, */
+    /* tracks, */
+    /* tracksPageNumber, */
+    /*  playlistTracks, */
+    /* tracksShuffle, */
+    /* playlistShuffle, */
+    /* minimalmode, */
+    /* miniModePlaylist, */
+    /* albums, */
+    /* albumsPageNumber */
+  }
+) => {
+  const { state, dispatch } = useAudioPlayer();
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [albumsSearchTerm, setAlbumsSearchTerm] = useState('');
 
@@ -75,14 +79,14 @@ const InfiniteList = ({
   useEffect(() => {
     const handleShuffling = () => {
       setShuffledPlaylist(
-        playlistTracks.map((item) => item).sort((a) => (Math.random() > 0.5 ? 1 : -1))
+        state.playlistTracks.map((item) => item).sort((a) => (Math.random() > 0.5 ? 1 : -1))
       );
     };
-    if (playlistShuffle) handleShuffling();
-  }, [playlistShuffle, playlistTracks]);
+    if (state.playlistShuffle) handleShuffling();
+  }, [state.playlistShuffle, state.playlistTracks]);
   /*   usePlaylist(albumId, dispatch); */
 
-  usePlaylistDialog(playlistReq, playlistTracks, dispatch, setPlaylistReq);
+  usePlaylistDialog(playlistReq, state.playlistTracks, dispatch, setPlaylistReq);
 
   const albumsTracks = albumTracks.map((track) => {
     console.log('mapped: ', track);
@@ -96,49 +100,56 @@ const InfiniteList = ({
   const scrollRef = useRef();
 
   useEffect(() => {
-    if (listType === 'files') {
-      if (currentTrack >= 0 && tracks[currentTrack + 1]) {
+    if (state.listType === 'files') {
+      if (state.currentTrack >= 0 && state.tracks[state.currentTrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: tracks[currentTrack + 1].afid
+          nextTrack: state.tracks[state.currentTrack + 1].afid
         });
       }
-      if (currentTrack >= 1 && tracks[currentTrack - 1]) {
+      if (state.currentTrack >= 1 && state.tracks[state.currentTrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: tracks[currentTrack - 1].afid
+          prevTrack: state.tracks[state.currentTrack - 1].afid
         });
       }
     }
-    if (listType === 'playlist' && !playlistShuffle) {
-      if (currentTrack >= 0 && playlistTracks[currentTrack + 1]) {
+    if (state.listType === 'playlist' && !playlistShuffle) {
+      if (state.currentTrack >= 0 && state.playlistTracks[state.currentTrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: playlistTracks[currentTrack + 1].afid
+          nextTrack: state.playlistTracks[state.currentTrack + 1].afid
         });
       }
-      if (currentTrack >= 1 && playlistTracks[currentTrack - 1]) {
+      if (state.currentTrack >= 1 && state.playlistTracks[state.currentTrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: playlistTracks[currentTrack - 1].afid
+          prevTrack: state.playlistTracks[state.currentTrack - 1].afid
         });
       }
     }
-    if (playlistShuffle) {
-      if (currentTrack >= 0 && shuffledPlaylist[currentTrack + 1]) {
+    if (state.playlistShuffle) {
+      if (state.currentTrack >= 0 && shuffledPlaylist[state.currentTrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: shuffledPlaylist[currentTrack + 1].afid
+          nextTrack: shuffledPlaylist[state.currentTrack + 1].afid
         });
       }
-      if (currentTrack >= 1 && shuffledPlaylist[currentTrack - 1]) {
+      if (state.currentTrack >= 1 && shuffledPlaylist[state.currentTrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: shuffledPlaylist[currentTrack - 1].afid
+          prevTrack: shuffledPlaylist[state.currentTrack - 1].afid
         });
       }
     }
-  }, [currentTrack, tracks, playlistTracks, shuffledPlaylist, listType, dispatch]);
+  }, [
+    state.currentTrack,
+    state.tracks,
+    state.playlistTracks,
+    shuffledPlaylist,
+    state.listType,
+    dispatch
+  ]);
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
@@ -151,20 +162,27 @@ const InfiniteList = ({
       toTrack.dispatchEvent(changeTrack);
     };
 
-    if (playNext && nextTrack) {
-      handleTrackChange(nextTrack);
+    if (state.playNext && state.nextTrack) {
+      handleTrackChange(state.nextTrack);
     }
-    if (playPrev && prevTrack) {
-      handleTrackChange(prevTrack);
+    if (state.playPrev && state.prevTrack) {
+      handleTrackChange(state.prevTrack);
     }
-  }, [playNext, nextTrack, playPrev, prevTrack, tracks, currentTrack]);
+  }, [
+    state.playNext,
+    state.nextTrack,
+    state.playPrev,
+    state.prevTrack,
+    state.tracks,
+    state.currentTrack
+  ]);
 
   const handleTextSearch = (e) => {
     e.preventDefault();
     if (e.currentTarget.textsearch.value === '') {
       setResetKey(getKey());
     }
-    if (listType === 'files') {
+    if (state.listType === 'files') {
       dispatch({
         type: 'reset-tracks',
         tracks: []
@@ -183,7 +201,7 @@ const InfiniteList = ({
       });
       setTracksSearchTerm(e.currentTarget.textsearch.value);
     }
-    if (listType === 'albums') {
+    if (state.listType === 'albums') {
       dispatch({
         type: 'reset-albums',
         albums: []
@@ -242,17 +260,17 @@ const InfiniteList = ({
 
   const handleContextMenuOption = async (option, id, term = null) => {
     if (option[0] === 'add track to playlist') {
-      const track = tracks.find((item) => item.afid === id);
+      const track = state.tracks.find((item) => item.afid === id);
 
       if (track) {
-        if (!playlistTracks.find((e) => e.afid === id)) {
+        if (!state.playlistTracks.find((e) => e.afid === id)) {
           setFlashDiv({ type: 'file', id: `${track.afid}--item-div` });
         } else {
           return;
         }
         dispatch({
           type: 'track-to-playlist',
-          playlistTracks: [...playlistTracks, track]
+          playlistTracks: [...state.playlistTracks, track]
         });
       }
     }
@@ -260,10 +278,10 @@ const InfiniteList = ({
       const albumTracks = await window.api.getAlbumTracks(term);
       dispatch({
         type: 'play-album',
-        playlistTracks: albumTracks
+        playlistTracks: state.albumTracks
       });
       const incompleteAlbum = albumTracks.filter((track) =>
-        playlistTracks.find((t) => t.afid === track.afid)
+        state.playlistTracks.find((t) => t.afid === track.afid)
       );
       if (incompleteAlbum.length < albumTracks.length) {
         const removeAlbum = loadedAlbums.filter((la) => la !== id);
@@ -278,7 +296,7 @@ const InfiniteList = ({
       }
     }
     if (option[0] === 'remove from playlist') {
-      const removeTrack = playlistTracks.filter((track) => track.afid !== id);
+      const removeTrack = state.playlistTracks.filter((track) => track.afid !== id);
       dispatch({
         type: 'playlist-clear',
         playlistTracks: removeTrack
@@ -289,7 +307,7 @@ const InfiniteList = ({
   const handleContextMenu = async (e) => {
     e.preventDefault();
     const term = e.target.getAttribute('fullpath');
-    const type = e.target.getAttribute('fromlisttype');
+    const type = e.target.getAttribute('fromstate.listType');
     if (type === null) return;
     const splitid = e.target.id.split('--')[0];
     const id = splitid;
@@ -336,8 +354,8 @@ const InfiniteList = ({
   };
 
   const handleSortClick = (e) => {
-    if (tracksShuffle || playlistShuffle) return;
-    if (listType === 'files') {
+    if (state.tracksShuffle || state.playlistShuffle) return;
+    if (state.listType === 'files') {
       dispatch({
         type: 'tracks-pagenumber',
         tracksPageNumber: 0
@@ -347,7 +365,7 @@ const InfiniteList = ({
         tracks: []
       });
       setFilesSortType(e.target.value);
-    } else if (listType === 'albums') {
+    } else if (state.listType === 'albums') {
       dispatch({
         type: 'albums-pagenumber',
         albumsPageNumber: 0
@@ -376,7 +394,7 @@ const InfiniteList = ({
             console.log('new page');
             dispatch({
               type: 'tracks-pagenumber',
-              tracksPageNumber: tracksPageNumber + 1
+              tracksPageNumber: state.tracksPageNumber + 1
             });
           }
         },
@@ -429,7 +447,7 @@ const InfiniteList = ({
     [active, scrollRef]
   );
 
-  const byFiles = tracks.map((item, index) => {
+  const byFiles = state.tracks.map((item, index) => {
     if (!item) return;
     return (
       <Item
@@ -439,7 +457,7 @@ const InfiniteList = ({
         key={getKey()}
         divId={`${item.afid}--item-div`}
         className={`${active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'}
-        ref={tracks.length === index + 1 ? lastTrackElement : scrollToView}
+        ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
         href={item.afid}
         id={item.afid}
         like={item.like}
@@ -447,7 +465,7 @@ const InfiniteList = ({
         val={index}
         flashDiv={flashDiv.id}
         showContextMenu={handleContextMenu}
-        handleTrackSelection={handleTrackSelection}
+        /* handleTrackSelection={handleTrackSelection} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
@@ -482,7 +500,7 @@ const InfiniteList = ({
     );
   });
   let pl;
-  playlistShuffle ? (pl = shuffledPlaylist) : (pl = playlistTracks);
+  state.playlistShuffle ? (pl = shuffledPlaylist) : (pl = state.playlistTracks);
   const byPlaylist = pl.map((item, index) => {
     return (
       <Item
@@ -498,7 +516,7 @@ const InfiniteList = ({
         audiofile={item.audiofile}
         val={index}
         showContextMenu={handleContextMenu}
-        handleTrackSelection={handleTrackSelection}
+        /* handleTrackSelection={handleTrackSelection} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
@@ -507,20 +525,20 @@ const InfiniteList = ({
   });
 
   const listClassNames = () => {
-    if (!library) {
+    if (!state.library) {
       return 'results results-hidden';
     }
-    if (library && !minimalmode) {
+    if (state.library && !state.minimalmode) {
       return 'results';
     }
-    if (library && minimalmode) {
+    if (state.library && state.minimalmode) {
       return 'results results-minimal';
     }
   };
 
   return (
     <>
-      {library === true ? (
+      {state.library === true ? (
         <MediaMenu
           isFilesSortSelected={isFilesSortSelected}
           isAlbumsSortSelected={isAlbumsSortSelected}
@@ -531,20 +549,20 @@ const InfiniteList = ({
           handlePlaylistFiles={handlePlaylistFiles}
           dispatch={dispatch}
           playlistShuffle={playlistShuffle}
-          tracksShuffle={tracksShuffle}
+          tracksShuffle={state.tracksShuffle}
         />
       ) : null}
       <div className={listClassNames()}>
-        {listType === 'files' && !tracks.length && !tracksLoading ? (
+        {state.listType === 'files' && !state.tracks.length && !tracksLoading ? (
           <div className="noresults">No results</div>
         ) : null}
-        {listType === 'albums' && !albums.length && !albumsLoading ? (
+        {state.listType === 'albums' && !state.albums.length && !albumsLoading ? (
           <div className="noresults">No results</div>
         ) : null}
-        {listType === 'playlist' && !playlistTracks.length ? (
+        {state.listType === 'playlist' && !state.playlistTracks.length ? (
           <div className="noresults">No current playlist</div>
         ) : null}
-        {listType === 'files' && (
+        {state.listType === 'files' && (
           <>
             <div className="files">{byFiles}</div>
             <div className="albums" style={{ display: 'none' }}>
@@ -555,7 +573,7 @@ const InfiniteList = ({
             </div>
           </>
         )}
-        {listType === 'albums' && (
+        {state.listType === 'albums' && (
           <>
             <div className="albums">{byAlbums}</div>
             <div className="files" style={{ display: 'none' }}>
@@ -566,7 +584,7 @@ const InfiniteList = ({
             </div>
           </>
         )}
-        {listType === 'playlist' && (
+        {state.listType === 'playlist' && (
           <>
             <div className="playlist">{byPlaylist}</div>
             <div className="albums" style={{ display: 'none' }}>
@@ -577,10 +595,10 @@ const InfiniteList = ({
             </div>
           </>
         )}
-        {listType === 'files'
+        {state.listType === 'files'
           ? tracksLoading && <div className="item itemloading">...Loading</div>
           : null}
-        {listType === 'albums'
+        {state.listType === 'albums'
           ? albumsLoading && <div className="item itemloading">...Loading</div>
           : null}
       </div>
