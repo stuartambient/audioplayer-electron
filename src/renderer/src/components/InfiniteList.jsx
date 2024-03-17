@@ -58,16 +58,16 @@ const InfiniteList = (
   /* const [albumId, setAlbumId] = useState([]); */
   const [playlistReq, setPlaylistReq] = useState('');
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
-    tracksPageNumber,
+    state.tracksPageNumber,
     tracksSearchTerm,
     filesSortType,
     resetKey,
     state,
     dispatch,
-    tracksShuffle
+    state.tracksShuffle
   );
   const { albumsLoading, hasMoreAlbums, albumsError } = useAlbums(
-    albumsPageNumber,
+    state.albumsPageNumber,
     albumsSearchTerm,
     albumsSortType,
     resetKey,
@@ -436,7 +436,7 @@ const InfiniteList = (
   const scrollToView = useCallback(
     (node) => {
       if (!node) return;
-      if (active && node && node.getAttribute('id') === `${active}--item-div`) {
+      if (state.active && node && node.getAttribute('id') === `${state.active}--item-div`) {
         scrollRef.current = node;
         /* scrollRef.current.scrollIntoView(); */
       }
@@ -444,7 +444,7 @@ const InfiniteList = (
         console.log(activeRef);
       } */
     },
-    [active, scrollRef]
+    [state.active, scrollRef]
   );
 
   const byFiles = state.tracks.map((item, index) => {
@@ -456,7 +456,9 @@ const InfiniteList = (
         type="file"
         key={getKey()}
         divId={`${item.afid}--item-div`}
-        className={`${active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'}
+        className={
+          `${state.active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'
+        }
         ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
         href={item.afid}
         id={item.afid}
@@ -477,14 +479,14 @@ const InfiniteList = (
     );
   });
 
-  const byAlbums = albums.map((item, index) => {
+  const byAlbums = state.albums.map((item, index) => {
     return (
       <Item
         type="folder"
         key={getKey()}
         id={item.id}
         className="item"
-        ref={albums.length === index + 1 ? lastAlbumElement : scrollToView}
+        ref={state.albums.length === index + 1 ? lastAlbumElement : scrollToView}
         href="http://"
         val={index}
         foldername={item.foldername}
@@ -509,7 +511,9 @@ const InfiniteList = (
         type="playlist"
         key={getKey()}
         divId={`${item.afid}--item-div`}
-        className={`${active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'}
+        className={
+          `${state.active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'
+        }
         href={item.afid}
         id={item.afid}
         like={item.like}
@@ -545,10 +549,10 @@ const InfiniteList = (
           handleSortClick={handleSortClick}
           listType={state.listType}
           handleTextSearch={handleTextSearch}
-          miniModePlaylist={miniModePlaylist}
+          miniModePlaylist={state.miniModePlaylist}
           handlePlaylistFiles={handlePlaylistFiles}
           dispatch={dispatch}
-          playlistShuffle={playlistShuffle}
+          playlistShuffle={state.playlistShuffle}
           tracksShuffle={state.tracksShuffle}
         />
       ) : null}
