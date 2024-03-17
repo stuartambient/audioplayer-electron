@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
 /* import 'ag-grid-community'; */
 import { FaSave } from 'react-icons/fa';
+import { CiPlay1 } from 'react-icons/ci';
 import { ImCancelCircle } from 'react-icons/im';
 import CustomToolPanel from './CustomToolPanel';
 
@@ -37,6 +38,12 @@ const AGGrid = ({ data }) => {
   const onGridReady = (params) => {
     gridApi = params.api;
   };
+
+  const IconCellRenderer = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <CiPlay1 />
+    </div>
+  );
 
   const handleColumnPanel = (e) => {
     const col = e.target.name;
@@ -159,6 +166,13 @@ const AGGrid = ({ data }) => {
 
   const columnDefs = useMemo(
     () => [
+      {
+        field: 'Icon',
+        cellRenderer: (params) => <CiPlay1 />,
+        width: 50,
+        editable: false,
+        resizable: false
+      },
       { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false },
       { field: 'audiofile', filter: true, hide: false, editable: false },
       { field: 'year', filter: true, hide: false },
@@ -174,6 +188,13 @@ const AGGrid = ({ data }) => {
           values: ['Option 1', 'Option 2', 'Option 3'] // Define your options here
         } */
       }
+      /*     {
+        field: 'Icon',
+        cellRenderer: (params) => <CiPlay1 />,
+        width: 50,
+        editable: false,
+        resizable: false
+      } */ // Optional: Center the cell content }
     ],
     []
   );
