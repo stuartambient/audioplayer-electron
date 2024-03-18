@@ -13,7 +13,7 @@ const Item = forwardRef(
       className,
       href,
       val,
-      handleTrackSelection,
+      /* handleTrackSelection, */
       artist,
       title,
       genre,

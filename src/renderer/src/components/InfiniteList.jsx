@@ -101,49 +101,49 @@ const InfiniteList = (
 
   useEffect(() => {
     if (state.listType === 'files') {
-      if (state.currentTrack >= 0 && state.tracks[state.currentTrack + 1]) {
+      if (state.newtrack >= 0 && state.tracks[state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: state.tracks[state.currentTrack + 1].afid
+          nextTrack: state.tracks[state.newtrack + 1].afid
         });
       }
-      if (state.currentTrack >= 1 && state.tracks[state.currentTrack - 1]) {
+      if (state.newtrack >= 1 && state.tracks[state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: state.tracks[state.currentTrack - 1].afid
+          prevTrack: state.tracks[state.newtrack - 1].afid
         });
       }
     }
     if (state.listType === 'playlist' && !playlistShuffle) {
-      if (state.currentTrack >= 0 && state.playlistTracks[state.currentTrack + 1]) {
+      if (state.newtrack >= 0 && state.playlistTracks[state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: state.playlistTracks[state.currentTrack + 1].afid
+          nextTrack: state.playlistTracks[state.newtrack + 1].afid
         });
       }
-      if (state.currentTrack >= 1 && state.playlistTracks[state.currentTrack - 1]) {
+      if (state.newtrack >= 1 && state.playlistTracks[state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: state.playlistTracks[state.currentTrack - 1].afid
+          prevTrack: state.playlistTracks[state.newtrack - 1].afid
         });
       }
     }
     if (state.playlistShuffle) {
-      if (state.currentTrack >= 0 && shuffledPlaylist[state.currentTrack + 1]) {
+      if (state.newtrack >= 0 && shuffledPlaylist[state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: shuffledPlaylist[state.currentTrack + 1].afid
+          nextTrack: shuffledPlaylist[state.newtrack + 1].afid
         });
       }
-      if (state.currentTrack >= 1 && shuffledPlaylist[state.currentTrack - 1]) {
+      if (state.newtrack >= 1 && shuffledPlaylist[state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: shuffledPlaylist[state.currentTrack - 1].afid
+          prevTrack: shuffledPlaylist[state.newtrack - 1].afid
         });
       }
     }
   }, [
-    state.currentTrack,
+    state.newtrack,
     state.tracks,
     state.playlistTracks,
     shuffledPlaylist,
@@ -153,6 +153,7 @@ const InfiniteList = (
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
+      console.log('track ID: ', trackId);
       const changeTrack = new Event('click', {
         bubbles: true,
         cancelable: false
@@ -174,7 +175,7 @@ const InfiniteList = (
     state.playPrev,
     state.prevTrack,
     state.tracks,
-    state.currentTrack
+    state.nextTrack
   ]);
 
   const handleTextSearch = (e) => {
