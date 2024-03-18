@@ -101,16 +101,17 @@ const InfiniteList = (
 
   useEffect(() => {
     if (state.listType === 'files') {
-      if (state.newtrack >= 0 && state.tracks[state.newtrack + 1]) {
+      if (state.newtrack >= 0 && state.tracks[+state.newtrack + 1]) {
+        /* console.log('next up: ', state.tracks[+state.newtrack + 1]); */
         dispatch({
           type: 'set-next-track',
-          nextTrack: state.tracks[state.newtrack + 1].afid
+          nextTrack: state.tracks[+state.newtrack + 1].afid
         });
       }
-      if (state.newtrack >= 1 && state.tracks[state.newtrack - 1]) {
+      if (state.newtrack >= 1 && state.tracks[+state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: state.tracks[state.newtrack - 1].afid
+          prevTrack: state.tracks[+state.newtrack - 1].afid
         });
       }
     }
