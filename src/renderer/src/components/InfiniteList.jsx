@@ -14,34 +14,8 @@ import {
   /*   useRandomTracks */
 } from '../hooks/useDb';
 import '../style/InfiniteList.css';
-/* import { electronAPI } from '@electron-toolkit/preload'; */
-/* import { ipcRenderer } from 'electron'; */
 
-const InfiniteList = (
-  {
-    /* handleTrackSelection, */
-    /* currentTrack, */
-    /* setCurrentTrack, */
-    /*  playNext,
-  playPrev, */
-    /*  nextTrack,
-  prevTrack, */
-    /* active, */
-    /*   state,
-  dispatch, */
-    /* listType */
-    /* library, */
-    /* tracks, */
-    /* tracksPageNumber, */
-    /*  playlistTracks, */
-    /* tracksShuffle, */
-    /* playlistShuffle, */
-    /* minimalmode, */
-    /* miniModePlaylist, */
-    /* albums, */
-    /* albumsPageNumber */
-  }
-) => {
+const InfiniteList = () => {
   const { state, dispatch } = useAudioPlayer();
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [albumsSearchTerm, setAlbumsSearchTerm] = useState('');
@@ -115,7 +89,7 @@ const InfiniteList = (
         });
       }
     }
-    if (state.listType === 'playlist' && !playlistShuffle) {
+    if (state.listType === 'playlist' && !state.playlistShuffle) {
       if (state.newtrack >= 0 && state.playlistTracks[state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
@@ -307,9 +281,10 @@ const InfiniteList = (
   };
 
   const handleContextMenu = async (e) => {
+    console.log('handleContextMenu: ', e);
     e.preventDefault();
     const term = e.target.getAttribute('fullpath');
-    const type = e.target.getAttribute('fromstate.listType');
+    const type = e.target.getAttribute('fromlisttype');
     if (type === null) return;
     const splitid = e.target.id.split('--')[0];
     const id = splitid;
