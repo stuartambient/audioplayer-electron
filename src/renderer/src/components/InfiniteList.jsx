@@ -254,7 +254,7 @@ const InfiniteList = () => {
       const albumTracks = await window.api.getAlbumTracks(term);
       dispatch({
         type: 'play-album',
-        playlistTracks: state.albumTracks
+        playlistTracks: albumTracks
       });
       const incompleteAlbum = albumTracks.filter((track) =>
         state.playlistTracks.find((t) => t.afid === track.afid)
