@@ -240,6 +240,8 @@ const InfiniteList = ({
     }
   }, [flashDiv]);
 
+  console.log('SHOW CONTEXT');
+
   const handleContextMenuOption = async (option, id, term = null) => {
     console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term);
     if (option[0] === 'add track to playlist') {
