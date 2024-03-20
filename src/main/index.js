@@ -684,6 +684,12 @@ ipcMain.handle('show-tracks-menu', (event) => {
       click: () => {
         return event.sender.send('track-to-playlist', 'add track to playlist');
       }
+    },
+    {
+      label: 'edit track metadata',
+      click: () => {
+        return event.sender.send('edit-track-metadata', 'edit track metadata');
+      }
     }
   ];
   const menu = Menu.buildFromTemplate(template);

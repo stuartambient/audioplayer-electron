@@ -46,6 +46,7 @@ const api = {
   showAlbumCoverMenu: () => ipcRenderer.invoke('show-album-cover-menu'),
   showTextInputMenu: () => ipcRenderer.invoke('show-text-input-menu'),
   onTrackToPlaylist: (cb) => ipcRenderer.once('track-to-playlist', (event, ...args) => cb(args)),
+  onEditTrackMetadata: (cb) => ipcRenderer.once('edit-metadata', (event, args) => cb(args)),
   onAlbumToPlaylist: (cb) => ipcRenderer.once('album-to-playlist', (event, ...args) => cb(args)),
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),

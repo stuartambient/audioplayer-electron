@@ -241,6 +241,7 @@ const InfiniteList = ({
   }, [flashDiv]);
 
   const handleContextMenuOption = async (option, id, term = null) => {
+    console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term);
     if (option[0] === 'add track to playlist') {
       const track = tracks.find((item) => item.afid === id);
 
@@ -255,6 +256,9 @@ const InfiniteList = ({
           playlistTracks: [...playlistTracks, track]
         });
       }
+    }
+    if (option[0] === 'edit track metadata') {
+      console.log('editing track metadata.....');
     }
     if (option[0] === 'add album to playlist') {
       const albumTracks = await window.api.getAlbumTracks(term);
@@ -288,6 +292,7 @@ const InfiniteList = ({
 
   const handleContextMenu = async (e) => {
     e.preventDefault();
+    console.log(e);
     const term = e.target.getAttribute('fullpath');
     const type = e.target.getAttribute('fromlisttype');
     if (type === null) return;
@@ -297,6 +302,7 @@ const InfiniteList = ({
       case 'file':
         await window.api.showTracksMenu();
         await window.api.onTrackToPlaylist((e) => handleContextMenuOption(e, id));
+        await window.api.onEditTrackMetadata((e) => handleContextMenuOption(e, id));
         break;
       case 'folder':
         await window.api.showAlbumsMenu();
