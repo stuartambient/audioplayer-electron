@@ -53,6 +53,7 @@ const InfiniteList = ({
 
   /* const [albumId, setAlbumId] = useState([]); */
   const [playlistReq, setPlaylistReq] = useState('');
+  const [contextMenuItem, setContextMenuItem] = useState(null);
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     tracksPageNumber,
     tracksSearchTerm,
@@ -240,7 +241,15 @@ const InfiniteList = ({
     }
   }, [flashDiv]);
 
-  console.log('SHOW CONTEXT');
+  const showContextMenu = (event) => {
+    e.preventDefault();
+    //const term = e.target.getAttribute('fullpath');
+    const type = e.target.getAttribute('fromlisttype');
+    if (type === null) return;
+    const id = e.target.id.split('--')[0];
+    setContextMenuItem({ id, type });
+    window.api.showContextMenu(id, type);
+  };
 
   const handleContextMenuOption = async (option, id, term = null) => {
     console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term);
@@ -454,7 +463,7 @@ const InfiniteList = ({
         audiofile={item.audiofile}
         val={index}
         flashDiv={flashDiv.id}
-        showContextMenu={handleContextMenu}
+        showContextMenu={showContextMenu}
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}

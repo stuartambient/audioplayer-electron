@@ -8,7 +8,7 @@ const fixedEncodeURIComponent = (str) => {
   });
 };
 // Custom APIs for renderer
-const api = {
+contextBridge.exposeInMainWorld('api', {
   updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
   updateCovers: () => ipcRenderer.invoke('update-covers'),
@@ -67,7 +67,7 @@ const api = {
   /*   onStartStream: (stream) => ipcRenderer.on('start-stream', (args) => args) */
 
   /* onAlbumCoverMenu: (cb) => ipcRenderer.once('add-album-to-playlist', (event, ...args) => cb(args)) */
-};
+});
 
 /* ipcRenderer.on('track-to-playlist', (_event, arg) => {
   console.log(arg);
@@ -76,7 +76,7 @@ const api = {
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
-if (process.contextIsolated) {
+/* if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('api', api);
@@ -86,4 +86,4 @@ if (process.contextIsolated) {
 } else {
   window.electron = electronAPI;
   window.api = api;
-}
+} */
