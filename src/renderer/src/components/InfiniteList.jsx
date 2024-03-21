@@ -29,7 +29,6 @@ const InfiniteList = () => {
   const [loadedAlbums, setLoadedAlbums] = useState([]);
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
 
-  /* const [albumId, setAlbumId] = useState([]); */
   const [playlistReq, setPlaylistReq] = useState('');
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     state.tracksPageNumber,
@@ -186,14 +185,7 @@ const InfiniteList = () => {
         type: 'albums-pagenumber',
         albumsPageNumber: 0
       });
-      /*       dispatch({
-        type: 'set-next-track',
-        nextTrack: ''
-      });
-      dispatch({
-        type: 'set-prev-track',
-        prevTrack: ''
-      }); */
+
       setAlbumsSearchTerm(e.currentTarget.textsearch.value);
     }
   };
@@ -428,8 +420,6 @@ const InfiniteList = () => {
     if (!item) return;
     return (
       <Item
-        //state={state}
-        //dispatch={dispatch}
         type="file"
         key={getKey()}
         divId={`${item.afid}--item-div`}
@@ -444,7 +434,6 @@ const InfiniteList = () => {
         val={index}
         flashDiv={flashDiv.id}
         showContextMenu={handleContextMenu}
-        /* handleTrackSelection={handleTrackSelection} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
@@ -483,8 +472,6 @@ const InfiniteList = () => {
   const byPlaylist = pl.map((item, index) => {
     return (
       <Item
-        //state={state}
-        //dispatch={dispatch}
         type="playlist"
         key={getKey()}
         divId={`${item.afid}--item-div`}
@@ -497,7 +484,6 @@ const InfiniteList = () => {
         audiofile={item.audiofile}
         val={index}
         showContextMenu={handleContextMenu}
-        /* handleTrackSelection={handleTrackSelection} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}

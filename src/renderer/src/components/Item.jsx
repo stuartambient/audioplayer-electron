@@ -34,10 +34,7 @@ const Item = forwardRef(
       albumPattern,
       handleAlbumTracksRequest,
       term,
-      fullpath,
-      checked
-      //state,
-      //dispatch
+      fullpath
     },
     ref
   ) => {
@@ -47,24 +44,6 @@ const Item = forwardRef(
       const bufferToString = Buffer.from(buffer).toString('base64');
       return `data:${buffer.format};base64,${bufferToString}`;
     };
-
-    /*     const useServer = (state, file) => {
-      useEffect(() => {
-        const startStream = async () => {
-          try {
-            state.audioRef.current.src = `streaming://${file}`;
-          } catch (e) {
-            console.log('error: ', e);
-          }
-        };
-
-        if (state && file) {
-          startStream();
-        }
-
-        return () => {};
-      }, [state, file]);
-    }; */
 
     const loadFile = async (state, file, id) => {
       console.log('file: ', file, 'state: ', state);
@@ -117,21 +96,18 @@ const Item = forwardRef(
     };
 
     if (type === 'file') {
-      /* console.log('ref: ', ref); */
       return (
         <div
           id={divId}
           className={flashDiv === divId ? 'item flash' : className}
           ref={ref}
           fromlisttype={type}
-          /* onContextMenu={showContextMenu} */
         >
           <a
             href={href}
             id={id}
             val={val}
             fromlisttype={type}
-            /* onClick={(e) => handleTrackSelection(e, { artist, title, album, audiofile, like })} */
             onClick={(e) => handleTrackSelect(e, { artist, title, album, audiofile, like })}
           >
             Artist: {artist}
@@ -146,11 +122,7 @@ const Item = forwardRef(
             samplerate: {samplerate}
           </a>
           <div className="item-menu">
-            <BsThreeDots
-              /* onContextMenu={showContextMenu}  */ onClick={showContextMenu}
-              fromlisttype={type}
-              id={divId}
-            />
+            <BsThreeDots onClick={showContextMenu} fromlisttype={type} id={divId} />
           </div>
         </div>
       );
@@ -164,7 +136,6 @@ const Item = forwardRef(
           </a>
           <div className="item-menu" fullpath={fullpath}>
             <BsThreeDots
-              /*  onContextMenu={showContextMenu} */
               onClick={showContextMenu}
               fromlisttype={type}
               id={id}
