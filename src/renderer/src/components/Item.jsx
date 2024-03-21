@@ -31,6 +31,7 @@ const Item = forwardRef(
       showMore,
       albumPattern,
       handleAlbumTracksRequest,
+      handleNewMenu,
       term,
       fullpath,
       checked,
@@ -71,7 +72,7 @@ const Item = forwardRef(
           </a>
           <div className="item-menu">
             <BsThreeDots
-              /* onContextMenu={showContextMenu}  */ onClick={showContextMenu}
+              /* onContextMenu={showContextMenu}  */ onClick={handleNewMenu}
               fromlisttype={type}
               id={divId}
             />

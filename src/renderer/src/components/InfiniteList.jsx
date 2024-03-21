@@ -160,6 +160,27 @@ const InfiniteList = ({
     }
   }, [playNext, nextTrack, playPrev, prevTrack, tracks, currentTrack]);
 
+  useEffect(() => {
+    const cleanup = window.api.onContextMenuCommand((command) => {
+      if (!contextMenuItem) return;
+
+      switch (command) {
+        case 'add-track-to-playlist':
+          // Your logic to add track to playlist
+          console.log('Adding track to playlist', contextMenuItem);
+          break;
+        case 'edit-track-metadata':
+          // Your logic for editing metadata
+          console.log('Editing track metadata', contextMenuItem);
+          break;
+        default:
+          break;
+      }
+    });
+
+    return () => cleanup(); // Clean up the listener when the component unmounts
+  }, [contextMenuItem]);
+
   const handleTextSearch = (e) => {
     e.preventDefault();
     if (e.currentTarget.textsearch.value === '') {
@@ -241,7 +262,7 @@ const InfiniteList = ({
     }
   }, [flashDiv]);
 
-  const showContextMenu = (event) => {
+  const handleNewMenu = (e) => {
     e.preventDefault();
     //const term = e.target.getAttribute('fullpath');
     const type = e.target.getAttribute('fromlisttype');
@@ -463,7 +484,7 @@ const InfiniteList = ({
         audiofile={item.audiofile}
         val={index}
         flashDiv={flashDiv.id}
-        showContextMenu={showContextMenu}
+        handleNewMenu={handleNewMenu}
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}

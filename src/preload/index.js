@@ -59,7 +59,12 @@ contextBridge.exposeInMainWorld('api', {
   genresStat: () => ipcRenderer.invoke('genres-stat'),
   nullMetadataStat: () => ipcRenderer.invoke('null-metadata-stat'),
   getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
-  getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre)
+  getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
+  showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
+  onContextMenuCommand: (callback) => {
+    ipcRenderer.on('context-menu-command', (event, command) => callback(command));
+    return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
+  }
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>
