@@ -510,13 +510,9 @@ const InfiniteList = () => {
           isFilesSortSelected={isFilesSortSelected}
           isAlbumsSortSelected={isAlbumsSortSelected}
           handleSortClick={handleSortClick}
-          listType={state.listType}
           handleTextSearch={handleTextSearch}
-          miniModePlaylist={state.miniModePlaylist}
           handlePlaylistFiles={handlePlaylistFiles}
-          dispatch={dispatch}
           playlistShuffle={state.playlistShuffle}
-          tracksShuffle={state.tracksShuffle}
         />
       ) : null}
       <div className={listClassNames()}>

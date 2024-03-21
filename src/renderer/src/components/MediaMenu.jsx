@@ -1,3 +1,4 @@
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import '../style/MediaMenu.css';
 
@@ -5,18 +6,14 @@ const MediaMenu = ({
   isFilesSortSelected,
   isAlbumsSortSelected,
   handleSortClick,
-  listType,
   handleTextSearch,
-  miniModePlaylist,
-  handlePlaylistFiles,
-  dispatch,
-  playlistShuffle,
-  tracksShuffle
+  handlePlaylistFiles
 }) => {
-  const handleListType = (listtype) => {
+  const { state, dispatch } = useAudioPlayer();
+  const handleListType = (type) => {
     dispatch({
       type: 'set-list-type',
-      listType: listtype
+      listType: type
     });
   };
 
@@ -27,8 +24,8 @@ const MediaMenu = ({
   };
 
   return (
-    <ul className={miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
-      {!miniModePlaylist && !tracksShuffle && listType === 'files' && (
+    <ul className={state.miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
+      {!state.miniModePlaylist && !state.tracksShuffle && state.listType === 'files' && (
         <div className="sort-menu">
           <fieldset>
             <li className="sort-menu--option">
@@ -78,7 +75,7 @@ const MediaMenu = ({
           </fieldset>
         </div>
       )}
-      {!miniModePlaylist && listType === 'albums' && (
+      {!state.miniModePlaylist && state.listType === 'albums' && (
         <div className="sort-menu">
           <fieldset>
             <li className="sort-menu--option">
@@ -108,7 +105,7 @@ const MediaMenu = ({
       )}
 
       {/*   <div className="right-side"> */}
-      {!tracksShuffle && (
+      {!state.tracksShuffle && (
         <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
             <div className="formelements">
@@ -129,7 +126,7 @@ const MediaMenu = ({
           </form>
         </li>
       )}
-      {tracksShuffle && listType === 'albums' && (
+      {state.tracksShuffle && state.listType === 'albums' && (
         <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
             <div className="formelements">
@@ -150,7 +147,7 @@ const MediaMenu = ({
           </form>
         </li>
       )}
-      {listType === 'playlist' && (
+      {state.listType === 'playlist' && (
         <li className="playlist-dialogs">
           <span id="playlist-clear" onClick={handlePlaylistFiles}>
             Clear
@@ -165,25 +162,25 @@ const MediaMenu = ({
       )}
       <li className="tabs" style={{ color: 'white' }}>
         <div
-          className={listType === 'files' ? 'tab active' : 'tab'}
+          className={state.listType === 'files' ? 'tab active' : 'tab'}
           onClick={() => handleListType('files')}
         >
           <span>files</span>
         </div>
         <div
-          className={listType === 'albums' ? 'tab active' : 'tab'}
+          className={state.listType === 'albums' ? 'tab active' : 'tab'}
           onClick={() => handleListType('albums')}
         >
           <span>albums</span>
         </div>
         <div
-          className={listType === 'playlist' ? 'tab active' : 'tab'}
+          className={state.listType === 'playlist' ? 'tab active' : 'tab'}
           onClick={() => handleListType('playlist')}
         >
           <span>playlist</span>
         </div>
         <div
-          className={listType === 'other' ? 'tab active' : 'tab'}
+          className={state.listType === 'other' ? 'tab active' : 'tab'}
           onClick={() => handleListType('other')}
         >
           <span>other</span>
