@@ -241,7 +241,7 @@ const InfiniteList = ({
   }, [flashDiv]);
 
   const handleContextMenuOption = async (option, id, term = null) => {
-    console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term);
+    /* console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term); */
     if (option[0] === 'add track to playlist') {
       const track = tracks.find((item) => item.afid === id);
 
@@ -292,7 +292,7 @@ const InfiniteList = ({
 
   const handleContextMenu = async (e) => {
     e.preventDefault();
-    console.log(e);
+    /* console.log(e); */
     const term = e.target.getAttribute('fullpath');
     const type = e.target.getAttribute('fromlisttype');
     if (type === null) return;
