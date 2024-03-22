@@ -15,7 +15,7 @@ import {
 } from './hooks/useTime';
 import Player from './components/Player';
 import InfiniteList from './Components/InfiniteList';
-import Switch from './Components/Switch';
+/* import Switch from './Components/Switch'; */
 import Home from './Components/Home';
 import Update from './Components/Update';
 import MainNav from './Components/MainNav';

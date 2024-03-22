@@ -113,16 +113,7 @@ const Home = () => {
       </ul>
 
       {homepage === 'albums-cover-view' && (
-        <AlbumsCoverView
-          /* state={state}
-          dispatch={dispatch}
-          covers={state.covers}
-          coversPageNumber={state.coversPageNumber}
-          coversSearchTerm={state.coversSearchTerm} */
-          resetKey={resetKey}
-          homepage={homepage}
-          /* coversLoaded={state.coversLoaded} */
-        />
+        <AlbumsCoverView resetKey={resetKey} homepage={homepage} />
       )}
       {homepage === 'stats' && <Stats />}
       {homepage === 'playlists' && <Playlists />}

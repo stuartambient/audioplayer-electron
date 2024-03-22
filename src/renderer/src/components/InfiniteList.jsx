@@ -512,7 +512,7 @@ const InfiniteList = () => {
           handleSortClick={handleSortClick}
           handleTextSearch={handleTextSearch}
           handlePlaylistFiles={handlePlaylistFiles}
-          playlistShuffle={state.playlistShuffle}
+          /* playlistShuffle={state.playlistShuffle} */
         />
       ) : null}
       <div className={listClassNames()}>

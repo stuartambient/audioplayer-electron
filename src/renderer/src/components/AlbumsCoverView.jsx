@@ -11,15 +11,7 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
 
-const AlbumsCoverView = ({
-  //state,
-  //dispatch,
-  //covers,
-  //coversPageNumber,
-  //coversSearchTerm,
-  homepage,
-  resetKey
-}) => {
+const AlbumsCoverView = ({ resetKey }) => {
   const { state, dispatch } = useAudioPlayer();
   const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
   const [viewMore, setViewMore] = useState(false);
