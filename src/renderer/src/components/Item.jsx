@@ -44,8 +44,7 @@ const Item = forwardRef(
       return `data:${buffer.format};base64,${bufferToString}`;
     };
 
-    const loadFile = async (state, file, id) => {
-      console.log('file: ', file, 'state: ', state);
+    const loadFile = async (file, id) => {
       try {
         state.audioRef.current.src = await `streaming://${file}`;
         /* const buf = await state.audioRef.current.src.arrayBuffer(); */
@@ -67,22 +66,31 @@ const Item = forwardRef(
       state.audioRef.current.load();
     };
 
-    const handleTrackSelect = (event, params) => {
+    const handleTrackSelect = (event, ...params) => {
       event.preventDefault();
+      let listType;
+      if (!event.target.getAttribute('fromlisttype')) {
+        listType = 'playlist';
+      } else {
+        listType = event.target.getAttribute('fromlisttype');
+      }
+      console.log('newtrack: ', event.target.getAttribute('val'));
+      console.log('selectedTrackListType: ', listType);
+      console.log('file: ', params[0].audiofile, 'id: ', event.target.id);
       state.audioRef.current.src = '';
 
       dispatch({
         type: 'newtrack',
         pause: false,
         newtrack: event.target.getAttribute('val'),
-        selectedTrackListType: event.target.getAttribute('fromlisttype'),
-        artist: params.artist,
-        title: params.title,
-        album: params.album,
+        selectedTrackListType: listType,
+        artist: params[0].artist,
+        title: params[0].title,
+        album: params[0].album,
         active: event.target.id,
         nextTrack: '',
         prevTrack: '',
-        isLiked: params.like === 1 ? true : false
+        isLiked: params[0].like === 1 ? true : false
       });
 
       dispatch({
@@ -91,7 +99,7 @@ const Item = forwardRef(
         playPrev: false
       });
 
-      loadFile(state, params.audiofile, event.target.id);
+      loadFile(params[0].audiofile, event.target.id);
     };
 
     if (type === 'file') {
@@ -157,9 +165,8 @@ const Item = forwardRef(
             href={href}
             id={id}
             val={val}
-            onClick={(e) =>
-              handleTrackSelect(e, state, dispatch, artist, title, album, audiofile, like)
-            }
+            onClick={(e) => handleTrackSelect(e, { artist, title, album, audiofile, like })}
+            /* onClick={(e) => handleTrackSelect(e, { artist, title, album, audiofile, like })} */
           >
             Artist: {artist}
             <br></br>
