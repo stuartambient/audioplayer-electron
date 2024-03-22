@@ -387,7 +387,7 @@ const InfiniteList = () => {
           if (entries[0].isIntersecting && hasMoreAlbums) {
             dispatch({
               type: 'albums-pagenumber',
-              albumsPageNumber: albumsPageNumber + 1
+              albumsPageNumber: state.albumsPageNumber + 1
             });
           }
         },

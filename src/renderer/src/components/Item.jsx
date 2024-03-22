@@ -39,7 +39,6 @@ const Item = forwardRef(
     ref
   ) => {
     const { state, dispatch } = useAudioPlayer();
-
     const handlePicture = (buffer) => {
       const bufferToString = Buffer.from(buffer).toString('base64');
       return `data:${buffer.format};base64,${bufferToString}`;
