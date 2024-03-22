@@ -92,27 +92,27 @@ const InfiniteList = () => {
       if (state.newtrack >= 0 && state.playlistTracks[state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: state.playlistTracks[state.newtrack + 1].afid
+          nextTrack: state.playlistTracks[+state.newtrack + 1].afid
         });
       }
       if (state.newtrack >= 1 && state.playlistTracks[state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: state.playlistTracks[state.newtrack - 1].afid
+          prevTrack: state.playlistTracks[+state.newtrack - 1].afid
         });
       }
     }
     if (state.playlistShuffle) {
-      if (state.newtrack >= 0 && shuffledPlaylist[state.newtrack + 1]) {
+      if (state.newtrack >= 0 && shuffledPlaylist[+state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: shuffledPlaylist[state.newtrack + 1].afid
+          nextTrack: shuffledPlaylist[+state.newtrack + 1].afid
         });
       }
-      if (state.newtrack >= 1 && shuffledPlaylist[state.newtrack - 1]) {
+      if (state.newtrack >= 1 && shuffledPlaylist[+state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: shuffledPlaylist[state.newtrack - 1].afid
+          prevTrack: shuffledPlaylist[+state.newtrack - 1].afid
         });
       }
     }

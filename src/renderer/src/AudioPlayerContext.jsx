@@ -23,7 +23,7 @@ const audioPlayerReducer = (state, action) => {
       return {
         ...state,
         pause: action.pause,
-        newtrack: action.newtrack,
+        newtrack: +action.newtrack,
         artist: action.artist,
         title: action.title,
         album: action.album,
@@ -358,7 +358,7 @@ export const AudioPlayerProvider = ({ children }) => {
     newtrack: '',
     playNext: false,
     playPrev: false,
-    nextTrack: '',
+    nextTrack: null,
     prevTrack: '',
     artist: '',
     title: '',
