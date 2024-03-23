@@ -168,6 +168,18 @@ const InfiniteList = ({
         case 'add-track-to-playlist':
           // Your logic to add track to playlist
           console.log('Adding track to playlist', contextMenuItem);
+          const track = state.tracks.find((item) => item.afid === contextMenuItem.id);
+          if (track) {
+            if (!state.playlistTracks.find((e) => e.afid === contextMenuItem.id)) {
+              setFlashDiv({ type: contextMenuItem.type, id: `${track.afid}--item-div` });
+            } else {
+              return;
+            }
+            dispatch({
+              type: 'track-to-playlist',
+              playlistTracks: [...playlistTracks, track]
+            });
+          }
           break;
         case 'edit-track-metadata':
           // Your logic for editing metadata
@@ -285,7 +297,7 @@ const InfiniteList = ({
         }
         dispatch({
           type: 'track-to-playlist',
-          playlistTracks: [...playlistTracks, track]
+          playlistTracks: [...state.playlistTracks, track]
         });
       }
     }
