@@ -1,3 +1,4 @@
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { FaHeart, FaBackward, FaForward, FaListUl, FaRandom } from 'react-icons/fa';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import '../style/Controls.css';
@@ -14,23 +15,24 @@ const Controls = ({
   playlistShuffle,
   listType
 }) => {
+  const { state, dispatch } = useAudioPlayer();
   const controlsClassNames = () => {
-    if (player && !minimalmode) {
+    if (state.player && !state.minimalmode) {
       return 'controls';
     }
-    if (minimalmode) {
+    if (state.minimalmode) {
       return 'controls controls--minimalmode';
     }
-    if (home) {
+    if (state.home) {
       return 'controls controls-home';
     }
   };
 
   const shuffleButtonClassName = () => {
-    if (tracksShuffle && listType === 'files') {
+    if (state.tracksShuffle && state.listType === 'files') {
       return 'btn on';
     }
-    if (playlistShuffle && listType === 'playlist') {
+    if (state.playlistShuffle && state.listType === 'playlist') {
       return 'btn plshuffle';
     } else {
       return 'btn';
@@ -38,11 +40,15 @@ const Controls = ({
   };
   return (
     <ul className={controlsClassNames()}>
-      <li className={isLiked ? 'btn isliked' : 'btn'} id="like" onClick={handlePlayerControls}>
+      <li
+        className={state.isLiked ? 'btn isliked' : 'btn'}
+        id="like"
+        onClick={handlePlayerControls}
+      >
         <FaHeart />
       </li>
 
-      {pause ? (
+      {state.pause ? (
         <li className="btn" id="pauseplay" onClick={handlePlayerControls}>
           <GiPlayButton />
         </li>
@@ -61,8 +67,12 @@ const Controls = ({
       <li className={shuffleButtonClassName()} id="shuffle" onClick={handlePlayerControls}>
         <FaRandom />
       </li>
-      {!minimalmode && !home && (
-        <li className={library ? 'btn on' : 'btn'} id="playlist" onClick={handlePlayerControls}>
+      {!state.minimalmode && !state.home && (
+        <li
+          className={state.library ? 'btn on' : 'btn'}
+          id="playlist"
+          onClick={handlePlayerControls}
+        >
           <FaListUl />
         </li>
       )}

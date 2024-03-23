@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { v4 as uuidv4 } from 'uuid';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { AiFillDownSquare } from 'react-icons/ai';
@@ -10,7 +11,8 @@ import AlbumsCoverView from './AlbumsCoverView';
 import Player from './Player';
 import CoverSearch from './CoverSearch';
 
-const Home = ({ state, dispatch }) => {
+const Home = () => {
+  const { state, dispatch } = useAudioPlayer();
   const [homepage, setHomePage] = useState('albums-cover-view');
   const [resetKey, setResetKey] = useState('');
   /*   const { state, dispatch } = AppState(); */
@@ -111,16 +113,7 @@ const Home = ({ state, dispatch }) => {
       </ul>
 
       {homepage === 'albums-cover-view' && (
-        <AlbumsCoverView
-          state={state}
-          dispatch={dispatch}
-          covers={state.covers}
-          coversPageNumber={state.coversPageNumber}
-          coversSearchTerm={state.coversSearchTerm}
-          resetKey={resetKey}
-          homepage={homepage}
-          coversLoaded={state.coversLoaded}
-        />
+        <AlbumsCoverView resetKey={resetKey} homepage={homepage} />
       )}
       {homepage === 'stats' && <Stats />}
       {homepage === 'playlists' && <Playlists />}

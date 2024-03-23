@@ -1,5 +1,6 @@
 /* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
@@ -10,15 +11,8 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
 
-const AlbumsCoverView = ({
-  state,
-  dispatch,
-  covers,
-  coversPageNumber,
-  coversSearchTerm,
-  homepage,
-  resetKey
-}) => {
+const AlbumsCoverView = ({ resetKey }) => {
+  const { state, dispatch } = useAudioPlayer();
   const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
   const [viewMore, setViewMore] = useState(false);
   const [coverSearch, setCoverSearch] = useState();
@@ -26,11 +20,11 @@ const AlbumsCoverView = ({
   const coversObserver = useRef();
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
-    coversPageNumber,
-    coversSearchTerm,
+    state.coversPageNumber,
+    state.coversSearchTerm,
     dispatch,
     resetKey,
-    covers.length
+    state.covers.length
   );
 
   useEffect(() => {
@@ -40,12 +34,12 @@ const AlbumsCoverView = ({
       });
     };
     cover();
-  }, [covers]);
+  }, [state.covers]);
 
   /* EFECT FOR RELOADING COVER IMAGE WHEN IMAGE IS UPDATED */
   useEffect(() => {
     if (coverUpdate.path !== '') {
-      const updateCovers = covers.map((cover) => {
+      const updateCovers = state.covers.map((cover) => {
         if (cover.fullpath === coverUpdate.path) {
           cover.img = coverUpdate.file;
         }
@@ -199,7 +193,7 @@ const AlbumsCoverView = ({
           if (entries[0].isIntersecting && hasMoreCovers) {
             dispatch({
               type: 'set-covers-pagenumber',
-              coversPageNumber: coversPageNumber + 1
+              coversPageNumber: state.coversPageNumber + 1
             });
           }
         },
@@ -214,10 +208,10 @@ const AlbumsCoverView = ({
   );
 
   useEffect(() => {
-    if (!coversObserver.current && covers.length > 0) {
+    if (!coversObserver.current && state.covers.length > 0) {
       dispatch({
         type: 'set-covers-pagenumber',
-        coversPageNumber: coversPageNumber + 1
+        coversPageNumber: state.coversPageNumber + 1
       });
     }
   }, [coversObserver]);
@@ -233,10 +227,10 @@ const AlbumsCoverView = ({
   return (
     <section className="albums-coverview">
       <ul className="albums-coverview--albums">
-        {covers.length > 0 &&
-          covers.map((cover, idx) => {
+        {state.covers.length > 0 &&
+          state.covers.map((cover, idx) => {
             return (
-              <li key={uuidv4()} ref={covers.length === idx + 1 ? lastCoverElement : null}>
+              <li key={uuidv4()} ref={state.covers.length === idx + 1 ? lastCoverElement : null}>
                 {cover.img && <img src={cover.img} alt="" />}
                 {!cover.img && <img src={NoImage} alt="" />}
                 <div className="overlay">

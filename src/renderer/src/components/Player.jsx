@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { BsVolumeMute } from 'react-icons/bs';
 import { BiVolumeFull } from 'react-icons/bi';
 import {
@@ -12,40 +13,22 @@ import { GiJetPack, GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FiVolume } from 'react-icons/fi';
 import '../style/Player.css';
 
-const Player = ({
-  title,
-  cover,
-  delay,
-  artist,
-  album,
-  duration,
-  pause,
-  onClick,
-  maximized,
-  audioRef,
-  library,
-  active,
-  isLiked,
-  minimalmode,
-  minimalmodeInfo,
-  home,
-  audio,
-  children
-}) => {
+const Player = ({ onClick, children }) => {
+  const { state, dispatch } = useAudioPlayer();
   const [cTime, setCTime] = useState('00:00');
   const [progbarInc, setProgbarInc] = useState(0);
 
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
-    const convertForProgbar = convertToSeconds(duration, cTime);
+    const convertForProgbar = convertToSeconds(state.duration, cTime);
     setProgbarInc(convertForProgbar * outlineWidth);
-  }, [duration, cTime]);
+  }, [state.duration, cTime]);
 
   useEffect(() => {
-    audioRef.current.ontimeupdate = () => {
-      setCTime(convertCurrentTime(audioRef.current));
+    state.audioRef.current.ontimeupdate = () => {
+      setCTime(convertCurrentTime(state.audioRef.current));
     };
-  }, [audioRef]);
+  }, [state.audioRef]);
 
   const seekbarOutline = useRef();
   const volumebarOutline = useRef();
@@ -60,7 +43,7 @@ const Player = ({
 
     if (widthRange > 0 || widthRange < outlineWidth) {
       const mark = widthRange / outlineWidth;
-      audioRef.current.volume = Math.round(mark * 10) / 10;
+      state.audioRef.current.volume = Math.round(mark * 10) / 10;
 
       volumeslider.current.setAttribute('style', `width:${widthRange}px`);
     } else {
@@ -69,36 +52,36 @@ const Player = ({
   };
 
   const handleSeekTime = (e) => {
-    const totaltime = convertDurationSeconds(duration);
+    const totaltime = convertDurationSeconds(state.duration);
     /* const seekbar = document.querySelector('.seekbar'); */
     const seekbarOutlineWidth = seekbarOutline.current.clientWidth;
     const seekPoint = e.clientX - seekbarOutline.current.getBoundingClientRect().left;
 
-    audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
+    state.audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
     /* setCTime(totaltime / seekbarOutlineWidth) * seekPoint; */
   };
 
   const playerClassNames = () => {
-    if (!library && !minimalmode && !home) {
+    if (!state.library && !state.minimalmode && !state.home) {
       return 'audio-player centered';
     }
 
-    if (maximized && !home) {
+    if (state.maximized && !state.home) {
       return 'audio-player audio-player--maximized';
     }
-    if (home) {
+    if (state.home) {
       return 'audio-player--homepage';
     }
-    if (library && !minimalmode) {
+    if (state.library && !state.minimalmode) {
       return 'audio-player';
     }
-    if (!library && minimalmode) {
+    if (!state.library && state.minimalmode) {
       return 'audio-player minimal-player';
     }
-    if (minimalmode) {
+    if (state.minimalmode) {
       return 'audio-player minimal-player';
     }
-    if (library && minimalmode) {
+    if (state.library && state.minimalmode) {
       return 'audio-player minimal-player--expanded';
     }
   };
@@ -106,62 +89,74 @@ const Player = ({
   return (
     <div
       className={playerClassNames()}
-      style={minimalmode ? { backgroundImage: `url(${cover})` } : { backgroundImage: 'none' }}
+      style={
+        state.minimalmode ? { backgroundImage: `url(${state.cover})` } : { backgroundImage: 'none' }
+      }
     >
-      {!minimalmodeInfo && !home && (
+      {!state.minimalmodeInfo && !state.home && (
         <div className="title">
-          <p className={title.length > 35 /* && !minimalmode */ ? 'title-transform' : 'title-text'}>
-            {title}
+          <p
+            className={
+              state.title.length > 35 /* && !minimalmode */ ? 'title-transform' : 'title-text'
+            }
+          >
+            {state.title}
           </p>
         </div>
       )}
 
-      {!minimalmodeInfo && home && (
+      {!state.minimalmodeInfo && state.home && (
         <div className="title">
           <span className="real-time">
-            <span className={title.length > 50 ? 'title-transform' : 'title-text'}>{title}</span>
+            <span className={state.title.length > 50 ? 'title-transform' : 'title-text'}>
+              {state.title}
+            </span>
           </span>
         </div>
       )}
 
-      {cover && cover !== 'not available' && (
+      {state.cover && state.cover !== 'not available' && (
         <>
           <div style={{ backgroundImage: `url` }} className="image">
-            {!minimalmode && <img src={cover} alt="" />}
+            {!state.minimalmode && <img src={state.cover} alt="" />}
           </div>
         </>
       )}
-      {cover === 'not available' && !home && delay === true && (
+      {state.cover === 'not available' && !state.home && state.delay === true && (
         <p style={{ gridRow: '2 / 3' }}>No available image</p>
       )}
 
-      {!minimalmodeInfo && !home && (
+      {!state.minimalmodeInfo && !state.home && (
         <div className="metadata">
           <>
-            {artist ? (
+            {state.artist ? (
               <div className="metadata-artist">
-                {!home && <span className="label">Artist: </span>}
+                {!state.home && <span className="label">Artist: </span>}
                 <span className="real-time">
                   <span
                     className={
-                      artist.length > 35 /* && !minimalmode */ ? 'artist-transform' : 'artist-text'
+                      state.artist.length > 35 /* && !minimalmode */
+                        ? 'artist-transform'
+                        : 'artist-text'
                     }
                   >
-                    {artist}
+                    {state.artist}
                   </span>
                 </span>
               </div>
             ) : null}
-            {album ? (
+            {state.album ? (
               <div className="metadata-album">
-                {!home && <span className="label">Album: </span>}
+                {!state.home && <span className="label">Album: </span>}
                 <span className="real-time">
                   <span
                     className={
-                      album.length > 25 /* && !minimalmode */ ? 'album-transform' : 'album-text'
+                      state.album.length > 25 /* && !minimalmode */
+                        ? 'album-transform'
+                        : 'album-text'
                     }
                   >
-                    {album}
+                    {state.album}
                   </span>
                 </span>
               </div>
@@ -170,24 +165,24 @@ const Player = ({
         </div>
       )}
 
-      {!minimalmodeInfo && home && (
+      {!state.minimalmodeInfo && state.home && (
         <>
-          {artist ? (
+          {state.artist ? (
             <div className="metadata-artist">
-              {!home && <span className="label">Artist: </span>}
+              {!state.home && <span className="label">Artist: </span>}
               <span className="real-time">
-                <span className={artist.length > 25 ? 'artist-transform' : 'artist-text'}>
-                  {artist}
+                <span className={state.artist.length > 25 ? 'artist-transform' : 'artist-text'}>
+                  {state.artist}
                 </span>
               </span>
             </div>
           ) : null}
-          {album ? (
+          {state.album ? (
             <div className="metadata-album">
-              {!home && <span className="label">Album: </span>}
+              {!state.home && <span className="label">Album: </span>}
               <span className="real-time">
-                <span className={album.length > 25 ? 'album-transform' : 'album-text'}>
-                  {album}
+                <span className={state.album.length > 25 ? 'album-transform' : 'album-text'}>
+                  {state.album}
                 </span>
               </span>
             </div>
@@ -195,19 +190,19 @@ const Player = ({
         </>
       )}
 
-      {!minimalmodeInfo && (
+      {!state.minimalmodeInfo && (
         <div className="time">
           <div className="duration">
-            {!home && <span className="label">Duration: </span>}
-            <span className="real-time">{duration}</span>
+            {!state.home && <span className="label">Duration: </span>}
+            <span className="real-time">{state.duration}</span>
           </div>
           <div className="elapsed">
-            {!home && <span className="label">Elapsed: </span>}
+            {!state.home && <span className="label">Elapsed: </span>}
             <span className="real-time">{cTime}</span>
           </div>
         </div>
       )}
-      {minimalmode && !minimalmodeInfo ? (
+      {state.minimalmode && !state.minimalmodeInfo ? (
         <div className="slider-group">
           <>
             <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
