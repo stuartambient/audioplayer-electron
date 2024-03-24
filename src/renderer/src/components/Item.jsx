@@ -64,6 +64,7 @@ const Item = forwardRef(
         });
       }
       state.audioRef.current.load();
+      state.audioRef.current.play();
     };
 
     const handleTrackSelect = (event, ...params) => {
@@ -74,9 +75,7 @@ const Item = forwardRef(
       } else {
         listType = event.target.getAttribute('fromlisttype');
       }
-      console.log('newtrack: ', event.target.getAttribute('val'));
-      console.log('selectedTrackListType: ', listType);
-      console.log('file: ', params[0].audiofile, 'id: ', event.target.id);
+
       state.audioRef.current.src = '';
 
       dispatch({

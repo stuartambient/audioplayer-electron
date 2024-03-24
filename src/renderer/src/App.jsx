@@ -32,7 +32,7 @@ function App() {
 
     const handleLoadedMetadata = (e) => {
       /* console.log('onloadedmetadata: ', e); */
-      audio.play();
+      /* audio.play(); */
       dispatch({ type: 'duration', duration: convertDuration(audio) });
       dispatch({ type: 'set-delay', delay: true });
     };

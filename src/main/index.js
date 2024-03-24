@@ -780,7 +780,8 @@ ipcMain.handle('show-child', (event, args) => {
       webPreferences: {
         preload: path.join(__dirname, '../preload/child.js'),
         sandbox: false,
-        webSecurity: false
+        webSecurity: false,
+        contextIsolation: true
       }
     });
 
@@ -806,7 +807,6 @@ ipcMain.handle('show-child', (event, args) => {
 });
 
 ipcMain.handle('show-list', (event, args) => {
-  /* console.log(args); */
   const createChildWindow = () => {
     newList = new BrowserWindow({
       width: 1200,
@@ -842,7 +842,6 @@ ipcMain.handle('show-list', (event, args) => {
 
 ipcMain.handle('download-file', async (event, ...args) => {
   const [fileUrl, filePath] = args;
-  console.log(fileUrl, '----', filePath);
 
   try {
     const res = await axios.get(`${fileUrl}`, { responseType: 'arraybuffer' });

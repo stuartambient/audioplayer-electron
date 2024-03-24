@@ -413,7 +413,7 @@ const InfiniteList = () => {
       if (!node) return;
       if (state.active && node && node.getAttribute('id') === `${state.active}--item-div`) {
         scrollRef.current = node;
-        /* scrollRef.current.scrollIntoView(); */
+        scrollRef.current.scrollIntoView();
       }
       /*       if (active) {
         console.log(activeRef);
