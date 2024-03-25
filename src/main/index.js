@@ -807,6 +807,7 @@ ipcMain.handle('show-child', (event, args) => {
 });
 
 ipcMain.handle('show-list', (event, args) => {
+  console.log('show-list: ', event, '----', args);
   const createChildWindow = () => {
     newList = new BrowserWindow({
       width: 1200,
