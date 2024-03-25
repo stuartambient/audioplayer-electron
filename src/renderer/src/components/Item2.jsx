@@ -82,14 +82,13 @@ const Item = forwardRef((props, ref) => {
           val={props.val}
           fromlisttype={props.type}
           onClick={(e) =>
-            handleTrackSelect(
-              e,
-              props.artist,
-              props.title,
-              props.album,
-              props.audiofile,
-              props.like
-            )
+            handleTrackSelect(e, {
+              artist: props.artist,
+              title: props.title,
+              album: props.album,
+              audiofile: props.audiofile,
+              like: props.like
+            })
           }
         >
           Artist: {props.artist}
@@ -141,14 +140,13 @@ const Item = forwardRef((props, ref) => {
           id={props.id}
           val={props.val}
           onClick={(e) =>
-            handleTrackSelect(
-              e,
-              props.artist,
-              props.title,
-              props.album,
-              props.audiofile,
-              props.like
-            )
+            handleTrackSelect(e, {
+              artist: props.artist,
+              title: props.title,
+              album: props.album,
+              audiofile: props.audiofile,
+              like: props.like
+            })
           }
           /* onClick={(e) => handleTrackSelect(e, { artist, title, album, audiofile, like })} */
         >
