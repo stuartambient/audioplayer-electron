@@ -30,7 +30,6 @@ const InfiniteList = () => {
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
 
   const [playlistReq, setPlaylistReq] = useState('');
-  const [contextMenuItem, setContextMenuItem] = useState(null);
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     state.tracksPageNumber,
     tracksSearchTerm,
@@ -152,40 +151,6 @@ const InfiniteList = () => {
     state.tracks,
     state.nextTrack
   ]);
-  }, [playNext, nextTrack, playPrev, prevTrack, tracks, currentTrack]);
-
-  /* useEffect(() => {
-    const cleanup = window.api.onContextMenuCommand((command) => {
-      if (!contextMenuItem) return;
-
-      switch (command) {
-        case 'add-track-to-playlist':
-          // Your logic to add track to playlist
-          console.log('Adding track to playlist', contextMenuItem);
-          const track = state.tracks.find((item) => item.afid === contextMenuItem.id);
-          if (track) {
-            if (!state.playlistTracks.find((e) => e.afid === contextMenuItem.id)) {
-              setFlashDiv({ type: contextMenuItem.type, id: `${track.afid}--item-div` });
-            } else {
-              return;
-            }
-            dispatch({
-              type: 'track-to-playlist',
-              playlistTracks: [...playlistTracks, track]
-            });
-          }
-          break;
-        case 'edit-track-metadata':
-          // Your logic for editing metadata
-          console.log('Editing track metadata', contextMenuItem);
-          break;
-        default:
-          break;
-      }
-    });
-
-    return () => cleanup(); // Clean up the listener when the component unmounts
-  }, [contextMenuItem]); */
 
   const handleTextSearch = (e) => {
     e.preventDefault();
@@ -262,7 +227,7 @@ const InfiniteList = () => {
   }, [flashDiv]);
 
   const handleContextMenuOption = async (option, id, term = null) => {
-    console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term);
+    /* console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term); */
     if (option[0] === 'add track to playlist') {
       const track = state.tracks.find((item) => item.afid === id);
 
@@ -309,9 +274,10 @@ const InfiniteList = () => {
         playlistTracks: removeTrack
       });
     }
-  }; */
+  };
 
   const handleContextMenu = async (e) => {
+    console.log('handleContextMenu: ', e);
     e.preventDefault();
     /* console.log(e); */
     const term = e.target.getAttribute('fullpath');
@@ -337,7 +303,7 @@ const InfiniteList = () => {
       default:
         return;
     }
-  }; */
+  };
 
   const handleAlbumTracksRequest = (e) => {
     const term = e.currentTarget.getAttribute('term');
@@ -474,7 +440,6 @@ const InfiniteList = () => {
         val={index}
         flashDiv={flashDiv.id}
         showContextMenu={handleContextMenu}
-        handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
@@ -500,7 +465,7 @@ const InfiniteList = () => {
         term={item.fullpath}
         fullpath={item.fullpath}
         handleAlbumTracksRequest={handleAlbumTracksRequest}
-        /* showContextMenu={handleContextMenu} */
+        showContextMenu={handleContextMenu}
         showMore={showMore}
         albumPattern={albumPattern}
         albumTracksLength={albumTracks.length}
@@ -525,7 +490,6 @@ const InfiniteList = () => {
         audiofile={item.audiofile}
         val={index}
         showContextMenu={handleContextMenu}
-        handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
