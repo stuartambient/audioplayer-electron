@@ -1,7 +1,6 @@
-import { forwardRef, useState } from 'react';
+import { forwardRef, useState, useEffect } from 'react';
 import ContextMenu from './ContextMenu';
 
-import { forwardRef, useState, useEffect } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { Buffer } from 'buffer';
 
