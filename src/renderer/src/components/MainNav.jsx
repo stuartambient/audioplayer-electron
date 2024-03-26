@@ -1,3 +1,4 @@
+import { useAudioPlayer } from '../AudioPlayerContext';
 import {
   AiOutlineMenu,
   AiOutlineHome,
@@ -14,10 +15,11 @@ import { CgMiniPlayer } from 'react-icons/cg';
 
 import '../style/MainNav.css';
 
-const MainNav = ({ onClick, home, update, player, minimalmode, library }) => {
+const MainNav = ({ onClick }) => {
+  const { state, dispatch } = useAudioPlayer();
   return (
-    <nav className={!minimalmode ? 'main-nav' : 'main-nav main-nav--minimal'}>
-      {!minimalmode && (
+    <nav className={!state.minimalmode ? 'main-nav' : 'main-nav main-nav--minimal'}>
+      {!state.minimalmode && (
         <>
           <ul className="main-nav--left" style={{ justifySelf: 'start' }}>
             <li onClick={onClick} id="menu">
@@ -25,16 +27,16 @@ const MainNav = ({ onClick, home, update, player, minimalmode, library }) => {
             </li>
           </ul>
           <ul className="main-nav--center">
-            <li onClick={onClick} id="home" className={home ? 'highlight' : ''}>
+            <li onClick={onClick} id="home" className={state.home ? 'highlight' : ''}>
               <span>Home</span>
             </li>
-            <li onClick={onClick} id="update" className={update ? 'highlight' : ''}>
+            <li onClick={onClick} id="update" className={state.update ? 'highlight' : ''}>
               <span>Update</span>
             </li>
-            <li onClick={onClick} id="player" className={player ? 'highlight' : ''}>
+            <li onClick={onClick} id="player" className={state.player ? 'highlight' : ''}>
               <span>Player</span>
             </li>
-            <li onClick={onClick} id="playerplaylist" className={player ? 'highlight' : ''}>
+            <li onClick={onClick} id="playerplaylist" className={state.player ? 'highlight' : ''}>
               <span>Player/Playlist</span>
             </li>
             <li onClick={onClick} id="mini-mode" className="endline">
@@ -55,7 +57,7 @@ const MainNav = ({ onClick, home, update, player, minimalmode, library }) => {
         </>
       )}
 
-      {minimalmode && (
+      {state.minimalmode && (
         <>
           <ul className="main-nav--left-minimal">
             <li onClick={onClick} id="mini-mode" className="mini">

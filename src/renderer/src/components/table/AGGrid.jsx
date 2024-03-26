@@ -99,6 +99,8 @@ const AGGrid = ({ data }) => {
       /* console.log(selectedNodes); */
       /* isRowsSelected.current.push(selectedNodes); */
       setNodesSelected(selectedNodes);
+    } else {
+      setNodesSelected([]);
     }
   }, []);
 
@@ -142,6 +144,26 @@ const AGGrid = ({ data }) => {
         return sizeToFit();
       case 'cancel-all':
         return handleCancel();
+      case 'save-all':
+        if (undosRef.current.length === 0) return;
+        console.log('undos ref: ', undosRef.current);
+        const updatesByRow = undosRef.current.reduce((acc, undo) => {
+          if (!acc[undo.rowId]) {
+            acc[undo.rowId] = {
+              id: originalData[undo.rowId].afid,
+              changes: {}
+            };
+          }
+          acc[undo.rowId].changes[undo.field] = undo.newValue;
+          return acc;
+        }, {});
+        const saveAll = Object.values(updatesByRow).map((row) => ({
+          id: row.id,
+          updates: row.changes
+        }));
+
+        console.log('save all: ', saveAll);
+        return;
       case 'undo-last':
         /* isUndoAction.current = true;
         console.log(undosRef.current); */

@@ -5,10 +5,7 @@ import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from './assets/icons';
 import { Buffer } from 'buffer';
-import TrackSelector from './hooks/TrackSelector';
-import AppState from './hooks/AppState';
-
-/* import useAudio from './hooks/useAudio'; */
+import { useAudioPlayer } from './AudioPlayerContext';
 
 import {
   convertDuration,
@@ -18,7 +15,7 @@ import {
 } from './hooks/useTime';
 import Player from './components/Player';
 import InfiniteList from './Components/InfiniteList';
-import Switch from './Components/Switch';
+/* import Switch from './Components/Switch'; */
 import Home from './Components/Home';
 import Update from './Components/Update';
 import MainNav from './Components/MainNav';
@@ -28,14 +25,14 @@ import Extras from './Components/Extras';
 import './App.css';
 
 function App() {
-  const { state, dispatch } = AppState();
+  const { state, dispatch } = useAudioPlayer();
 
   useEffect(() => {
     const audio = state.audioRef.current;
 
     const handleLoadedMetadata = (e) => {
-      console.log('onloadedmetadata: ', e);
-      audio.play();
+      /* console.log('onloadedmetadata: ', e); */
+      /* audio.play(); */
       dispatch({ type: 'duration', duration: convertDuration(audio) });
       dispatch({ type: 'set-delay', delay: true });
     };
@@ -112,6 +109,7 @@ function App() {
   };
 
   const handlePlayerControls = (e) => {
+    console.log('handle player: ', e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'playlist':
         dispatch({
@@ -318,104 +316,24 @@ function App() {
   return (
     <div className={containerClassNames()}>
       {state.home || state.update || state.library || state.minimalmode ? (
-        <MainNav
-          onClick={handleMainNav}
-          home={state.home}
-          update={state.update}
-          player={state.player}
-          minimalmode={state.minimalmode}
-          library={state.library}
-        />
+        <MainNav onClick={handleMainNav} />
       ) : null}
-      {state.home && !state.minimalmode && <Home state={state} dispatch={dispatch} />}
+      {state.home && !state.minimalmode && <Home />}
       {state.update && <Update />}
       {state.player || state.home ? (
-        <Player
-          title={state.title}
-          cover={state.cover}
-          delay={state.delay}
-          artist={state.artist}
-          album={state.album}
-          duration={state.duration}
-          /* currentTime={state.currentTime} */
-          pause={state.pause}
-          onClick={handlePlayerControls}
-          audioRef={state.audioRef}
-          library={state.library}
-          isLiked={state.isLiked}
-          minimalmode={state.minimalmode}
-          home={state.home}
-          minimalmodeInfo={state.minimalmodeInfo}
-          maximized={state.maximized}
-          audio={state.audioRef.current.src}
-        >
+        <Player onClick={handlePlayerControls}>
           {!state.minimalmode && (
             <>
-              <Controls
-                isLiked={state.isLiked}
-                handlePlayerControls={handlePlayerControls}
-                pause={state.pause}
-                minimalmode={state.minimalmode}
-                player={state.player}
-                home={state.home}
-                tracksShuffle={state.tracksShuffle}
-                playlistShuffle={state.playlistShuffle}
-                library={state.library}
-                listType={state.listType}
-              />
-              {!state.home && (
-                <Extras
-                  handlePlayerControls={handlePlayerControls}
-                  volume={state.volume}
-                  seeking={state.seeking}
-                  library={state.library}
-                  tracksShuffle={state.tracksShuffle}
-                  playlistShuffle={state.playlistShuffle}
-                  home={state.home}
-                />
-              )}
+              <Controls handlePlayerControls={handlePlayerControls} />
+              {!state.home && <Extras handlePlayerControls={handlePlayerControls} />}
             </>
           )}
         </Player>
       ) : null}
-      {state.minimalmode && (
-        <Controls
-          isLiked={state.isLiked}
-          handlePlayerControls={handlePlayerControls}
-          pause={state.pause}
-          minimalmode={state.minimalmode}
-          player={state.player}
-          home={state.home}
-          tracksShuffle={state.tracksShuffle}
-          playlistShuffle={state.playlistShuffle}
-          listType={state.listType}
-        />
-      )}
+      {state.minimalmode && <Controls handlePlayerControls={handlePlayerControls} />}
 
       {state.player || state.miniModePlaylist || state.home || state.update ? (
-        <InfiniteList
-          handleTrackSelection={TrackSelector}
-          library={state.library}
-          currentTrack={state.newtrack}
-          playNext={state.playNext}
-          playPrev={state.playPrev}
-          nextTrack={state.nextTrack}
-          prevTrack={state.prevTrack}
-          active={state.active}
-          dispatch={dispatch}
-          state={state}
-          listType={state.listType}
-          /* handlePicture={handlePicture} */
-          tracks={state.tracks}
-          tracksPageNumber={state.tracksPageNumber}
-          tracksShuffle={state.tracksShuffle}
-          playlistShuffle={state.playlistShuffle}
-          playlistTracks={state.playlistTracks}
-          minimalmode={state.minimalmode}
-          miniModePlaylist={state.miniModePlaylist}
-          albums={state.albums}
-          albumsPageNumber={state.albumsPageNumber}
-        />
+        <InfiniteList />
       ) : null}
       {/*       ) : null} */}
     </div>

@@ -83,7 +83,6 @@ const deleteAlbums = async (data) => {
 };
 
 const deleteAlbum = async (data) => {
-  console.log(data);
   const deleteSingleAlbum = db.prepare('DELETE FROM albums WHERE fullpath = ?');
   deleteSingleAlbum.run();
 };
@@ -143,15 +142,12 @@ const allTracks = () => {
 
 const getAllPkeys = () => {
   const alltracks = db.prepare('SELECT afid FROM tracks');
-  /* console.log(alltracks.length); */
+
   return alltracks.all();
 };
 const getAllTracks = (rows) => {
-  /* const tracks = db.prepare('SELECT * FROM tracks ORDER BY RANDOM() LIMIT 50000'); */
   const tracks = db.prepare('SELECT * FROM tracks WHERE afid = ?');
 
-  /*   const shuffledTracks = rows.map((r) => tracks.get(r));
-  console.log('shuffled length from sql.js ', shuffledTracks.length); */
   const shuffledTracks = [];
   for (const r of rows) {
     try {
@@ -159,13 +155,13 @@ const getAllTracks = (rows) => {
       if (track) {
         shuffledTracks.push(track);
       } else if (!track) {
-        console.log(r.afid);
+        console.log('no track avail: ', r.afid);
       }
     } catch (error) {
       console.error(`Error retrieving rowid ${r}:`, error);
     }
   }
-  console.log('shuffled length from sql.js ', shuffledTracks.length);
+
   return shuffledTracks;
 };
 
@@ -238,20 +234,9 @@ const getPlaylist = (playlist) => {
     if (!file) return;
     albumFiles.push(file);
   });
-  /* albumFiles.forEach((a) => console.log(a.afid)); */
+
   return albumFiles;
 };
-
-/* SELECT foldername, fullpath FROM albums where unaccent(foldername) 
-LIKE '%Koner%' ORDER BY lower(unaccent(foldername)) */
-
-/* const allAlbumsByScroll = (offsetNum, sort) => {
-  console.log('sort : ', sort);
-  const stmt = db.prepare(
-    `SELECT * FROM albums ORDER BY ${sort} ASC LIMIT 50 OFFSET ${offsetNum * 50} `
-  );
-  return stmt.all();
-}; */
 
 const allAlbumsByScroll = (offsetNum, sort) => {
   let query;
@@ -274,7 +259,6 @@ const allAlbumsByScroll = (offsetNum, sort) => {
 };
 
 const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
-  console.log('sort: ', sort);
   const term = `%${text}%`;
 
   let query;
@@ -331,7 +315,7 @@ const filesByAlbum = (albumPath) => {
   /* const albumpath = getAlbum.fullpath; */
   const files = db.prepare('SELECT * FROM tracks WHERE audiofile LIKE ?');
   const albumFiles = files.all(`${albumPath}%`);
-  console.log('albumFiles: ', albumFiles.length);
+
   return albumFiles;
 };
 

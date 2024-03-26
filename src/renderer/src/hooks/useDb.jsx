@@ -1,12 +1,6 @@
 /* import { is } from '@electron-toolkit/utils'; */
 import { useState, useEffect, useMemo } from 'react';
-
-/* import axios from "axios"; */
-
-/* const client = axios.create({
-  baseURL: "http://localhost:3008/",
-  proxy: false,
-}); */
+import { useAudioPlayer } from '../AudioPlayerContext';
 
 const useTracks = (
   tracksPageNumber,
@@ -91,20 +85,37 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispa
 
   useEffect(() => {
     let isSubscribed = true;
+
     const loadAlbums = async () => {
-      setAlbumsLoading(true);
-      setAlbumsError(false);
-      const albumRequest = await window.api.getAlbums(albumsPageNumber, albumsSearchTerm, sortType);
-      if (albumRequest && isSubscribed) {
-        /* console.log('album-request-length: ', albumRequest.length); */
-        dispatch({
-          type: 'albums-playlist',
-          albums: albumRequest
-        });
-        setHasMoreAlbums(albumRequest.length > 0);
-        setAlbumsLoading(false);
+      try {
+        setAlbumsLoading(true);
+        /* setAlbumsError(false); */
+        const albumRequest = await window.api.getAlbums(
+          albumsPageNumber,
+          albumsSearchTerm,
+          sortType
+        );
+
+        if (albumRequest && isSubscribed) {
+          /* console.log('album-request-length: ', albumRequest.length); */
+          dispatch({
+            type: 'albums-playlist',
+            albums: albumRequest
+          });
+          setHasMoreAlbums(albumRequest.length > 0);
+          /*         setAlbumsLoading(false); */
+        }
+      } catch (error) {
+        if (isSubscribed) {
+          setAlbumsError(true);
+        }
+      } finally {
+        if (isSubscribed) {
+          setAlbumsLoading(false);
+        }
       }
     };
+
     loadAlbums();
     return () => (isSubscribed = false);
   }, [albumsPageNumber, albumsSearchTerm, sortType, resetKey]);
@@ -181,8 +192,6 @@ const useTotalTracksStat = (setTotalTracks) => {
     return () => (subscribed = false);
   }, []);
 };
-/* return { totalTracks };
-}; */
 
 const useTopHundredArtistsStat = () => {
   const [topHundredArtists, setTopHundredArtists] = useState([]);
@@ -296,42 +305,6 @@ const useAllAlbumsCovers = (
   return { coversLoading, hasMoreCovers, coversError };
 };
 
-/* const useLast10AlbumsStat = () => {
-  const [last10Albums, setLast10Albums] = useState([]);
-  useEffect(() => {
-    let subscribed = true;
-    const getLast10Albums = async () => {
-      const last10AlbumsRequest = await window.api.last10AlbumsStat();
-      if (last10AlbumsRequest && subscribed) {
-        setLast10Albums(last10AlbumsRequest);
-      } else {
-        return;
-      }
-    };
-    getLast10Albums();
-    return () => (subscribed = false);
-  }, []);
-  return { last10Albums, setLast10Albums };
-}; */
-
-/* const useLast100TracksStat = () => {
-  const [last100Tracks, setLast100Tracks] = useState([]);
-  useEffect(() => {
-    let subscribed = true;
-    const getLast100Tracks = async () => {
-      const last100TracksRequest = await window.api.last100TracksStat();
-      if (last100TracksRequest && subscribed) {
-        setLast100Tracks(last100TracksRequest);
-      } else {
-        return;
-      }
-    };
-    getLast100Tracks();
-    return () => (subscribed = false);
-  }, []);
-  return { last100Tracks };
-}; */
-
 const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
   useEffect(() => {
     let isSubscribed = true;
@@ -405,38 +378,6 @@ const useGetPlaylists = (setMyPlaylists) => {
   }, []);
 };
 
-/* const useRandomTracks = (shuffledTracksPageNumber, state, dispatch, shuffle) => {
-  const [shuffledLoading, setShuffledLoading] = useState(true);
-  const [shuffledError, setShuffledError] = useState(false);
-  const [hasMoreShuffled, setHasMoreShuffled] = useState(false);
-  useEffect(() => {
-    let isSubscribed = true;
-    const shuffleTracks = async () => {
-      let start, end;
-      if (!state.shuffleTracks) {
-        start = 0;
-        end = 49;
-      } else {
-        start = state.shuffledTracks.length - 1;
-        const end = start + 49;
-      }
-      const test = await window.api.testGlobal(start, end);
-      if (test && isSubscribed) {
-        console.log('test: ', test);
-        dispatch({
-          type: 'shuffled-tracks',
-          shuffledTracks: [...state.shuffledTracks, ...test]
-        });
-        setHasMoreShuffled(test.length > 0);
-        setShuffledLoading(false);
-      }
-    };
-    if (shuffledTracksPageNumber) shuffleTracks();
-    return () => (isSubscribed = false);
-  }, [shuffledTracksPageNumber]);
-  return { shuffledLoading, hasMoreShuffled, shuffledError }; */
-//};
-
 export {
   useTracks,
   useAlbums,
@@ -445,11 +386,8 @@ export {
   useTopHundredArtistsStat,
   useGenres,
   useNullMeta,
-  /*  useLast10AlbumsStat, */
-  /*   useLast100TracksStat, */
   usePlaylist,
   usePlaylistDialog,
   useGetPlaylists,
   useAllAlbumsCovers
-  /* useRandomTracks */
 };
