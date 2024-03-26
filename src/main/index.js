@@ -95,70 +95,42 @@ if (!fs.existsSync(coversFolder)) {
 
 /* RANDOM ARRAY FOR TRACKS SHUFFLE */
 let shuffled = new Array();
-/* console.log('df: ', documentsFolder); */
-
-/* let splashWindow;
-
-function createSplashWindow() {
-  splashWindow = new BrowserWindow({
-    width: 320,
-    height: 240,
-    frame: false,
-    resizable: false,
-    backgroundColor: '#FFF',
-    alwaysOnTop: true,
-    show: false
-  });
-  splashWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, 'splash.html'),
-      protocol: 'file',
-      slashes: true
-    })
-  );
-  splashWindow.on('closed', () => {
-    splashWindow = null;
-  });
-  splashWindow.once('ready-to-show', () => {
-    splashWindow.show();
-  });
-} */
 
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled promise rejection:', err);
 });
 
+app.on('ready', () => console.log('app is ready'));
+
 const capitalizeDriveLetter = (str) => {
   return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
 };
 
-app.on('ready', () => {
+function createWindow() {
   const mainWindowConfig = {
     frame: false,
     useContentSize: true,
     transparent: true,
-    show: false,
-    ...(process.platform === 'linux'
-      ? {
-          icon: path.join(__dirname, '../../build/icon.png')
-        }
-      : {}),
+    ...(process.platform === 'linux' ? { icon: path.join(__dirname, '../../build/icon.png') } : {}),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
       webSecurity: false
     }
   };
-  let mainUrl;
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainUrl = `${process.env['ELECTRON_RENDERER_URL']}/index.html`;
-  } else {
-    mainUrl = `path.join(__dirname, '../renderer/index.html`;
-  }
-  windowManager.createMainWindow(mainWindowConfig, mainUrl);
-});
 
-let mainWindow;
+  const mainURL =
+    is.Dev && process.env['ELECTRON_RENDERER_URL']
+      ? `${process.env['ELECTRON_RENDERER_URL']}/index.html`
+      : `file://${path.join(__dirname, '../renderer/index.html')}`; // Fix the missing quote and typo
+
+  // Use the WindowManager to create the main window
+  windowManager.createWindow('main', mainWindowConfig, mainURL);
+}
+
+app.on('ready', createWindow);
+const mainWindow = windowManager.getWindow('main');
+/* let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -196,7 +168,6 @@ function createWindow() {
   });
 
   ipcMain.on('maximize', (events, args) => {
-    /* console.log('getsize: ', mainWindow.getBounds()); */
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize();
     } else {
@@ -205,14 +176,12 @@ function createWindow() {
     }
   });
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`);
   } else {
     mainWindow.loadFile(`path.join(__dirname, '../renderer/index.html`);
   }
-}
+} */
 
 const reactDevToolsPath =
   /* 'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.1_0'; */
@@ -293,7 +262,7 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  createWindow();
+  /*   createWindow(); */
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the

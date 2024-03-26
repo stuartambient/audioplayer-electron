@@ -1,51 +1,57 @@
-import { BrowserWindow } from 'electron';
+const { BrowserWindow, ipcMain, shell } = require('electron');
+const path = require('path');
 
 class WindowManager {
   constructor() {
     this.windows = new Map();
   }
 
-  createMainWindow(config, url) {
-    const id = 'main'; // A fixed ID for the main window
+  createWindow(id, config, url) {
     if (this.windows.has(id)) {
-      console.error('Main window already exists.');
-      return this.windows.get(id);
+      this.windows.get(id).focus();
+      return;
     }
 
-    const mainWindow = new BrowserWindow(config);
-    mainWindow.loadURL(url);
+    const window = new BrowserWindow(config);
 
-    mainWindow.on('closed', () => {
+    window.on('ready-to-show', () => {
+      window.show();
+    });
+
+    window.webContents.setWindowOpenHandler((details) => {
+      shell.openExternal(details.url);
+      return { action: 'deny' };
+    });
+
+    ipcMain.on('app-close', () => {
+      window.close();
+    });
+
+    ipcMain.on('minimize', () => {
+      window.minimize();
+    });
+
+    ipcMain.on('maximize', () => {
+      if (window.isMaximized()) {
+        window.unmaximize();
+      } else {
+        window.setMaximizable(true); // Ensure the window can be maximized
+        window.maximize();
+      }
+    });
+
+    window.loadURL(url);
+
+    window.on('closed', () => {
       this.windows.delete(id);
     });
 
-    this.windows.set(id, mainWindow);
-    return mainWindow;
-  }
-
-  createChildWindow(id, config, url) {
-    if (this.windows.has(id)) {
-      const existingWindow = this.windows.get(id);
-      existingWindow.focus();
-      return existingWindow;
-    }
-
-    const childWindow = new BrowserWindow(config);
-    childWindow.loadURL(url);
-
-    childWindow.on('closed', () => {
-      this.windows.delete(id);
-    });
-
-    this.windows.set(id, childWindow);
-    return childWindow;
+    this.windows.set(id, window);
   }
 
   getWindow(id) {
-    return this.windows.get(id);
+    return this.windows.get(id); // Retrieve a window by ID
   }
-
-  // You can add more methods as needed, for example, to send data to specific windows, close all windows, etc.
 }
 
 const windowManager = new WindowManager();
