@@ -19,6 +19,7 @@ import http from 'node:http';
 import * as stream from 'stream';
 import { promisify } from 'util';
 import { Buffer } from 'buffer';
+import windowManager from './windowManager.js';
 import { parseFile } from 'music-metadata';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -130,22 +131,13 @@ process.on('unhandledRejection', (err) => {
 const capitalizeDriveLetter = (str) => {
   return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
 };
-let mainWindow;
 
-function createWindow() {
-  // Create the browser window.
-  mainWindow = new BrowserWindow({
-    /* width: 660,
-    height: 600, */
+app.on('ready', () => {
+  const mainWindowConfig = {
     frame: false,
     useContentSize: true,
-    /* backgroundColor: '#1D1B1B', */
     transparent: true,
-
-    /* resizable: false, */
-    /* rgb(9, 0, 7) */
     show: false,
-    /* autoHideMenuBar: true, */
     ...(process.platform === 'linux'
       ? {
           icon: path.join(__dirname, '../../build/icon.png')
@@ -155,14 +147,39 @@ function createWindow() {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
       webSecurity: false
-      /* nodeIntegration: true */
+    }
+  };
+  let mainUrl;
+  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+    mainUrl = `${process.env['ELECTRON_RENDERER_URL']}/index.html`;
+  } else {
+    mainUrl = `path.join(__dirname, '../renderer/index.html`;
+  }
+  windowManager.createMainWindow(mainWindowConfig, mainUrl);
+});
+
+let mainWindow;
+
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    frame: false,
+    useContentSize: true,
+    transparent: true,
+    show: false,
+    ...(process.platform === 'linux'
+      ? {
+          icon: path.join(__dirname, '../../build/icon.png')
+        }
+      : {}),
+    webPreferences: {
+      preload: path.join(__dirname, '../preload/index.js'),
+      sandbox: false,
+      webSecurity: false
     }
   });
 
   mainWindow.on('ready-to-show', () => {
-    /* mainWindow.setMinimumSize(300, 300); */
     mainWindow.show();
-    /* console.log('dirname: ', __dirname); */
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
