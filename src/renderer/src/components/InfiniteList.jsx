@@ -160,7 +160,7 @@ const InfiniteList = ({
     }
   }, [playNext, nextTrack, playPrev, prevTrack, tracks, currentTrack]);
 
-  useEffect(() => {
+  /* useEffect(() => {
     const cleanup = window.api.onContextMenuCommand((command) => {
       if (!contextMenuItem) return;
 
@@ -191,7 +191,7 @@ const InfiniteList = ({
     });
 
     return () => cleanup(); // Clean up the listener when the component unmounts
-  }, [contextMenuItem]);
+  }, [contextMenuItem]); */
 
   const handleTextSearch = (e) => {
     e.preventDefault();
@@ -274,7 +274,7 @@ const InfiniteList = ({
     }
   }, [flashDiv]);
 
-  const handleNewMenu = (e) => {
+  /*   const handleNewMenu = (e) => {
     e.preventDefault();
     //const term = e.target.getAttribute('fullpath');
     const type = e.target.getAttribute('fromlisttype');
@@ -282,9 +282,9 @@ const InfiniteList = ({
     const id = e.target.id.split('--')[0];
     setContextMenuItem({ id, type });
     window.api.showContextMenu(id, type);
-  };
+  }; */
 
-  const handleContextMenuOption = async (option, id, term = null) => {
+  /*   const handleContextMenuOption = async (option, id, term = null) => {
     console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term);
     if (option[0] === 'add track to playlist') {
       const track = tracks.find((item) => item.afid === id);
@@ -332,9 +332,9 @@ const InfiniteList = ({
         playlistTracks: removeTrack
       });
     }
-  };
+  }; */
 
-  const handleContextMenu = async (e) => {
+  /*   const handleContextMenu = async (e) => {
     e.preventDefault();
     console.log(e);
     const term = e.target.getAttribute('fullpath');
@@ -360,7 +360,7 @@ const InfiniteList = ({
       default:
         return;
     }
-  };
+  }; */
 
   const handleAlbumTracksRequest = (e) => {
     const term = e.currentTarget.getAttribute('term');
@@ -496,7 +496,7 @@ const InfiniteList = ({
         audiofile={item.audiofile}
         val={index}
         flashDiv={flashDiv.id}
-        handleNewMenu={handleNewMenu}
+        /* handleNewMenu={handleNewMenu} */
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
@@ -523,7 +523,7 @@ const InfiniteList = ({
         term={item.fullpath}
         fullpath={item.fullpath}
         handleAlbumTracksRequest={handleAlbumTracksRequest}
-        showContextMenu={handleContextMenu}
+        /* showContextMenu={handleContextMenu} */
         showMore={showMore}
         albumPattern={albumPattern}
         albumTracksLength={albumTracks.length}
@@ -547,7 +547,7 @@ const InfiniteList = ({
         like={item.like}
         audiofile={item.audiofile}
         val={index}
-        showContextMenu={handleContextMenu}
+        /* showContextMenu={handleContextMenu} */
         handleTrackSelection={handleTrackSelection}
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}

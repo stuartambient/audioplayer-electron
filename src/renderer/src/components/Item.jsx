@@ -1,4 +1,5 @@
 import { forwardRef, useState } from 'react';
+import ContextMenu from './ContextMenu';
 import { Plus, Minus } from '../assets/icons';
 import { BsThreeDots } from 'react-icons/bs';
 
@@ -71,11 +72,7 @@ const Item = forwardRef(
             samplerate: {samplerate}
           </a>
           <div className="item-menu">
-            <BsThreeDots
-              /* onContextMenu={showContextMenu}  */ onClick={handleNewMenu}
-              fromlisttype={type}
-              id={divId}
-            />
+            <ContextMenu fromlisttype={type} id={id} />
           </div>
         </div>
       );
@@ -88,13 +85,7 @@ const Item = forwardRef(
             {foldername}
           </a>
           <div className="item-menu" fullpath={fullpath}>
-            <BsThreeDots
-              /*  onContextMenu={showContextMenu} */
-              onClick={showContextMenu}
-              fromlisttype={type}
-              id={id}
-              fullpath={fullpath}
-            />
+            <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} />
           </div>
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}
@@ -123,11 +114,7 @@ const Item = forwardRef(
             Album: {album}
           </a>
           <div className="item-menu">
-            <BsThreeDots
-              /* onContextMenu={showContextMenu} */ onClick={showContextMenu}
-              fromlisttype={type}
-              id={divId}
-            />
+            <ContextMenu fromlisttype={type} id={divId} />
           </div>
         </div>
       );

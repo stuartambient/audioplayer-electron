@@ -693,6 +693,13 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       click: () => {
         return event.sender.send('context-menu-command', 'edit-track-metadata');
       }
+    },
+    {
+      label: 'Add Album to Playlist',
+      visible: type === 'folder',
+      click: () => {
+        return event.sender.send('context-menu-command ', 'add-album-to-playlist');
+      }
     }
   ];
   const menu = Menu.buildFromTemplate(template);
