@@ -1,4 +1,3 @@
-
 import { forwardRef, useState } from 'react';
 import ContextMenu from './ContextMenu';
 
@@ -134,11 +133,7 @@ const Item = forwardRef(
             samplerate: {samplerate}
           </a>
           <div className="item-menu">
-<<<<<<< HEAD
             <ContextMenu fromlisttype={type} id={id} />
-=======
-            <BsThreeDots onClick={showContextMenu} fromlisttype={type} id={divId} />
->>>>>>> master
           </div>
         </div>
       );
@@ -151,16 +146,7 @@ const Item = forwardRef(
             {foldername}
           </a>
           <div className="item-menu" fullpath={fullpath}>
-<<<<<<< HEAD
             <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} />
-=======
-            <BsThreeDots
-              onClick={showContextMenu}
-              fromlisttype={type}
-              id={id}
-              fullpath={fullpath}
-            />
->>>>>>> master
           </div>
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}

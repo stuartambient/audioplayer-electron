@@ -226,8 +226,7 @@ const InfiniteList = () => {
     }
   }, [flashDiv]);
 
-  const handleContextMenuOption = async (option, id, term = null) => {
-    /* console.log('option[0]: ', option[0], 'id: ', id, 'term: ', term); */
+  /* const handleContextMenuOption = async (option, id, term = null) => {
     if (option[0] === 'add track to playlist') {
       const track = state.tracks.find((item) => item.afid === id);
 
@@ -279,7 +278,6 @@ const InfiniteList = () => {
   const handleContextMenu = async (e) => {
     console.log('handleContextMenu: ', e);
     e.preventDefault();
-    /* console.log(e); */
     const term = e.target.getAttribute('fullpath');
     const type = e.target.getAttribute('fromlisttype');
     if (type === null) return;
@@ -303,7 +301,7 @@ const InfiniteList = () => {
       default:
         return;
     }
-  };
+  }; */
 
   const handleAlbumTracksRequest = (e) => {
     const term = e.currentTarget.getAttribute('term');
@@ -439,7 +437,7 @@ const InfiniteList = () => {
         audiofile={item.audiofile}
         val={index}
         flashDiv={flashDiv.id}
-        showContextMenu={handleContextMenu}
+        /* showContextMenu={handleContextMenu} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
@@ -465,7 +463,7 @@ const InfiniteList = () => {
         term={item.fullpath}
         fullpath={item.fullpath}
         handleAlbumTracksRequest={handleAlbumTracksRequest}
-        showContextMenu={handleContextMenu}
+        /* showContextMenu={handleContextMenu} */
         showMore={showMore}
         albumPattern={albumPattern}
         albumTracksLength={albumTracks.length}
@@ -489,7 +487,7 @@ const InfiniteList = () => {
         like={item.like}
         audiofile={item.audiofile}
         val={index}
-        showContextMenu={handleContextMenu}
+        /* showContextMenu={handleContextMenu} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
