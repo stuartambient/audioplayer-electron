@@ -44,15 +44,22 @@ const Item = forwardRef(
   ) => {
     /* if (divId) console.log('divid: ', divId); */
     const { state, dispatch } = useAudioPlayer();
-    const [flash, setFlash] = useState(false);
+    const [flash, setFlash] = useState();
+
+    /*     useEffect(() => {
+      if (flash && flash.id) console.log('flash: ', flash.id);
+    }, [flash]); */
+
+    /*     const handleFlash = (obj) => {
+      console.log('obj: ', obj);
+      if (obj) {
+        setFlash(() => obj);
+      }
+    }; */
     const handlePicture = (buffer) => {
       const bufferToString = Buffer.from(buffer).toString('base64');
       return `data:${buffer.format};base64,${bufferToString}`;
     };
-
-    useEffect(() => {
-      if (flash) console.log('flash: ', flash);
-    }, [flash]);
 
     const loadFile = async (file, id) => {
       try {
@@ -112,8 +119,15 @@ const Item = forwardRef(
     };
 
     if (type === 'file') {
+      const newId = divId.split('--')[0];
       return (
-        <div id={divId} className={className} ref={ref} fromlisttype={type}>
+        <div
+          key={flash && flash.id === newId ? 'animated' : 'not-animated'}
+          className={flash && flash.id === newId ? 'item flash-effect' : className}
+          id={divId}
+          ref={ref}
+          fromlisttype={type}
+        >
           <a
             href={href}
             id={id}
@@ -133,7 +147,7 @@ const Item = forwardRef(
             samplerate: {samplerate}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={id} setFlash={setFlash} divid={divId} />
+            <ContextMenu fromlisttype={type} id={id} handleFlash={setFlash} divid={divId} />
           </div>
         </div>
       );
@@ -141,12 +155,17 @@ const Item = forwardRef(
 
     if (type === 'folder') {
       return (
-        <div id={id} className={className} ref={ref} fromlisttype={type}>
+        <div
+          id={id}
+          className={flash && flash.id === id ? 'item flash-effect' : 'item'}
+          ref={ref}
+          fromlisttype={type}
+        >
           <a href={href} id={id} val={val} onClick={(e) => e.preventDefault()}>
             {foldername}
           </a>
           <div className="item-menu" fullpath={fullpath}>
-            <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} setFlash={setFlash} />
+            <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} handleFlash={setFlash} />
           </div>
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}
@@ -164,8 +183,8 @@ const Item = forwardRef(
           className={className}
           ref={ref}
           fromlisttype={type}
-          setFlash={setFlash}
-          divId={divId}
+          /* setFlash={setFlash}
+          divId={divId} */
         >
           <a
             href={href}
@@ -181,7 +200,7 @@ const Item = forwardRef(
             Album: {album}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={id} setFlash={setFlash} divid={divId} />
+            <ContextMenu fromlisttype={type} id={id} handleFlash={setFlash} divid={divId} />
           </div>
         </div>
       );
