@@ -42,12 +42,17 @@ const Item = forwardRef(
     },
     ref
   ) => {
+    /* if (divId) console.log('divid: ', divId); */
     const { state, dispatch } = useAudioPlayer();
     const [flash, setFlash] = useState(false);
     const handlePicture = (buffer) => {
       const bufferToString = Buffer.from(buffer).toString('base64');
       return `data:${buffer.format};base64,${bufferToString}`;
     };
+
+    useEffect(() => {
+      if (flash) console.log('flash: ', flash);
+    }, [flash]);
 
     const loadFile = async (file, id) => {
       try {
@@ -108,12 +113,7 @@ const Item = forwardRef(
 
     if (type === 'file') {
       return (
-        <div
-          id={divId}
-          className={`${flash} ? flash-effect ${className}: ${className}`}
-          ref={ref}
-          fromlisttype={type}
-        >
+        <div id={divId} className={className} ref={ref} fromlisttype={type}>
           <a
             href={href}
             id={id}
@@ -133,7 +133,7 @@ const Item = forwardRef(
             samplerate: {samplerate}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={id} setFlash={setFlash} />
+            <ContextMenu fromlisttype={type} id={id} setFlash={setFlash} divid={divId} />
           </div>
         </div>
       );
@@ -159,7 +159,14 @@ const Item = forwardRef(
     }
     if (type === 'playlist') {
       return (
-        <div id={divId} className={className} ref={ref} fromlisttype={type}>
+        <div
+          id={divId}
+          className={className}
+          ref={ref}
+          fromlisttype={type}
+          setFlash={setFlash}
+          divId={divId}
+        >
           <a
             href={href}
             id={id}
@@ -174,7 +181,7 @@ const Item = forwardRef(
             Album: {album}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={divId} setFlash={setFlash} />
+            <ContextMenu fromlisttype={type} id={id} setFlash={setFlash} divid={divId} />
           </div>
         </div>
       );

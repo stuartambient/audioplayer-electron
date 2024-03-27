@@ -3,7 +3,7 @@ import { useAudioPlayer } from '../AudioPlayerContext';
 import { BsThreeDots } from 'react-icons/bs';
 import '../style/FlashEffect.css';
 
-const ContextMenu = ({ fromlisttype, id, fullpath, setFlash }) => {
+const ContextMenu = ({ fromlisttype, id, fullpath, setFlash, divid }) => {
   const { state, dispatch } = useAudioPlayer();
   const [contextMenuItem, setContextMenuItem] = useState(null);
   const divRef = useRef(null);
@@ -48,8 +48,11 @@ const ContextMenu = ({ fromlisttype, id, fullpath, setFlash }) => {
     e.preventDefault();
     const id = divRef.current.id;
     const type = divRef.current.dataset.type;
-    setContextMenuItem({ id, type });
-    window.api.showContextMenu(id, type);
+    setFlash({ type, id });
+
+    /* const divId = divRef.current.dataset.divId;  */
+    /*   setContextMenuItem({ id, type });
+    window.api.showContextMenu(id, type); */
 
     //const term = e.target.getAttribute('fullpath');
     /*     const type = e.target.getAttribute('fromlisttype');
@@ -86,6 +89,7 @@ const ContextMenu = ({ fromlisttype, id, fullpath, setFlash }) => {
     <div
       id={id}
       data-type={fromlisttype}
+      data-divid={divid || undefined}
       onClick={handleContextMenu}
       style={{ display: 'flex', alignItems: 'center' }}
       ref={divRef}
