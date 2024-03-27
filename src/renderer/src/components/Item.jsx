@@ -6,6 +6,7 @@ import { Buffer } from 'buffer';
 
 import { Plus, Minus } from '../assets/icons';
 import { BsThreeDots } from 'react-icons/bs';
+import '../style/FlashEffect.css';
 
 const Item = forwardRef(
   (
@@ -23,7 +24,6 @@ const Item = forwardRef(
       audiofile,
       like,
       showContextMenu,
-      flashDiv,
       lossless,
       bitrate,
       samplerate,
@@ -43,6 +43,7 @@ const Item = forwardRef(
     ref
   ) => {
     const { state, dispatch } = useAudioPlayer();
+    const [flash, setFlash] = useState(false);
     const handlePicture = (buffer) => {
       const bufferToString = Buffer.from(buffer).toString('base64');
       return `data:${buffer.format};base64,${bufferToString}`;
@@ -109,7 +110,7 @@ const Item = forwardRef(
       return (
         <div
           id={divId}
-          className={flashDiv === divId ? 'item flash' : className}
+          className={`${flash} ? flash-effect ${className}: ${className}`}
           ref={ref}
           fromlisttype={type}
         >
@@ -132,7 +133,7 @@ const Item = forwardRef(
             samplerate: {samplerate}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={id} />
+            <ContextMenu fromlisttype={type} id={id} setFlash={setFlash} />
           </div>
         </div>
       );
@@ -145,7 +146,7 @@ const Item = forwardRef(
             {foldername}
           </a>
           <div className="item-menu" fullpath={fullpath}>
-            <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} />
+            <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} setFlash={setFlash} />
           </div>
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}
@@ -173,7 +174,7 @@ const Item = forwardRef(
             Album: {album}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={divId} />
+            <ContextMenu fromlisttype={type} id={divId} setFlash={setFlash} />
           </div>
         </div>
       );

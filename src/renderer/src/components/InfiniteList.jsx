@@ -25,7 +25,7 @@ const InfiniteList = () => {
   const [filesSortType, setFilesSortType /* scrollRef */] = useState('createdon');
   const [albumsSortType, setAlbumsSortType /* scrollRef */] = useState('datecreated');
   const [resetKey, setResetKey] = useState(null);
-  const [flashDiv, setFlashDiv] = useState({ type: '', id: '' });
+  /*   const [flashDiv, setFlashDiv] = useState({ type: '', id: '' }); */
   const [loadedAlbums, setLoadedAlbums] = useState([]);
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
 
@@ -210,21 +210,19 @@ const InfiniteList = () => {
 
   const handleListScroll = (e) => {};
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (flashDiv.id !== '' && flashDiv.type !== '') {
-      /* if (flashDiv.type === file) return; */
       const item = document.getElementById(flashDiv.id);
       item.classList.add('flash');
     }
+    
+  }, [flashDiv]); */
 
-    /* return () => setTimeout(() => setFlashDiv({ type: '', id: '' }), 3000); */
-  }, [flashDiv]);
-
-  useEffect(() => {
+  /*   useEffect(() => {
     if (flashDiv.type === 'file') {
       setTimeout(() => setFlashDiv({ type: '', id: '' }), 1000);
     }
-  }, [flashDiv]);
+  }, [flashDiv]); */
 
   /* const handleContextMenuOption = async (option, id, term = null) => {
     if (option[0] === 'add track to playlist') {
@@ -436,7 +434,7 @@ const InfiniteList = () => {
         like={item.like}
         audiofile={item.audiofile}
         val={index}
-        flashDiv={flashDiv.id}
+        /*  flashDiv={flashDiv.id} */
         /* showContextMenu={handleContextMenu} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}

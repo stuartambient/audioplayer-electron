@@ -1,7 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
+import { useAudioPlayer } from '../AudioPlayerContext';
 import { BsThreeDots } from 'react-icons/bs';
+import '../style/FlashEffect.css';
 
-const ContextMenu = ({ fromlisttype, id, fullpath }) => {
+const ContextMenu = ({ fromlisttype, id, fullpath, setFlash }) => {
+  const { state, dispatch } = useAudioPlayer();
   const [contextMenuItem, setContextMenuItem] = useState(null);
   const divRef = useRef(null);
 
@@ -19,13 +22,14 @@ const ContextMenu = ({ fromlisttype, id, fullpath }) => {
           const track = state.tracks.find((item) => item.afid === contextMenuItem.id);
           if (track) {
             if (!state.playlistTracks.find((e) => e.afid === contextMenuItem.id)) {
-              setFlashDiv({ type: contextMenuItem.type, id: `${track.afid}--item-div` });
+              setFlash(true);
+              setTimeout(() => setFlash(false), 2000); // Reset the flash effect after the animation duration
             } else {
               return;
             }
             dispatch({
               type: 'track-to-playlist',
-              playlistTracks: [...playlistTracks, track]
+              playlistTracks: [...state.playlistTracks, track]
             });
           }
           break;
@@ -85,6 +89,7 @@ const ContextMenu = ({ fromlisttype, id, fullpath }) => {
       onClick={handleContextMenu}
       style={{ display: 'flex', alignItems: 'center' }}
       ref={divRef}
+      /* className={`${flash ? 'item flash-effect' : 'item'}`} */
     >
       <BsThreeDots />;
     </div>
