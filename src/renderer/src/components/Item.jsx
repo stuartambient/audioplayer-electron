@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect } from 'react';
+import { forwardRef, useState, useEffect, memo } from 'react';
 import ContextMenu from './ContextMenu';
 
 import { useAudioPlayer } from '../AudioPlayerContext';
@@ -44,18 +44,7 @@ const Item = forwardRef(
   ) => {
     /* if (divId) console.log('divid: ', divId); */
     const { state, dispatch } = useAudioPlayer();
-    const [flash, setFlash] = useState();
 
-    /*     useEffect(() => {
-      if (flash && flash.id) console.log('flash: ', flash.id);
-    }, [flash]); */
-
-    /*     const handleFlash = (obj) => {
-      console.log('obj: ', obj);
-      if (obj) {
-        setFlash(() => obj);
-      }
-    }; */
     const handlePicture = (buffer) => {
       const bufferToString = Buffer.from(buffer).toString('base64');
       return `data:${buffer.format};base64,${bufferToString}`;
@@ -122,8 +111,7 @@ const Item = forwardRef(
       const newId = divId.split('--')[0];
       return (
         <div
-          key={flash && flash.id === newId ? 'animated' : 'not-animated'}
-          className={flash && flash.id === newId ? 'item flash-effect' : className}
+          className={state.flashDiv?.id === newId ? 'item flash-effect' : className}
           id={divId}
           ref={ref}
           fromlisttype={type}
@@ -147,7 +135,7 @@ const Item = forwardRef(
             samplerate: {samplerate}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={id} handleFlash={setFlash} divid={divId} />
+            <ContextMenu fromlisttype={type} id={id} divid={divId} />
           </div>
         </div>
       );
@@ -157,7 +145,7 @@ const Item = forwardRef(
       return (
         <div
           id={id}
-          className={flash && flash.id === id ? 'item flash-effect' : 'item'}
+          className={className /* flash && flash.id === id ? 'item flash-effect' : 'item' */}
           ref={ref}
           fromlisttype={type}
         >
@@ -165,7 +153,7 @@ const Item = forwardRef(
             {foldername}
           </a>
           <div className="item-menu" fullpath={fullpath}>
-            <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} handleFlash={setFlash} />
+            <ContextMenu fromlisttype={type} id={id} fullpath={fullpath} />
           </div>
           <div id={id} term={term} onClick={(e) => handleAlbumTracksRequest(e)}>
             {showMore === id ? <Minus id="minus" /> : <Plus id="plus" />}
@@ -200,7 +188,7 @@ const Item = forwardRef(
             Album: {album}
           </a>
           <div className="item-menu">
-            <ContextMenu fromlisttype={type} id={id} handleFlash={setFlash} divid={divId} />
+            <ContextMenu fromlisttype={type} id={id} /* handleFlash={setFlash} */ divid={divId} />
           </div>
         </div>
       );

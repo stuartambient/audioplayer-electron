@@ -40,7 +40,7 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('get-covers', coversPageNum, coversSearchTerm),
   setShuffledTracksArray: () => ipcRenderer.invoke('set-shuffled-tracks-array'),
   getShuffledTracks: (start, end) => ipcRenderer.invoke('get-shuffled-tracks', start, end),
-  showTracksMenu: () => ipcRenderer.invoke('show-tracks-menu'),
+  /*  showTracksMenu: () => ipcRenderer.invoke('show-tracks-menu'), */
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
   showPlaylistsMenu: () => ipcRenderer.invoke('show-playlists-menu'),
   showAlbumCoverMenu: () => ipcRenderer.invoke('show-album-cover-menu'),
@@ -62,7 +62,7 @@ contextBridge.exposeInMainWorld('api', {
   getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
-    ipcRenderer.on('context-menu-command', (event, command) => callback(command));
+    ipcRenderer.once('context-menu-command', (event, command) => callback(command));
     return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
   }
 

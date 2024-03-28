@@ -679,6 +679,7 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 });
 
 ipcMain.on('show-context-menu', (event, id, type) => {
+  console.log(id, type);
   const template = [
     {
       label: 'Add Track to Playlist',

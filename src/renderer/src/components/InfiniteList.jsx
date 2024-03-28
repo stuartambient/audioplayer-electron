@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
+import { useState, useRef, useCallback, useEffect, forwardRef, memo, useMemo } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +15,8 @@ import {
 } from '../hooks/useDb';
 import '../style/InfiniteList.css';
 
-const InfiniteList = () => {
+const InfiniteList = memo(() => {
+  /* console.log('Infinite List mounted again'); */
   const { state, dispatch } = useAudioPlayer();
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [albumsSearchTerm, setAlbumsSearchTerm] = useState('');
@@ -48,6 +49,17 @@ const InfiniteList = () => {
   );
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
+
+  useEffect(() => {
+    if (state.flashDiv?.id) {
+      const timer = setTimeout(() => {
+        dispatch({
+          type: 'reset-flash-div'
+        });
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [state.flashDiv]);
 
   useEffect(() => {
     const handleShuffling = () => {
@@ -419,7 +431,8 @@ const InfiniteList = () => {
   );
 
   const byFiles = state.tracks.map((item, index) => {
-    if (!item) return;
+    if (!item) return null;
+
     return (
       <Item
         type="file"
@@ -569,6 +582,6 @@ const InfiniteList = () => {
       </div>
     </>
   );
-};
+});
 
 export default InfiniteList;

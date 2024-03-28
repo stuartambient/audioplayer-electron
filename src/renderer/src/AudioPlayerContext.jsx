@@ -321,6 +321,14 @@ const audioPlayerReducer = (state, action) => {
         coversPageNumber: action.coversPageNumber
       };
     }
+    case 'flash-div': {
+      return {
+        ...state,
+        flashDiv: action.flashDiv
+      };
+    }
+    case 'reset-flash-div':
+      return { ...state, flashDiv: null };
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -396,7 +404,8 @@ export const AudioPlayerProvider = ({ children }) => {
     tracksShuffle: false,
     playlistShuffle: false,
     playlistMode: false,
-    seeking: false
+    seeking: false,
+    flashDiv: ''
   };
 
   const [state, dispatch] = useReducer(audioPlayerReducer, initialState);
