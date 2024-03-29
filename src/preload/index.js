@@ -40,14 +40,10 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('get-covers', coversPageNum, coversSearchTerm),
   setShuffledTracksArray: () => ipcRenderer.invoke('set-shuffled-tracks-array'),
   getShuffledTracks: (start, end) => ipcRenderer.invoke('get-shuffled-tracks', start, end),
-  /*  showTracksMenu: () => ipcRenderer.invoke('show-tracks-menu'), */
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
-  showPlaylistsMenu: () => ipcRenderer.invoke('show-playlists-menu'),
   showAlbumCoverMenu: () => ipcRenderer.invoke('show-album-cover-menu'),
   showTextInputMenu: () => ipcRenderer.invoke('show-text-input-menu'),
-  onTrackToPlaylist: (cb) => ipcRenderer.once('track-to-playlist', (event, ...args) => cb(args)),
   onEditTrackMetadata: (cb) => ipcRenderer.once('edit-metadata', (event, args) => cb(args)),
-  onAlbumToPlaylist: (cb) => ipcRenderer.once('album-to-playlist', (event, ...args) => cb(args)),
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),

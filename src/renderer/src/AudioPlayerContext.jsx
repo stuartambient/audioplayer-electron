@@ -131,6 +131,13 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
+    /*     case 'current-playlist-length': {
+      return {
+        ...state,
+        playlistLength: state.playlistTracks.length
+      };
+    } */
+
     case 'albums-playlist': {
       return {
         ...state,
@@ -329,6 +336,19 @@ const audioPlayerReducer = (state, action) => {
     }
     case 'reset-flash-div':
       return { ...state, flashDiv: null };
+
+    case 'loaded-albums':
+      return {
+        ...state,
+        loadedAlbums: action.loadedAlbums
+      };
+
+    case 'remove-from-loaded-albums':
+      return {
+        ...state,
+        loadedAlbums: action.removeAlbum
+      };
+
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -390,7 +410,7 @@ export const AudioPlayerProvider = ({ children }) => {
     shuffledTracks: [],
     playlistInOrder: [],
     albumsInPlaylist: [],
-
+    loadedAlbums: [],
     listType: 'files',
     selectedTrackListType: 'file',
     searchTermFiles: '',
@@ -404,6 +424,7 @@ export const AudioPlayerProvider = ({ children }) => {
     tracksShuffle: false,
     playlistShuffle: false,
     playlistMode: false,
+    /* playlistLength: 0, */
     seeking: false,
     flashDiv: ''
   };

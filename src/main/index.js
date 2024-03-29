@@ -699,33 +699,14 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       label: 'Add Album to Playlist',
       visible: type === 'folder',
       click: () => {
-        return event.sender.send('context-menu-command ', 'add-album-to-playlist');
+        return event.sender.send('context-menu-command', 'add-album-to-playlist');
       }
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  menu.popup(BrowserWindow.fromWebContents(event.sender));
-});
-
-ipcMain.handle('show-albums-menu', (event) => {
-  const template = [
+    },
     {
-      label: 'add album to playlist',
+      label: 'Remove from Playlist',
+      visible: type === 'playlist',
       click: () => {
-        return event.sender.send('album-to-playlist', 'add album to playlist');
-      }
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  menu.popup(BrowserWindow.fromWebContents(event.sender));
-});
-
-ipcMain.handle('show-playlists-menu', (event) => {
-  const template = [
-    {
-      label: 'remove from playlist',
-      click: () => {
-        return event.sender.send('remove-from-playlist', 'remove from playlist');
+        return event.sender.send('context-menu-command', 'remove-from-playlist');
       }
     }
   ];

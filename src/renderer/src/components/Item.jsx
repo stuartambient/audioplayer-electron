@@ -145,7 +145,7 @@ const Item = forwardRef(
       return (
         <div
           id={id}
-          className={className /* flash && flash.id === id ? 'item flash-effect' : 'item' */}
+          className={state.flashDiv?.id === id ? 'item flash-effect' : className}
           ref={ref}
           fromlisttype={type}
         >

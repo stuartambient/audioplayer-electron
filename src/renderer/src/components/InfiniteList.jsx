@@ -16,7 +16,6 @@ import {
 import '../style/InfiniteList.css';
 
 const InfiniteList = memo(() => {
-  /* console.log('Infinite List mounted again'); */
   const { state, dispatch } = useAudioPlayer();
   const [tracksSearchTerm, setTracksSearchTerm] = useState('');
   const [albumsSearchTerm, setAlbumsSearchTerm] = useState('');
@@ -27,7 +26,7 @@ const InfiniteList = memo(() => {
   const [albumsSortType, setAlbumsSortType /* scrollRef */] = useState('datecreated');
   const [resetKey, setResetKey] = useState(null);
   /*   const [flashDiv, setFlashDiv] = useState({ type: '', id: '' }); */
-  const [loadedAlbums, setLoadedAlbums] = useState([]);
+  /* const [loadedAlbums, setLoadedAlbums] = useState([]); */
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
 
   const [playlistReq, setPlaylistReq] = useState('');
@@ -139,7 +138,6 @@ const InfiniteList = memo(() => {
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
-      console.log('track ID: ', trackId);
       const changeTrack = new Event('click', {
         bubbles: true,
         cancelable: false
@@ -220,99 +218,6 @@ const InfiniteList = memo(() => {
     }
   };
 
-  const handleListScroll = (e) => {};
-
-  /*   useEffect(() => {
-    if (flashDiv.id !== '' && flashDiv.type !== '') {
-      const item = document.getElementById(flashDiv.id);
-      item.classList.add('flash');
-    }
-    
-  }, [flashDiv]); */
-
-  /*   useEffect(() => {
-    if (flashDiv.type === 'file') {
-      setTimeout(() => setFlashDiv({ type: '', id: '' }), 1000);
-    }
-  }, [flashDiv]); */
-
-  /* const handleContextMenuOption = async (option, id, term = null) => {
-    if (option[0] === 'add track to playlist') {
-      const track = state.tracks.find((item) => item.afid === id);
-
-      if (track) {
-        if (!state.playlistTracks.find((e) => e.afid === id)) {
-          setFlashDiv({ type: 'file', id: `${track.afid}--item-div` });
-        } else {
-          return;
-        }
-        dispatch({
-          type: 'track-to-playlist',
-          playlistTracks: [...state.playlistTracks, track]
-        });
-      }
-    }
-    if (option[0] === 'edit track metadata') {
-      console.log('editing track metadata.....');
-    }
-    if (option[0] === 'add album to playlist') {
-      const albumTracks = await window.api.getAlbumTracks(term);
-      dispatch({
-        type: 'play-album',
-        playlistTracks: albumTracks
-      });
-      const incompleteAlbum = albumTracks.filter((track) =>
-        state.playlistTracks.find((t) => t.afid === track.afid)
-      );
-      if (incompleteAlbum.length < albumTracks.length) {
-        const removeAlbum = loadedAlbums.filter((la) => la !== id);
-        setLoadedAlbums(removeAlbum);
-        setFlashDiv({ type: 'folder', id: id });
-      }
-      if (!loadedAlbums.includes(id)) {
-        setLoadedAlbums([...loadedAlbums, id]);
-        setFlashDiv({ type: 'folder', id: id });
-      } else {
-        return;
-      }
-    }
-    if (option[0] === 'remove from playlist') {
-      const removeTrack = state.playlistTracks.filter((track) => track.afid !== id);
-      dispatch({
-        type: 'playlist-clear',
-        playlistTracks: removeTrack
-      });
-    }
-  };
-
-  const handleContextMenu = async (e) => {
-    console.log('handleContextMenu: ', e);
-    e.preventDefault();
-    const term = e.target.getAttribute('fullpath');
-    const type = e.target.getAttribute('fromlisttype');
-    if (type === null) return;
-    const splitid = e.target.id.split('--')[0];
-    const id = splitid;
-    switch (type) {
-      case 'file':
-        await window.api.showTracksMenu();
-        await window.api.onTrackToPlaylist((e) => handleContextMenuOption(e, id));
-        await window.api.onEditTrackMetadata((e) => handleContextMenuOption(e, id));
-        break;
-      case 'folder':
-        await window.api.showAlbumsMenu();
-        await window.api.onAlbumToPlaylist((e) => handleContextMenuOption(e, id, term));
-        break;
-      case 'playlist':
-        await window.api.showPlaylistsMenu();
-        await window.api.onRemoveFromPlaylist((e) => handleContextMenuOption(e, id));
-
-        break;
-      default:
-        return;
-    }
-  }; */
-
   const handleAlbumTracksRequest = (e) => {
     const term = e.currentTarget.getAttribute('term');
 
@@ -374,7 +279,6 @@ const InfiniteList = memo(() => {
       filesObserver.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMoreTracks) {
-            console.log('new page');
             dispatch({
               type: 'tracks-pagenumber',
               tracksPageNumber: state.tracksPageNumber + 1
