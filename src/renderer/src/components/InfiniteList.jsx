@@ -398,7 +398,6 @@ const InfiniteList = memo(() => {
         like={item.like}
         audiofile={item.audiofile}
         val={index}
-        /* showContextMenu={handleContextMenu} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
