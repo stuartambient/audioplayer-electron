@@ -13,8 +13,7 @@ export default defineConfig({
         input: {
           index: resolve(__dirname, 'src/preload/index.js'),
           child: resolve(__dirname, 'src/preload/child.js'),
-          list: resolve(__dirname, 'src/preload/list.js'),
-          metadataPanel: resolve(__dirname, 'src/preload/metadataPanel.js')
+          list: resolve(__dirname, 'src/preload/list.js')
           /* list: resolve(__dirname, 'src/renderer/list.js') */
         }
       }
