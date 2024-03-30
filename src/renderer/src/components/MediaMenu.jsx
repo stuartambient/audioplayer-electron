@@ -11,7 +11,6 @@ const MediaMenu = ({
 }) => {
   const { state, dispatch } = useAudioPlayer();
   const handleListType = (type) => {
-    console.log('type: ', type);
     dispatch({
       type: 'set-list-type',
       listType: type

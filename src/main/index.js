@@ -154,7 +154,8 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
-      webSecurity: false
+      webSecurity: false,
+      contextIsolation: true
       /* nodeIntegration: true */
     }
   });
@@ -677,44 +678,35 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   }
 });
 
-ipcMain.handle('show-tracks-menu', (event) => {
+ipcMain.on('show-context-menu', (event, id, type) => {
+  console.log(id, type);
   const template = [
     {
-      label: 'add track to playlist',
+      label: 'Add Track to Playlist',
+      visible: type === 'file',
       click: () => {
-        return event.sender.send('track-to-playlist', 'add track to playlist');
+        return event.sender.send('context-menu-command', 'add-track-to-playlist');
       }
     },
     {
-      label: 'edit track metadata',
+      label: 'Edit Track Metadata',
+      visible: type === 'file',
       click: () => {
-        return event.sender.send('edit-track-metadata', 'edit track metadata');
+        return event.sender.send('context-menu-command', 'edit-track-metadata');
       }
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  menu.popup(BrowserWindow.fromWebContents(event.sender));
-});
-
-ipcMain.handle('show-albums-menu', (event) => {
-  const template = [
+    },
     {
-      label: 'add album to playlist',
+      label: 'Add Album to Playlist',
+      visible: type === 'folder',
       click: () => {
-        return event.sender.send('album-to-playlist', 'add album to playlist');
+        return event.sender.send('context-menu-command', 'add-album-to-playlist');
       }
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  menu.popup(BrowserWindow.fromWebContents(event.sender));
-});
-
-ipcMain.handle('show-playlists-menu', (event) => {
-  const template = [
+    },
     {
-      label: 'remove from playlist',
+      label: 'Remove from Playlist',
+      visible: type === 'playlist',
       click: () => {
-        return event.sender.send('remove-from-playlist', 'remove from playlist');
+        return event.sender.send('context-menu-command', 'remove-from-playlist');
       }
     }
   ];

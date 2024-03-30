@@ -131,6 +131,13 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
+    /*     case 'current-playlist-length': {
+      return {
+        ...state,
+        playlistLength: state.playlistTracks.length
+      };
+    } */
+
     case 'albums-playlist': {
       return {
         ...state,
@@ -277,6 +284,14 @@ const audioPlayerReducer = (state, action) => {
         playlistTracks: action.playlistTracks
       };
     }
+
+    case 'remove-track': {
+      return {
+        ...state,
+        playlistTracks: state.playlistTracks.filter((track) => track.afid !== action.id)
+      };
+    }
+
     case 'mini-mode-info': {
       return {
         ...state,
@@ -321,6 +336,27 @@ const audioPlayerReducer = (state, action) => {
         coversPageNumber: action.coversPageNumber
       };
     }
+    case 'flash-div': {
+      return {
+        ...state,
+        flashDiv: action.flashDiv
+      };
+    }
+    case 'reset-flash-div':
+      return { ...state, flashDiv: null };
+
+    case 'loaded-albums':
+      return {
+        ...state,
+        loadedAlbums: action.loadedAlbums
+      };
+
+    case 'remove-from-loaded-albums':
+      return {
+        ...state,
+        loadedAlbums: action.removeAlbum
+      };
+
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -382,7 +418,7 @@ export const AudioPlayerProvider = ({ children }) => {
     shuffledTracks: [],
     playlistInOrder: [],
     albumsInPlaylist: [],
-
+    loadedAlbums: [],
     listType: 'files',
     selectedTrackListType: 'file',
     searchTermFiles: '',
@@ -396,7 +432,8 @@ export const AudioPlayerProvider = ({ children }) => {
     tracksShuffle: false,
     playlistShuffle: false,
     playlistMode: false,
-    seeking: false
+    seeking: false,
+    flashDiv: ''
   };
 
   const [state, dispatch] = useReducer(audioPlayerReducer, initialState);
