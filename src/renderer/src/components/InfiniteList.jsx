@@ -25,8 +25,6 @@ const InfiniteList = memo(() => {
   const [filesSortType, setFilesSortType /* scrollRef */] = useState('createdon');
   const [albumsSortType, setAlbumsSortType /* scrollRef */] = useState('datecreated');
   const [resetKey, setResetKey] = useState(null);
-  /*   const [flashDiv, setFlashDiv] = useState({ type: '', id: '' }); */
-  /* const [loadedAlbums, setLoadedAlbums] = useState([]); */
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
 
   const [playlistReq, setPlaylistReq] = useState('');
@@ -351,8 +349,6 @@ const InfiniteList = memo(() => {
         like={item.like}
         audiofile={item.audiofile}
         val={index}
-        /*  flashDiv={flashDiv.id} */
-        /* showContextMenu={handleContextMenu} */
         artist={item.artist ? item.artist : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}

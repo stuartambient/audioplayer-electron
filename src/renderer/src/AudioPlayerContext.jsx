@@ -432,7 +432,6 @@ export const AudioPlayerProvider = ({ children }) => {
     tracksShuffle: false,
     playlistShuffle: false,
     playlistMode: false,
-    /* playlistLength: 0, */
     seeking: false,
     flashDiv: ''
   };
