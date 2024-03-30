@@ -29,7 +29,6 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
                 flashDiv: contextMenuItem
               });
             }
-            //}
           } else {
             return;
           }
@@ -57,16 +56,12 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
           };
           getAlbumTracks();
 
-          /*     if (option[0] === 'remove from playlist') {
-      const removeTrack = state.playlistTracks.filter((track) => track.afid !== id);
-      dispatch({
-        type: 'playlist-clear',
-        playlistTracks: removeTrack
-      });
-    }
-  }; */
-
           break;
+        case 'remove-from-playlist':
+          dispatch({
+            type: 'remove-track',
+            id: contextMenuItem.id
+          });
         default:
           break;
       }
@@ -74,10 +69,6 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
 
     return setContextMenuItem(null);
   }, [contextMenuItem]);
-
-  /*   useEffect(() => {
-    if (contextMenuItem) handleFlash({ id: contextMenuItem.id, type: contextMenuItem.type });
-  }, [contextMenuItem]); */
 
   const handleContextMenu = async (e) => {
     e.preventDefault();
@@ -102,7 +93,6 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
       onClick={handleContextMenu}
       style={{ display: 'flex', alignItems: 'center' }}
       ref={divRef}
-      /* className={`${flash ? 'item flash-effect' : 'item'}`} */
     >
       <BsThreeDots />;
     </div>

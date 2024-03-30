@@ -284,6 +284,14 @@ const audioPlayerReducer = (state, action) => {
         playlistTracks: action.playlistTracks
       };
     }
+
+    case 'remove-track': {
+      return {
+        ...state,
+        playlistTracks: state.playlistTracks.filter((track) => track.afid !== action.id)
+      };
+    }
+
     case 'mini-mode-info': {
       return {
         ...state,
