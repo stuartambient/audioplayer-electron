@@ -3,7 +3,7 @@ import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
 const listapi = {
-  onSendToList: (cb) => ipcRenderer.on('send-to-list', (event, arg) => cb(arg))
+  onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg))
 };
 
 if (process.contextIsolated) {

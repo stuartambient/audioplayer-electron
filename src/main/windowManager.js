@@ -5,16 +5,13 @@ const path = require('path');
 // Store windows by name
 const windows = new Map();
 
-/* if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-  mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`);
-} else {
-  mainWindow.loadFile(`path.join(__dirname, '../renderer/index.html`);
-}
- */
-
-// Utility function to create or update child windows
 function createOrUpdateChildWindow(name, config, data) {
+  console.log(name, config);
+
   let window = windows.get(name);
+  if (window) {
+    window.webContents.send('send-to-child', data);
+  }
 
   if (!window) {
     window = new BrowserWindow({
@@ -23,7 +20,7 @@ function createOrUpdateChildWindow(name, config, data) {
       show: config.show,
       resizable: config.resizable,
       webPreferences: {
-        preload: path.join(__dirname, `../preload/${config.preload}`),
+        preload: path.join(__dirname, `../preload/${config.preload}.js`),
         sandbox: config.sandbox,
         webSecurity: config.webSecurity,
         contextIsolation: config.contextIsolation
@@ -32,8 +29,8 @@ function createOrUpdateChildWindow(name, config, data) {
 
     const url =
       is.dev && process.env['ELECTRON_RENDERER_URL']
-        ? `${process.env['ELECTRON_RENDERER_URL']}/child.html`
-        : path.join(__dirname, '../renderer/child.html');
+        ? `${process.env['ELECTRON_RENDERER_URL']}/${config.preload}.html`
+        : path.join(__dirname, `../renderer/${config.preload}.html`);
 
     is.dev ? window.loadURL(url) : window.loadFile(url);
 
@@ -42,11 +39,12 @@ function createOrUpdateChildWindow(name, config, data) {
     });
 
     windows.set(name, window);
+    console.log(windows);
 
     window.once('ready-to-show', () => {
       window.show();
+      window.webContents.send('send-to-child', data);
     });
-    window.webContents.send('send-to-child', data);
   }
 
   /* window.webContents.send('send-to-child', args); */

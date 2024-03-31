@@ -11,7 +11,7 @@ const ListApp = () => {
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
-      await window.listapi.onSendToList((e) => {
+      await window.listapi.onSendToChild((e) => {
         setListType(e.listType);
         setData(e.results);
       });

@@ -27,18 +27,31 @@ export const TotalMedia = () => {
   );
 };
 
+const openChildWindow = (name, type, data) => {
+  window.api.showChild({
+    name: name,
+    winConfig: {
+      width: 1200,
+      height: 550,
+      show: false,
+      resizable: true,
+      preload: 'list',
+      sandbox: false,
+      webSecurity: false,
+      contextIsolation: true
+    },
+    data: { listType: type, results: data }
+  });
+};
 export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
-  /*  const [artistTracks, setArtistTracks] = useState({ artist: '', results: [] }); */
 
   const getArtistTracks = async (e) => {
-    console.log('artist id: ', e.target.id);
     const artist = e.target.id;
     const results = await window.api.getTracksByArtist(artist);
-    setTimeout(
-      async () => await window.api.showList({ listType: 'top-artists', results: results }),
-      1000
-    );
+    if (results) {
+      openChildWindow('table-data', 'top-artists', results);
+    }
   };
 
   return (
@@ -60,11 +73,9 @@ export const Genres = () => {
   const getGenres = async (e) => {
     const genre = e.target.id;
     const results = await window.api.getTracksByGenre(genre);
-    console.log(results);
-    setTimeout(
-      async () => await window.api.showList({ listType: 'top-genres', results: results }),
-      1000
-    );
+    if (results) {
+      openChildWindow('table-data', 'top-genres', results);
+    }
   };
 
   return (

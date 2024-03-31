@@ -26,6 +26,10 @@ const Stats = () => {
         </li>
       </ul>
       <div className="stats--results">
+        <div className="stats--sort">
+          <p>sort1</p>
+          <p>sort2</p>
+        </div>
         {req === 'totalmedia' && <TotalMedia />}
         {req === 'genres' && <Genres />}
         {req === 'topArtists' && <TopHundredArtists />}

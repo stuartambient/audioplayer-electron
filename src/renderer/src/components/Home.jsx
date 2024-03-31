@@ -9,7 +9,7 @@ import Playlists from './Playlists';
 import '../style/Home.css';
 import AlbumsCoverView from './AlbumsCoverView';
 import Player from './Player';
-import CoverSearch from './CoverSearch';
+/* import CoverSearch from './CoverSearch'; */
 
 const Home = () => {
   const { state, dispatch } = useAudioPlayer();
@@ -31,9 +31,11 @@ const Home = () => {
 
   const handleCoversSearchTerm = (e) => {
     e.preventDefault();
+    console.log('searching : ', coverSearchRef.current.value);
     if (!coverSearchRef.current.value) {
       setResetKey(getKey());
     }
+    console.log('searching : ', coverSearchRef.current.value);
     dispatch({
       type: 'covers-search-term',
       coversSearchTerm: coverSearchRef.current.value,
@@ -103,13 +105,13 @@ const Home = () => {
         >
           <span>Playlists</span>
         </li>
-        <li
+        {/*         <li
           className={homepage === 'coversearch' ? 'home-cards--item active' : 'home-cards--item'}
           id="coversearch"
           onClick={handleHomePage}
         >
           <span>Cover search</span>
-        </li>
+        </li> */}
       </ul>
 
       {homepage === 'albums-cover-view' && (
@@ -117,7 +119,7 @@ const Home = () => {
       )}
       {homepage === 'stats' && <Stats />}
       {homepage === 'playlists' && <Playlists />}
-      {homepage === 'coversearch' && <CoverSearch />}
+      {/* {homepage === 'coversearch' && <CoverSearch />} */}
     </>
   );
 };

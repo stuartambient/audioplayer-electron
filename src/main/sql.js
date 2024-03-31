@@ -46,11 +46,11 @@ const insertFiles = (files) => {
   const info = insertMany(files);
 };
 
-const getMissingCovers = () => {
+/* const getMissingCovers = () => {
   const missingCovers = db.prepare('SELECT * FROM covers');
   const covers = missingCovers.all();
   return covers;
-};
+}; */
 
 const deleteFiles = (files) => {
   const deleteFile = db.prepare('DELETE FROM tracks WHERE audiofile = ?');
@@ -361,7 +361,7 @@ export {
   getPlaylist,
   allCoversByScroll,
   getAllTracks,
-  getMissingCovers,
+  /*   getMissingCovers, */
   allTracks,
   refreshMetadata
 };

@@ -40,7 +40,7 @@ import {
   getFiles,
   getAllPkeys,
   getAllTracks,
-  getMissingCovers,
+  /*   getMissingCovers, */
   deleteAlbum,
   allTracks,
   refreshMetadata
@@ -97,33 +97,6 @@ if (!fs.existsSync(coversFolder)) {
 let shuffled = new Array();
 /* console.log('df: ', documentsFolder); */
 
-/* let splashWindow;
-
-function createSplashWindow() {
-  splashWindow = new BrowserWindow({
-    width: 320,
-    height: 240,
-    frame: false,
-    resizable: false,
-    backgroundColor: '#FFF',
-    alwaysOnTop: true,
-    show: false
-  });
-  splashWindow.loadURL(
-    url.format({
-      pathname: path.join(__dirname, 'splash.html'),
-      protocol: 'file',
-      slashes: true
-    })
-  );
-  splashWindow.on('closed', () => {
-    splashWindow = null;
-  });
-  splashWindow.once('ready-to-show', () => {
-    splashWindow.show();
-  });
-} */
-
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled promise rejection:', err);
 });
@@ -136,17 +109,10 @@ let mainWindow;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    /* width: 660,
-    height: 600, */
     frame: false,
     useContentSize: true,
-    /* backgroundColor: '#1D1B1B', */
     transparent: true,
-
-    /* resizable: false, */
-    /* rgb(9, 0, 7) */
     show: false,
-    /* autoHideMenuBar: true, */
     ...(process.platform === 'linux'
       ? {
           icon: path.join(__dirname, '../../build/icon.png')
@@ -157,14 +123,11 @@ function createWindow() {
       sandbox: false,
       webSecurity: false,
       contextIsolation: true
-      /* nodeIntegration: true */
     }
   });
 
   mainWindow.on('ready-to-show', () => {
-    /* mainWindow.setMinimumSize(300, 300); */
     mainWindow.show();
-    /* console.log('dirname: ', __dirname); */
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -380,10 +343,7 @@ ipcMain.handle('update-covers', async () => {
   return updatedFolders;
 });
 
-ipcMain.handle('missing-covers', async () => {
-  const result = getMissingCovers();
-  return result;
-});
+/*  */
 
 ipcMain.handle('create-table', () => {
   const result = createTable();
@@ -762,79 +722,10 @@ ipcMain.handle('show-text-input-menu', (event) => {
 
   inputMenu.popup(BrowserWindow.fromWebContents(event.sender));
 });
-let newWin, newList;
+
 ipcMain.handle('show-child', (event, args) => {
   const { name, winConfig, data } = args;
-  console.log(name, data, winConfig);
   createOrUpdateChildWindow(name, winConfig, data);
-  /* const createChildWindow = () => {
-    newWin = new BrowserWindow({
-      width: 450,
-      height: 550,
-      show: false,
-      resizable: false,
-      webPreferences: {
-        preload: path.join(__dirname, '../preload/child.js'),
-        sandbox: false,
-        webSecurity: false,
-        contextIsolation: true
-      }
-    });
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      newWin.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/child.html`);
-    } else {
-      newWin.loadFile(path.join(__dirname, '../renderer/child.html'));
-    }
-    newWin.loadFile(path.join(__dirname, '../renderer/child.html')); 
-
-    newWin.on('ready-to-show', () => {
-      newWin.show();
-      newWin.webContents.send('send-to-child', args);
-    });
-  };
-
-  const openWindows = BrowserWindow.getAllWindows().length;
-  if (openWindows === 1) {
-    createChildWindow();
-  } else {
-    BrowserWindow.fromId(newWin.id).webContents.send('send-to-child', args);
-  } */
-});
-
-ipcMain.handle('show-list', (event, args) => {
-  console.log('show-list: ', event, '----', args);
-  const createChildWindow = () => {
-    newList = new BrowserWindow({
-      width: 1200,
-      height: 500,
-      show: false,
-      resizable: true,
-      webPreferences: {
-        preload: path.join(__dirname, '../preload/list.js'),
-        sandbox: false,
-        webSecurity: false
-      }
-    });
-
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-      newList.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/list.html`);
-    } else {
-      newList.loadFile(path.join(__dirname, '../renderer/list.html'));
-    }
-
-    newList.on('ready-to-show', () => {
-      newList.show();
-      newList.webContents.send('send-to-list', args);
-    });
-  };
-
-  const openWindows = BrowserWindow.getAllWindows().length;
-  if (openWindows === 1) {
-    createChildWindow();
-  } else {
-    BrowserWindow.fromId(newList.id).webContents.send('send-to-list', args);
-  }
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {

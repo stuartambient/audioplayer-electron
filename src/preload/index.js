@@ -11,8 +11,8 @@ const fixedEncodeURIComponent = (str) => {
 const api = {
   updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
-  updateCovers: () => ipcRenderer.invoke('update-covers'),
-  missingCovers: () => ipcRenderer.invoke('missing-covers'),
+  /*   updateCovers: () => ipcRenderer.invoke('update-covers'), */
+  /*  missingCovers: () => ipcRenderer.invoke('missing-covers'), */
   createTable: () => ipcRenderer.invoke('create-table'),
   getTracks: (page, term, sort) => ipcRenderer.invoke('get-tracks', page, term, sort),
   getAlbums: (page, term, sort) => ipcRenderer.invoke('get-albums', page, term, sort),
@@ -52,7 +52,6 @@ const api = {
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
   showChild: (args) => ipcRenderer.invoke('show-child', args),
-  showList: (arr) => ipcRenderer.invoke('show-list', arr),
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
   updateMeta: () => ipcRenderer.invoke('update-meta'),
