@@ -51,7 +51,7 @@ const api = {
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
-  showChild: (arr) => ipcRenderer.invoke('show-child', arr),
+  showChild: (args) => ipcRenderer.invoke('show-child', args),
   showList: (arr) => ipcRenderer.invoke('show-list', arr),
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),

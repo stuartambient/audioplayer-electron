@@ -1,58 +1,64 @@
-const { BrowserWindow, ipcMain, shell } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
+import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 const path = require('path');
 
-class WindowManager {
-  constructor() {
-    this.windows = new Map();
-  }
+// Store windows by name
+const windows = new Map();
 
-  createWindow(id, config, url) {
-    if (this.windows.has(id)) {
-      this.windows.get(id).focus();
-      return;
-    }
+/* if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+  mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`);
+} else {
+  mainWindow.loadFile(`path.join(__dirname, '../renderer/index.html`);
+}
+ */
 
-    const window = new BrowserWindow(config);
+// Utility function to create or update child windows
+function createOrUpdateChildWindow(name, config, data) {
+  let window = windows.get(name);
 
-    window.on('ready-to-show', () => {
-      window.show();
-    });
-
-    window.webContents.setWindowOpenHandler((details) => {
-      shell.openExternal(details.url);
-      return { action: 'deny' };
-    });
-
-    ipcMain.on('app-close', () => {
-      window.close();
-    });
-
-    ipcMain.on('minimize', () => {
-      window.minimize();
-    });
-
-    ipcMain.on('maximize', () => {
-      if (window.isMaximized()) {
-        window.unmaximize();
-      } else {
-        window.setMaximizable(true); // Ensure the window can be maximized
-        window.maximize();
+  if (!window) {
+    window = new BrowserWindow({
+      width: config.width,
+      height: config.height,
+      show: config.show,
+      resizable: config.resizable,
+      webPreferences: {
+        preload: path.join(__dirname, `../preload/${config.preload}`),
+        sandbox: config.sandbox,
+        webSecurity: config.webSecurity,
+        contextIsolation: config.contextIsolation
       }
     });
 
-    window.loadURL(url);
+    const url =
+      is.dev && process.env['ELECTRON_RENDERER_URL']
+        ? `${process.env['ELECTRON_RENDERER_URL']}/child.html`
+        : path.join(__dirname, '../renderer/child.html');
+
+    is.dev ? window.loadURL(url) : window.loadFile(url);
 
     window.on('closed', () => {
-      this.windows.delete(id);
+      windows.delete(name);
     });
 
-    this.windows.set(id, window);
+    windows.set(name, window);
+
+    window.once('ready-to-show', () => {
+      window.show();
+    });
+    window.webContents.send('send-to-child', data);
   }
 
-  getWindow(id) {
-    return this.windows.get(id); // Retrieve a window by ID
-  }
+  /* window.webContents.send('send-to-child', args); */
 }
 
-const windowManager = new WindowManager();
-export default windowManager;
+/* ipcMain.handle('show-child', (event, args) => {
+  const name = args.name || 'defaultChildWindow'; 
+  createOrUpdateChildWindow(name, args);
+});
+
+app.whenReady().then(() => {
+
+}); */
+
+export default createOrUpdateChildWindow;

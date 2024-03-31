@@ -14,12 +14,12 @@ import {
 import * as path from 'path';
 import fs from 'fs';
 /* import { spawn } from 'child_process'; */
+import createOrUpdateChildWindow from './windowManager.js';
 import url, { pathToFileURL } from 'url';
 import http from 'node:http';
 import * as stream from 'stream';
 import { promisify } from 'util';
 import { Buffer } from 'buffer';
-import windowManager from './windowManager.js';
 import { parseFile } from 'music-metadata';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -95,49 +95,58 @@ if (!fs.existsSync(coversFolder)) {
 
 /* RANDOM ARRAY FOR TRACKS SHUFFLE */
 let shuffled = new Array();
+/* console.log('df: ', documentsFolder); */
+
+/* let splashWindow;
+
+function createSplashWindow() {
+  splashWindow = new BrowserWindow({
+    width: 320,
+    height: 240,
+    frame: false,
+    resizable: false,
+    backgroundColor: '#FFF',
+    alwaysOnTop: true,
+    show: false
+  });
+  splashWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, 'splash.html'),
+      protocol: 'file',
+      slashes: true
+    })
+  );
+  splashWindow.on('closed', () => {
+    splashWindow = null;
+  });
+  splashWindow.once('ready-to-show', () => {
+    splashWindow.show();
+  });
+} */
 
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled promise rejection:', err);
 });
 
-app.on('ready', () => console.log('app is ready'));
-
 const capitalizeDriveLetter = (str) => {
   return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
 };
+let mainWindow;
 
 function createWindow() {
-  const mainWindowConfig = {
-    frame: false,
-    useContentSize: true,
-    transparent: true,
-    ...(process.platform === 'linux' ? { icon: path.join(__dirname, '../../build/icon.png') } : {}),
-    webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
-      sandbox: false,
-      webSecurity: false
-    }
-  };
-
-  const mainURL =
-    is.Dev && process.env['ELECTRON_RENDERER_URL']
-      ? `${process.env['ELECTRON_RENDERER_URL']}/index.html`
-      : `file://${path.join(__dirname, '../renderer/index.html')}`; // Fix the missing quote and typo
-
-  // Use the WindowManager to create the main window
-  windowManager.createWindow('main', mainWindowConfig, mainURL);
-}
-
-app.on('ready', createWindow);
-const mainWindow = windowManager.getWindow('main');
-/* let mainWindow;
-
-function createWindow() {
+  // Create the browser window.
   mainWindow = new BrowserWindow({
+    /* width: 660,
+    height: 600, */
     frame: false,
     useContentSize: true,
+    /* backgroundColor: '#1D1B1B', */
     transparent: true,
+
+    /* resizable: false, */
+    /* rgb(9, 0, 7) */
     show: false,
+    /* autoHideMenuBar: true, */
     ...(process.platform === 'linux'
       ? {
           icon: path.join(__dirname, '../../build/icon.png')
@@ -146,12 +155,16 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
-      webSecurity: false
+      webSecurity: false,
+      contextIsolation: true
+      /* nodeIntegration: true */
     }
   });
 
   mainWindow.on('ready-to-show', () => {
+    /* mainWindow.setMinimumSize(300, 300); */
     mainWindow.show();
+    /* console.log('dirname: ', __dirname); */
   });
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -168,6 +181,7 @@ function createWindow() {
   });
 
   ipcMain.on('maximize', (events, args) => {
+    /* console.log('getsize: ', mainWindow.getBounds()); */
     if (mainWindow.isMaximized()) {
       mainWindow.unmaximize();
     } else {
@@ -176,12 +190,14 @@ function createWindow() {
     }
   });
 
+  // HMR for renderer base on electron-vite cli.
+  // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`);
   } else {
     mainWindow.loadFile(`path.join(__dirname, '../renderer/index.html`);
   }
-} */
+}
 
 const reactDevToolsPath =
   /* 'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.1_0'; */
@@ -262,7 +278,7 @@ app.whenReady().then(() => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  /*   createWindow(); */
+  createWindow();
 
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
@@ -663,44 +679,35 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   }
 });
 
-ipcMain.handle('show-tracks-menu', (event) => {
+ipcMain.on('show-context-menu', (event, id, type) => {
+  console.log(id, type);
   const template = [
     {
-      label: 'add track to playlist',
+      label: 'Add Track to Playlist',
+      visible: type === 'file',
       click: () => {
-        return event.sender.send('track-to-playlist', 'add track to playlist');
+        return event.sender.send('context-menu-command', 'add-track-to-playlist');
       }
     },
     {
-      label: 'edit track metadata',
+      label: 'Edit Track Metadata',
+      visible: type === 'file',
       click: () => {
-        return event.sender.send('edit-track-metadata', 'edit track metadata');
+        return event.sender.send('context-menu-command', 'edit-track-metadata');
       }
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  menu.popup(BrowserWindow.fromWebContents(event.sender));
-});
-
-ipcMain.handle('show-albums-menu', (event) => {
-  const template = [
+    },
     {
-      label: 'add album to playlist',
+      label: 'Add Album to Playlist',
+      visible: type === 'folder',
       click: () => {
-        return event.sender.send('album-to-playlist', 'add album to playlist');
+        return event.sender.send('context-menu-command', 'add-album-to-playlist');
       }
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  menu.popup(BrowserWindow.fromWebContents(event.sender));
-});
-
-ipcMain.handle('show-playlists-menu', (event) => {
-  const template = [
+    },
     {
-      label: 'remove from playlist',
+      label: 'Remove from Playlist',
+      visible: type === 'playlist',
       click: () => {
-        return event.sender.send('remove-from-playlist', 'remove from playlist');
+        return event.sender.send('context-menu-command', 'remove-from-playlist');
       }
     }
   ];
@@ -757,7 +764,10 @@ ipcMain.handle('show-text-input-menu', (event) => {
 });
 let newWin, newList;
 ipcMain.handle('show-child', (event, args) => {
-  const createChildWindow = () => {
+  const { name, winConfig, data } = args;
+  console.log(name, data, winConfig);
+  createOrUpdateChildWindow(name, winConfig, data);
+  /* const createChildWindow = () => {
     newWin = new BrowserWindow({
       width: 450,
       height: 550,
@@ -776,7 +786,7 @@ ipcMain.handle('show-child', (event, args) => {
     } else {
       newWin.loadFile(path.join(__dirname, '../renderer/child.html'));
     }
-    /* newWin.loadFile(path.join(__dirname, '../renderer/child.html')); */
+    newWin.loadFile(path.join(__dirname, '../renderer/child.html')); 
 
     newWin.on('ready-to-show', () => {
       newWin.show();
@@ -789,7 +799,7 @@ ipcMain.handle('show-child', (event, args) => {
     createChildWindow();
   } else {
     BrowserWindow.fromId(newWin.id).webContents.send('send-to-child', args);
-  }
+  } */
 });
 
 ipcMain.handle('show-list', (event, args) => {
