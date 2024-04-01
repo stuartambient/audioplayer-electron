@@ -10,7 +10,7 @@ function createOrUpdateChildWindow(name, config, data) {
 
   let window = windows.get(name);
   if (window) {
-    window.webContents.send('send-to-child', data);
+    return window.webContents.send('send-to-child', data);
   }
 
   if (!window) {
@@ -46,17 +46,6 @@ function createOrUpdateChildWindow(name, config, data) {
       window.webContents.send('send-to-child', data);
     });
   }
-
-  /* window.webContents.send('send-to-child', args); */
 }
-
-/* ipcMain.handle('show-child', (event, args) => {
-  const name = args.name || 'defaultChildWindow'; 
-  createOrUpdateChildWindow(name, args);
-});
-
-app.whenReady().then(() => {
-
-}); */
 
 export default createOrUpdateChildWindow;
