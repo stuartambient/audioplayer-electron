@@ -8,7 +8,7 @@ const fixedEncodeURIComponent = (str) => {
   });
 };
 // Custom APIs for renderer
-const api = {
+contextBridge.exposeInMainWorld('api', {
   updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
   /*   updateCovers: () => ipcRenderer.invoke('update-covers'), */
@@ -40,14 +40,10 @@ const api = {
     ipcRenderer.invoke('get-covers', coversPageNum, coversSearchTerm),
   setShuffledTracksArray: () => ipcRenderer.invoke('set-shuffled-tracks-array'),
   getShuffledTracks: (start, end) => ipcRenderer.invoke('get-shuffled-tracks', start, end),
-  showTracksMenu: () => ipcRenderer.invoke('show-tracks-menu'),
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
-  showPlaylistsMenu: () => ipcRenderer.invoke('show-playlists-menu'),
   showAlbumCoverMenu: () => ipcRenderer.invoke('show-album-cover-menu'),
   showTextInputMenu: () => ipcRenderer.invoke('show-text-input-menu'),
-  onTrackToPlaylist: (cb) => ipcRenderer.once('track-to-playlist', (event, ...args) => cb(args)),
   onEditTrackMetadata: (cb) => ipcRenderer.once('edit-metadata', (event, args) => cb(args)),
-  onAlbumToPlaylist: (cb) => ipcRenderer.once('album-to-playlist', (event, ...args) => cb(args)),
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
   onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
@@ -58,7 +54,12 @@ const api = {
   genresStat: () => ipcRenderer.invoke('genres-stat'),
   nullMetadataStat: () => ipcRenderer.invoke('null-metadata-stat'),
   getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
-  getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre)
+  getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
+  showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
+  onContextMenuCommand: (callback) => {
+    ipcRenderer.once('context-menu-command', (event, command) => callback(command));
+    return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
+  }
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>
@@ -66,7 +67,7 @@ const api = {
   /*   onStartStream: (stream) => ipcRenderer.on('start-stream', (args) => args) */
 
   /* onAlbumCoverMenu: (cb) => ipcRenderer.once('add-album-to-playlist', (event, ...args) => cb(args)) */
-};
+});
 
 /* ipcRenderer.on('track-to-playlist', (_event, arg) => {
   console.log(arg);
@@ -75,7 +76,7 @@ const api = {
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
 // just add to the DOM global.
-if (process.contextIsolated) {
+/* if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('api', api);
@@ -85,4 +86,4 @@ if (process.contextIsolated) {
 } else {
   window.electron = electronAPI;
   window.api = api;
-}
+} */

@@ -109,7 +109,6 @@ function App() {
   };
 
   const handlePlayerControls = (e) => {
-    console.log('handle player: ', e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'playlist':
         dispatch({

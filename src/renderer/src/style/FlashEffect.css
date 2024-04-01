@@ -1,0 +1,14 @@
+@keyframes flashAnimation {
+  0%,
+  100% {
+    /* opacity: 1; */
+  }
+  50% {
+    /* opacity: 0; */
+    background-color: red;
+  }
+}
+
+.flash-effect {
+  animation: flashAnimation 1s ease-out;
+}
