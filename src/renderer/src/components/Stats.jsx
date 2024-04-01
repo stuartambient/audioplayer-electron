@@ -6,8 +6,13 @@ import '../style/Stats.css';
 
 const Stats = () => {
   const [req, setReq] = useState('');
+  const [sort, setSort] = useState('col1');
 
   const handleStatReq = (e) => setReq(e.currentTarget.id);
+
+  const handleSort = (e) => {
+    console.log(e.target.id);
+  };
 
   return (
     <div className="stats">
@@ -26,13 +31,33 @@ const Stats = () => {
         </li>
       </ul>
       <div className="stats--results">
-        <div className="stats--sort">
-          <p>sort1</p>
-          <p>sort2</p>
-        </div>
         {req === 'totalmedia' && <TotalMedia />}
-        {req === 'genres' && <Genres />}
-        {req === 'topArtists' && <TopHundredArtists />}
+        {req === 'genres' && (
+          <>
+            <div className="stats--sort">
+              <p id="col1sort" onClick={handleSort}>
+                sort1
+              </p>
+              <p id="col2sort" onClick={handleSort}>
+                sort2
+              </p>
+            </div>
+            <Genres />
+          </>
+        )}
+        {req === 'topArtists' && (
+          <>
+            <div className="stats--sort">
+              <p id="col1sort" onClick={handleSort}>
+                sort1
+              </p>
+              <p id="col2sort" onClick={handleSort}>
+                sort2
+              </p>
+            </div>
+            <TopHundredArtists />
+          </>
+        )}
         {req === 'nometadata' && <NullMetadata />}
       </div>
     </div>

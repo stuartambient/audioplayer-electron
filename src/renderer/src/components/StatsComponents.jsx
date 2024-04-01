@@ -46,6 +46,8 @@ const openChildWindow = (name, type, data) => {
 export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
 
+  console.log(topHundredArtists.sort((a, b) => a.artist.localeCompare(b.count)));
+
   const getArtistTracks = async (e) => {
     const artist = e.target.id;
     const results = await window.api.getTracksByArtist(artist);
