@@ -6,7 +6,7 @@ const path = require('path');
 const windows = new Map();
 
 function createOrUpdateChildWindow(name, config, data) {
-  console.log(name, 'config: ', config);
+  console.log(`${process.env['ELECTRON_RENDERER_URL']}/${config.preload}.html`);
 
   let window = windows.get(name);
   if (window) {
