@@ -145,7 +145,7 @@ const AlbumsCoverView = ({ resetKey }) => {
         resizable: false,
 
         /* preload: path.join(__dirname, '../preload/child.js'), */
-        preload: 'child',
+        preload: 'coverSearch',
         sandbox: false,
         webSecurity: false,
         contextIsolation: true

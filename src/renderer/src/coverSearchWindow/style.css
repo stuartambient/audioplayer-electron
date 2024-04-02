@@ -1,0 +1,137 @@
+:root {
+  --blue1: #26b0ff;
+  --blue2: #2686ff;
+  --blue3: #265bff;
+  --blue4: #2630ff;
+}
+
+body {
+  box-sizing: border-box;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+}
+
+.cover-search-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: grid;
+  grid-template-rows: 45% 25% 25%;
+  grid-template-columns: 100%;
+  grid-row-gap: 1rem;
+  color: white;
+  background-color: #212121;
+}
+
+.cover-search-wrapper ul {
+  list-style: none;
+  min-width: 100%;
+}
+
+.cover-search--images .image-ui {
+  display: flex;
+  min-width: 100%;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 0.8rem;
+}
+
+.cover-search--images .images img {
+  margin-top: 0.2rem;
+}
+
+.cover-search--images .image-ui .image-download {
+  border: 1px solid red;
+  padding: 0.2rem 0.2rem 0.2rem 0.2rem;
+  border-radius: 5px;
+}
+
+.cover-search--images .image-ui .image-download:hover {
+  cursor: pointer;
+  background: var(--blue4);
+}
+
+.cover-search--images .images .images--size {
+  display: flex;
+  flex-direction: column;
+}
+.cover-search--release {
+  grid-row: 2 / 3;
+}
+
+.cover-search--releases {
+  grid-row: 2 / 4;
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.cover-search--releases li {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid white;
+  padding: 0.3rem;
+  font-size: 0.9rem;
+}
+
+.cover-search--releases li .value {
+  background-color: var(--blue4);
+}
+
+.cover-search--releases .label {
+  background-color: black;
+  padding: 0.1rem;
+  margin-right: 5px;
+}
+
+.cover-search--releases li > * {
+  margin: 0.2rem 0;
+}
+
+.cover-search--releases .preview {
+  align-self: center;
+  padding: 0.2rem;
+  border: 1px inset white;
+  border-radius: 3px;
+}
+
+.cover-search--releases .preview:hover {
+  cursor: pointer;
+}
+
+.cover-search--images {
+  grid-row: 1 / 2;
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  flex-direction: column;
+}
+
+/* .cover-search--releases li {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: 30% 70%;
+  align-items: center;
+  border-bottom: 1px solid white;
+}
+
+.cover-search--releases li:hover {
+  cursor: pointer;
+}
+
+.cover-search--releases li .heading {
+  justify-self: center;
+  grid-column: 1 / 3;
+}
+ */

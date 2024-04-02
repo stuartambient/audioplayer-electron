@@ -35,7 +35,7 @@ const openChildWindow = (name, type, data) => {
       height: 550,
       show: false,
       resizable: true,
-      preload: 'list',
+      preload: 'metadataEditing',
       sandbox: false,
       webSecurity: false,
       contextIsolation: true
