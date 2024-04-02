@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { HiOutlineCursorClick } from 'react-icons/hi';
-import AGGrid from '../components/table/AGGrid';
+import AGGrid from '../../table/AGGrid';
 import './style.css';
 
 const MetadataEditingApp = () => {
@@ -11,7 +11,7 @@ const MetadataEditingApp = () => {
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
-      await window.listapi.onSendToChild((e) => {
+      await window.metadataEditingApi.onSendToChild((e) => {
         setListType(e.listType);
         setData(e.results);
       });

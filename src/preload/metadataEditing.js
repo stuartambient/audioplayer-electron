@@ -2,20 +2,20 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
-const listapi = {
+const metadataEditingApi = {
   onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg))
 };
 
 if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI);
-    contextBridge.exposeInMainWorld('listapi', listapi);
+    contextBridge.exposeInMainWorld('metadataEditingApi', metadataEditingApi);
   } catch (error) {
     console.error(error);
   }
 } else {
   window.electron = electronAPI;
-  window.listapi = listapi;
+  window.metadataEditingApi = metadataEditingApi;
 }
 
 /* releases.release[0].results

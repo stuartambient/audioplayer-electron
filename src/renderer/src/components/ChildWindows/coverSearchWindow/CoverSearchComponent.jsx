@@ -25,7 +25,7 @@ const CoverSearchApp = () => {
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
-      await window.childapi.onSendToChild((e) => {
+      await window.coverSearchApi.onSendToChild((e) => {
         setReleases(e);
         setPreviewImage(undefined);
       });
@@ -45,9 +45,12 @@ const CoverSearchApp = () => {
 
   const handleDownloadImage = async (e) => {
     e.preventDefault();
-    const download = await window.childapi.downloadFile(`${previewImage.url}`, releases[0].path);
+    const download = await window.coverSearchApi.downloadFile(
+      `${previewImage.url}`,
+      releases[0].path
+    );
     console.log('download image: ', download, releases[0].path);
-    await window.childapi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
+    await window.coverSearchApi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
   };
 
   return (
