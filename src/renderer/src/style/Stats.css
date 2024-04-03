@@ -11,6 +11,26 @@
   grid-column: 1 / 2;
 }
 
+.stats ul {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.stats--nav > li {
+  flex-grow: 0;
+  flex-shrink: 0;
+  flex-basis: auto; /* Or a specific width, depending on your design */
+  position: relative;
+}
+
+.stats--nav > li > ul {
+  position: absolute;
+  left: 0; /* Adjust as needed */
+  top: 100%; /* Position it right below the parent li */
+  width: max-content; /* Or a specific width */
+}
+
 .stats--list::-webkit-scrollbar {
   display: none;
 }

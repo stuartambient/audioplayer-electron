@@ -54,7 +54,8 @@ import {
   genresWithCount,
   nullMetadata,
   allTracksByArtist,
-  allTracksByGenre
+  allTracksByGenre,
+  distinctDirectories
 } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
@@ -470,6 +471,16 @@ ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
     return tracks;
   } catch (err) {
     console.error(err.message);
+  }
+});
+
+ipcMain.handle('distinct-directories', async () => {
+  console.log('distinct-directories called');
+  try {
+    const dirs = await distinctDirectories();
+    return dirs;
+  } catch (e) {
+    console.log(e.message);
   }
 });
 

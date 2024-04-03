@@ -34,6 +34,18 @@ const allTracksByGenre = (genre) => {
   return result;
 };
 
+const distinctDirectories = () => {
+  // Define the SQL query to get unique color values
+  const sql = 'SELECT DISTINCT rootlocation FROM albums';
+
+  // Execute the query
+  const rows = db.prepare(sql).all();
+
+  // Extract just the color values
+  const uniqueDirectories = rows.map((row) => row.rootlocation);
+  return uniqueDirectories;
+};
+
 const genresWithCount = () => {
   const stmt = db.prepare(
     'SELECT genre, COUNT(*) as count FROM tracks GROUP BY genre ORDER BY lower(genre)'
@@ -55,7 +67,8 @@ export {
   genresWithCount,
   nullMetadata,
   allTracksByArtist,
-  allTracksByGenre
+  allTracksByGenre,
+  distinctDirectories
 };
 
 /*

@@ -378,6 +378,23 @@ const useGetPlaylists = (setMyPlaylists) => {
   }, []);
 };
 
+const useDistinctDirectories = (setDirectories) => {
+  useEffect(() => {
+    let subscribed = true;
+    const getDistinctDirectories = async () => {
+      const myDirectories = await window.api.distinctDirectories();
+      if (myDirectories) {
+        console.log(myDirectories);
+        setDirectories(myDirectories);
+      }
+    };
+    if (subscribed) {
+      getDistinctDirectories();
+    }
+    return () => (subscribed = false);
+  }, []);
+};
+
 export {
   useTracks,
   useAlbums,
@@ -389,5 +406,6 @@ export {
   usePlaylist,
   usePlaylistDialog,
   useGetPlaylists,
-  useAllAlbumsCovers
+  useAllAlbumsCovers,
+  useDistinctDirectories
 };

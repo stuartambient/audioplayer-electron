@@ -52,6 +52,7 @@ contextBridge.exposeInMainWorld('api', {
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
   updateMeta: () => ipcRenderer.invoke('update-meta'),
   genresStat: () => ipcRenderer.invoke('genres-stat'),
+  distinctDirectories: () => ipcRenderer.invoke('distinct-directories'),
   nullMetadataStat: () => ipcRenderer.invoke('null-metadata-stat'),
   getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
   getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
