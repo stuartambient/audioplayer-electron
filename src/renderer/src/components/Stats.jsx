@@ -1,6 +1,12 @@
 import { useState, useEffect } from 'react';
 /* import { useTotalTracksStat, useTopHundredArtistsStat } from '../hooks/useDb'; */
-import { TotalMedia, TopHundredArtists, Genres, NullMetadata } from './StatsComponents';
+import {
+  TotalMedia,
+  TopHundredArtists,
+  Genres,
+  NullMetadata,
+  FolderTracks
+} from './StatsComponents';
 import { useDistinctDirectories } from '../hooks/useDb';
 /* import { AiOutlineTrophy } from 'react-icons'; */
 import '../style/Stats.css';
@@ -14,6 +20,14 @@ const Stats = () => {
   useDistinctDirectories(setDirectories);
 
   /*   useTotalTracksStat(setDirectories); */
+
+  useEffect(() => {
+    if (isSubmenuOpen && reqDirectories.length > 0) {
+      setReq('directories');
+    } else if (!isSubmenuOpen && reqDirectories.length > 0) {
+      setReqDirectories([]);
+    }
+  }, [isSubmenuOpen, reqDirectories]);
 
   const toggleSubmenu = (event) => {
     // Check if the click is directly on the 'Directories' title or the `li` itself
@@ -102,6 +116,7 @@ const Stats = () => {
             <Genres />
           </>
         )}
+        {req === 'directories' && <FolderTracks directories={reqDirectories} />}
         {req === 'topArtists' && (
           <>
             <div className="stats--sort">

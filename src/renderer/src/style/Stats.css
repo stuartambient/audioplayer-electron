@@ -11,7 +11,14 @@
   grid-column: 1 / 2;
 }
 
-.stats ul {
+.stats--nav {
+  display: grid;
+  grid-template-rows: repeat(5, auto); /* Default to a single column layout */
+  gap: 10px;
+  margin-left: 10px;
+}
+
+/* .stats ul {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -20,16 +27,16 @@
 .stats--nav > li {
   flex-grow: 0;
   flex-shrink: 0;
-  flex-basis: auto; /* Or a specific width, depending on your design */
+  flex-basis: auto; 
   position: relative;
 }
 
 .stats--nav > li > ul {
   position: absolute;
-  left: 0; /* Adjust as needed */
-  top: 100%; /* Position it right below the parent li */
-  width: max-content; /* Or a specific width */
-}
+  left: 0; 
+  top: 100%; 
+  width: max-content; 
+} */
 
 .stats--list::-webkit-scrollbar {
   display: none;

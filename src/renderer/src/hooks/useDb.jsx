@@ -229,6 +229,22 @@ const useGenres = (setGenres) => {
   /* return genres; */
 };
 
+const useFolder = (setFolderTracks, directories) => {
+  useEffect(() => {
+    let subscribed = true;
+    const getFolder = async () => {
+      const folderRequest = await window.api.foldersStat(directories);
+      if (folderRequest && subscribed) {
+        setFolderTracks(folderRequest);
+      } else {
+        return 'no results';
+      }
+    };
+    getFolder();
+    return () => (subscribed = false);
+  }, [directories]);
+};
+
 const useNullMeta = (setTracks) => {
   useEffect(() => {
     let subscribed = true;
@@ -384,7 +400,6 @@ const useDistinctDirectories = (setDirectories) => {
     const getDistinctDirectories = async () => {
       const myDirectories = await window.api.distinctDirectories();
       if (myDirectories) {
-        console.log(myDirectories);
         setDirectories(myDirectories);
       }
     };
@@ -407,5 +422,6 @@ export {
   usePlaylistDialog,
   useGetPlaylists,
   useAllAlbumsCovers,
-  useDistinctDirectories
+  useDistinctDirectories,
+  useFolder
 };

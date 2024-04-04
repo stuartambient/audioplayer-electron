@@ -34,6 +34,16 @@ const allTracksByGenre = (genre) => {
   return result;
 };
 
+const allTracksByFolder = (root) => {
+  // Corrected SQL query string and removed the extra `}`
+  const stmt = db.prepare(
+    `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE root = ?`
+  );
+  // Execute the prepared statement with `root` as the parameter
+  const result = stmt.all(root);
+  return result;
+};
+
 const distinctDirectories = () => {
   // Define the SQL query to get unique color values
   const sql = 'SELECT DISTINCT rootlocation FROM albums';
@@ -54,6 +64,26 @@ const genresWithCount = () => {
   return results;
 };
 
+const foldersWithCount = (dirs) => {
+  // Assuming dirs is an array of folder paths, e.g., ['path1', 'path2']
+  // Prepare a query string with placeholders for 'dirs' values
+  let placeholders = dirs.map(() => '?').join(', ');
+  let sql = `
+    SELECT root, COUNT(*) as count 
+    FROM tracks 
+    WHERE root IN (${placeholders})
+    GROUP BY root 
+    ORDER BY lower(root)
+  `;
+
+  // Prepare the statement with the sql query
+  const stmt = db.prepare(sql);
+
+  // Execute the query with 'dirs' as the parameters for placeholders
+  const results = stmt.all(...dirs);
+  return results;
+};
+
 const nullMetadata = () => {
   const stmt = db.prepare(
     `SELECT audiofile FROM tracks WHERE artist IS NULL OR title IS NULL OR album IS NULL ORDER BY audiofile`
@@ -65,9 +95,11 @@ export {
   totalTracks,
   topHundredArtists,
   genresWithCount,
+  foldersWithCount,
   nullMetadata,
   allTracksByArtist,
   allTracksByGenre,
+  allTracksByFolder,
   distinctDirectories
 };
 

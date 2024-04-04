@@ -8,6 +8,7 @@ import {
   useTotalTracksStat,
   useTopHundredArtistsStat,
   useGenres,
+  useFolder,
   useNullMeta
 } from '../hooks/useDb';
 
@@ -45,11 +46,9 @@ const openChildWindow = (name, type, data) => {
 };
 export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
-
-  /* console.log(topHundredArtists.sort((a, b) => a.artist.localeCompare(b.count))); */
-  console.log('top: ', topHundredArtists);
   const getArtistTracks = async (e) => {
     const artist = e.target.id;
+    console.log('artists, e.target id: ', artist);
     const results = await window.api.getTracksByArtist(artist);
     if (results) {
       openChildWindow('table-data', 'top-artists', results);
@@ -91,8 +90,50 @@ export const Genres = () => {
       stat="stat-genres"
     />
   );
+};
 
-  /* const genreList = genres.map((genre) => {
+export const FolderTracks = ({ directories }) => {
+  const [folderTracks, setFolderTracks] = useState([]);
+  useFolder(setFolderTracks, directories);
+
+  const handleFolderStatClick = (e) => {
+    const spanParent = event.target.closest('span');
+    if (spanParent) {
+      console.log(spanParent.id);
+    } else {
+      console.log('StatClick: ', e.target.id);
+    }
+  };
+
+  /*   useEffect(() => {
+    if (folderTracks) {
+      console.log('ft: ', folderTracks);
+    }
+  }, [folderTracks]); */
+  const getRootTracks = async (e) => {
+    const root = e.target.id;
+    const results = await window.api.getTracksByFolder(root);
+    if (results) {
+      openChildWindow('table-data', 'top-folders', results);
+    }
+  };
+
+  /*  export const FolderTracksExpanded = ({}) => {}; */
+
+  return (
+    <List
+      data={folderTracks}
+      height={600}
+      itemSize={50}
+      width="100%"
+      className="stats--list"
+      onClick={handleFolderStatClick}
+      stat="stat-folder"
+    />
+  );
+};
+
+/* const genreList = genres.map((genre) => {
     if (!genre.genre) return;
     return (
       <li className="stats--genres-genre">
@@ -101,8 +142,8 @@ export const Genres = () => {
       </li>
     );
   }); */
-  /* return <ul className="stats--genres">{genreList}</ul>; */
-};
+/* return <ul className="stats--genres">{genreList}</ul>; */
+//};
 
 export const NullMetadata = () => {
   const [tracks, setTracks] = useState();

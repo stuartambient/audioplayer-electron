@@ -55,7 +55,9 @@ import {
   nullMetadata,
   allTracksByArtist,
   allTracksByGenre,
-  distinctDirectories
+  distinctDirectories,
+  foldersWithCount,
+  allTracksByFolder
 } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
@@ -475,7 +477,7 @@ ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
 });
 
 ipcMain.handle('distinct-directories', async () => {
-  console.log('distinct-directories called');
+  /* console.log('distinct-directories called'); */
   try {
     const dirs = await distinctDirectories();
     return dirs;
@@ -493,10 +495,22 @@ ipcMain.handle('get-tracks-by-genre', async (_, arg) => {
   }
 });
 
+ipcMain.handle('get-tracks-by-folder', async (event, folder) => {
+  console.log('get tracks by folder: ', folder);
+  const folderTracks = await allTracksByFolder(folder);
+  return folderTracks;
+});
+
 ipcMain.handle('genres-stat', async () => {
   const genres = await genresWithCount();
   /* console.log('genres: ', genres.length); */
   return genres;
+});
+
+ipcMain.handle('folders-stat', async (event, dirs) => {
+  const folders = await foldersWithCount(dirs);
+  console.log(folders);
+  return folders;
 });
 
 ipcMain.handle('null-metadata-stat', async () => {

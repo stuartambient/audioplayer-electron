@@ -52,10 +52,12 @@ contextBridge.exposeInMainWorld('api', {
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
   updateMeta: () => ipcRenderer.invoke('update-meta'),
   genresStat: () => ipcRenderer.invoke('genres-stat'),
+  foldersStat: (dirs) => ipcRenderer.invoke('folders-stat', dirs),
   distinctDirectories: () => ipcRenderer.invoke('distinct-directories'),
   nullMetadataStat: () => ipcRenderer.invoke('null-metadata-stat'),
   getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
   getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
+  getTracksByFolder: (folder) => ipcRenderer.invoke('get-tracks-by-folder', folder),
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
     ipcRenderer.once('context-menu-command', (event, command) => callback(command));

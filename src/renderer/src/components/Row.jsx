@@ -1,3 +1,5 @@
+import { GiExpandedRays } from 'react-icons/gi';
+
 const Row = ({ index, style, data, onClick, stat }) => {
   const rowData = data[index];
 
@@ -39,6 +41,24 @@ const Row = ({ index, style, data, onClick, stat }) => {
             <span id={rowData.genre} onClick={onClick} style={countStyles}>
               {rowData.count}
             </span>
+          )}
+        </>
+      )}
+      {stat === 'stat-folder' && (
+        <>
+          {/*  <span style={itemStyles}>{!rowData.root ? 'null' : rowData.root}</span> */}
+          {rowData.root && (
+            <>
+              <span id={rowData.root} onClick={onClick}>
+                {rowData.root}
+              </span>
+              <span id={`${rowData.root}--expand`} onClick={onClick}>
+                <GiExpandedRays />
+              </span>
+              <span id={rowData.count} onClick={onClick} style={countStyles}>
+                {rowData.count}
+              </span>
+            </>
           )}
         </>
       )}
