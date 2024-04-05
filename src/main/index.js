@@ -57,7 +57,8 @@ import {
   allTracksByGenre,
   distinctDirectories,
   foldersWithCount,
-  allTracksByFolder
+  allTracksByFolder,
+  albumsByTopFolder
 } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
@@ -499,6 +500,11 @@ ipcMain.handle('get-tracks-by-folder', async (event, folder) => {
   console.log('get tracks by folder: ', folder);
   const folderTracks = await allTracksByFolder(folder);
   return folderTracks;
+});
+
+ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
+  const folderAlbums = await albumsByTopFolder(folder);
+  return folderAlbums;
 });
 
 ipcMain.handle('genres-stat', async () => {

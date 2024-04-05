@@ -84,6 +84,13 @@ const foldersWithCount = (dirs) => {
   return results;
 };
 
+const albumsByTopFolder = (folder) => {
+  const stmt = db.prepare('SELECT * FROM albums WHERE rootlocation = ?');
+
+  const results = stmt.all(folder);
+  return results;
+};
+
 const nullMetadata = () => {
   const stmt = db.prepare(
     `SELECT audiofile FROM tracks WHERE artist IS NULL OR title IS NULL OR album IS NULL ORDER BY audiofile`
@@ -100,7 +107,8 @@ export {
   allTracksByArtist,
   allTracksByGenre,
   allTracksByFolder,
-  distinctDirectories
+  distinctDirectories,
+  albumsByTopFolder
 };
 
 /*

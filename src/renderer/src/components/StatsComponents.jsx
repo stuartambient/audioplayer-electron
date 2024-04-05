@@ -92,33 +92,63 @@ export const Genres = () => {
   );
 };
 
-export const FolderTracks = ({ directories }) => {
-  const [folderTracks, setFolderTracks] = useState([]);
-  useFolder(setFolderTracks, directories);
-
-  const handleFolderStatClick = (e) => {
-    const spanParent = event.target.closest('span');
-    if (spanParent) {
-      console.log(spanParent.id);
-    } else {
-      console.log('StatClick: ', e.target.id);
+export const ExpandedRoot = ({ expandFolder }) => {
+  console.log(expandFolder);
+  const [activeAlbums, setActiveAlbums] = useState({ folder: null, albums: [] });
+  const getAlbumsByTopFolder = async (expandFolder) => {
+    //console.log('folder: ', folder);
+    const results = await window.api.getAlbumsByTopFolder(expandFolder);
+    if (results) {
+      console.log(results);
+      setActiveAlbums({ folder, albums: results });
     }
+    getAlbumsByTopFolder(expandFolder);
   };
 
-  /*   useEffect(() => {
-    if (folderTracks) {
-      console.log('ft: ', folderTracks);
+  return (
+    <List
+      data={activeAlbums}
+      height={600}
+      itemSize={50}
+      width="100%"
+      className="stats--albums"
+      onClick={() => console.log('need click')}
+      stat="stat-album"
+    ></List>
+  );
+};
+
+export const FolderTracks = ({ directories, expandList, setExpandList, setExpandFolder }) => {
+  const [folderTracks, setFolderTracks] = useState([]);
+
+  useFolder(setFolderTracks, directories);
+
+  useEffect(() => {
+    if (!expandList) {
+      setExpandFolder('');
     }
-  }, [folderTracks]); */
-  const getRootTracks = async (e) => {
-    const root = e.target.id;
+  }, [expandList]);
+
+  const getRootTracks = async (folder) => {
+    const root = folder;
+    console.log(root);
     const results = await window.api.getTracksByFolder(root);
     if (results) {
       openChildWindow('table-data', 'top-folders', results);
     }
   };
 
-  /*  export const FolderTracksExpanded = ({}) => {}; */
+  const handleFolderStatClick = (e) => {
+    e.preventDefault();
+    if (e.target.id.endsWith('--expand')) {
+      const folder = e.target.id.split('--')[0];
+      setExpandList(!expandList);
+
+      setExpandFolder(folder);
+    } else if (e.target.id) {
+      getRootTracks(e.target.id);
+    }
+  };
 
   return (
     <List
@@ -129,7 +159,7 @@ export const FolderTracks = ({ directories }) => {
       className="stats--list"
       onClick={handleFolderStatClick}
       stat="stat-folder"
-    />
+    ></List>
   );
 };
 

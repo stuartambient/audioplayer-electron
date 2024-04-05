@@ -49,15 +49,13 @@ const Row = ({ index, style, data, onClick, stat }) => {
           {/*  <span style={itemStyles}>{!rowData.root ? 'null' : rowData.root}</span> */}
           {rowData.root && (
             <>
-              <span id={rowData.root} onClick={onClick}>
+              <span id={rowData.root} onClick={onClick} style={{ cursor: 'pointer' }}>
                 {rowData.root}
               </span>
-              <span id={`${rowData.root}--expand`} onClick={onClick}>
-                <GiExpandedRays />
+              <span style={{ cursor: 'pointer' }}>
+                <GiExpandedRays id={`${rowData.root}--expand`} onClick={onClick} />
               </span>
-              <span id={rowData.count} onClick={onClick} style={countStyles}>
-                {rowData.count}
-              </span>
+              <span id={rowData.count}>{rowData.count}</span>
             </>
           )}
         </>

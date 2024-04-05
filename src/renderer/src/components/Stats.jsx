@@ -5,7 +5,8 @@ import {
   TopHundredArtists,
   Genres,
   NullMetadata,
-  FolderTracks
+  FolderTracks,
+  ExpandedRoot
 } from './StatsComponents';
 import { useDistinctDirectories } from '../hooks/useDb';
 /* import { AiOutlineTrophy } from 'react-icons'; */
@@ -17,6 +18,8 @@ const Stats = () => {
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [directories, setDirectories] = useState([]);
   const [reqDirectories, setReqDirectories] = useState([]);
+  const [expandList, setExpandList] = useState(false);
+  const [expandFolder, setExpandFolder] = useState('');
   useDistinctDirectories(setDirectories);
 
   /*   useTotalTracksStat(setDirectories); */
@@ -116,7 +119,16 @@ const Stats = () => {
             <Genres />
           </>
         )}
-        {req === 'directories' && <FolderTracks directories={reqDirectories} />}
+        {req === 'directories' && (
+          <FolderTracks
+            directories={reqDirectories}
+            setExpandList={setExpandList}
+            expandList={expandList}
+            /* expandFolder={expandFolder} */
+            setExpandFolder={setExpandFolder}
+          ></FolderTracks>
+        )}
+        {expandList && <ExpandedRoot expandFolder />}
         {req === 'topArtists' && (
           <>
             <div className="stats--sort">
