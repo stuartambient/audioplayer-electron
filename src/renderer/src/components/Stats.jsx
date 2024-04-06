@@ -5,10 +5,11 @@ import {
   TopHundredArtists,
   Genres,
   NullMetadata,
-  FolderTracks,
+  RootDirectories,
   ExpandedRoot
+  /* LoadAlbumsByRoot */
 } from './StatsComponents';
-import { useDistinctDirectories } from '../hooks/useDb';
+import { useDistinctDirectories, useAlbumsByRoot } from '../hooks/useDb';
 /* import { AiOutlineTrophy } from 'react-icons'; */
 import '../style/Stats.css';
 
@@ -20,9 +21,16 @@ const Stats = () => {
   const [reqDirectories, setReqDirectories] = useState([]);
   const [expandList, setExpandList] = useState(false);
   const [expandFolder, setExpandFolder] = useState('');
+  const [albumsByRoot, setAlbumsByRoot] = useState([]);
   useDistinctDirectories(setDirectories);
 
+  /* useAlbumsByRoot(reqDirectories, setAlbumsByRoot); */
+
   /*   useTotalTracksStat(setDirectories); */
+
+  useEffect(() => {
+    console.log('reqDirectories: ', reqDirectories);
+  }, [reqDirectories]);
 
   useEffect(() => {
     if (isSubmenuOpen && reqDirectories.length > 0) {
@@ -40,13 +48,30 @@ const Stats = () => {
     // Otherwise, do nothing (let the checkbox clicks be handled by their own handler)
   };
 
+  const addRoot = (item) => {
+    const rootItems = async (item) => {
+      const results = await window.parseInt.getAlbumsByRoot(item);
+      setAlbumsByRoot((prevItems) => [...prevItems, results]);
+    };
+    if (!reqDirectories.includes(item)) {
+      setReqDirectories((prevItems) => [...prevItems, item]);
+      rootItems(item);
+    }
+  };
+
+  const removeRoot = (item) => {
+    setReqDirectories((prevItems) => prevItems.filter((i) => i !== item));
+  };
+
   const handleCheckboxChange = (event, item) => {
     event.stopPropagation();
     if (event.target.checked) {
-      setReqDirectories([...reqDirectories, item]);
+      //setReqDirectories([...reqDirectories, item]);
+      addRoot(item);
     } else {
       // If the checkbox is unchecked, remove the item from the array
-      setReqDirectories(reqDirectories.filter((directory) => directory !== item));
+      //setReqDirectories(reqDirectories.filter((directory) => directory !== item));
+      removeRoot(item);
     }
   };
 
@@ -120,15 +145,15 @@ const Stats = () => {
           </>
         )}
         {req === 'directories' && (
-          <FolderTracks
+          <RootDirectories
             directories={reqDirectories}
             setExpandList={setExpandList}
             expandList={expandList}
             /* expandFolder={expandFolder} */
             setExpandFolder={setExpandFolder}
-          ></FolderTracks>
+          ></RootDirectories>
         )}
-        {expandList && <ExpandedRoot expandFolder />}
+        {expandList && <ExpandedRoot expandFolder={expandFolder} />}
         {req === 'topArtists' && (
           <>
             <div className="stats--sort">

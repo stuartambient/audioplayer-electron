@@ -229,13 +229,13 @@ const useGenres = (setGenres) => {
   /* return genres; */
 };
 
-const useFolder = (setFolderTracks, directories) => {
+const useRoot = (setRootDirectories, directories) => {
   useEffect(() => {
     let subscribed = true;
     const getFolder = async () => {
       const folderRequest = await window.api.foldersStat(directories);
       if (folderRequest && subscribed) {
-        setFolderTracks(folderRequest);
+        setRootDirectories(folderRequest);
       } else {
         return 'no results';
       }
@@ -243,6 +243,26 @@ const useFolder = (setFolderTracks, directories) => {
     getFolder();
     return () => (subscribed = false);
   }, [directories]);
+};
+
+const useAlbumsByRoot = (dir, setAlbumsByRoot) => {
+  return console.log('dirs: ', dirs);
+};
+
+const useExpandedRoot = (root, setActiveAlbums) => {
+  useEffect(() => {
+    let subscribed = true;
+    const getRootFolders = async () => {
+      const results = await window.api.getAlbumsByTopFolder(root);
+      if (results && subscribed) {
+        setActiveAlbums(results);
+      } else {
+        return 'no results';
+      }
+    };
+    getRootFolders();
+    return () => (subscribed = false);
+  }, [root]);
 };
 
 const useNullMeta = (setTracks) => {
@@ -423,5 +443,7 @@ export {
   useGetPlaylists,
   useAllAlbumsCovers,
   useDistinctDirectories,
-  useFolder
+  useRoot,
+  useExpandedRoot,
+  useAlbumsByRoot
 };

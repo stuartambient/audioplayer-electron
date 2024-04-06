@@ -507,6 +507,12 @@ ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
   return folderAlbums;
 });
 
+ipcMain.handle('get-albums-by-root', async (event, dirs) => {
+  const results = await useAlbumsByRoot(dirs);
+  console.log(results);
+  return results;
+});
+
 ipcMain.handle('genres-stat', async () => {
   const genres = await genresWithCount();
   /* console.log('genres: ', genres.length); */

@@ -31,11 +31,9 @@ const Home = () => {
 
   const handleCoversSearchTerm = (e) => {
     e.preventDefault();
-    console.log('searching : ', coverSearchRef.current.value);
     if (!coverSearchRef.current.value) {
       setResetKey(getKey());
     }
-    console.log('searching : ', coverSearchRef.current.value);
     dispatch({
       type: 'covers-search-term',
       coversSearchTerm: coverSearchRef.current.value,

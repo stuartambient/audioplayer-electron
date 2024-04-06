@@ -8,8 +8,9 @@ import {
   useTotalTracksStat,
   useTopHundredArtistsStat,
   useGenres,
-  useFolder,
-  useNullMeta
+  useRoot,
+  useNullMeta,
+  useExpandedRoot
 } from '../hooks/useDb';
 
 export const TotalMedia = () => {
@@ -92,18 +93,26 @@ export const Genres = () => {
   );
 };
 
+/* export const LoadAlbumsByRoot = () => {}; */
+
 export const ExpandedRoot = ({ expandFolder }) => {
-  console.log(expandFolder);
-  const [activeAlbums, setActiveAlbums] = useState({ folder: null, albums: [] });
-  const getAlbumsByTopFolder = async (expandFolder) => {
-    //console.log('folder: ', folder);
+  console.log('ExpandedRoot folder: ', expandFolder);
+  const [activeAlbums, setActiveAlbums] = useState([]);
+
+  useEffect(() => {
+    if (activeAlbums) {
+      console.log(activeAlbums);
+    }
+  }, [activeAlbums]);
+  useExpandedRoot(expandFolder, setActiveAlbums);
+  /* const getAlbumsByTopFolder = async (expandFolder) => {
     const results = await window.api.getAlbumsByTopFolder(expandFolder);
     if (results) {
       console.log(results);
       setActiveAlbums({ folder, albums: results });
     }
     getAlbumsByTopFolder(expandFolder);
-  };
+  }; */
 
   return (
     <List
@@ -113,15 +122,15 @@ export const ExpandedRoot = ({ expandFolder }) => {
       width="100%"
       className="stats--albums"
       onClick={() => console.log('need click')}
-      stat="stat-album"
+      stat="stat-albums"
     ></List>
   );
 };
 
-export const FolderTracks = ({ directories, expandList, setExpandList, setExpandFolder }) => {
-  const [folderTracks, setFolderTracks] = useState([]);
+export const RootDirectories = ({ directories, expandList, setExpandList, setExpandFolder }) => {
+  const [rootDirectories, setRootDirectories] = useState([]);
 
-  useFolder(setFolderTracks, directories);
+  useRoot(setRootDirectories, directories);
 
   useEffect(() => {
     if (!expandList) {
@@ -152,7 +161,7 @@ export const FolderTracks = ({ directories, expandList, setExpandList, setExpand
 
   return (
     <List
-      data={folderTracks}
+      data={rootDirectories}
       height={600}
       itemSize={50}
       width="100%"
