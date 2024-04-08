@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 /* import { FixedSizeList as List } from 'react-window'; */
 import List from './List';
+/* import AGGrid from '../table/AGGrid'; */
 /* import Row from './Row'; */
 
 import {
@@ -93,9 +94,21 @@ export const Genres = () => {
   );
 };
 
+export const AlbumsByRoot = ({ albums }) => (
+  <List
+    data={albums}
+    height={600} // Specify the desired height of the list
+    itemSize={50} // Specify the height of each item in the list
+    width="100%" // Specify the desired width of the list
+    className="stats--list"
+    /* onClick={getGenres} */
+    stat="stat-albums"
+  />
+);
+
 /* export const LoadAlbumsByRoot = () => {}; */
 
-export const ExpandedRoot = ({ expandFolder }) => {
+/* export const ExpandedRoot = ({ expandFolder }) => {
   console.log('ExpandedRoot folder: ', expandFolder);
   const [activeAlbums, setActiveAlbums] = useState([]);
 
@@ -105,14 +118,6 @@ export const ExpandedRoot = ({ expandFolder }) => {
     }
   }, [activeAlbums]);
   useExpandedRoot(expandFolder, setActiveAlbums);
-  /* const getAlbumsByTopFolder = async (expandFolder) => {
-    const results = await window.api.getAlbumsByTopFolder(expandFolder);
-    if (results) {
-      console.log(results);
-      setActiveAlbums({ folder, albums: results });
-    }
-    getAlbumsByTopFolder(expandFolder);
-  }; */
 
   return (
     <List
@@ -125,9 +130,9 @@ export const ExpandedRoot = ({ expandFolder }) => {
       stat="stat-albums"
     ></List>
   );
-};
+}; */
 
-export const RootDirectories = ({ directories, expandList, setExpandList, setExpandFolder }) => {
+/* export const RootDirectories = ({ directories, expandList, setExpandList, setExpandFolder }) => {
   const [rootDirectories, setRootDirectories] = useState([]);
 
   useRoot(setRootDirectories, directories);
@@ -157,7 +162,7 @@ export const RootDirectories = ({ directories, expandList, setExpandList, setExp
     } else if (e.target.id) {
       getRootTracks(e.target.id);
     }
-  };
+  }; 
 
   return (
     <List
@@ -170,7 +175,7 @@ export const RootDirectories = ({ directories, expandList, setExpandList, setExp
       stat="stat-folder"
     ></List>
   );
-};
+};*/
 
 /* const genreList = genres.map((genre) => {
     if (!genre.genre) return;

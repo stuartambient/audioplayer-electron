@@ -508,7 +508,7 @@ ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
 });
 
 ipcMain.handle('get-albums-by-root', async (event, dirs) => {
-  const results = await useAlbumsByRoot(dirs);
+  const results = await albumsByTopFolder(dirs);
   console.log(results);
   return results;
 });

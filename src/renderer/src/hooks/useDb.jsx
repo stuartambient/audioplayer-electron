@@ -182,7 +182,6 @@ const useTotalTracksStat = (setTotalTracks) => {
       const totalTracksRequest = await window.api.totalTracksStat();
       if (totalTracksRequest && subscribed) {
         setTotalTracks(totalTracksRequest);
-        console.log(totalTracks);
       } else {
         return;
       }

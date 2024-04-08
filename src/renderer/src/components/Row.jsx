@@ -60,7 +60,7 @@ const Row = ({ index, style, data, onClick, stat }) => {
           )}
         </>
       )}
-      {stat === 'stat-albums' && <span key={rowData.id}>{rowData.fullpath}</span>}
+      {stat === 'stat-albums' && <span key={rowData.id}>{rowData.foldername}</span>}
     </div>
   );
 };

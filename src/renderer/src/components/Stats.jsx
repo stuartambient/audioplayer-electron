@@ -1,27 +1,30 @@
 import { useState, useEffect } from 'react';
 /* import { useTotalTracksStat, useTopHundredArtistsStat } from '../hooks/useDb'; */
+import { PiFolderOpenLight } from 'react-icons/pi';
 import {
   TotalMedia,
   TopHundredArtists,
   Genres,
   NullMetadata,
-  RootDirectories,
-  ExpandedRoot
+  AlbumsByRoot
+  /*   RootDirectories,
+  ExpandedRoot */
   /* LoadAlbumsByRoot */
 } from './StatsComponents';
-import { useDistinctDirectories, useAlbumsByRoot } from '../hooks/useDb';
+import { useDistinctDirectories /* , useAlbumsByRoot */ } from '../hooks/useDb';
 /* import { AiOutlineTrophy } from 'react-icons'; */
 import '../style/Stats.css';
 
 const Stats = () => {
-  const [req, setReq] = useState('');
+  const [statReq, setStatReq] = useState('');
   const [sort, setSort] = useState('col1');
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [directories, setDirectories] = useState([]);
   const [reqDirectories, setReqDirectories] = useState([]);
-  const [expandList, setExpandList] = useState(false);
-  const [expandFolder, setExpandFolder] = useState('');
+  /* const [expandList, setExpandList] = useState(false); */
+  /* const [expandFolder, setExpandFolder] = useState(''); */
   const [albumsByRoot, setAlbumsByRoot] = useState([]);
+  const [reqDir, setReqDir] = useState('');
   useDistinctDirectories(setDirectories);
 
   /* useAlbumsByRoot(reqDirectories, setAlbumsByRoot); */
@@ -29,18 +32,15 @@ const Stats = () => {
   /*   useTotalTracksStat(setDirectories); */
 
   useEffect(() => {
-    console.log('reqDirectories: ', reqDirectories);
-  }, [reqDirectories]);
-
-  useEffect(() => {
     if (isSubmenuOpen && reqDirectories.length > 0) {
-      setReq('directories');
+      setStatReq('directories');
     } else if (!isSubmenuOpen && reqDirectories.length > 0) {
       setReqDirectories([]);
     }
   }, [isSubmenuOpen, reqDirectories]);
 
   const toggleSubmenu = (event) => {
+    console.log('toggleSubmenu: ', event.target.id);
     // Check if the click is directly on the 'Directories' title or the `li` itself
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
       setIsSubmenuOpen(!isSubmenuOpen);
@@ -50,32 +50,41 @@ const Stats = () => {
 
   const addRoot = (item) => {
     const rootItems = async (item) => {
-      const results = await window.parseInt.getAlbumsByRoot(item);
-      setAlbumsByRoot((prevItems) => [...prevItems, results]);
+      const results = await window.api.getAlbumsByRoot(item);
+      /* console.log(results); */
+      setAlbumsByRoot((prevItems) => [...prevItems, ...results]);
     };
     if (!reqDirectories.includes(item)) {
-      setReqDirectories((prevItems) => [...prevItems, item]);
+      //setReqDirectories((prevItems) => [...prevItems, item]);
       rootItems(item);
     }
   };
 
   const removeRoot = (item) => {
+    /*     console.log('removeRoot: ', item);
+    albumsByRoot.forEach((a) =>
+      console.log(a)
+    ); */
     setReqDirectories((prevItems) => prevItems.filter((i) => i !== item));
+    setAlbumsByRoot((prevItems) => prevItems.filter((i) => i.rootlocation !== item));
   };
 
   const handleCheckboxChange = (event, item) => {
     event.stopPropagation();
     if (event.target.checked) {
-      //setReqDirectories([...reqDirectories, item]);
+      setReqDirectories([...reqDirectories, item]);
       addRoot(item);
     } else {
       // If the checkbox is unchecked, remove the item from the array
-      //setReqDirectories(reqDirectories.filter((directory) => directory !== item));
+      setReqDirectories(reqDirectories.filter((directory) => directory !== item));
       removeRoot(item);
     }
   };
 
-  const handleStatReq = (e) => setReq(e.currentTarget.id);
+  const handleStatReq = (e) => {
+    console.log('e.currentTarget.id: ', e.currentTarget.id);
+    setStatReq(e.currentTarget.id);
+  };
 
   const handleSort = (e) => {
     console.log(e.target.id);
@@ -94,18 +103,23 @@ const Stats = () => {
           <p>Genres</p>
         </li>
         <li className="stat" id="directories" onClick={toggleSubmenu}>
-          <p id="directories-p">Directories</p>
+          Directories
           {isSubmenuOpen && (
             <ul>
               {directories.map((item) => {
                 return (
-                  <li key={item}>
+                  <li
+                    className="directories"
+                    key={item}
+                    style={{ display: 'flex', alignItems: 'center' }}
+                  >
                     <input
                       type="checkbox"
                       id={item}
                       onChange={(e) => handleCheckboxChange(e, item)}
                     />
                     {item}
+                    <PiFolderOpenLight />
                   </li>
                 );
               })}
@@ -130,8 +144,8 @@ const Stats = () => {
       </ul>
 
       <div className="stats--results">
-        {req === 'totalmedia' && <TotalMedia />}
-        {req === 'genres' && (
+        {statReq === 'totalmedia' && <TotalMedia />}
+        {statReq === 'genres' && (
           <>
             <div className="stats--sort">
               <p id="col1sort" onClick={handleSort}>
@@ -144,17 +158,16 @@ const Stats = () => {
             <Genres />
           </>
         )}
-        {req === 'directories' && (
+        {/*         {req === 'directories' && (
           <RootDirectories
             directories={reqDirectories}
             setExpandList={setExpandList}
             expandList={expandList}
-            /* expandFolder={expandFolder} */
             setExpandFolder={setExpandFolder}
           ></RootDirectories>
-        )}
-        {expandList && <ExpandedRoot expandFolder={expandFolder} />}
-        {req === 'topArtists' && (
+        )} */}
+        {/*  {expandList && <ExpandedRoot expandFolder={expandFolder} />} */}
+        {statReq === 'topArtists' && (
           <>
             <div className="stats--sort">
               <p id="col1sort" onClick={handleSort}>
@@ -167,7 +180,8 @@ const Stats = () => {
             <TopHundredArtists />
           </>
         )}
-        {req === 'nometadata' && <NullMetadata />}
+        {statReq === 'directories' && <AlbumsByRoot albums={albumsByRoot} />}
+        {statReq === 'nometadata' && <NullMetadata />}
       </div>
     </div>
   );

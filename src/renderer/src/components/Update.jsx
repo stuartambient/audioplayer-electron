@@ -32,7 +32,6 @@ const Update = () => {
       case 'foldersupdate':
         setFolderUpdateReq(true);
         const foldersUpdate = await window.api.updateFolders();
-        console.log('folders update: ', foldersUpdate);
         setFolderUpdateResults(foldersUpdate);
         setFolderUpdateReq(false);
         break;
