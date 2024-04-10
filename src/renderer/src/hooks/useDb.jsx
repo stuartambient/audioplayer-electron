@@ -244,8 +244,18 @@ const useRoot = (setRootDirectories, directories) => {
   }, [directories]);
 };
 
-const useAlbumsByRoot = (dir, setAlbumsByRoot) => {
-  return console.log('dirs: ', dirs);
+const useTracksByRoot = (root, onTracksFetched) => {
+  useEffect(() => {
+    const getTracksByRoot = async () => {
+      const results = await window.api.getTracksByRoot(root);
+      if (results) {
+        // Instead of setting the state here, call the callback with the results
+        onTracksFetched(results);
+      }
+    };
+
+    getTracksByRoot();
+  }, [root, onTracksFetched]); // Include onTracksFetched in the dependencies array
 };
 
 const useExpandedRoot = (root, setActiveAlbums) => {
@@ -444,5 +454,5 @@ export {
   useDistinctDirectories,
   useRoot,
   useExpandedRoot,
-  useAlbumsByRoot
+  useTracksByRoot
 };

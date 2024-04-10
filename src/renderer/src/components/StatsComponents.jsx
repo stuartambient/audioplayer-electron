@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { useTracksByRoot } from '../hooks/useDb';
 /* import { FixedSizeList as List } from 'react-window'; */
 import List from './List';
+import { openChildWindow } from './ChildWindows/openChildWindow';
 /* import AGGrid from '../table/AGGrid'; */
 /* import Row from './Row'; */
 
@@ -30,27 +32,10 @@ export const TotalMedia = () => {
   );
 };
 
-const openChildWindow = (name, type, data) => {
-  window.api.showChild({
-    name: name,
-    winConfig: {
-      width: 1200,
-      height: 550,
-      show: false,
-      resizable: true,
-      preload: 'metadataEditing',
-      sandbox: false,
-      webSecurity: false,
-      contextIsolation: true
-    },
-    data: { listType: type, results: data }
-  });
-};
 export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
   const getArtistTracks = async (e) => {
     const artist = e.target.id;
-    console.log('artists, e.target id: ', artist);
     const results = await window.api.getTracksByArtist(artist);
     if (results) {
       openChildWindow('table-data', 'top-artists', results);
@@ -94,6 +79,31 @@ export const Genres = () => {
   );
 };
 
+export const TracksByFolder = ({ root }) => {
+  console.log('rooty: ', root);
+  const [tracks, setTracks] = useState([]);
+  // This function will be passed to the custom hook
+  const handleTracksFetched = (fetchedTracks) => {
+    setTracks((prevTracks) => [...prevTracks, ...fetchedTracks]);
+    // If you need to do something immediately after setting the state, do it here
+    // For example, opening a child window
+  };
+
+  // Use the custom hook for fetching data
+  useTracksByRoot(root, handleTracksFetched);
+
+  // Alternatively, you can use useEffect here if you want to trigger side effects
+  // specifically when `tracks` changes, instead of immediately in `handleTracksFetched`
+  useEffect(() => {
+    if (tracks.length > 0) {
+      openChildWindow('table-data', 'root-tracks', tracks);
+    }
+  }, [tracks]);
+
+  // Render your component or return null if it's purely for fetching and managing state
+  return null; // Or your JSX here
+};
+
 export const AlbumsByRoot = ({ albums }) => (
   <List
     data={albums}
@@ -106,76 +116,10 @@ export const AlbumsByRoot = ({ albums }) => (
   />
 );
 
-/* export const LoadAlbumsByRoot = () => {}; */
-
-/* export const ExpandedRoot = ({ expandFolder }) => {
-  console.log('ExpandedRoot folder: ', expandFolder);
-  const [activeAlbums, setActiveAlbums] = useState([]);
-
-  useEffect(() => {
-    if (activeAlbums) {
-      console.log(activeAlbums);
-    }
-  }, [activeAlbums]);
-  useExpandedRoot(expandFolder, setActiveAlbums);
-
-  return (
-    <List
-      data={activeAlbums}
-      height={600}
-      itemSize={50}
-      width="100%"
-      className="stats--albums"
-      onClick={() => console.log('need click')}
-      stat="stat-albums"
-    ></List>
-  );
-}; */
-
-/* export const RootDirectories = ({ directories, expandList, setExpandList, setExpandFolder }) => {
-  const [rootDirectories, setRootDirectories] = useState([]);
-
-  useRoot(setRootDirectories, directories);
-
-  useEffect(() => {
-    if (!expandList) {
-      setExpandFolder('');
-    }
-  }, [expandList]);
-
-  const getRootTracks = async (folder) => {
-    const root = folder;
-    console.log(root);
-    const results = await window.api.getTracksByFolder(root);
-    if (results) {
-      openChildWindow('table-data', 'top-folders', results);
-    }
-  };
-
-  const handleFolderStatClick = (e) => {
-    e.preventDefault();
-    if (e.target.id.endsWith('--expand')) {
-      const folder = e.target.id.split('--')[0];
-      setExpandList(!expandList);
-
-      setExpandFolder(folder);
-    } else if (e.target.id) {
-      getRootTracks(e.target.id);
-    }
-  }; 
-
-  return (
-    <List
-      data={rootDirectories}
-      height={600}
-      itemSize={50}
-      width="100%"
-      className="stats--list"
-      onClick={handleFolderStatClick}
-      stat="stat-folder"
-    ></List>
-  );
-};*/
+export const TracksByRoot = ({ root }) => {
+  const [albums, setAlbums] = useState([]);
+  console.log('tbr: ', root);
+};
 
 /* const genreList = genres.map((genre) => {
     if (!genre.genre) return;

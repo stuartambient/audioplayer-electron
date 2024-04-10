@@ -34,7 +34,7 @@ const allTracksByGenre = (genre) => {
   return result;
 };
 
-const allTracksByFolder = (root) => {
+const allTracksByRoot = (root) => {
   // Corrected SQL query string and removed the extra `}`
   const stmt = db.prepare(
     `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE root = ?`
@@ -106,7 +106,7 @@ export {
   nullMetadata,
   allTracksByArtist,
   allTracksByGenre,
-  allTracksByFolder,
+  allTracksByRoot,
   distinctDirectories,
   albumsByTopFolder
 };

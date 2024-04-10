@@ -57,7 +57,7 @@ import {
   allTracksByGenre,
   distinctDirectories,
   foldersWithCount,
-  allTracksByFolder,
+  allTracksByRoot,
   albumsByTopFolder
 } from './stats';
 import initAlbums from './updateFolders';
@@ -169,16 +169,22 @@ function createWindow() {
 const reactDevToolsPath =
   /* 'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.1_0'; */
   'C:/Users/sambi/documents/Devtools/4.27.1_0';
+/*   'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi'; */
+/* 'C:/Users/sambi/documents/Devtools2/5.0.2_0'; */
 
 let primaryDisplay;
 
-app.on('ready', async () => {
-  /*   primaryDisplay = screen.getPrimaryDisplay();
-  console.log('primary display: ', primaryDisplay);
-  console.log('all displays: ', screen.getAllDisplays()); */
+app.whenReady().then(async () => {
   await session.defaultSession.loadExtension(reactDevToolsPath);
 });
-
+/* 
+app.on('ready', async () => { */
+/*   primaryDisplay = screen.getPrimaryDisplay();
+  console.log('primary display: ', primaryDisplay);
+  console.log('all displays: ', screen.getAllDisplays()); */
+/*   await session.defaultSession.loadExtension(reactDevToolsPath);
+});
+ */
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -496,10 +502,10 @@ ipcMain.handle('get-tracks-by-genre', async (_, arg) => {
   }
 });
 
-ipcMain.handle('get-tracks-by-folder', async (event, folder) => {
-  console.log('get tracks by folder: ', folder);
-  const folderTracks = await allTracksByFolder(folder);
-  return folderTracks;
+ipcMain.handle('get-tracks-by-root', async (event, root) => {
+  const rootTracks = await allTracksByRoot(root);
+  /* console.log(rootTracks); */
+  return rootTracks;
 });
 
 ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
