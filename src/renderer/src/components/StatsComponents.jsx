@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useTracksByRoot } from '../hooks/useDb';
 /* import { FixedSizeList as List } from 'react-window'; */
@@ -79,31 +79,6 @@ export const Genres = () => {
   );
 };
 
-export const TracksByFolder = ({ root }) => {
-  console.log('rooty: ', root);
-  const [tracks, setTracks] = useState([]);
-  // This function will be passed to the custom hook
-  const handleTracksFetched = (fetchedTracks) => {
-    setTracks((prevTracks) => [...prevTracks, ...fetchedTracks]);
-    // If you need to do something immediately after setting the state, do it here
-    // For example, opening a child window
-  };
-
-  // Use the custom hook for fetching data
-  useTracksByRoot(root, handleTracksFetched);
-
-  // Alternatively, you can use useEffect here if you want to trigger side effects
-  // specifically when `tracks` changes, instead of immediately in `handleTracksFetched`
-  useEffect(() => {
-    if (tracks.length > 0) {
-      openChildWindow('table-data', 'root-tracks', tracks);
-    }
-  }, [tracks]);
-
-  // Render your component or return null if it's purely for fetching and managing state
-  return null; // Or your JSX here
-};
-
 export const AlbumsByRoot = ({ albums }) => (
   <List
     data={albums}
@@ -117,8 +92,14 @@ export const AlbumsByRoot = ({ albums }) => (
 );
 
 export const TracksByRoot = ({ root }) => {
-  const [albums, setAlbums] = useState([]);
-  console.log('tbr: ', root);
+  const [tracks, setTracks] = useState([]);
+  useTracksByRoot(root, setTracks);
+
+  useEffect(() => {
+    if (tracks.length > 0) {
+      openChildWindow('table-data', 'root-tracks', tracks);
+    }
+  }, [tracks]);
 };
 
 /* const genreList = genres.map((genre) => {

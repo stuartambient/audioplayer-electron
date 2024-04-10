@@ -244,18 +244,20 @@ const useRoot = (setRootDirectories, directories) => {
   }, [directories]);
 };
 
-const useTracksByRoot = (root, onTracksFetched) => {
+const useTracksByRoot = (root, setTracks) => {
   useEffect(() => {
+    let isSubscribed = true;
     const getTracksByRoot = async () => {
       const results = await window.api.getTracksByRoot(root);
-      if (results) {
+      if (results && isSubscribed) {
         // Instead of setting the state here, call the callback with the results
-        onTracksFetched(results);
+        setTracks(results);
       }
     };
 
     getTracksByRoot();
-  }, [root, onTracksFetched]); // Include onTracksFetched in the dependencies array
+    return () => (isSubscribed = false);
+  }, [root]); // Include onTracksFetched in the dependencies array
 };
 
 const useExpandedRoot = (root, setActiveAlbums) => {

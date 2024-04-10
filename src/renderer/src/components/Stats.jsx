@@ -7,8 +7,7 @@ import {
   Genres,
   NullMetadata,
   AlbumsByRoot,
-  TracksByRoot,
-  TracksByFolder
+  TracksByRoot
 } from './StatsComponents';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 import { useDistinctDirectories /* , useAlbumsByRoot */ } from '../hooks/useDb';
@@ -51,6 +50,7 @@ const Stats = () => {
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
       setIsSubmenuOpen(!isSubmenuOpen);
     }
+    handleStatReq(event);
   };
 
   const addRoot = (item) => {
@@ -83,7 +83,10 @@ const Stats = () => {
   };
 
   const handleStatReq = (e) => {
-    console.log('e.currentTarget.id: ', e.currentTarget.id);
+    if (e.currentTarget.id !== 'directories' && isSubmenuOpen) {
+      setIsSubmenuOpen(false);
+      setAlbumsByRoot([]);
+    }
     setStatReq(e.currentTarget.id);
   };
 
@@ -166,7 +169,7 @@ const Stats = () => {
             <Genres />
           </>
         )}
-        {root && <TracksByFolder root={root} />}
+        {root && <TracksByRoot root={root} />}
         {statReq === 'directories' && (
           <>
             <div className="stats--length">

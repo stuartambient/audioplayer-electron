@@ -515,19 +515,16 @@ ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
 
 ipcMain.handle('get-albums-by-root', async (event, dirs) => {
   const results = await albumsByTopFolder(dirs);
-  console.log(results);
   return results;
 });
 
 ipcMain.handle('genres-stat', async () => {
   const genres = await genresWithCount();
-  /* console.log('genres: ', genres.length); */
   return genres;
 });
 
 ipcMain.handle('folders-stat', async (event, dirs) => {
   const folders = await foldersWithCount(dirs);
-  console.log(folders);
   return folders;
 });
 
@@ -582,7 +579,6 @@ ipcMain.handle('save-playlist', async (_, args) => {
 });
 
 ipcMain.handle('get-playlists', async () => {
-  /* console.log('called'); */
   const playlistsStats = [];
   const playlists = await fs.promises.readdir(playlistsFolder);
   for await (const pl of playlists) {
@@ -591,7 +587,6 @@ ipcMain.handle('get-playlists', async () => {
       playlistsStats.push({ name: pl, createdon: convertToUTC(tmp.birthtimeMs) });
     }
   }
-  /* console.log(playlistsStats); */
   return playlists;
 });
 
@@ -618,7 +613,6 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 
 ipcMain.handle('get-covers', async (_, ...args) => {
   const albums = await allCoversByScroll(args[0], args[1]);
-  /* console.log(albums); */
   const albumsWithImages = Promise.all(
     albums.map(async (l) => {
       try {
@@ -669,12 +663,8 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   try {
     const start = offset * limit;
     const end = start + limit - 1;
-    /* console.log('start: ', start, 'end: ', end); */
 
-    /* const [start, end] = args;
-    console.log('s: ', start, 'e: ', end); */
     const fifty = shuffled.slice(start, end + 1);
-    /*  console.log(fifty); */
     const tracks = getAllTracks(fifty);
     return tracks;
   } catch (err) {
@@ -683,7 +673,6 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 });
 
 ipcMain.on('show-context-menu', (event, id, type) => {
-  console.log(id, type);
   const template = [
     {
       label: 'Add Track to Playlist',
