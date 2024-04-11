@@ -13,12 +13,12 @@ const CoverSearchApp = () => {
     console.log(import.meta.env.RENDERER_VITE_DISCOGS_KEY);
   }); */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (previewImage) {
       console.log(previewImage);
     }
   }, [previewImage]);
-
+ */
   /*  useEffect(() => {
     if (releases) console.log(releases);
   }); */
@@ -26,7 +26,6 @@ const CoverSearchApp = () => {
     let subscribed = true;
     const getArgs = async () => {
       await window.coverSearchApi.onSendToChild((e) => {
-        console.log(e);
         setReleases(e);
         setPreviewImage(undefined);
       });
@@ -34,6 +33,10 @@ const CoverSearchApp = () => {
     if (subscribed) getArgs();
     return () => (subscribed = false);
   });
+
+  useEffect(() => {
+    console.log('releases: ', releases);
+  }, [releases]);
 
   const handleImagePreview = (url) => {
     console.log('preview: ', url);
@@ -74,10 +77,10 @@ const CoverSearchApp = () => {
           </div>
         </ul>
       )}
-      {(releases && releases[0].results.length > 0) ||
-      (releases && releases[0].mbresults.length) ? (
+      {(releases && releases[0].results.results.length > 0) ||
+      (releases && releases[0].results.mbresults.length) ? (
         <ul className="cover-search--releases">
-          {releases[0].results.map((r) => {
+          {releases[0].results.results.map((r) => {
             return (
               <li>
                 {r.title && (
@@ -102,7 +105,6 @@ const CoverSearchApp = () => {
                   <span
                     className="preview"
                     id={r.cover_image}
-                    /* onClick={() => setPreviewImage(r.cover_image)} */
                     onClick={() => handleImagePreview(r.cover_image)}
                   >
                     Preview Image
@@ -111,8 +113,8 @@ const CoverSearchApp = () => {
               </li>
             );
           })}
-          {releases[0] && releases[0].mbresults.length > 0
-            ? releases[0].mbresults.map((m) => {
+          {releases[0] && releases[0].results.mbresults.length > 0
+            ? releases[0].results.mbresults.map((m) => {
                 return (
                   <li>
                     {m.title && (
@@ -125,7 +127,6 @@ const CoverSearchApp = () => {
                       <span
                         className="preview"
                         id={m.images.image}
-                        /* onClick={() => setPreviewImage(m.images.image)} */
                         onClick={() => handleImagePreview(m.images.image)}
                       >
                         Preview Image

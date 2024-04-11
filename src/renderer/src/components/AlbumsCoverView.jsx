@@ -5,19 +5,18 @@ import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { useAllAlbumsCovers } from '../hooks/useDb';
-import { openChildWindow } from './ChildWindows/openChildWindow';
 import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import AppState from '../hooks/AppState';
+import { openChildWindow } from './ChildWindows/openChildWindow';
 
 const AlbumsCoverView = ({ resetKey }) => {
   const { state, dispatch } = useAudioPlayer();
   const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
   const [viewMore, setViewMore] = useState(false);
   const [coverSearch, setCoverSearch] = useState();
-  const [coverResults, setCoverResults] = useState();
 
   const coversObserver = useRef();
 
@@ -49,7 +48,8 @@ const AlbumsCoverView = ({ resetKey }) => {
     }
   });
 
-  /*   const compareStrs = (str1, str2) => {
+  const compareStrs = (str1, str2) => {
+    // STR1 IS FOLDER, STR2 IS TITLE FROM API
     const str2split = str2
       .replace('-', '')
       .split(' ')
@@ -63,8 +63,14 @@ const AlbumsCoverView = ({ resetKey }) => {
     }
     const percentage = 100 - (correct.failed / correct.total) * 100;
     return percentage;
+  };
+
+  /*   const cleanString = () => {
+    let title, artist;
+    artist = search.album.split('-')[0].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+    title = search.album.split('-')[1].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
   }; */
-  /* 
+
   const handleCoverSearch = async (search) => {
     let title, artist, url, mbUrl;
     if (search.album.split(' ').includes('-')) {
@@ -105,6 +111,7 @@ const AlbumsCoverView = ({ resetKey }) => {
     await axios
       .get(`http://musicbrainz.org/ws/2/release-group/?query=${search.album}&limit=1`)
       .then(async (response) => {
+        /* console.log('musicbrainz - release-group - response: ', response); */
         const artists = response.data['release-groups'][0]['artist-credit'];
         const allartists = artists.map((a) => a.name);
         const album = response.data['release-groups'][0].title;
@@ -129,21 +136,46 @@ const AlbumsCoverView = ({ resetKey }) => {
         }
       });
 
-    window.api.showChild({
+    setTimeout(
+      () =>
+        openChildWindow(
+          'cover-search-window',
+          'covers-found',
+          {
+            width: 450,
+            height: 550,
+            show: false,
+            resizable: false,
+            preload: 'coverSearch',
+            sandbox: false,
+            webSecurity: false,
+            contextIsolation: true
+          },
+          {
+            ...discogsResults,
+            ...musicBrainzResults
+          }
+        ),
+      1000
+    );
+    /* setTimeout(() => window.api.showChild({ ...discogsResults, ...musicBrainzResults }), 1000); */
+    /*     window.api.showChild({
       name: 'cover-search-window',
       winConfig: {
         width: 450,
         height: 550,
         show: false,
-        resizable: false,
-        preload: 'coverSearch',
+        resizable: false, */
+
+    /* preload: path.join(__dirname, '../preload/child.js'), */
+    /*         preload: 'coverSearch',
         sandbox: false,
         webSecurity: false,
         contextIsolation: true
       },
       data: { ...discogsResults, ...musicBrainzResults }
-    });
-  }; */
+    }); */
+  };
 
   useEffect(() => {
     const sendCovers = async () => {
@@ -171,108 +203,6 @@ const AlbumsCoverView = ({ resetKey }) => {
         playlistTracks: albumTracks
       });
     }
-  };
-
-  // Utility function to compare strings
-  const compareStrings = (folderName, apiTitle) => {
-    const apiTitleParts = apiTitle
-      .replace('-', '')
-      .split(' ')
-      .filter((s) => s !== '');
-    let matchStats = { total: apiTitleParts.length, failed: 0 };
-    folderName.split(' ').forEach((part) => {
-      const searchTerm = part.split('-')[0].trim().toLowerCase();
-      if (!apiTitle.toLowerCase().includes(searchTerm)) {
-        matchStats.failed += 1;
-      }
-    });
-    return 100 - (matchStats.failed / matchStats.total) * 100;
-  };
-
-  // Function to fetch from Discogs API
-  const fetchFromDiscogs = async (artist, title, token) => {
-    const baseUrl = `https://api.discogs.com/database/search?token=${token}`;
-    const url =
-      artist && title
-        ? `${baseUrl}&title=${encodeURIComponent(title)}&release_title=${encodeURIComponent(
-            title
-          )}&artist=${encodeURIComponent(artist)}`
-        : `${baseUrl}&q=${encodeURIComponent(title || artist)}`;
-    try {
-      const response = await axios.get(url);
-      return response.data.results;
-    } catch (error) {
-      console.error('Error fetching from Discogs:', error);
-      return [];
-    }
-  };
-
-  // Function to fetch from MusicBrainz and Cover Art Archive
-  const fetchFromMusicBrainz = async (searchAlbum) => {
-    const mbResults = [];
-    try {
-      const mbResponse = await axios.get(
-        `http://musicbrainz.org/ws/2/release-group/?query=${encodeURIComponent(
-          searchAlbum
-        )}&limit=1`
-      );
-      const artists = mbResponse.data['release-groups'][0]['artist-credit']
-        .map((a) => a.name)
-        .join(',');
-      const album = mbResponse.data['release-groups'][0].title;
-      const releases = mbResponse.data['release-groups'][0].releases;
-      for (const release of releases) {
-        try {
-          const coverResponse = await axios.get(`http://coverartarchive.org/release/${release.id}`);
-          mbResults.push({ title: `${artists} - ${album}`, images: coverResponse.data.images[0] });
-        } catch (error) {
-          console.log(`Error fetching cover art for release ${release.id}:`, error);
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching from MusicBrainz:', error);
-    }
-    return mbResults;
-  };
-
-  // Main function to handle cover search
-  const handleCoverSearch = async (search) => {
-    const { album, path } = search;
-    let artist, title;
-    if (album.includes('-')) {
-      [artist, title] = album
-        .split('-')
-        .map((part) => part.replaceAll(/\W/g, ' ').replaceAll('and', ' '));
-      console.log('Artist:', artist, 'Title:', title);
-    } else {
-      title = album;
-    }
-
-    const discogsToken = import.meta.env.RENDERER_VITE_DISCOGS_KEY;
-    const discogsResults = await fetchFromDiscogs(artist, title, discogsToken);
-    const musicBrainzResults = await fetchFromMusicBrainz(album);
-
-    // Example of showing results - adjust according to your application's needs
-    console.log('Discogs Results:', discogsResults);
-    console.log('MusicBrainz & Cover Art Results:', musicBrainzResults);
-    // Implement the logic to display or use the results as needed
-    const results = { ...discogsResults, ...musicBrainzResults };
-    console.log(results);
-    /* openChildWindow(
-      'cover-search-window',
-      'covers-found',
-      {
-        width: 450,
-        height: 550,
-        show: false,
-        resizable: false,
-        preload: 'coverSearch',
-        sandbox: false,
-        webSecurity: false,
-        contextIsolation: true
-      },
-      { discogsResults, musicBrainzResults }
-    ); */
   };
 
   const handleContextMenuOption = async (option, path, album) => {
