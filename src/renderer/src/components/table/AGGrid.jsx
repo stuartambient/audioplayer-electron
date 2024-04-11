@@ -233,7 +233,7 @@ const AGGrid = ({ data }) => {
   }, []);
 
   return (
-    <div>
+    <>
       {/* Example using Grid's API */}
       <CustomToolPanel
         onChange={handleColumnPanel}
@@ -242,7 +242,7 @@ const AGGrid = ({ data }) => {
         nodesSelected={nodesSelected}
       />
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-      <div className="ag-theme-alpine-dark" style={{ width: '100%', height: 1200 }}>
+      <div className="ag-theme-alpine-dark" style={{ width: '100%', height: '100%' }}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
           rowData={originalData} // Row Data for Rows
@@ -272,7 +272,7 @@ const AGGrid = ({ data }) => {
           selectedRowData={isRowsSelected.current}
         />
       )} */}
-    </div>
+    </>
   );
 };
 

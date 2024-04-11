@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld('api', {
   getAlbums: (page, term, sort) => ipcRenderer.invoke('get-albums', page, term, sort),
   getAlbum: (id) => ipcRenderer.invoke('get-album', id),
   getAlbumTracks: (pattern) => ipcRenderer.invoke('get-album-tracks', pattern),
-  streamAudio: (trackid) => ipcRenderer.invoke('stream-audio', trackid),
+  /* streamAudio: (trackid) => ipcRenderer.invoke('stream-audio', trackid), */
   getCover: (trackid) => ipcRenderer.invoke('get-cover', trackid),
   appMinimize: () => ipcRenderer.send('minimize'),
   appMaximize: () => ipcRenderer.send('maximize'),
@@ -58,7 +58,7 @@ contextBridge.exposeInMainWorld('api', {
   getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
   getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
   getTracksByRoot: (root) => ipcRenderer.invoke('get-tracks-by-root', root),
-  getAlbumsByTopFolder: (folder) => ipcRenderer.invoke('get-albums-by-top-folder', folder),
+  /* getAlbumsByTopFolder: (folder) => ipcRenderer.invoke('get-albums-by-top-folder', folder), */
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
     ipcRenderer.once('context-menu-command', (event, command) => callback(command));

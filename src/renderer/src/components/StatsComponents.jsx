@@ -11,9 +11,7 @@ import {
   useTotalTracksStat,
   useTopHundredArtistsStat,
   useGenres,
-  useRoot,
-  useNullMeta,
-  useExpandedRoot
+  useNullMeta
 } from '../hooks/useDb';
 
 export const TotalMedia = () => {
@@ -38,7 +36,21 @@ export const TopHundredArtists = () => {
     const artist = e.target.id;
     const results = await window.api.getTracksByArtist(artist);
     if (results) {
-      openChildWindow('table-data', 'top-artists', results);
+      openChildWindow(
+        'table-data',
+        'top-artists',
+        {
+          width: 1200,
+          height: 550,
+          show: false,
+          resizeable: true,
+          preload: 'metadataEditing',
+          sandbox: false,
+          webSecurity: false,
+          contextIsolation: true
+        },
+        results
+      );
     }
   };
 
@@ -62,7 +74,21 @@ export const Genres = () => {
     const genre = e.target.id;
     const results = await window.api.getTracksByGenre(genre);
     if (results) {
-      openChildWindow('table-data', 'top-genres', results);
+      openChildWindow(
+        'table-data',
+        'top-genres',
+        {
+          width: 1200,
+          height: 550,
+          show: false,
+          resizeable: true,
+          preload: 'metadataEditing',
+          sandbox: false,
+          webSecurity: false,
+          contextIsolation: true
+        },
+        results
+      );
     }
   };
 
@@ -97,7 +123,21 @@ export const TracksByRoot = ({ root }) => {
 
   useEffect(() => {
     if (tracks.length > 0) {
-      openChildWindow('table-data', 'root-tracks', tracks);
+      openChildWindow(
+        'table-data',
+        'root-tracks',
+        {
+          width: 1200,
+          height: 550,
+          show: false,
+          resizeable: true,
+          preload: 'metadataEditing',
+          sandbox: false,
+          webSecurity: false,
+          contextIsolation: true
+        },
+        tracks
+      );
     }
   }, [tracks]);
 };

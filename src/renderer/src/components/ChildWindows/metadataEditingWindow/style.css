@@ -1,0 +1,13 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#metadata-editing {
+  height: 100%;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}

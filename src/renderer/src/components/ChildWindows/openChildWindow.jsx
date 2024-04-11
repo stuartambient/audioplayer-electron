@@ -1,15 +1,15 @@
-export const openChildWindow = (name, type, data) => {
+export const openChildWindow = (name, type, config, data) => {
   window.api.showChild({
     name: name,
     winConfig: {
-      width: 1200,
-      height: 550,
-      show: false,
-      resizable: true,
-      preload: 'metadataEditing',
-      sandbox: false,
-      webSecurity: false,
-      contextIsolation: true
+      width: config.width,
+      height: config.height,
+      show: config.show,
+      resizable: config.resizable,
+      preload: config.preload,
+      sandbox: config.sandbox,
+      webSecurity: config.webSecurity,
+      contextIsolation: config.contextIsolation
     },
     data: { listType: type, results: data }
   });

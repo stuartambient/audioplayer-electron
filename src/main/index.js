@@ -391,11 +391,11 @@ ipcMain.handle('get-album-tracks', async (event, args) => {
   return allAlbumTracks;
 });
 
-ipcMain.handle('stream-audio', async (event, arg) => {
+/* ipcMain.handle('stream-audio', async (event, arg) => {
   const file = await fs.promises.readFile(arg);
   const filebuf = Buffer.from(file);
   return filebuf;
-});
+}); */
 
 ipcMain.on('test-real-stream', async (event, ...args) => {
   let url = await `streaming://${args[0]}`;
@@ -508,10 +508,10 @@ ipcMain.handle('get-tracks-by-root', async (event, root) => {
   return rootTracks;
 });
 
-ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
+/* ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
   const folderAlbums = await albumsByTopFolder(folder);
   return folderAlbums;
-});
+}); */
 
 ipcMain.handle('get-albums-by-root', async (event, dirs) => {
   const results = await albumsByTopFolder(dirs);

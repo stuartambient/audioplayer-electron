@@ -26,6 +26,7 @@ const CoverSearchApp = () => {
     let subscribed = true;
     const getArgs = async () => {
       await window.coverSearchApi.onSendToChild((e) => {
+        console.log(e);
         setReleases(e);
         setPreviewImage(undefined);
       });

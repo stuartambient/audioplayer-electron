@@ -9,7 +9,6 @@ import {
   AlbumsByRoot,
   TracksByRoot
 } from './StatsComponents';
-import { openChildWindow } from './ChildWindows/openChildWindow';
 import { useDistinctDirectories /* , useAlbumsByRoot */ } from '../hooks/useDb';
 /* import { AiOutlineTrophy } from 'react-icons'; */
 import '../style/Stats.css';
@@ -32,19 +31,6 @@ const Stats = () => {
       setReqDirectories([]);
     }
   }, [isSubmenuOpen, reqDirectories]);
-
-  /*   const getTracksByRoot = async () => {
-    const results = await window.api.getTracksByRoot(root);
-    if (results) {
-      openChildWindow('table-data', 'root-tracks', results);
-    }
-  };
-
-  useEffect(() => {
-    if (root) {
-      getTracksByRoot();
-    }
-  }, [root]); */
 
   const toggleSubmenu = (event) => {
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
