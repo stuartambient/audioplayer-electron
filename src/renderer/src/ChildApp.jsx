@@ -9,19 +9,10 @@ const ChildApp = () => {
   const [releases, setReleases] = useState(undefined);
   const [previewImage, setPreviewImage] = useState({ url: '', width: '', height: '' });
 
-  /*   useEffect(() => {
-    console.log(import.meta.env.RENDERER_VITE_DISCOGS_KEY);
-  }); */
-
   useEffect(() => {
-    if (previewImage) {
-      console.log(previewImage);
-    }
-  }, [previewImage]);
-
-  /*  useEffect(() => {
     if (releases) console.log(releases);
-  }); */
+  }, [releases]);
+
   useEffect(() => {
     let subscribed = true;
     const getArgs = async () => {
@@ -50,95 +41,7 @@ const ChildApp = () => {
     await window.childapi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
   };
 
-  return (
-    <div className="cover-search-wrapper">
-      {previewImage && (
-        <ul className="cover-search--images">
-          <li className="images">
-            <img
-              src={previewImage.url}
-              style={{ width: '175px', height: '175px', marginTop: '1rem' }}
-            />
-          </li>
-          <div className="image-ui">
-            <p>Width: {previewImage.width}</p>
-            <p> Height: {previewImage.height}</p>
-
-            <li className="image-download" onClick={handleDownloadImage}>
-              Download Image
-            </li>
-          </div>
-        </ul>
-      )}
-      {(releases && releases[0].results.length > 0) ||
-      (releases && releases[0].mbresults.length) ? (
-        <ul className="cover-search--releases">
-          {releases[0].results.map((r) => {
-            return (
-              <li>
-                {r.title && (
-                  <span className="value">
-                    <span className="label">Title:</span>
-                    {r.title}
-                  </span>
-                )}
-                {r.format && (
-                  <span className="value">
-                    <span className="label">Format:</span>
-                    {r.format.join(',')}
-                  </span>
-                )}
-                {r.label && (
-                  <span className="value">
-                    <span className="label">Label:</span>
-                    {r.label.join(',')}
-                  </span>
-                )}
-                {r.cover_image && (
-                  <span
-                    className="preview"
-                    id={r.cover_image}
-                    /* onClick={() => setPreviewImage(r.cover_image)} */
-                    onClick={() => handleImagePreview(r.cover_image)}
-                  >
-                    Preview Image
-                  </span>
-                )}
-              </li>
-            );
-          })}
-          {releases[0] && releases[0].mbresults.length > 0
-            ? releases[0].mbresults.map((m) => {
-                return (
-                  <li>
-                    {m.title && (
-                      <span className="value">
-                        <span className="label">Title:</span>
-                        {m.title}
-                      </span>
-                    )}
-                    {m.images.image && (
-                      <span
-                        className="preview"
-                        id={m.images.image}
-                        /* onClick={() => setPreviewImage(m.images.image)} */
-                        onClick={() => handleImagePreview(m.images.image)}
-                      >
-                        Preview Image
-                      </span>
-                    )}
-                  </li>
-                );
-              })
-            : null}
-        </ul>
-      ) : (
-        <ul className="cover-search--releases">
-          <p>no results</p>
-        </ul>
-      )}
-    </div>
-  );
+  return <div>Men at work</div>;
 };
 
 export default ChildApp;
