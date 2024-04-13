@@ -763,6 +763,7 @@ ipcMain.handle('show-text-input-menu', (event) => {
 });
 let newWin, newList;
 ipcMain.handle('show-child', (event, args) => {
+  console.log('args: ', args.length);
   const createChildWindow = () => {
     newWin = new BrowserWindow({
       width: 450,

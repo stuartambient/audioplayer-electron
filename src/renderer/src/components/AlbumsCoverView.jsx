@@ -62,6 +62,7 @@ const AlbumsCoverView = ({ resetKey }) => {
         : `${baseUrl}&q=${encodeURIComponent(title || artist)}`;
     try {
       const response = await axios.get(url);
+      console.log('discogs response: ', response.data);
       return response.data.results;
     } catch (error) {
       console.error('Error fetching from Discogs:', error);
@@ -72,7 +73,6 @@ const AlbumsCoverView = ({ resetKey }) => {
   // Function to fetch from MusicBrainz and Cover Art Archive
   const fetchFromMusicBrainz = async (searchAlbum) => {
     const mbResults = [];
-    const newMbResults = [];
     try {
       const mbResponse = await axios.get(
         `http://musicbrainz.org/ws/2/release-group/?query=${encodeURIComponent(
@@ -80,10 +80,10 @@ const AlbumsCoverView = ({ resetKey }) => {
         )}&limit=1`
       );
       /* console.log('mb response: ', mbResponse); */
-      const artists = mbResponse.data['release-groups'][0]['artist-credit']
+      /*       const artists = mbResponse.data['release-groups'][0]['artist-credit']
         .map((a) => a.name)
         .join(',');
-      const album = mbResponse.data['release-groups'][0].title;
+      const album = mbResponse.data['release-groups'][0].title; */
       const releases = mbResponse.data['release-groups'][0].releases;
       for (const release of releases) {
         try {
@@ -94,8 +94,20 @@ const AlbumsCoverView = ({ resetKey }) => {
             const coverResponse = await axios.get(
               `http://coverartarchive.org/release/${release.id}`
             );
-            //console.log(coverResponse);
-            newMbResults.push({
+
+            const artist = searchAlbum.split(' - ')[0];
+            const title = searchAlbum.split(' - ')[1];
+
+            /* if (
+              artist.toLowerCase() !==
+                releaseInfo.data['artist-credit'][0].artist.name.toLowerCase() &&
+              title.toLowerCase() !== releaseInfo.data.title.toLowerCase()
+            ) {
+              return;
+            } */
+
+            /*  console.log('releaseinfo: ', releaseInfo.data); */
+            mbResults.push({
               releaseId: release.id,
               coverResponse: coverResponse.data.images.map((img) => {
                 return {
@@ -103,68 +115,52 @@ const AlbumsCoverView = ({ resetKey }) => {
                   thumbnails: img.thumbnails
                 };
               }),
-              thumbnails: coverResponse.data.images[0].thumbnails,
+              /* thumbnails: coverResponse.data.images[0].thumbnails, */
               title: releaseInfo.data.title,
-              artist: releaseInfo.data['artist-credit'][0].artist.name,
+              artist: releaseInfo.data['artist-credit'].map((n) => {
+                return {
+                  artist: n.artist.name
+                };
+              }),
               barcode: releaseInfo.data.barcode,
               country: releaseInfo.data.country,
               date: releaseInfo.data.date,
-              labelInfo: releaseInfo.data['label-info'],
-              media: releaseInfo.data.media,
-              releaseEvents: releaseInfo.data['release-events']
+              labelInfo: releaseInfo.data['label-info'].map((l) => {
+                return {
+                  label: l.label.name
+                };
+              }),
+              media: releaseInfo.data.media.map((m) => {
+                return {
+                  trackCount: m['track-count']
+                };
+              }),
+              releaseEvents: releaseInfo.data['release-events'].map((r) => {
+                return {
+                  country: r.area.name
+                };
+              })
             });
           }
-          /*  console.log(
-            'release id ',
-            release.id,
-            'cover-art-archive: ',
-            releaseInfo.data['cover-art-archive'].artwork,
-            'releaseInfo',
-            'title: ',
-            releaseInfo.data.title,
-            'artist: ',
-            releaseInfo.data['artist-credit'][0].artist.name,
-            'barcode: ',
-            releaseInfo.data.barcode,
-            'country: ',
-            releaseInfo.data.country,
-            'date: ',
-            releaseInfo.data.date,
-            'label-info: ',
-            releaseInfo.data['label-info'],
-            'media: ',
-            releaseInfo.data.media,
-            'release-events: ',
-            releaseInfo.data['release-events']
-          ); */
         } catch (error) {
           console.log(`Error fetching cover art for release ${release.id}:`, error);
         }
-        /* try {
-          const coverResponse = await axios.get(`http://coverartarchive.org/release/${release.id}`);
-          console.log('releases: ', release);
-          mbResults.push({ title: `${artists} - ${album}`, images: coverResponse.data.images[0] });
-        } catch (error) {
-          console.log(`Error fetching cover art for release ${release.id}:`, error);
-        } */
       }
     } catch (error) {
       console.error('Error fetching from MusicBrainz:', error);
     }
-    console.log('newMbResults: ', newMbResults);
     return mbResults;
   };
 
   // Main function to handle cover search
   const handleCoverSearch = async (search) => {
-    console.log('search: ', search);
+    /*  console.log('search: ', search); */
     const { album, path } = search;
     let artist, title;
     if (album.includes('-')) {
       [artist, title] = album
         .split('-')
         .map((part) => part.replaceAll(/\W/g, ' ').replaceAll('and', ' '));
-      console.log('Artist:', artist, 'Title:', title);
     } else {
       title = album;
     }
@@ -174,12 +170,14 @@ const AlbumsCoverView = ({ resetKey }) => {
     const musicBrainzResults = await fetchFromMusicBrainz(album);
 
     // Example of showing results - adjust according to your application's needs
-    /*  console.log('Discogs Results:', discogsResults);
-    console.log('MusicBrainz & Cover Art Results:', musicBrainzResults); */
+    /* console.log('Discogs Results:', discogsResults); */
+    /* console.log('MusicBrainz & Cover Art Results:', musicBrainzResults); */
+
     // Implement the logic to display or use the results as needed
     /*   const results = discogsResults.concat(musicBrainzResults);
     console.log('results from cover searches: ', results); */
-    /*  setTimeout(() => window.api.showChild(results), 1000); */
+    console.log(musicBrainzResults);
+    setTimeout(() => window.api.showChild(musicBrainzResults), 1000);
   };
 
   // Example usage
@@ -229,7 +227,7 @@ const AlbumsCoverView = ({ resetKey }) => {
       const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
 
       const refAlbum = album.replace(regex, '');
-      console.log('album: ', album, 'refAlbum: ', refAlbum);
+      /*       console.log('album: ', album, 'refAlbum: ', refAlbum); */
       handleCoverSearch({ path: path, album: refAlbum });
       /* setCoverSearch({ path: path, album: refAlbum.join(' ') }); */
     } else if (option[0] === 'add album to playlist') {
