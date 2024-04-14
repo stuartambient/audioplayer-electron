@@ -27,9 +27,7 @@ const ChildApp = () => {
 
   useEffect(() => {
     if (releases.length > 0) {
-      releases.map((a, i) => {
-        console.log('index: ', i, 'obj: ', a);
-      });
+      console.log('releases: ', releases);
     }
   }, [releases]);
 
@@ -51,7 +49,7 @@ const ChildApp = () => {
 
   return (
     <div>
-      {releases.flat().map((release, index) => (
+      {releases.map((release, index) => (
         <ReleaseComponent key={release.releaseId} release={release} />
       ))}
     </div>

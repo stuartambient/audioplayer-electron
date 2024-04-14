@@ -98,15 +98,6 @@ const AlbumsCoverView = ({ resetKey }) => {
             const artist = searchAlbum.split(' - ')[0];
             const title = searchAlbum.split(' - ')[1];
 
-            /* if (
-              artist.toLowerCase() !==
-                releaseInfo.data['artist-credit'][0].artist.name.toLowerCase() &&
-              title.toLowerCase() !== releaseInfo.data.title.toLowerCase()
-            ) {
-              return;
-            } */
-
-            /*  console.log('releaseinfo: ', releaseInfo.data); */
             mbResults.push({
               releaseId: release.id,
               coverResponse: coverResponse.data.images.map((img) => {
@@ -137,7 +128,7 @@ const AlbumsCoverView = ({ resetKey }) => {
               }),
               releaseEvents: releaseInfo.data['release-events'].map((r) => {
                 return {
-                  country: r.area.name
+                  country: r.country
                 };
               })
             });

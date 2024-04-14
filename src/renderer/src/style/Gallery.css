@@ -1,0 +1,14 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(150px, 1fr)
+  ); /* Creates as many columns as can fit, min 150px */
+  gap: 10px; /* Space between images */
+}
+
+.gallery-item img {
+  width: 100%; /* Make images fill their containers */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 8px; /* Optional: adds rounded corners */
+}

@@ -763,13 +763,12 @@ ipcMain.handle('show-text-input-menu', (event) => {
 });
 let newWin, newList;
 ipcMain.handle('show-child', (event, args) => {
-  console.log('args: ', args.length);
   const createChildWindow = () => {
     newWin = new BrowserWindow({
       width: 450,
       height: 550,
       show: false,
-      resizable: false,
+      /* resizable: false, */
       webPreferences: {
         preload: path.join(__dirname, '../preload/child.js'),
         sandbox: false,
