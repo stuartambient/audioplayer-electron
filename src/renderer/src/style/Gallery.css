@@ -1,0 +1,56 @@
+.gallery {
+  /*  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px; */
+}
+
+.gallery-item {
+  display: flex; /* Aligns children (img and thumbnails) in a row */
+  align-items: space-around; /* Aligns items to the start of the flex container */
+  /* /gap: 5px; */ /* Space between main image and thumbnails */
+  /* flex-direction: column; */
+}
+
+.gallery-item img:hover {
+  cursor: pointer;
+}
+
+/* .gallery-image {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+} */
+
+.gallery-item img {
+  width: 60%; /* Smaller size for the main image */
+  height: auto;
+  border-radius: 8px;
+}
+
+/* .gallery-item img {
+  width: 80%;
+  height: auto;
+  border-radius: 8px;
+} */
+
+.gallery-thumbnails {
+  display: flex;
+  flex-direction: column; /* Stack thumbnails vertically */
+  /* justify-content: start; */
+  gap: 5px; /* Space between thumbnails */
+}
+
+.gallery-thumbnails a {
+  display: block;
+  background-color: #f0f0f0;
+  color: #333;
+  text-decoration: none;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.gallery-thumbnails a:hover {
+  background-color: #ddd; /* Darker background on hover */
+  transform: translateY(-3px); /* Slight raise effect */
+}

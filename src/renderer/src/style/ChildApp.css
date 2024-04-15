@@ -9,6 +9,7 @@ body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
+  m/* argin: 1rem; */
   display: flex;
 }
 
@@ -24,7 +25,16 @@ textarea {
   font-size: 100%;
 }
 
-.cover-search-wrapper {
+.release-item {
+  margin: .5rem;
+  display: grid;
+  /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));  */
+  grid-template-columns: repeat(auto); 
+  gap: 10px;
+  border: 2px solid red;
+}
+
+/* .cover-search-wrapper {
   height: 100vh;
   width: 100vw;
   display: grid;
@@ -113,10 +123,9 @@ textarea {
 .cover-search--images {
   grid-row: 1 / 2;
   display: flex;
-  /* justify-content: center; */
   align-items: center;
   flex-direction: column;
-}
+} */
 
 /* .cover-search--releases li {
   display: grid;
