@@ -3,19 +3,13 @@ import { useState, useMemo } from 'react';
 import Gallery from './Gallery';
 import '../style/ReleaseComponent.css';
 
-export const ImageComponent = ({ images }) => {
-  const galleryImages = useMemo(() => {
-    return images.reduce((acc, img) => {
-      // Add the main image
-      acc.push(img.image);
-      // Add all thumbnails
-      acc.push(...Object.values(img.thumbnails));
-      return acc;
-    }, []);
-  }, [images]);
+export const ImageComponent = ({ images, savePath }) => {
+  if (!images) return null;
   return (
-    <div>
-      <Gallery images={galleryImages} />
+    <div className="images-container">
+      {images.map((img, index) => (
+        <Gallery key={`${img.image}-${index + 1}`} image={img.image} thumbnails={img.thumbnails} />
+      ))}
     </div>
   );
 };
@@ -38,19 +32,19 @@ const LabelComponent = ({ labels }) => (
 
 export const ReleaseComponent = ({ release }) => {
   return (
-    <div>
+    <div className="release-info">
       {release.artist.map((artist, index) => (
-        <h2>{artist.artist}</h2>
+        <h2 key={index}>
+          {artist.artist} - {release.title}
+        </h2>
       ))}
-      <h3>{release.artist.artist}</h3>
-      <h2>{release.title}</h2>
-      <ImageComponent images={release.coverResponse} />
-      {/*   <ArtistComponent artists={release.artist} />  */}
-      <p>Barcode: {release.barcode}</p>
-      <p>Country: {release.country}</p>
-      <p>Date: {release.date}</p>
+      <p>
+        <b>Barcode:</b> {release.barcode}
+        <b>Country:</b> {release.country}
+        <b>Date:</b> {release.date}
+      </p>
       {/* <LabelComponent labels={release.labelInfo} /> */}
-      Additional components for media, releaseEvents etc.
+      <ImageComponent images={release.coverResponse} savepath={release.savepath} />
     </div>
   );
 };

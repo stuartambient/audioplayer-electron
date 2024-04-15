@@ -48,9 +48,11 @@ const ChildApp = () => {
   }; */
 
   return (
-    <div>
+    <div className="releases-container">
       {releases.map((release, index) => (
-        <ReleaseComponent key={release.releaseId} release={release} />
+        <div className="release-item">
+          <ReleaseComponent key={release.releaseId} release={release} />
+        </div>
       ))}
     </div>
   );

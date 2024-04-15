@@ -13,9 +13,10 @@ import AppState from '../hooks/AppState';
 
 const AlbumsCoverView = ({ resetKey }) => {
   const { state, dispatch } = useAudioPlayer();
-  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
+  /*  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' }); */
   const [viewMore, setViewMore] = useState(false);
-  const [coverSearch, setCoverSearch] = useState();
+  /* const [coverSearch, setCoverSearch] = useState(); */
+  const [coverPath, setCoverPath] = useState('');
 
   const coversObserver = useRef();
 
@@ -27,14 +28,14 @@ const AlbumsCoverView = ({ resetKey }) => {
     state.covers.length
   );
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const cover = async () => {
       await window.api.onRefreshHomeCover((e) => {
         setCoverUpdate({ path: e[0], file: e[1] });
       });
     };
     cover();
-  }, [state.covers]);
+  }, [state.covers]); */
 
   const compareStrings = (folderName, apiTitle) => {
     const apiTitleParts = apiTitle
@@ -100,6 +101,7 @@ const AlbumsCoverView = ({ resetKey }) => {
 
             mbResults.push({
               releaseId: release.id,
+              savePath: coverPath,
               coverResponse: coverResponse.data.images.map((img) => {
                 return {
                   image: img.image,
@@ -147,6 +149,8 @@ const AlbumsCoverView = ({ resetKey }) => {
   const handleCoverSearch = async (search) => {
     /*  console.log('search: ', search); */
     const { album, path } = search;
+    setCoverPath(path);
+
     let artist, title;
     if (album.includes('-')) {
       [artist, title] = album
@@ -175,7 +179,7 @@ const AlbumsCoverView = ({ resetKey }) => {
   /*   handleCoverSearch({ album: 'Artist - Album Title', path: '/path/to/album' }); */
 
   /* EFECT FOR RELOADING COVER IMAGE WHEN IMAGE IS UPDATED */
-  useEffect(() => {
+  /*   useEffect(() => {
     if (coverUpdate.path !== '') {
       const updateCovers = state.covers.map((cover) => {
         if (cover.fullpath === coverUpdate.path) {
@@ -183,14 +187,14 @@ const AlbumsCoverView = ({ resetKey }) => {
         }
       });
     }
-  });
+  }); */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const sendCovers = async () => {
       await window.api.showChild(coverSearch);
     };
     if (coverSearch) sendCovers();
-  }, [coverSearch]);
+  }, [coverSearch]); */
 
   const handleAlbumToPlaylist = async (path) => {
     const albumTracks = await window.api.getAlbumTracks(path);

@@ -1,18 +1,29 @@
 /* import React from 'react'; */
 import '../style/Gallery.css';
 
-const Gallery = ({ images }) => {
-  console.log(images);
+const Gallery = ({ image, thumbnails }) => {
+  const handleImageClick = (e) => {
+    e.preventDefault();
+    console.log('e target: ', e.target);
+  };
   return (
     <div className="gallery">
-      {images.map((image, index) => (
-        <div key={index} className="gallery-item">
-          <img src={image} alt={`Image ${index + 1}`} />
-          <a href={image} download={`Image-${index + 1}`}>
+      <div className="gallery-item">
+        <img src={image} alt={`Image ${image}`} onClick={(e) => handleImageClick(e)} />
+        {/*        <span>
+          <a href={image} download={`Image-${image}`}>
             Download
           </a>
+        </span> */}
+
+        <div className="gallery-thumbnails">
+          {Object.entries(thumbnails).map(([key, value], index) => (
+            <a key={index} href={value} style={{ display: 'block', margin: '2px 0' }}>
+              {key}
+            </a>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 };
