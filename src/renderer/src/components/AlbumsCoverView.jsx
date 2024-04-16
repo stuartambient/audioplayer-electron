@@ -172,8 +172,28 @@ const AlbumsCoverView = ({ resetKey }) => {
     // Implement the logic to display or use the results as needed
     /*   const results = discogsResults.concat(musicBrainzResults);
     console.log('results from cover searches: ', results); */
-    console.log(musicBrainzResults);
-    setTimeout(() => window.api.showChild(musicBrainzResults), 1000);
+    /* console.log(musicBrainzResults); */
+    /*  window.api.showChild(musicBrainzResults); */
+    /* setTimeout(
+      () => */
+    openChildWindow(
+      'cover-search',
+      'cover-search',
+      {
+        width: 800,
+        height: 600,
+        show: false,
+        resizable: true,
+        preload: 'coverSearch',
+        sandbox: false,
+        webSecurity: false,
+        contextIsolation: true
+      },
+
+      musicBrainzResults
+    ); /* ,
+      1000
+    ); */
   };
 
   // Example usage

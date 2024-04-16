@@ -3,7 +3,7 @@ import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
 const coverSearchApi = {
-  onSendToChild: (cb) => ipcRenderer.once('send-to-child', (event, ...args) => cb(args)),
+  onSendToChild: (cb) => ipcRenderer.once('send-to-child', (event, args) => cb(args)),
   downloadFile: (fileUrl, savepath) => ipcRenderer.invoke('download-file', fileUrl, savepath),
   refreshCover: (cover, path) => ipcRenderer.invoke('refresh-cover', cover, path)
 };

@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { HiOutlineCursorClick } from 'react-icons/hi';
-import { ReleaseComponent } from './components/ReleaseComponent';
-import './style/ChildApp.css';
+import { ReleaseComponent } from '../../../components/ReleaseComponent';
+import './style.css';
 
-const ChildApp = () => {
+const CoverSearchApp = () => {
   const [releases, setReleases] = useState([]);
 
   /*   const [previewImage, setPreviewImage] = useState({ url: '', width: '', height: '' }); */
@@ -16,9 +16,9 @@ const ChildApp = () => {
 
   useEffect(() => {
     let subscribed = true;
-    const getArgs = async () => {
+    const getReleases = async () => {
       await window.coverSearchApi.onSendToChild((e) => {
-        setReleases(e);
+        setReleases(e.results);
       });
     };
     if (subscribed) getReleases();
@@ -42,10 +42,7 @@ const ChildApp = () => {
 
   const handleDownloadImage = async (e) => {
     e.preventDefault();
-    const download = await window.coverSearchApi.downloadFile(
-      `${previewImage.url}`,
-      releases[0].path
-    );
+    const download = await window.childapi.downloadFile(`${previewImage.url}`, releases[0].path);
     console.log('download image: ', download, releases[0].path);
     await window.childapi.refreshCover(`${releases[0].path}/cover.jpg`, releases[0].path);
   }; */

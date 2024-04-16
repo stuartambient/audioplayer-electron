@@ -81,7 +81,7 @@ export const Genres = () => {
           width: 1200,
           height: 550,
           show: false,
-          resizeable: true,
+          resizable: true,
           preload: 'metadataEditing',
           sandbox: false,
           webSecurity: false,

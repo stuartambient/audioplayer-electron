@@ -6,6 +6,7 @@ const path = require('path');
 const windows = new Map();
 
 function createOrUpdateChildWindow(name, config, data) {
+  console.log('name: ', name, 'config: ', config);
   let window = windows.get(name);
   if (window) {
     return window.webContents.send('send-to-child', data);

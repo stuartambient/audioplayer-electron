@@ -1,0 +1,627 @@
+merged
+  result 100644 ecc4a0bca52d6e5a254189c4edf9fc5d5c4abf81 package-lock.json
+  our    100644 d4b949d416c46932bee44480371afb88b437b1aa package-lock.json
+@@ -12,6 +12,8 @@
+         "@electron-toolkit/preload": "^1.0.2",
+         "@electron-toolkit/utils": "^1.0.2",
+         "@emotion/styled": "^11.11.0",
++        "@tanstack/match-sorter-utils": "^8.8.4",
++        "@tanstack/react-table": "^8.9.3",
+         "ag-grid-community": "^30.1.0",
+         "ag-grid-react": "^30.1.0",
+         "axios": "^1.3.4",
+@@ -21,6 +23,7 @@
+         "eslint-config-react-app": "^7.0.1",
+         "fast-glob": "^3.2.12",
+         "music-metadata": "^7.13.0",
++        "react-data-grid": "^7.0.0-beta.34",
+         "react-icons": "^4.7.1",
+         "react-window": "^1.8.9",
+         "uuid": "^9.0.0"
+@@ -2877,6 +2880,52 @@
+         "node": ">=6"
+       }
+     },
++    "node_modules/@tanstack/match-sorter-utils": {
++      "version": "8.15.1",
++      "resolved": "https://registry.npmjs.org/@tanstack/match-sorter-utils/-/match-sorter-utils-8.15.1.tgz",
++      "integrity": "sha512-PnVV3d2poenUM31ZbZi/yXkBu3J7kd5k2u51CGwwNojag451AjTH9N6n41yjXz2fpLeewleyLBmNS6+HcGDlXw==",
++      "dependencies": {
++        "remove-accents": "0.5.0"
++      },
++      "engines": {
++        "node": ">=12"
++      },
++      "funding": {
++        "type": "github",
++        "url": "https://github.com/sponsors/tannerlinsley"
++      }
++    },
++    "node_modules/@tanstack/react-table": {
++      "version": "8.16.0",
++      "resolved": "https://registry.npmjs.org/@tanstack/react-table/-/react-table-8.16.0.tgz",
++      "integrity": "sha512-rKRjnt8ostqN2fercRVOIH/dq7MAmOENCMvVlKx6P9Iokhh6woBGnIZEkqsY/vEJf1jN3TqLOb34xQGLVRuhAg==",
++      "dependencies": {
++        "@tanstack/table-core": "8.16.0"
++      },
++      "engines": {
++        "node": ">=12"
++      },
++      "funding": {
++        "type": "github",
++        "url": "https://github.com/sponsors/tannerlinsley"
++      },
++      "peerDependencies": {
++        "react": ">=16.8",
++        "react-dom": ">=16.8"
++      }
++    },
++    "node_modules/@tanstack/table-core": {
++      "version": "8.16.0",
++      "resolved": "https://registry.npmjs.org/@tanstack/table-core/-/table-core-8.16.0.tgz",
++      "integrity": "sha512-dCG8vQGk4js5v88/k83tTedWOwjGnIyONrKpHpfmSJB8jwFHl8GSu1sBBxbtACVAPtAQgwNxl0rw1d3RqRM1Tg==",
++      "engines": {
++        "node": ">=12"
++      },
++      "funding": {
++        "type": "github",
++        "url": "https://github.com/sponsors/tannerlinsley"
++      }
++    },
+     "node_modules/@tokenizer/token": {
+       "version": "0.3.0",
+       "resolved": "https://registry.npmjs.org/@tokenizer/token/-/token-0.3.0.tgz",
+@@ -4414,6 +4463,14 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/clsx": {
++      "version": "2.1.0",
++      "resolved": "https://registry.npmjs.org/clsx/-/clsx-2.1.0.tgz",
++      "integrity": "sha512-m3iNNWpd9rl3jvvcBnu70ylMdrXt8Vlq4HYadnU5fwcOtvkSQWPmj7amUcDT2qYI7risszBjI5AUIUox9D16pg==",
++      "engines": {
++        "node": ">=6"
++      }
++    },
+     "node_modules/color-convert": {
+       "version": "1.9.3",
+       "resolved": "https://registry.npmjs.org/color-convert/-/color-convert-1.9.3.tgz",
+@@ -8658,6 +8715,18 @@
+         "node": ">=0.10.0"
+       }
+     },
++    "node_modules/react-data-grid": {
++      "version": "7.0.0-beta.43",
++      "resolved": "https://registry.npmjs.org/react-data-grid/-/react-data-grid-7.0.0-beta.43.tgz",
++      "integrity": "sha512-uqzhXsaeIpCnNsB1zODWzP88od6r5Q5UA5GnEhba9XmUMFUy2VcUTTfABmbAiVGdJkUzWJTx1l0hZn0WNGE/hQ==",
++      "dependencies": {
++        "clsx": "^2.0.0"
++      },
++      "peerDependencies": {
++        "react": "^18.0",
++        "react-dom": "^18.0"
++      }
++    },
+     "node_modules/react-dom": {
+       "version": "18.2.0",
+       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz",
+@@ -8865,6 +8934,11 @@
+         "jsesc": "bin/jsesc"
+       }
+     },
++    "node_modules/remove-accents": {
++      "version": "0.5.0",
++      "resolved": "https://registry.npmjs.org/remove-accents/-/remove-accents-0.5.0.tgz",
++      "integrity": "sha512-8g3/Otx1eJaVD12e31UbJj1YzdtVvzH85HV7t+9MJYk/u3XmkOUJ5Ys9wQrf9PCPK8+xn4ymzqYCiZl6QWKn+A=="
++    },
+     "node_modules/require-directory": {
+       "version": "2.1.1",
+       "resolved": "https://registry.npmjs.org/require-directory/-/require-directory-2.1.1.tgz",
+changed in both
+  base   100644 bef46e6c3b8bf1a4575eb03f5fe84938baba7061 src/main/index.js
+  our    100644 40758ca47737c15aaa5613430797865099c432f2 src/main/index.js
+  their  100644 ec946855a8081a67dbb451b7b10a12f5adac6a95 src/main/index.js
+@@ -754,6 +754,37 @@
+ 
+   inputMenu.popup(BrowserWindow.fromWebContents(event.sender));
+ });
++<<<<<<< .our
++=======
++let newWin, newList;
++ipcMain.handle('show-child', (event, args) => {
++  const createChildWindow = () => {
++    newWin = new BrowserWindow({
++      width: 450,
++      height: 550,
++      show: false,
++      /* resizable: false, */
++      webPreferences: {
++        preload: path.join(__dirname, '../preload/child.js'),
++        sandbox: false,
++        webSecurity: false,
++        contextIsolation: true
++      }
++    });
++
++    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
++      newWin.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/child.html`);
++    } else {
++      newWin.loadFile(path.join(__dirname, '../renderer/child.html'));
++    }
++    /* newWin.loadFile(path.join(__dirname, '../renderer/child.html')); */
++
++    newWin.on('ready-to-show', () => {
++      newWin.show();
++      newWin.webContents.send('send-to-child', args);
++    });
++  };
++>>>>>>> .their
+ 
+ ipcMain.handle('show-child', (event, args) => {
+   const { name, winConfig, data } = args;
+removed in local
+  base   100644 b7a28357215a832ddf474f5e3ea81e2d67c43d08 src/preload/child.js
+  their  100644 89f0c6acdccef6332a799bb73b7a037ae96ad810 src/preload/child.js
+removed in local
+  base   100644 edbed028be8804269eb9b1e0c013847752b0c4a8 src/renderer/src/ChildApp.jsx
+  their  100644 2d854bc5df3e334a8e4634cc3d807394dbadee17 src/renderer/src/ChildApp.jsx
+changed in both
+  base   100644 66435346d8ddc268af8869984a41e2c185155476 src/renderer/src/components/AlbumsCoverView.jsx
+  our    100644 0a7b8892475fea2eeb01698fdbabe734b08781fc src/renderer/src/components/AlbumsCoverView.jsx
+  their  100644 f0fd05ed3375767f3682a35521988dd2ef362fca src/renderer/src/components/AlbumsCoverView.jsx
+@@ -14,9 +14,10 @@
+ 
+ const AlbumsCoverView = ({ resetKey }) => {
+   const { state, dispatch } = useAudioPlayer();
+-  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' });
++  /*  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' }); */
+   const [viewMore, setViewMore] = useState(false);
+-  const [coverSearch, setCoverSearch] = useState();
++  /* const [coverSearch, setCoverSearch] = useState(); */
++  const [coverPath, setCoverPath] = useState('');
+ 
+   const coversObserver = useRef();
+ 
+@@ -28,72 +29,138 @@
+     state.covers.length
+   );
+ 
+-  useEffect(() => {
++  /*   useEffect(() => {
+     const cover = async () => {
+       await window.api.onRefreshHomeCover((e) => {
+         setCoverUpdate({ path: e[0], file: e[1] });
+       });
+     };
+     cover();
+-  }, [state.covers]);
+-
+-  /* EFECT FOR RELOADING COVER IMAGE WHEN IMAGE IS UPDATED */
+-  useEffect(() => {
+-    if (coverUpdate.path !== '') {
+-      const updateCovers = state.covers.map((cover) => {
+-        if (cover.fullpath === coverUpdate.path) {
+-          cover.img = coverUpdate.file;
+-        }
+-      });
+-    }
+-  });
++  }, [state.covers]); */
+ 
+-  const compareStrs = (str1, str2) => {
+-    // STR1 IS FOLDER, STR2 IS TITLE FROM API
+-    const str2split = str2
++  const compareStrings = (folderName, apiTitle) => {
++    const apiTitleParts = apiTitle
+       .replace('-', '')
+       .split(' ')
+       .filter((s) => s !== '');
+-    let correct = { total: str2split.length, failed: 0 };
+-    for (const a of str1) {
+-      const dropHyphen = a.split('-')[0].trim();
+-      if (!str2.toLowerCase().includes(dropHyphen.toLowerCase())) {
+-        correct.failed += 1;
++    let matchStats = { total: apiTitleParts.length, failed: 0 };
++    folderName.split(' ').forEach((part) => {
++      const searchTerm = part.split('-')[0].trim().toLowerCase();
++      if (!apiTitle.toLowerCase().includes(searchTerm)) {
++        matchStats.failed += 1;
+       }
++    });
++    return 100 - (matchStats.failed / matchStats.total) * 100;
++  };
++
++  // Function to fetch from Discogs API
++  const fetchFromDiscogs = async (artist, title, token) => {
++    const baseUrl = `https://api.discogs.com/database/search?token=${token}`;
++    const url =
++      artist && title
++        ? `${baseUrl}&title=${encodeURIComponent(title)}&release_title=${encodeURIComponent(
++            title
++          )}&artist=${encodeURIComponent(artist)}`
++        : `${baseUrl}&q=${encodeURIComponent(title || artist)}`;
++    try {
++      const response = await axios.get(url);
++      console.log('discogs response: ', response.data);
++      return response.data.results;
++    } catch (error) {
++      console.error('Error fetching from Discogs:', error);
++      return [];
+     }
+-    const percentage = 100 - (correct.failed / correct.total) * 100;
+-    return percentage;
+   };
+ 
+-  /*   const cleanString = () => {
+-    let title, artist;
+-    artist = search.album.split('-')[0].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+-    title = search.album.split('-')[1].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+-  }; */
++  // Function to fetch from MusicBrainz and Cover Art Archive
++  const fetchFromMusicBrainz = async (searchAlbum) => {
++    const mbResults = [];
++    try {
++      const mbResponse = await axios.get(
++        `http://musicbrainz.org/ws/2/release-group/?query=${encodeURIComponent(
++          searchAlbum
++        )}&limit=1`
++      );
++      /* console.log('mb response: ', mbResponse); */
++      /*       const artists = mbResponse.data['release-groups'][0]['artist-credit']
++        .map((a) => a.name)
++        .join(',');
++      const album = mbResponse.data['release-groups'][0].title; */
++      const releases = mbResponse.data['release-groups'][0].releases;
++      for (const release of releases) {
++        try {
++          const releaseInfo = await axios.get(
++            `http://musicbrainz.org/ws/2/release/${release.id}?inc=artist-credits+labels+discids+recordings`
++          );
++          if (releaseInfo.data['cover-art-archive'].artwork) {
++            const coverResponse = await axios.get(
++              `http://coverartarchive.org/release/${release.id}`
++            );
++
++            const artist = searchAlbum.split(' - ')[0];
++            const title = searchAlbum.split(' - ')[1];
+ 
+-  const handleCoverSearch = async (search) => {
+-    let title, artist, url, mbUrl;
+-    if (search.album.split(' ').includes('-')) {
+-      artist = search.album.split('-')[0].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+-      title = search.album.split('-')[1].replaceAll(/\W/g, ' ').replaceAll('and', ' ');
+-      console.log('artist: ', artist, 'title: ', title);
++            mbResults.push({
++              releaseId: release.id,
++              savePath: coverPath,
++              coverResponse: coverResponse.data.images.map((img) => {
++                return {
++                  image: img.image,
++                  thumbnails: img.thumbnails
++                };
++              }),
++              /* thumbnails: coverResponse.data.images[0].thumbnails, */
++              title: releaseInfo.data.title,
++              artist: releaseInfo.data['artist-credit'].map((n) => {
++                return {
++                  artist: n.artist.name
++                };
++              }),
++              barcode: releaseInfo.data.barcode,
++              country: releaseInfo.data.country,
++              date: releaseInfo.data.date,
++              labelInfo: releaseInfo.data['label-info'].map((l) => {
++                return {
++                  label: l.label.name
++                };
++              }),
++              media: releaseInfo.data.media.map((m) => {
++                return {
++                  trackCount: m['track-count']
++                };
++              }),
++              releaseEvents: releaseInfo.data['release-events'].map((r) => {
++                return {
++                  country: r.country
++                };
++              })
++            });
++          }
++        } catch (error) {
++          console.log(`Error fetching cover art for release ${release.id}:`, error);
++        }
++      }
++    } catch (error) {
++      console.error('Error fetching from MusicBrainz:', error);
+     }
++    return mbResults;
++  };
+ 
+-    const discogsResults = { path: search.path, album: search.album, results: [] };
+-    const musicBrainzResults = {
+-      path: search.path,
+-      album: search.album,
+-      mbresults: []
+-    };
+-    if (title) {
+-      url = `https://api.discogs.com/database/search?title=${title}&release_title=${title}&artist=${artist}&token=${
+-        import.meta.env.RENDERER_VITE_DISCOGS_KEY
+-      }`;
++  // Main function to handle cover search
++  const handleCoverSearch = async (search) => {
++    /*  console.log('search: ', search); */
++    const { album, path } = search;
++    setCoverPath(path);
++
++    let artist, title;
++    if (album.includes('-')) {
++      [artist, title] = album
++        .split('-')
++        .map((part) => part.replaceAll(/\W/g, ' ').replaceAll('and', ' '));
+     } else {
+-      url = `https://api.discogs.com/database/search?q=${search.album}&token=${
+-        import.meta.env.RENDERER_VITE_DISCOGS_KEY
+-      }`;
++      title = album;
+     }
++<<<<<<< .our
+     await axios
+       .get(url)
+       .then(async (response) => {
+@@ -175,14 +242,44 @@
+       },
+       data: { ...discogsResults, ...musicBrainzResults }
+     }); */
++=======
++
++    const discogsToken = import.meta.env.RENDERER_VITE_DISCOGS_KEY;
++    const discogsResults = await fetchFromDiscogs(artist, title, discogsToken);
++    const musicBrainzResults = await fetchFromMusicBrainz(album);
++
++    // Example of showing results - adjust according to your application's needs
++    /* console.log('Discogs Results:', discogsResults); */
++    /* console.log('MusicBrainz & Cover Art Results:', musicBrainzResults); */
++
++    // Implement the logic to display or use the results as needed
++    /*   const results = discogsResults.concat(musicBrainzResults);
++    console.log('results from cover searches: ', results); */
++    console.log(musicBrainzResults);
++    setTimeout(() => window.api.showChild(musicBrainzResults), 1000);
++>>>>>>> .their
+   };
+ 
+-  useEffect(() => {
++  // Example usage
++  /*   handleCoverSearch({ album: 'Artist - Album Title', path: '/path/to/album' }); */
++
++  /* EFECT FOR RELOADING COVER IMAGE WHEN IMAGE IS UPDATED */
++  /*   useEffect(() => {
++    if (coverUpdate.path !== '') {
++      const updateCovers = state.covers.map((cover) => {
++        if (cover.fullpath === coverUpdate.path) {
++          cover.img = coverUpdate.file;
++        }
++      });
++    }
++  }); */
++
++  /*   useEffect(() => {
+     const sendCovers = async () => {
+       await window.api.showChild(coverSearch);
+     };
+     if (coverSearch) sendCovers();
+-  }, [coverSearch]);
++  }, [coverSearch]); */
+ 
+   const handleAlbumToPlaylist = async (path) => {
+     const albumTracks = await window.api.getAlbumTracks(path);
+@@ -210,7 +307,7 @@
+       const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
+ 
+       const refAlbum = album.replace(regex, '');
+-      console.log('album: ', album, 'refAlbum: ', refAlbum);
++      /*       console.log('album: ', album, 'refAlbum: ', refAlbum); */
+       handleCoverSearch({ path: path, album: refAlbum });
+       /* setCoverSearch({ path: path, album: refAlbum.join(' ') }); */
+     } else if (option[0] === 'add album to playlist') {
+added in remote
+  their  100644 0e41eb90b31596dc7641888d4631820aedf70abe src/renderer/src/components/Gallery.jsx
+@@ -0,0 +1,31 @@
++/* import React from 'react'; */
++import '../style/Gallery.css';
++
++const Gallery = ({ image, thumbnails }) => {
++  const handleImageClick = (e) => {
++    e.preventDefault();
++    console.log('e target: ', e.target);
++  };
++  return (
++    <div className="gallery">
++      <div className="gallery-item">
++        <img src={image} alt={`Image ${image}`} onClick={(e) => handleImageClick(e)} />
++        {/*        <span>
++          <a href={image} download={`Image-${image}`}>
++            Download
++          </a>
++        </span> */}
++
++        <div className="gallery-thumbnails">
++          {Object.entries(thumbnails).map(([key, value], index) => (
++            <a key={index} href={value} style={{ display: 'block', margin: '2px 0' }}>
++              {key}
++            </a>
++          ))}
++        </div>
++      </div>
++    </div>
++  );
++};
++
++export default Gallery;
+added in remote
+  their  100644 a4d1fceebe405cddedf62b0ed41c31342991d83f src/renderer/src/components/ReleaseComponent.jsx
+@@ -0,0 +1,50 @@
++import { useState, useMemo } from 'react';
++
++import Gallery from './Gallery';
++import '../style/ReleaseComponent.css';
++
++export const ImageComponent = ({ images, savePath }) => {
++  if (!images) return null;
++  return (
++    <div className="images-container">
++      {images.map((img, index) => (
++        <Gallery key={`${img.image}-${index + 1}`} image={img.image} thumbnails={img.thumbnails} />
++      ))}
++    </div>
++  );
++};
++
++const ArtistComponent = ({ artists }) => (
++  <ul>
++    {artists.map((artist, index) => (
++      <li key={index}>{artist.artist}</li>
++    ))}
++  </ul>
++);
++
++const LabelComponent = ({ labels }) => (
++  <ul>
++    {labels.map((label, index) => (
++      <li key={index}>{label.label}</li>
++    ))}
++  </ul>
++);
++
++export const ReleaseComponent = ({ release }) => {
++  return (
++    <div className="release-info">
++      {release.artist.map((artist, index) => (
++        <h2 key={index}>
++          {artist.artist} - {release.title}
++        </h2>
++      ))}
++      <p>
++        <b>Barcode:</b> {release.barcode}
++        <b>Country:</b> {release.country}
++        <b>Date:</b> {release.date}
++      </p>
++      {/* <LabelComponent labels={release.labelInfo} /> */}
++      <ImageComponent images={release.coverResponse} savepath={release.savepath} />
++    </div>
++  );
++};
+merged
+  result 100644 80037e78bd97f96740ffc98fd142f84f7b6b413f src/renderer/src/style/ChildApp.css
+  our    100644 8b86fdbba909130e9f26e669d3e46d5a13416f20 src/renderer/src/style/ChildApp.css
+@@ -9,6 +9,7 @@
+   box-sizing: border-box;
+   width: 100vw;
+   height: 100vh;
++  m/* argin: 1rem; */
+   display: flex;
+ }
+ 
+@@ -24,7 +25,16 @@
+   font-size: 100%;
+ }
+ 
+-.cover-search-wrapper {
++.release-item {
++  margin: .5rem;
++  display: grid;
++  /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));  */
++  grid-template-columns: repeat(auto); 
++  gap: 10px;
++  border: 2px solid red;
++}
++
++/* .cover-search-wrapper {
+   height: 100vh;
+   width: 100vw;
+   display: grid;
+@@ -113,10 +123,9 @@
+ .cover-search--images {
+   grid-row: 1 / 2;
+   display: flex;
+-  /* justify-content: center; */
+   align-items: center;
+   flex-direction: column;
+-}
++} */
+ 
+ /* .cover-search--releases li {
+   display: grid;
+added in remote
+  their  100644 39a277afabe48857ec559cf5036aa1b3197deb91 src/renderer/src/style/Gallery.css
+@@ -0,0 +1,56 @@
++.gallery {
++  /*  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
++  gap: 10px; */
++}
++
++.gallery-item {
++  display: flex; /* Aligns children (img and thumbnails) in a row */
++  align-items: space-around; /* Aligns items to the start of the flex container */
++  /* /gap: 5px; */ /* Space between main image and thumbnails */
++  /* flex-direction: column; */
++}
++
++.gallery-item img:hover {
++  cursor: pointer;
++}
++
++/* .gallery-image {
++  display: flex;
++  flex-direction: column;
++  justify-content: center;
++} */
++
++.gallery-item img {
++  width: 60%; /* Smaller size for the main image */
++  height: auto;
++  border-radius: 8px;
++}
++
++/* .gallery-item img {
++  width: 80%;
++  height: auto;
++  border-radius: 8px;
++} */
++
++.gallery-thumbnails {
++  display: flex;
++  flex-direction: column; /* Stack thumbnails vertically */
++  /* justify-content: start; */
++  gap: 5px; /* Space between thumbnails */
++}
++
++.gallery-thumbnails a {
++  display: block;
++  background-color: #f0f0f0;
++  color: #333;
++  text-decoration: none;
++  padding: 8px;
++  border-radius: 4px;
++  transition: background-color 0.3s, transform 0.3s;
++}
++
++.gallery-thumbnails a:hover {
++  background-color: #ddd; /* Darker background on hover */
++  transform: translateY(-3px); /* Slight raise effect */
++}
+added in remote
+  their  100644 cc6803fb1339a83352da76cd3de42a69c084aa87 src/renderer/src/style/ReleaseComponent.css
+@@ -0,0 +1,11 @@
++.release-info {
++  display: flex;
++  flex-direction: column;
++  gap: 5px;
++}
++
++.images-container {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 20px;
++}
