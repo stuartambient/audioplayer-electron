@@ -1,5 +1,5 @@
 /* import React from 'react'; */
-import '../style/Gallery.css';
+import './ChildWindows/coverSearchWindow/style.css';
 
 const Gallery = ({ image, thumbnails }) => {
   const handleImageClick = (e) => {
@@ -18,7 +18,7 @@ const Gallery = ({ image, thumbnails }) => {
 
         <div className="gallery-thumbnails">
           {Object.entries(thumbnails).map(([key, value], index) => (
-            <a key={index} href={value} style={{ display: 'block', margin: '2px 0' }}>
+            <a key={index} href={value} /* style={{ display: 'block', margin: '2px 0' }} */>
               {key}
             </a>
           ))}

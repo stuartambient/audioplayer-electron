@@ -9,7 +9,6 @@ body {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  m/* argin: 1rem; */
   display: flex;
 }
 
@@ -23,15 +22,6 @@ select,
 textarea {
   font-family: inherit;
   font-size: 100%;
-}
-
-.release-item {
-  margin: .5rem;
-  display: grid;
-  /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));  */
-  grid-template-columns: repeat(auto); 
-  gap: 10px;
-  border: 2px solid red;
 }
 
 /* .cover-search-wrapper {

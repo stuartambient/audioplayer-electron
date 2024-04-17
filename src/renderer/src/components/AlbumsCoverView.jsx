@@ -73,7 +73,8 @@ const AlbumsCoverView = ({ resetKey }) => {
   };
 
   // Function to fetch from MusicBrainz and Cover Art Archive
-  const fetchFromMusicBrainz = async (searchAlbum) => {
+  const fetchFromMusicBrainz = async (path, searchAlbum) => {
+    console.log('mb: ', path);
     const mbResults = [];
     try {
       const mbResponse = await axios.get(
@@ -99,10 +100,9 @@ const AlbumsCoverView = ({ resetKey }) => {
 
             const artist = searchAlbum.split(' - ')[0];
             const title = searchAlbum.split(' - ')[1];
-
             mbResults.push({
               releaseId: release.id,
-              savePath: coverPath,
+              savePath: path,
               coverResponse: coverResponse.data.images.map((img) => {
                 return {
                   image: img.image,
@@ -150,7 +150,6 @@ const AlbumsCoverView = ({ resetKey }) => {
   const handleCoverSearch = async (search) => {
     /*  console.log('search: ', search); */
     const { album, path } = search;
-    setCoverPath(path);
 
     let artist, title;
     if (album.includes('-')) {
@@ -163,19 +162,8 @@ const AlbumsCoverView = ({ resetKey }) => {
 
     const discogsToken = import.meta.env.RENDERER_VITE_DISCOGS_KEY;
     const discogsResults = await fetchFromDiscogs(artist, title, discogsToken);
-    const musicBrainzResults = await fetchFromMusicBrainz(album);
+    const musicBrainzResults = await fetchFromMusicBrainz(path, album);
 
-    // Example of showing results - adjust according to your application's needs
-    /* console.log('Discogs Results:', discogsResults); */
-    /* console.log('MusicBrainz & Cover Art Results:', musicBrainzResults); */
-
-    // Implement the logic to display or use the results as needed
-    /*   const results = discogsResults.concat(musicBrainzResults);
-    console.log('results from cover searches: ', results); */
-    /* console.log(musicBrainzResults); */
-    /*  window.api.showChild(musicBrainzResults); */
-    /* setTimeout(
-      () => */
     openChildWindow(
       'cover-search',
       'cover-search',

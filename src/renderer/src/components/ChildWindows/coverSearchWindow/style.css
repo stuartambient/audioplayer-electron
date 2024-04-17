@@ -25,11 +25,103 @@ textarea {
   font-size: 100%;
 }
 
-.release-item {
-  margin: 0.5rem;
+/* .releases-container {
   display: grid;
-  /* grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));  */
-  grid-template-columns: repeat(auto);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 0.75fr));
+  gap: 0.5rem;
+} */
+
+#cover-search {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column layout */
+  gap: 20px;
+  padding: 20px;
+  background-color: #f0f0f0; /* Light gray background for the whole container */
+  padding: 20px;
+}
+
+.releases-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive grid */
+  gap: 20px;
+}
+
+.release-main h2 {
+  font-family: 'Arial', sans-serif; /* You can choose a more unique font */
+  color: #333;
+  padding: 16px;
+}
+
+.release-info div {
+  font-family: 'Arial', sans-serif;
+  color: #666;
+  padding: 8px 16px;
+  border-bottom: 1px solid #eee; /* Separators for information */
+}
+
+.release-item {
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* Structured layout for each item */
+  align-self: start;
   gap: 10px;
-  border: 2px solid red;
+  /**/
+
+  background-color: white;
+  border: 1px solid #ddd; /* Light gray border */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  overflow: hidden; /* Ensures content fits within the rounded borders */
+  transition: transform 0.2s; /* Smooth transition for hover effect */
+}
+
+.release-item:hover {
+  transform: translateY(-5px); /* Slight lift effect on hover */
+}
+
+.images-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.gallery-item img {
+  width: 100%;
+  display: block;
+  border-radius: 0 0 8px 8px; /* Rounded bottom corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-thumbnails a {
+  display: inline-block;
+  margin-right: 5px;
+  text-decoration: none;
+  color: blue;
+  /*  color: #0056b3;
+  text-decoration: none;
+  padding: 5px;
+  transition: color 0.3s, transform 0.3s; */
+}
+
+.gallery-thumbnails a:hover {
+  color: #003580;
+  transform: scale(1.1); /* Makes the link slightly larger on hover */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.release-item {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@media (max-width: 768px) {
+  .releases-container {
+    grid-template-columns: 1fr; /* Stack items on smaller screens */
+  }
 }

@@ -1,7 +1,10 @@
 .gallery {
-  /*  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 10px; */
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(150px, 2fr)
+  ); /* Creates as many columns as can fit, min 150px */
+  gap: 10px; /* Space between images */
 }
 
 .gallery-item {

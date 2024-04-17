@@ -1,10 +1,11 @@
 import { useState, useMemo } from 'react';
 
 import Gallery from './Gallery';
-import '../style/ReleaseComponent.css';
+import './ChildWindows/coverSearchWindow/style.css';
 
 export const ImageComponent = ({ images, savePath }) => {
   if (!images) return null;
+
   return (
     <div className="images-container">
       {images.map((img, index) => (
@@ -22,29 +23,57 @@ const ArtistComponent = ({ artists }) => (
   </ul>
 );
 
-const LabelComponent = ({ labels }) => (
-  <ul>
-    {labels.map((label, index) => (
-      <li key={index}>{label.label}</li>
+const MediaComponent = ({ media }) => (
+  <span>
+    {media.map((info, index) => (
+      <div key={index}>
+        <b>Track Count:</b> {info.trackCount}
+      </div>
     ))}
-  </ul>
+  </span>
+);
+
+const LabelComponent = ({ labels }) => (
+  <span>
+    {labels.map((label, index) => (
+      <div key={index}>
+        <b>Label:</b>
+        {label.label}
+      </div>
+    ))}
+  </span>
 );
 
 export const ReleaseComponent = ({ release }) => {
   return (
-    <div className="release-info">
-      {release.artist.map((artist, index) => (
-        <h2 key={index}>
-          {artist.artist} - {release.title}
-        </h2>
-      ))}
-      <p>
-        <b>Barcode:</b> {release.barcode}
-        <b>Country:</b> {release.country}
-        <b>Date:</b> {release.date}
-      </p>
-      {/* <LabelComponent labels={release.labelInfo} /> */}
-      <ImageComponent images={release.coverResponse} savepath={release.savepath} />
-    </div>
+    <>
+      <div className="release-main">
+        {release.artist.map((artist, index) => (
+          <h2 key={index}>
+            {artist.artist} - {release.title}
+          </h2>
+        ))}
+      </div>
+      <div className="release-info">
+        <span>
+          <div>
+            <b>Barcode:</b> {release.barcode}
+          </div>
+          <div>
+            <b>Country:</b> {release.country}
+          </div>
+          <div>
+            <b>Date:</b> {release.date}
+          </div>
+        </span>
+
+        <MediaComponent media={release.media} />
+        <LabelComponent labels={release.labelInfo} />
+      </div>
+
+      <div>
+        <ImageComponent images={release.coverResponse} savePath={release.savePath} />
+      </div>
+    </>
   );
 };
