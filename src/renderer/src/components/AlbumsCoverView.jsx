@@ -63,6 +63,7 @@ const AlbumsCoverView = ({ resetKey }) => {
           )}&artist=${encodeURIComponent(artist)}`
         : `${baseUrl}&q=${encodeURIComponent(title || artist)}`;
     try {
+      console.log('discogs url: ', url);
       const response = await axios.get(url);
       console.log('discogs response: ', response.data);
       return response.data.results;
@@ -74,7 +75,6 @@ const AlbumsCoverView = ({ resetKey }) => {
 
   // Function to fetch from MusicBrainz and Cover Art Archive
   const fetchFromMusicBrainz = async (path, searchAlbum) => {
-    console.log('mb: ', path);
     const mbResults = [];
     try {
       const mbResponse = await axios.get(
