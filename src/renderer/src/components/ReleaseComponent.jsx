@@ -23,26 +23,31 @@ const ArtistComponent = ({ artists }) => (
   </ul>
 );
 
-const MediaComponent = ({ media }) => (
-  <span>
-    {media.map((info, index) => (
-      <div key={index}>
-        <b>Track Count:</b> {info.trackCount}
-      </div>
-    ))}
-  </span>
-);
+const MediaComponent = ({ media }) => {
+  return (
+    <span>
+      {media.map((info, index) => (
+        <div key={index}>
+          <b>Track Count:</b> {info.trackCount}
+        </div>
+      ))}
+    </span>
+  );
+};
 
-const LabelComponent = ({ labels }) => (
-  <span>
-    {labels.map((label, index) => (
-      <div key={index}>
-        <b>Label:</b>
-        {label.label}
-      </div>
-    ))}
-  </span>
-);
+const LabelComponent = ({ labels }) => {
+  console.log('labels: ', labels);
+  return (
+    <span>
+      {labels.map((label, index) => (
+        <div key={index}>
+          <b>Label:</b>
+          {label.label}
+        </div>
+      ))}
+    </span>
+  );
+};
 
 export const ReleaseComponent = ({ release }) => {
   return (
@@ -57,18 +62,17 @@ export const ReleaseComponent = ({ release }) => {
       <div className="release-info">
         <span>
           <div>
-            <b>Barcode:</b> {release.barcode}
+            <b>Barcode:</b> {release.barcode ? release.barcode : 'NA'}
           </div>
           <div>
-            <b>Country:</b> {release.country}
+            <b>Country:</b> {release.country ? release.country : 'NA'}
           </div>
           <div>
-            <b>Date:</b> {release.date}
+            <b>Date:</b> {release.date ? release.data : 'NA'}
           </div>
         </span>
-
-        <MediaComponent media={release.media} />
-        <LabelComponent labels={release.labelInfo} />
+        {release.media && <MediaComponent media={release.media} />}
+        {release.labelInfo && <LabelComponent labels={release.labelInfo} />}
       </div>
 
       <div>

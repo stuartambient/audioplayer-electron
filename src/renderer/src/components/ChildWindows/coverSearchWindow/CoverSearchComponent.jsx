@@ -18,6 +18,7 @@ const CoverSearchApp = () => {
     let subscribed = true;
     const getReleases = async () => {
       await window.coverSearchApi.onSendToChild((e) => {
+        console.log(e.results);
         setReleases(e.results);
       });
     };

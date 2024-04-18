@@ -1,6 +1,6 @@
 export class AlbumArt {
-  constructor(
-    releaseId,
+  constructor(options) {
+    /*  releaseId,
     savePath,
     coverResponse,
     title,
@@ -8,16 +8,15 @@ export class AlbumArt {
     barcode,
     country,
     date,
-    labelInfo
-  ) {
-    (this.releaseId = releaseId),
-      (this.savePath = savePath),
-      (this.coverResponse = coverResponse),
-      (this.title = title),
-      (this.artist = artist),
-      (this.barcode = barcode),
-      (this.country = country),
-      (this.date = date),
-      (this.labelInfo = labelInfo);
+    labelInfo */
+    (this.releaseId = options.releaseId),
+      (this.savePath = options.savePath),
+      (this.coverResponse = options.coverResponse),
+      (this.title = options.title),
+      (this.artist = options.artist),
+      (this.barcode = options.barcode),
+      (this.country = options.country),
+      (this.date = options.date),
+      (this.labelInfo = options.labelInfo);
   }
 }
