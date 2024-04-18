@@ -5,6 +5,7 @@ import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { useAllAlbumsCovers } from '../hooks/useDb';
+import { AlbumArt } from '../utility/AlbumArt';
 import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
@@ -54,7 +55,7 @@ const AlbumsCoverView = ({ resetKey }) => {
   };
 
   // Function to fetch from Discogs API
-  const fetchFromDiscogs = async (artist, title, token) => {
+  const fetchFromDiscogs = async (path, artist, title, token) => {
     const baseUrl = `https://api.discogs.com/database/search?token=${token}`;
     const url =
       artist && title
@@ -63,10 +64,25 @@ const AlbumsCoverView = ({ resetKey }) => {
           )}&artist=${encodeURIComponent(artist)}`
         : `${baseUrl}&q=${encodeURIComponent(title || artist)}`;
     try {
-      console.log('discogs url: ', url);
+      /* console.log('discogs url: ', url); */
       const response = await axios.get(url);
-      console.log('discogs response: ', response.data);
-      return response.data.results;
+      console.log('response: ', response.data.results);
+      return response.data.results.map(
+        (item) =>
+          new AlbumArt(
+            item.id,
+            path,
+            [{ image: item.cover_image, thumbnails: { small: item.thumb } }],
+            item.title.split('-')[1],
+            [{ artist: item.title.split('-')[0] }],
+            item.barcode.map((bc, index) => bc),
+            item.country,
+            item.year,
+            item.label.map((lab, index) => [{ label: lab }])
+          )
+      );
+
+      /* return response.data.results; */
     } catch (error) {
       console.error('Error fetching from Discogs:', error);
       return [];
@@ -89,6 +105,7 @@ const AlbumsCoverView = ({ resetKey }) => {
       const album = mbResponse.data['release-groups'][0].title; */
       const releases = mbResponse.data['release-groups'][0].releases;
       for (const release of releases) {
+        /*  console.log('release: ', release); */
         try {
           const releaseInfo = await axios.get(
             `http://musicbrainz.org/ws/2/release/${release.id}?inc=artist-credits+labels+discids+recordings`
@@ -161,10 +178,12 @@ const AlbumsCoverView = ({ resetKey }) => {
     }
 
     const discogsToken = import.meta.env.RENDERER_VITE_DISCOGS_KEY;
-    const discogsResults = await fetchFromDiscogs(artist, title, discogsToken);
+    const discogsResults = await fetchFromDiscogs(path, artist, title, discogsToken);
     const musicBrainzResults = await fetchFromMusicBrainz(path, album);
+    console.log('discogs: ', discogsResults);
+    console.log('musicbrainz: ', musicBrainzResults);
 
-    openChildWindow(
+    /*     openChildWindow(
       'cover-search',
       'cover-search',
       {
@@ -179,8 +198,8 @@ const AlbumsCoverView = ({ resetKey }) => {
       },
 
       musicBrainzResults
-    ); /* ,
-      1000
+    ); 
+
     ); */
   };
 
