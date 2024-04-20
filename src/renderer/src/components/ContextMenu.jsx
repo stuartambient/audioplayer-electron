@@ -60,6 +60,9 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
             type: 'remove-track',
             id: contextMenuItem.id
           });
+        case 'open-album-folder':
+          window.api.openAlbumFolder(contextMenuItem.path);
+          break;
         default:
           break;
       }

@@ -9,7 +9,12 @@ export const ImageComponent = ({ images, savePath }) => {
   return (
     <div className="images-container">
       {images.map((img, index) => (
-        <Gallery key={`${img.image}-${index + 1}`} image={img.image} thumbnails={img.thumbnails} />
+        <Gallery
+          key={`${img.image}-${index + 1}`}
+          image={img.image}
+          thumbnails={img.thumbnails}
+          savePath={savePath}
+        />
       ))}
     </div>
   );
@@ -36,7 +41,6 @@ const MediaComponent = ({ media }) => {
 };
 
 const LabelComponent = ({ labels }) => {
-  console.log('labels: ', labels);
   return (
     <span>
       {labels.map((label, index) => (

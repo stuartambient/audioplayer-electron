@@ -696,6 +696,13 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       }
     },
     {
+      label: 'Open Album Folder',
+      visible: type === 'folder',
+      click: () => {
+        return event.sender.send('context-menu-command', 'open-album-folder');
+      }
+    },
+    {
       label: 'Remove from Playlist',
       visible: type === 'playlist',
       click: () => {
@@ -763,13 +770,40 @@ ipcMain.handle('show-child', (event, args) => {
 ipcMain.handle('download-file', async (event, ...args) => {
   const [fileUrl, filePath] = args;
 
+  const extension = path.extname(new URL(fileUrl).pathname);
+  const defaultFilename = `cover${extension}`;
+  const initialPath = filePath ? path.join(filePath, defaultFilename) : defaultFilename;
+
+  let savePath = await dialog.showSaveDialog({
+    title: 'Save Image',
+    defaultPath: initialPath,
+    filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }],
+    properties: ['showOverwriteConfirmation']
+  });
+
+  if (savePath.canceled) {
+    console.log('Download canceled by user.');
+    return 'User cancelled the download';
+  }
+
   try {
-    const res = await axios.get(`${fileUrl}`, { responseType: 'arraybuffer' });
-    /* fs.writeFileSync(filePath, res.data); */
-    fs.writeFileSync(`${filePath}/cover.jpg`, res.data);
-    return 'download complete';
+    const response = await axios.get(fileUrl, {
+      responseType: 'arraybuffer',
+      headers: {
+        'User-Agent': 'musicplayer-electron/1.0 +https://stuartambient.github.io/musicapp-intro/'
+      }
+    });
+    if (response.status === 200) {
+      await fs.promises.writeFile(savePath.filePath, response.data);
+      console.log('Download complete:', savePath.filePath);
+      return 'Download complete';
+    } else {
+      console.log('Failed to download:', response.status);
+      return `Download failed with status: ${response.status}`;
+    }
   } catch (err) {
-    return err.message;
+    console.error('Error during download or save:', err);
+    return `Error: ${err.message}`;
   }
 });
 

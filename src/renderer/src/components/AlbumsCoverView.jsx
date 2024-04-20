@@ -55,8 +55,9 @@ const AlbumsCoverView = ({ resetKey }) => {
   };
 
   // Function to fetch from Discogs API
-  const fetchFromDiscogs = async (path, artist, title, token) => {
-    const baseUrl = `https://api.discogs.com/database/search?token=${token}`;
+  const fetchFromDiscogs = async (path, artist, title, token, key, secret) => {
+    /* const baseUrl = `https://api.discogs.com/database/search?token=${token}`; */
+    const baseUrl = `https://api.discogs.com/database/search?key=${key}&secret=${secret}`;
     const url =
       artist && title
         ? `${baseUrl}&title=${encodeURIComponent(title)}&release_title=${encodeURIComponent(
@@ -65,7 +66,11 @@ const AlbumsCoverView = ({ resetKey }) => {
         : `${baseUrl}&q=${encodeURIComponent(title || artist)}`;
     try {
       /* console.log('discogs url: ', url); */
-      const response = await axios.get(url);
+      const response = await axios.get(url, {
+        headers: {
+          'User-Agent': 'musicplayer-electron/1.0 +https://stuartambient.github.io/musicapp-intro/'
+        }
+      });
       /* console.log('response: ', response.data.results); */
       return response.data.results.map(
         (item) =>
@@ -98,6 +103,7 @@ const AlbumsCoverView = ({ resetKey }) => {
           searchAlbum
         )}&limit=1`
       );
+      console.log('mbrainz release-groups[0]: ', mbResponse.data['release-groups']);
       const releases = mbResponse.data['release-groups'][0].releases;
       for (const release of releases) {
         try {
@@ -108,35 +114,37 @@ const AlbumsCoverView = ({ resetKey }) => {
             const coverResponse = await axios.get(
               `http://coverartarchive.org/release/${release.id}`
             );
-            mbResults.push({
-              releaseId: release.id,
-              savePath: path,
-              coverResponse: coverResponse.data.images.map((img) => {
-                return {
-                  image: img.image,
-                  thumbnails: img.thumbnails
-                };
-              }),
-              title: releaseInfo.data.title,
-              artist: releaseInfo.data['artist-credit'].map((n) => {
-                return {
-                  artist: n.artist.name
-                };
-              }),
-              barcode: releaseInfo.data.barcode,
-              country: releaseInfo.data.country,
-              date: releaseInfo.data.date,
-              labelInfo: releaseInfo.data['label-info'].map((l) => {
-                return {
-                  label: l.label.name
-                };
-              }),
-              media: releaseInfo.data.media.map((m) => {
-                return {
-                  trackCount: m['track-count']
-                };
+            mbResults.push(
+              new AlbumArt({
+                releaseId: release.id,
+                savePath: path,
+                coverResponse: coverResponse.data.images.map((img) => {
+                  return {
+                    image: img.image,
+                    thumbnails: img.thumbnails
+                  };
+                }),
+                title: releaseInfo.data.title,
+                artist: releaseInfo.data['artist-credit'].map((n) => {
+                  return {
+                    artist: n.artist.name
+                  };
+                }),
+                barcode: releaseInfo.data.barcode,
+                country: releaseInfo.data.country,
+                date: releaseInfo.data.date,
+                labelInfo: releaseInfo.data['label-info'].map((l) => {
+                  return {
+                    label: l.label.name
+                  };
+                }),
+                media: releaseInfo.data.media.map((m) => {
+                  return {
+                    trackCount: m['track-count']
+                  };
+                })
               })
-            });
+            );
           }
         } catch (error) {
           console.log(`Error fetching cover art for release ${release.id}:`, error);
@@ -162,8 +170,17 @@ const AlbumsCoverView = ({ resetKey }) => {
       title = album;
     }
 
+    const discogsKey = import.meta.env.RENDERER_VITE_DISCOGS_CONSUMER_KEY;
+    const discogsSecret = import.meta.env.RENDERER_VITE_DISCOGS_CONSUMER_SECRET;
     const discogsToken = import.meta.env.RENDERER_VITE_DISCOGS_KEY;
-    const discogsResults = await fetchFromDiscogs(path, artist, title, discogsToken);
+    const discogsResults = await fetchFromDiscogs(
+      path,
+      artist,
+      title,
+      discogsToken,
+      discogsKey,
+      discogsSecret
+    );
     const musicBrainzResults = await fetchFromMusicBrainz(path, album);
     /* console.log('discogs: ', discogsResults);
     console.log('musicbrainz: ', musicBrainzResults); */
@@ -185,27 +202,6 @@ const AlbumsCoverView = ({ resetKey }) => {
       [...discogsResults, ...musicBrainzResults]
     );
   };
-
-  // Example usage
-  /*   handleCoverSearch({ album: 'Artist - Album Title', path: '/path/to/album' }); */
-
-  /* EFECT FOR RELOADING COVER IMAGE WHEN IMAGE IS UPDATED */
-  /*   useEffect(() => {
-    if (coverUpdate.path !== '') {
-      const updateCovers = state.covers.map((cover) => {
-        if (cover.fullpath === coverUpdate.path) {
-          cover.img = coverUpdate.file;
-        }
-      });
-    }
-  }); */
-
-  /*   useEffect(() => {
-    const sendCovers = async () => {
-      await window.api.showChild(coverSearch);
-    };
-    if (coverSearch) sendCovers();
-  }, [coverSearch]); */
 
   const handleAlbumToPlaylist = async (path) => {
     const albumTracks = await window.api.getAlbumTracks(path);

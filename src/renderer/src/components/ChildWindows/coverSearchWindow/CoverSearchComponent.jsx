@@ -18,19 +18,12 @@ const CoverSearchApp = () => {
     let subscribed = true;
     const getReleases = async () => {
       await window.coverSearchApi.onSendToChild((e) => {
-        console.log(e.results);
         setReleases(e.results);
       });
     };
     if (subscribed) getReleases();
     return () => (subscribed = false);
   });
-
-  useEffect(() => {
-    if (releases.length > 0) {
-      console.log('releases: ', releases);
-    }
-  }, [releases]);
 
   /*   const handleImagePreview = (url) => {
     console.log('preview: ', url);
@@ -51,8 +44,8 @@ const CoverSearchApp = () => {
   return (
     <div className="releases-container">
       {releases.map((release, index) => (
-        <div className="release-item">
-          <ReleaseComponent key={release.releaseId} release={release} />
+        <div key={release.releaseId} className="release-item">
+          <ReleaseComponent release={release} />
         </div>
       ))}
     </div>

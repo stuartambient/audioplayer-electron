@@ -1,11 +1,25 @@
 /* import React from 'react'; */
 import './ChildWindows/coverSearchWindow/style.css';
 
-const Gallery = ({ image, thumbnails }) => {
+const downloadImage = async (url, path) => {
+  try {
+    const download = await window.coverSearchApi.downloadFile(url, path);
+  } catch (e) {
+    console.log('error: ', e);
+  }
+};
+
+const Gallery = ({ image, thumbnails, savePath }) => {
   const handleImageClick = (e) => {
     e.preventDefault();
-    console.log('e target: ', e.target);
+    downloadImage(e.target.src, savePath);
   };
+
+  const handleThumbnailClick = (e) => {
+    e.preventDefault();
+    downloadImage(e.target.href, savePath);
+  };
+
   return (
     <div className="gallery">
       <div className="gallery-item">
@@ -18,7 +32,7 @@ const Gallery = ({ image, thumbnails }) => {
 
         <div className="gallery-thumbnails">
           {Object.entries(thumbnails).map(([key, value], index) => (
-            <a key={index} href={value} /* style={{ display: 'block', margin: '2px 0' }} */>
+            <a key={index} href={value} onClick={(e) => handleThumbnailClick(e)}>
               {key}
             </a>
           ))}
