@@ -105,17 +105,21 @@ export const Genres = () => {
   );
 };
 
-export const AlbumsByRoot = ({ albums }) => (
-  <List
-    data={albums}
-    height={600} // Specify the desired height of the list
-    itemSize={50} // Specify the height of each item in the list
-    width="100%" // Specify the desired width of the list
-    className="stats--list"
-    /* onClick={getGenres} */
-    stat="stat-albums"
-  />
-);
+export const AlbumsByRoot = ({ albums, listHeight }) => {
+  if (!listHeight) return;
+  return (
+    <List
+      key={listHeight}
+      data={albums}
+      height={listHeight} // Specify the desired height of the list
+      itemSize={50} // Specify the height of each item in the list
+      width="100%" // Specify the desired width of the list
+      className="stats--list"
+      /* onClick={getGenres} */
+      stat="stat-albums"
+    />
+  );
+};
 
 export const TracksByRoot = ({ root }) => {
   const [tracks, setTracks] = useState([]);

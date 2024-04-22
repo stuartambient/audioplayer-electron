@@ -2,15 +2,17 @@ import { FixedSizeList } from 'react-window';
 import Row from './Row';
 
 export const List = ({ height, data, itemSize, width, className, onClick, stat }) => {
-  let newHeight;
+  console.log('height: ', height);
+  /* let newHeight;
   if (stat === 'stat-folder' || stat === 'stat-album') {
     newHeight = height / 2;
   } else {
     newHeight = height;
   }
+  console.log('list height: ', newHeight); */
   return (
     <FixedSizeList
-      height={newHeight}
+      height={height}
       itemCount={data.length}
       itemSize={itemSize} // Specify the height of each item in the list
       width={width} // Specify the desired width of the list
