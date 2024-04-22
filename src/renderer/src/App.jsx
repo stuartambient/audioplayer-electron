@@ -23,6 +23,7 @@ import Controls from './Components/Controls';
 import Extras from './Components/Extras';
 
 import './App.css';
+/* import './style/normalize.css'; */
 
 function App() {
   const { state, dispatch } = useAudioPlayer();
