@@ -64,7 +64,8 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.once('context-menu-command', (event, command) => callback(command));
     return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
   },
-  getAlbumsByRoot: (roots) => ipcRenderer.invoke('get-albums-by-root', roots)
+  getAlbumsByRoot: (roots) => ipcRenderer.invoke('get-albums-by-root', roots),
+  toggleResizable: (isResizable) => ipcRenderer.send('toggle-resizable', isResizable)
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>

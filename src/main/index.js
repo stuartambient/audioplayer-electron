@@ -305,6 +305,14 @@ const processUpdateResult = (type, result) => {
   }
 };
 
+ipcMain.on('toggle-resizable', (event, isResizable) => {
+  mainWindow.setResizable(isResizable);
+  const [currentWidth, currentHeight] = mainWindow.getSize();
+  if (isResizable) {
+    mainWindow.setMinimumSize(currentWidth, currentHeight);
+  }
+});
+
 ipcMain.handle('update-folders', async () => {
   const result = await initAlbums();
   processUpdateResult('folder', result);
@@ -424,6 +432,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
+  console.log('screen-mode-change: ', args[0]);
   if (args[0] === 'mini') {
     await mainWindow.setMinimumSize(290, 350);
     await mainWindow.setSize(290, 350, false);

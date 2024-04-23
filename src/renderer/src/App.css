@@ -83,7 +83,8 @@ textarea {
 
 .container-home {
   /* grid-template-rows: 2rem 0.5fr 0.5fr 2.5rem; */
-  grid-template-rows: 2rem 2rem 1fr 2.5rem;
+  /* grid-template-rows: 2rem 2rem 1fr 2.5rem; */
+  grid-template-rows: repeat(2, auto) 1fr auto;
   grid-template-columns: 25% 75%;
   align-content: start;
   background-color: black;
