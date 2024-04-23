@@ -30,8 +30,8 @@
   border: solid 1px var(--blue1);
   grid-row: 2 / 10;
   grid-column: 1 / 3;
-  width: 45%;
-  justify-self: center;
+  /*   width: 45%;
+  justify-self: center; */
 }
 
 .audio-player--maximized {

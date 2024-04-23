@@ -30,7 +30,8 @@ export const TotalMedia = () => {
   );
 };
 
-export const TopHundredArtists = () => {
+export const TopHundredArtists = ({ listHeight }) => {
+  if (!listHeight) return;
   const { topHundredArtists } = useTopHundredArtistsStat();
   const getArtistTracks = async (e) => {
     const artist = e.target.id;
@@ -56,8 +57,9 @@ export const TopHundredArtists = () => {
 
   return (
     <List
+      key={listHeight}
       data={topHundredArtists}
-      height={600} // Specify the desired height of the list
+      height={listHeight} // Specify the desired height of the list
       itemSize={50} // Specify the height of each item in the list
       width="100%" // Specify the desired width of the list
       className="stats--list"
@@ -67,7 +69,8 @@ export const TopHundredArtists = () => {
   );
 };
 
-export const Genres = () => {
+export const Genres = ({ listHeight }) => {
+  if (!listHeight) return;
   const [genres, setGenres] = useState([]);
   useGenres(setGenres);
   const getGenres = async (e) => {
@@ -94,8 +97,9 @@ export const Genres = () => {
 
   return (
     <List
+      key={listHeight}
       data={genres}
-      height={600} // Specify the desired height of the list
+      height={listHeight} // Specify the desired height of the list
       itemSize={50} // Specify the height of each item in the list
       width="100%" // Specify the desired width of the list
       className="stats--list"

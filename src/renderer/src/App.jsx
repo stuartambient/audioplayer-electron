@@ -81,7 +81,11 @@ function App() {
     const changeScreenMode = async () => {
       if (state.minimalmode && state.player) {
         await window.api.screenMode(state.miniModePlaylist ? 'mini-expanded' : 'mini');
-      } else if (!state.minimalmode && state.player) {
+      } else if (!state.minimalmode && state.player && state.library) {
+        await window.api.screenMode('player-library');
+      } else if (state.player && !state.library) {
+        await window.api.screenMode('player');
+      } else if (!state.player) {
         await window.api.screenMode('default');
       }
     };
@@ -89,7 +93,7 @@ function App() {
       changeScreenMode();
     }
     return () => (subscribed = false);
-  }, [state.minimalmode, state.player, state.miniModePlaylist]);
+  }, [state.minimalmode, state.player, state.miniModePlaylist, state.library]);
 
   const handleUpdateLike = async (id) => {
     if (!id) return;

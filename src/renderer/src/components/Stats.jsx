@@ -166,7 +166,7 @@ const Stats = () => {
                 sort2
               </p>
             </div>
-            <Genres />
+            <Genres listHeight={listHeight} />
           </>
         )}
         {root && <TracksByRoot root={root} />}
@@ -175,7 +175,7 @@ const Stats = () => {
             <div className="stats--length">
               {/* <p id="stats-albums-length">Number of albums loaded: {albumsByRoot.length}</p> */}
             </div>
-            <AlbumsByRoot albums={albumsByRoot} />
+            <AlbumsByRoot albums={albumsByRoot} listHeight={listHeight} />
           </>
         )}
         {statReq === 'topArtists' && (
@@ -188,18 +188,18 @@ const Stats = () => {
                 sort2
               </p>
             </div>
-            <TopHundredArtists />
+            <TopHundredArtists listHeight={listHeight} />
           </>
         )}
         {/* {statReq === 'directories' && <AlbumsByRoot albums={albumsByRoot} />} */}
-        {statReq === 'directories' && (
+        {/* {statReq === 'directories' && (
           <>
             <div className="stats--length">
               <p id="stats-albums-length">Number of albums loaded: {albumsByRoot.length}</p>
             </div>
             <AlbumsByRoot albums={albumsByRoot} listHeight={listHeight} />
           </>
-        )}
+        )} */}
         {statReq === 'nometadata' && <NullMetadata />}
       </div>
     </div>
