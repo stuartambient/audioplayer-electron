@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 /* import { useTotalTracksStat, useTopHundredArtistsStat } from '../hooks/useDb'; */
 import { PiFolderOpenLight } from 'react-icons/pi';
 import {
@@ -22,7 +22,21 @@ const Stats = () => {
   const [albumsByRoot, setAlbumsByRoot] = useState([]);
   const [reqDir, setReqDir] = useState('');
   const [root, setRoot] = useState(null);
+  const containerRef = useRef(null);
+  const [listHeight, setListHeight] = useState(300);
   useDistinctDirectories(setDirectories);
+
+  const updateSize = () => {
+    if (containerRef.current) {
+      setListHeight(containerRef.current.clientHeight);
+    }
+  };
+
+  useEffect(() => {
+    updateSize(); // Set initial size
+    window.addEventListener('resize', updateSize); // Update size on window resize
+    return () => window.removeEventListener('resize', updateSize); // Cleanup on unmount
+  }, []);
 
   useEffect(() => {
     if (isSubmenuOpen && reqDirectories.length > 0) {
@@ -140,7 +154,7 @@ const Stats = () => {
         </li>
       </ul>
 
-      <div className="stats--results">
+      <div className="stats--results" ref={containerRef}>
         {statReq === 'totalmedia' && <TotalMedia />}
         {statReq === 'genres' && (
           <>
@@ -152,16 +166,16 @@ const Stats = () => {
                 sort2
               </p>
             </div>
-            <Genres />
+            <Genres listHeight={listHeight} />
           </>
         )}
         {root && <TracksByRoot root={root} />}
         {statReq === 'directories' && (
           <>
             <div className="stats--length">
-              <p id="stats-albums-length">Number of albums loaded: {albumsByRoot.length}</p>
+              {/* <p id="stats-albums-length">Number of albums loaded: {albumsByRoot.length}</p> */}
             </div>
-            <AlbumsByRoot albums={albumsByRoot} />
+            <AlbumsByRoot albums={albumsByRoot} listHeight={listHeight} />
           </>
         )}
         {statReq === 'topArtists' && (
@@ -174,18 +188,18 @@ const Stats = () => {
                 sort2
               </p>
             </div>
-            <TopHundredArtists />
+            <TopHundredArtists listHeight={listHeight} />
           </>
         )}
         {/* {statReq === 'directories' && <AlbumsByRoot albums={albumsByRoot} />} */}
-        {statReq === 'directories' && (
+        {/* {statReq === 'directories' && (
           <>
             <div className="stats--length">
               <p id="stats-albums-length">Number of albums loaded: {albumsByRoot.length}</p>
             </div>
-            <AlbumsByRoot albums={albumsByRoot} />
+            <AlbumsByRoot albums={albumsByRoot} listHeight={listHeight} />
           </>
-        )}
+        )} */}
         {statReq === 'nometadata' && <NullMetadata />}
       </div>
     </div>

@@ -77,31 +77,28 @@ function App() {
     if (!state.pause) state.audioRef.current.play();
   }, [state.pause, state.audioRef.current]);
 
-  /*   useEffect(() => {
-    const changeMode = async () => {
-      await window.api.screenMode('mini');
-    };
-    const changeDefault = async () => {
-      await window.api.screenMode('default');
-    };
-    const changeExpandMini = async () => {
-      await window.api.screenMode('mini-expanded');
-    };
-    if (state.minimalmode && state.player) changeMode();
-    if (state.player && state.minimalmode && state.miniModePlaylist) changeExpandMini();
-    if (!state.minimalmode && state.player) changeDefault();
-  }, [state.minimalmode, state.player, state.miniModePlaylist]); */
-
   useEffect(() => {
+    let subscribed = true;
     const changeScreenMode = async () => {
       if (state.minimalmode && state.player) {
         await window.api.screenMode(state.miniModePlaylist ? 'mini-expanded' : 'mini');
-      } else if (!state.minimalmode && state.player) {
+        await window.api.toggleResizable(false);
+      } else if (!state.minimalmode && state.player && state.library) {
+        await window.api.screenMode('player-library');
+        await window.api.toggleResizable(true);
+      } else if (state.player && !state.library) {
+        await window.api.screenMode('player');
+        await window.api.toggleResizable(false);
+      } else if (!state.player) {
         await window.api.screenMode('default');
+        await window.api.toggleResizable(true);
       }
     };
-    changeScreenMode();
-  }, [state.minimalmode, state.player, state.miniModePlaylist]);
+    if (subscribed) {
+      changeScreenMode();
+    }
+    return () => (subscribed = false);
+  }, [state.minimalmode, state.player, state.miniModePlaylist, state.library]);
 
   const handleUpdateLike = async (id) => {
     if (!id) return;

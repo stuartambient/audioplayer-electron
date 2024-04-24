@@ -4,11 +4,12 @@
   grid-row: 3 / 4;
   color: white;
   display: grid;
-  grid-template-columns: 30% 70%;
+  grid-template-columns: 15% 80%;
 }
 
 .stats--nav {
   grid-column: 1 / 2;
+  grid-row: 1 / 2;
 }
 
 .stats--nav {
@@ -91,12 +92,13 @@
 
 .stats--results {
   grid-column: 2 / 3;
-  max-height: 80vh;
-  padding: 0.2rem;
+  grid-row: 1 / 2;
+  height: 100%;
+  /* padding: 0.2rem; */
   background: black;
   color: white;
   border: 1px solid green;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   scroll-behavior: smooth;
 }
