@@ -1,7 +1,7 @@
 import { GiExpandedRays } from 'react-icons/gi';
 
 const Row = ({ index, style, data, onClick, stat }) => {
-  /*  console.log('index: ', index, 'data: ', data, 'onClick: ', onClick, 'stat: ', stat); */
+  /* console.log('index: ', index, 'data: ', data, 'onClick: ', onClick, 'stat: ', stat); */
   const rowData = data[index];
 
   const rowStyles = {
@@ -26,21 +26,21 @@ const Row = ({ index, style, data, onClick, stat }) => {
   };
 
   return (
-    <div style={{ ...style, ...rowStyles }}>
+    <div style={rowStyles}>
       {stat === 'stat-artists' && (
         <>
-          <span style={itemStyles}>{rowData.artist}</span>
-          <span id={rowData.artist} onClick={onClick} style={countStyles}>
-            {rowData.count}
+          <span style={itemStyles}>{data.artist}</span>
+          <span id={data.artist} onClick={onClick} style={countStyles}>
+            {data.count}
           </span>
         </>
       )}
       {stat === 'stat-genres' && (
         <>
-          <span style={itemStyles}>{!rowData.genre ? 'null' : rowData.genre}</span>
-          {rowData.genre && (
-            <span id={rowData.genre} onClick={onClick} style={countStyles}>
-              {rowData.count}
+          <span style={itemStyles}>{!data.genre ? 'null' : data.genre}</span>
+          {data.genre && (
+            <span id={data.genre} onClick={onClick} style={countStyles}>
+              {data.count}
             </span>
           )}
         </>
@@ -62,8 +62,8 @@ const Row = ({ index, style, data, onClick, stat }) => {
         </>
       )}
       {stat === 'stat-albums' && (
-        <span key={rowData.id} id={rowData.fullpath}>
-          {rowData.foldername}
+        <span key={data.id} id={data.fullpath}>
+          {data.foldername}
           {/*  - {rowData.datecreated.split(' ')[0]} */}
         </span>
       )}

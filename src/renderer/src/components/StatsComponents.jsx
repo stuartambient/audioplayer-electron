@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { useTracksByRoot } from '../hooks/useDb';
 /* import { FixedSizeList as List } from 'react-window'; */
 import List from './List';
-import ListNew from './ListNew';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 /* import AGGrid from '../table/AGGrid'; */
 /* import Row from './Row'; */
@@ -31,8 +30,7 @@ export const TotalMedia = () => {
   );
 };
 
-export const TopHundredArtists = ({ listHeight }) => {
-  if (!listHeight) return;
+export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
   const getArtistTracks = async (e) => {
     const artist = e.target.id;
@@ -58,11 +56,9 @@ export const TopHundredArtists = ({ listHeight }) => {
 
   return (
     <List
-      key={listHeight}
       data={topHundredArtists}
-      height={listHeight} // Specify the desired height of the list
-      itemSize={50} // Specify the height of each item in the list
-      width="100%" // Specify the desired width of the list
+      height="100%" // Specify the desired height of the list
+      width="100%"
       className="stats--list"
       onClick={getArtistTracks}
       stat="stat-artists"
@@ -70,9 +66,7 @@ export const TopHundredArtists = ({ listHeight }) => {
   );
 };
 
-export const Genres = ({ listHeight }) => {
-  if (!listHeight) return;
-  console.log('listHeight, - ', listHeight);
+export const Genres = () => {
   const [genres, setGenres] = useState([]);
   useGenres(setGenres);
   const getGenres = async (e) => {
@@ -98,8 +92,8 @@ export const Genres = ({ listHeight }) => {
   };
 
   return (
-    <ListNew
-      height={listHeight}
+    <List
+      height="100%"
       width="100%"
       className="stats--list"
       data={genres}
@@ -108,29 +102,14 @@ export const Genres = ({ listHeight }) => {
       /* itemSize={50} */
     />
   );
-
-  return (
-    <List
-      key={listHeight}
-      data={genres}
-      height={listHeight} // Specify the desired height of the list
-      itemSize={50} // Specify the height of each item in the list
-      width="100%" // Specify the desired width of the list
-      className="stats--list"
-      onClick={getGenres}
-      stat="stat-genres"
-    />
-  );
 };
 
-export const AlbumsByRoot = ({ albums, listHeight }) => {
-  if (!listHeight) return;
+export const AlbumsByRoot = ({ albums }) => {
   return (
     <List
-      key={listHeight}
       data={albums}
-      height={listHeight} // Specify the desired height of the list
-      itemSize={50} // Specify the height of each item in the list
+      height="100%" // Specify the desired height of the list
+      /* itemSize={50} // Specify the height of each item in the list */
       width="100%" // Specify the desired width of the list
       className="stats--list"
       /* onClick={getGenres} */
