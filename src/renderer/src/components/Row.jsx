@@ -1,6 +1,7 @@
 import { GiExpandedRays } from 'react-icons/gi';
 
 const Row = ({ index, style, data, onClick, stat }) => {
+  /*  console.log('index: ', index, 'data: ', data, 'onClick: ', onClick, 'stat: ', stat); */
   const rowData = data[index];
 
   const rowStyles = {
@@ -60,7 +61,12 @@ const Row = ({ index, style, data, onClick, stat }) => {
           )}
         </>
       )}
-      {stat === 'stat-albums' && <span key={rowData.id}>{rowData.foldername}</span>}
+      {stat === 'stat-albums' && (
+        <span key={rowData.id} id={rowData.fullpath}>
+          {rowData.foldername}
+          {/*  - {rowData.datecreated.split(' ')[0]} */}
+        </span>
+      )}
     </div>
   );
 };

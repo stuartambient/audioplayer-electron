@@ -200,10 +200,10 @@ function App() {
         /* if (minimalmode) {
           await window.api.screenMode('default');
         } */
-        dispatch({
+        /* dispatch({
           type: 'set-maximize',
           maximized: !state.maximized
-        });
+        }); */
         window.api.appMaximize();
         break;
       case 'minimodeinfo':

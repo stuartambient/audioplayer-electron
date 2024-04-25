@@ -66,7 +66,6 @@ contextBridge.exposeInMainWorld('api', {
   },
   getAlbumsByRoot: (roots) => ipcRenderer.invoke('get-albums-by-root', roots),
   toggleResizable: (isResizable) => ipcRenderer.send('toggle-resizable', isResizable)
-
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>
     await fetch(`streaming://${path}`, { method: 'GET' }).then((res) => console.log(res.url)) */

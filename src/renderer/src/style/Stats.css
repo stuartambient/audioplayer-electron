@@ -101,6 +101,7 @@
   overflow-y: hidden;
   overflow-x: hidden;
   scroll-behavior: smooth;
+  resize: both;
 }
 
 .stats ul {

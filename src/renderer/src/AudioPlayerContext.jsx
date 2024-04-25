@@ -197,12 +197,12 @@ const audioPlayerReducer = (state, action) => {
         libraryReload: action.libraryReload
       };
     }
-    case 'set-maximize': {
+    /*   case 'set-maximize': {
       return {
         ...state,
         maximized: action.maximized
       };
-    }
+    } */
     case 'load-playlist': {
       return {
         ...state,
@@ -389,7 +389,7 @@ export const AudioPlayerProvider = ({ children }) => {
     minimalmode: false,
     minimalmodeInfo: false,
     miniModePlaylist: false,
-    maximized: false,
+    /*  maximized: false, */
     active: '',
     newtrack: '',
     playNext: false,

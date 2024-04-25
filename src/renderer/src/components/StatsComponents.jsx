@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useTracksByRoot } from '../hooks/useDb';
 /* import { FixedSizeList as List } from 'react-window'; */
 import List from './List';
+import ListNew from './ListNew';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 /* import AGGrid from '../table/AGGrid'; */
 /* import Row from './Row'; */
@@ -71,6 +72,7 @@ export const TopHundredArtists = ({ listHeight }) => {
 
 export const Genres = ({ listHeight }) => {
   if (!listHeight) return;
+  console.log('listHeight, - ', listHeight);
   const [genres, setGenres] = useState([]);
   useGenres(setGenres);
   const getGenres = async (e) => {
@@ -94,6 +96,18 @@ export const Genres = ({ listHeight }) => {
       );
     }
   };
+
+  return (
+    <ListNew
+      height={listHeight}
+      width="100%"
+      className="stats--list"
+      data={genres}
+      onClick={getGenres}
+      stat="stat-genres"
+      /* itemSize={50} */
+    />
+  );
 
   return (
     <List
