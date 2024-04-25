@@ -78,9 +78,9 @@ const MainNav = ({ onClick }) => {
             </li>
           </ul>
           <ul className="main-nav--right-minimal">
-            <li onClick={onClick} id="maximize">
+            {/*  <li onClick={onClick} id="maximize">
               <AiOutlineFullscreen />
-            </li>
+            </li> */}
             <li onClick={onClick} id="close">
               <AiOutlineClose />
             </li>

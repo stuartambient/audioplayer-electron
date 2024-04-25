@@ -246,12 +246,12 @@ const AppState = () => {
           libraryReload: action.libraryReload
         };
       }
-      case 'set-maximize': {
+      /*      case 'set-maximize': {
         return {
           ...state,
           maximized: action.maximized
         };
-      }
+      } */
       case 'load-playlist': {
         return {
           ...state,
