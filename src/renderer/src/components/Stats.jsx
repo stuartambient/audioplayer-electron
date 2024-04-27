@@ -5,7 +5,6 @@ import {
   TotalMedia,
   TopHundredArtists,
   Genres,
-  NullMetadata,
   AlbumsByRoot,
   TracksByRoot
 } from './StatsComponents';
@@ -123,9 +122,6 @@ const Stats = () => {
             </ul>
           )}
         </li>
-        <li className="stat" id="nometadata" onClick={handleStatReq}>
-          <p>Missing metadata</p>
-        </li>
         <li>
           Selected Directories:
           {reqDirectories.length > 0 ? (
@@ -158,27 +154,9 @@ const Stats = () => {
         )}
         {statReq === 'topArtists' && (
           <>
-            {/*  <div className="stats--sort">
-              <p id="col1sort" onClick={handleSort}>
-                sort1
-              </p>
-              <p id="col2sort" onClick={handleSort}>
-                sort2
-              </p>
-            </div> */}
             <TopHundredArtists />
           </>
         )}
-        {/* {statReq === 'directories' && <AlbumsByRoot albums={albumsByRoot} />} */}
-        {/* {statReq === 'directories' && (
-          <>
-            <div className="stats--length">
-              <p id="stats-albums-length">Number of albums loaded: {albumsByRoot.length}</p>
-            </div>
-            <AlbumsByRoot albums={albumsByRoot} listHeight={listHeight} />
-          </>
-        )} */}
-        {statReq === 'nometadata' && <NullMetadata />}
       </div>
     </div>
   );

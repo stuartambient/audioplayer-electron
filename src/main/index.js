@@ -545,17 +545,6 @@ ipcMain.handle('folders-stat', async (event, dirs) => {
   return folders;
 });
 
-ipcMain.handle('null-metadata-stat', async () => {
-  const results = await nullMetadata();
-  for await (const result of results) {
-    try {
-      await writeFile(result.audiofile, `${updatesFolder}\\files_missing_metadata.m3u`);
-    } catch (e) {
-      console.error(e.message);
-    }
-  }
-});
-
 ipcMain.handle('open-playlist', async () => {
   const open = await dialog.showOpenDialog(mainWindow, {
     defaultPath: playlistsFolder,

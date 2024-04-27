@@ -37,9 +37,9 @@ const Row = ({ index, style, data, onClick, stat }) => {
       )}
       {stat === 'stat-genres' && (
         <>
-          <span style={itemStyles}>{!data.genre ? 'null' : data.genre}</span>
-          {data.genre && (
-            <span id={data.genre} onClick={onClick} style={countStyles}>
+          <span style={itemStyles}>{!data.genre_display ? 'null' : data.genre_display}</span>
+          {data.genre_display && (
+            <span id={data.genre_display} onClick={onClick} style={countStyles}>
               {data.count}
             </span>
           )}

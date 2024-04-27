@@ -7,12 +7,7 @@ import { openChildWindow } from './ChildWindows/openChildWindow';
 /* import AGGrid from '../table/AGGrid'; */
 /* import Row from './Row'; */
 
-import {
-  useTotalTracksStat,
-  useTopHundredArtistsStat,
-  useGenres,
-  useNullMeta
-} from '../hooks/useDb';
+import { useTotalTracksStat, useTopHundredArtistsStat, useGenres } from '../hooks/useDb';
 
 export const TotalMedia = () => {
   const [totalTracks, setTotalTracks] = useState();
@@ -43,7 +38,7 @@ export const TopHundredArtists = () => {
           width: 1200,
           height: 550,
           show: false,
-          resizeable: true,
+          resizable: true,
           preload: 'metadataEditing',
           sandbox: false,
           webSecurity: false,
@@ -131,7 +126,7 @@ export const TracksByRoot = ({ root }) => {
           width: 1200,
           height: 550,
           show: false,
-          resizeable: true,
+          resizable: true,
           preload: 'metadataEditing',
           sandbox: false,
           webSecurity: false,
@@ -139,28 +134,6 @@ export const TracksByRoot = ({ root }) => {
         },
         tracks
       );
-    }
-  }, [tracks]);
-};
-
-/* const genreList = genres.map((genre) => {
-    if (!genre.genre) return;
-    return (
-      <li className="stats--genres-genre">
-        <span className="genre-count">{genre['COUNT(genre)']}</span>
-        <span className="genre-name">{genre.genre}</span>
-      </li>
-    );
-  }); */
-/* return <ul className="stats--genres">{genreList}</ul>; */
-//};
-
-export const NullMetadata = () => {
-  const [tracks, setTracks] = useState();
-  useNullMeta(setTracks);
-  useEffect(() => {
-    if (tracks) {
-      console.log(tracks);
     }
   }, [tracks]);
 };

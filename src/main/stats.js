@@ -27,10 +27,19 @@ const allTracksByArtist = (artist) => {
 };
 
 const allTracksByGenre = (genre) => {
-  const stmt = db.prepare(
-    `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE genre = ?`
-  );
-  const result = stmt.all(genre);
+  console.log('genre: ', genre);
+  let query, params;
+  if (genre === 'No Genre Specified') {
+    // Query to handle special category
+    query = `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE genre IS NULL OR genre = '' OR genre = ' '`;
+    params = [];
+  } else {
+    // Standard query for specific genres
+    query = `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE genre = ?`;
+    params = [genre];
+  }
+  const stmt = db.prepare(query);
+  const result = stmt.all(...params);
   return result;
 };
 
@@ -58,7 +67,21 @@ const distinctDirectories = () => {
 
 const genresWithCount = () => {
   const stmt = db.prepare(
-    'SELECT genre, COUNT(*) as count FROM tracks GROUP BY genre ORDER BY lower(genre)'
+    `
+    SELECT 
+      CASE 
+        WHEN genre IS NULL OR genre = '' OR genre = ' ' THEN 'No Genre Specified' 
+        ELSE genre 
+      END as genre_display,
+      COUNT(*) as count 
+    FROM tracks 
+    GROUP BY genre_display 
+    ORDER BY 
+      CASE 
+        WHEN genre_display = 'No Genre Specified' THEN 1 
+        ELSE 2 
+      END, lower(genre_display)
+  `
   );
   const results = stmt.all();
   return results;

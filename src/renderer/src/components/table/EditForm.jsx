@@ -23,6 +23,15 @@ function EditForm({ onUpdate, nodesSelected }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Utility function to convert data types based on the field name
+  function convertToCorrectType(key, value) {
+    // Add more cases as necessary for other specific fields or types
+    if (key === 'year') {
+      return Number(value);
+    }
+    return value; // Return as is if no specific conversion is needed
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const multiRowChanges = [];
@@ -31,10 +40,12 @@ function EditForm({ onUpdate, nodesSelected }) {
 
       Object.keys(formData).forEach((key) => {
         if (formData[key]) {
+          const newValue = convertToCorrectType(key, formData[key]);
+          console.log('newValue: ', newValue);
           const changeObj = {
             rowId: node.rowIndex,
             field: key,
-            newValue: formData[key],
+            newValue,
             oldValue: node.data[key]
           };
           multiRowChanges.push(changeObj);

@@ -8,6 +8,7 @@ import CustomToolPanel from './CustomToolPanel';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
+import './styles/AGGrid.css';
 
 const AGGrid = ({ data }) => {
   const [originalData, setOriginalData] = useState([]);
@@ -111,7 +112,6 @@ const AGGrid = ({ data }) => {
     const lastEdit = undosRef.current.pop();
     const rowNode = gridRef.current.api.getRowNode(lastEdit.rowId);
     rowNode.setDataValue(lastEdit.field, lastEdit.oldValue);
-    console.log('ref', undosRef.current);
   };
 
   const handleCancel = (e) => {
@@ -136,7 +136,6 @@ const AGGrid = ({ data }) => {
   }, []);
 
   const handleGridMenu = (e) => {
-    console.log('target id: ', e.target.id);
     switch (e.target.id) {
       case 'auto-size-all':
         return autoSize();
@@ -146,7 +145,7 @@ const AGGrid = ({ data }) => {
         return handleCancel();
       case 'save-all':
         if (undosRef.current.length === 0) return;
-        console.log('undos ref: ', undosRef.current);
+
         const updatesByRow = undosRef.current.reduce((acc, undo) => {
           if (!acc[undo.rowId]) {
             acc[undo.rowId] = {
@@ -162,7 +161,6 @@ const AGGrid = ({ data }) => {
           updates: row.changes
         }));
 
-        console.log('save all: ', saveAll);
         return;
       case 'undo-last':
         /* isUndoAction.current = true;
@@ -196,8 +194,29 @@ const AGGrid = ({ data }) => {
         resizable: false
       },
       { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false },
-      { field: 'audiofile', filter: true, hide: false, editable: false },
-      { field: 'year', filter: true, hide: false },
+      {
+        field: 'audiofile',
+        filter: true,
+        hide: false,
+        editable: false
+        /*         cellClassRules: {
+          'rag-green': (params) => params.value.startsWith('H:/')
+        } */
+      },
+      {
+        field: 'year',
+        filter: 'agNumberColumnFilter',
+        hide: false,
+        type: 'numericColumn',
+        valueSetter: (params) => {
+          const newValue = Number(params.newValue);
+          if (!isNaN(newValue) && params.data.year !== newValue) {
+            params.data.year = newValue;
+            return true; // Indicate the value has been updated
+          }
+          return false; // No valid update occurred
+        }
+      },
       { field: 'title', filter: true, hide: false },
       { field: 'artist', filter: true, hide: false },
       { field: 'album', filter: true, hide: false },
@@ -249,7 +268,7 @@ const AGGrid = ({ data }) => {
           columnDefs={columnDefs} // Column Defs for Columns
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}
-          onFirstDataRendered={() => console.log('Data Rendered')}
+          /* onFirstDataRendered={() => console.log('Data Rendered')} */
           onSelectionChanged={onSelectionChanged}
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
