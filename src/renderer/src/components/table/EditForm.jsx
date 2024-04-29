@@ -41,7 +41,7 @@ function EditForm({ onUpdate, nodesSelected }) {
       Object.keys(formData).forEach((key) => {
         if (formData[key]) {
           const newValue = convertToCorrectType(key, formData[key]);
-          console.log('newValue: ', newValue);
+
           const changeObj = {
             rowId: node.rowIndex,
             field: key,
