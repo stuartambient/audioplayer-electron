@@ -18,8 +18,7 @@ const AGGrid = ({ data }) => {
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
-  const undosRef = useRef([]);
-  const redosRef = useRef([]);
+
   const [undos, setUndos] = useState([]);
   const [redos, setRedos] = useState([]);
 
@@ -62,21 +61,22 @@ const AGGrid = ({ data }) => {
       const rowNode = gridRef.current.api.getRowNode(edit.rowId);
       rowNode.setDataValue(edit.field, edit.newValue);
     });
-    undosRef.current = [...undosRef.current, ...edits];
+    /* setUndos((prevUndos) => [...prevUndos, ...change]); */
   };
 
   const handleCellValueChanged = useCallback(
     (event) => {
       if (!isUndoAction && !isRedoAction) {
         const { api, node, colDef, newValue } = event;
+        console.log('event: ', event);
         const change = {
           rowId: node.id, // Ensure this is how you access the ID correctly
           field: event.colDef.field,
+          file: event.data.audiofile,
           newValue: event.newValue,
           oldValue: event.oldValue
         };
 
-        /* undosRef.current.push(change); */
         setUndos((prevUndos) => [...prevUndos, change]);
 
         api.flashCells({
@@ -110,12 +110,8 @@ const AGGrid = ({ data }) => {
   }, []);
 
   const handleUndoLastEdit = () => {
-    //if (undosRef.current.length === 0) return;
     if (undos.length === 0) return;
     setIsUndoAction(true);
-
-    /*     const lastEdit = undosRef.current.pop();
-    console.log('last Edit: ', lastEdit); */
 
     // Push this last edit into the redo stack
     const newUndos = [...undos];
@@ -127,6 +123,7 @@ const AGGrid = ({ data }) => {
       {
         rowId: lastEdit.rowId,
         field: lastEdit.field,
+        file: lastEdit.audiofile,
         oldValue: gridRef.current.api.getValue(
           lastEdit.field,
           gridRef.current.api.getRowNode(lastEdit.rowId)
@@ -153,6 +150,7 @@ const AGGrid = ({ data }) => {
       {
         rowId: lastRedo.rowId,
         field: lastRedo.field,
+        file: lastRedo.audiofile,
         oldValue: gridRef.current.api.getValue(
           lastRedo.field,
           gridRef.current.api.getRowNode(lastRedo.rowId)
@@ -195,9 +193,28 @@ const AGGrid = ({ data }) => {
       case 'cancel-all':
         return handleCancel();
       case 'save-all':
-        if (undosRef.current.length === 0) return;
+        if (undos.length === 0) return;
 
-        const updatesByRow = undosRef.current.reduce((acc, undo) => {
+        const updatesByRow = undos.reduce((acc, undo) => {
+          if (!acc[undo.rowId]) {
+            acc[undo.rowId] = {
+              id: originalData[undo.rowId].audiofile,
+              changes: {}
+            };
+          }
+          acc[undo.rowId].changes[undo.field] = undo.newValue;
+
+          return acc;
+        }, {});
+        const saveAll = Object.values(updatesByRow).map((row) => ({
+          id: row.id,
+          updates: row.changes
+        }));
+        console.log('save all: ', saveAll);
+        return;
+      /*  if (undos.length === 0) return;
+
+        const updatesByRow = undos.reduce((acc, undo) => {
           if (!acc[undo.rowId]) {
             acc[undo.rowId] = {
               id: originalData[undo.rowId].afid,
@@ -212,14 +229,11 @@ const AGGrid = ({ data }) => {
           id: row.id,
           updates: row.changes
         }));
-        /* console.log('saveAll: ', saveAll, '---', undosRef.current); */
-        return;
+        console.log('save all: ', saveAll);
+        return; */
       case 'undo-last':
-        /* isUndoAction.current = true;
-        console.log(undosRef.current); */
         return handleUndoLastEdit();
       case 'redo-last':
-        /* console.log('redos: ', redosRef.current); */
         return handleRedoLastEdit();
       case 'deselect-all':
         return deselectAll();
@@ -253,7 +267,8 @@ const AGGrid = ({ data }) => {
         field: 'audiofile',
         filter: true,
         hide: false,
-        editable: false
+        editable: false,
+        rowDrag: true
         /*         cellClassRules: {
           'rag-green': (params) => params.value.startsWith('H:/')
         } */
@@ -320,7 +335,7 @@ const AGGrid = ({ data }) => {
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}
           onSelectionChanged={onSelectionChanged}
-          getRowId={getRowId}
+          /* getRowId={getRowId} */
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
@@ -330,6 +345,8 @@ const AGGrid = ({ data }) => {
           rowMultiSelectWithClick={true}
           onCellValueChanged={handleCellValueChanged}
           undoRedoCellEditing={false}
+          rowDragManaged={true}
+          rowDragMultiRow={true}
         />
       </div>
       {/*       {isRowsSelected.current && isRowsSelected.current.length > 0 && (

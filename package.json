@@ -31,6 +31,7 @@
     "eslint-config-react-app": "^7.0.1",
     "fast-glob": "^3.2.12",
     "music-metadata": "^7.13.0",
+    "node-taglib-sharp": "^5.2.3",
     "react-data-grid": "^7.0.0-beta.34",
     "react-icons": "^4.7.1",
     "react-virtuoso": "^4.7.10",
