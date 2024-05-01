@@ -21,6 +21,8 @@ import * as stream from 'stream';
 import { promisify } from 'util';
 import { Buffer } from 'buffer';
 import { parseFile } from 'music-metadata';
+import { File } from 'node-taglib-sharp';
+import transformTags from './transformTags.js';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, updateMeta, convertToUTC } from './utility';
@@ -675,6 +677,21 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
     return tracks;
   } catch (err) {
     console.log(err.message);
+  }
+});
+
+ipcMain.handle('update-tags', async (_, arr) => {
+  /*   const updateTags = async (updates) => {
+    for await (const file of updates) {
+      const myFile = await File.createFromPath(file.id);
+         transformTags(file.updates); */
+  /* console.log('performers: ', myFile.tag.performers);
+      console.log('albumArtists: ', myFile.tag.albumArtists);
+      console.log('generes: ', myFile.tag.genres); */
+  //  }
+  // };
+  if (arr.length > 0) {
+    transformTags(arr);
   }
 });
 

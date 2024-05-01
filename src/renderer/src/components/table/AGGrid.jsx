@@ -184,6 +184,10 @@ const AGGrid = ({ data }) => {
     gridRef.current.api.sizeColumnsToFit();
   }, []);
 
+  const updateTags = async (arr) => {
+    const writeTags = await window.metadataEditingApi.updateTags(arr);
+  };
+
   const handleGridMenu = (e) => {
     switch (e.target.id) {
       case 'auto-size-all':
@@ -210,8 +214,8 @@ const AGGrid = ({ data }) => {
           id: row.id,
           updates: row.changes
         }));
-        console.log('save all: ', saveAll);
-        return;
+        /* console.log('save all: ', saveAll); */
+        return updateTags(saveAll);
       /*  if (undos.length === 0) return;
 
         const updatesByRow = undos.reduce((acc, undo) => {

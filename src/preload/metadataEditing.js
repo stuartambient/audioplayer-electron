@@ -3,7 +3,8 @@ import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
 const metadataEditingApi = {
-  onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg))
+  onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg)),
+  updateTags: (arr) => ipcRenderer.invoke('update-tags', arr)
 };
 
 if (process.contextIsolated) {
