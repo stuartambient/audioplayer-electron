@@ -681,17 +681,73 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 });
 
 ipcMain.handle('update-tags', async (_, arr) => {
-  /*   const updateTags = async (updates) => {
+  const updateTags = async (updates) => {
     for await (const file of updates) {
       const myFile = await File.createFromPath(file.id);
-         transformTags(file.updates); */
-  /* console.log('performers: ', myFile.tag.performers);
+      const {
+        albumArtists,
+        album,
+        composers,
+        conductor,
+        comment,
+        dateTagged,
+        disc,
+        discCount,
+        description,
+        genres,
+        isrc,
+        performers,
+        pictures,
+        publisher,
+        sizeOnDisk,
+        title,
+        track,
+        trackCount,
+        year
+      } = myFile.tag;
+      const { audioBitrate, audioSampleRate, codecs, durationMilliseconds, mediaTypes } =
+        myFile.properties;
+      /* console.log(file);
+      console.log('-------------------------------');
+      console.log(
+        albumArtists, // common.albumArtist
+        album, //common.album
+        composers, //common.composer
+        conductor, //common.conductor
+        comment, // common.comment
+        dateTagged, // common.data (YYYY-MM-DD_
+        disc, //common.disk
+        discCount, // common.totaldiscs
+        description, // common.description
+        genres, // common.genre
+        isrc,
+        performers, // common.artist
+        pictures, // common.picture
+        publisher,
+        sizeOnDisk,
+        title, //common.title
+        track, //common.track
+        trackCount, // common.totaltracks
+        year, //common.year
+        audioBitrate, //format.bitrate
+        audioSampleRate, //format.sampleRate
+        codecs, //format.codec
+        durationMilliseconds, //format.duration
+        mediaTypes
+      ); */
+
+      /* myFile.tag.year = 2002; */
+      /* myFile.tag.genres = ['Experimental'];
+      myFile.save(); */
+      myFile.dispose();
+
+      /* console.log('performers: ', myFile.tag.performers);
       console.log('albumArtists: ', myFile.tag.albumArtists);
       console.log('generes: ', myFile.tag.genres); */
-  //  }
-  // };
+    }
+  };
   if (arr.length > 0) {
-    transformTags(arr);
+    updateTags(arr);
   }
 });
 
