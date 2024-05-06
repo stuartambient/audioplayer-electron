@@ -64,7 +64,7 @@ import {
 } from './stats';
 import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
-import initCovers from './updateFolderCovers';
+/* import initCovers from './updateFolderCovers'; */
 import initUpdateMetadata from './updateMetadata';
 protocol.registerSchemesAsPrivileged([
   {
@@ -333,7 +333,7 @@ ipcMain.handle('update-meta', async () => {
   return result;
 });
 
-ipcMain.handle('update-covers', async () => {
+/* ipcMain.handle('update-covers', async () => {
   let result;
   try {
     result = await initCovers();
@@ -343,7 +343,6 @@ ipcMain.handle('update-covers', async () => {
 
   let updatedFolders = [];
   for await (const r of result) {
-    /* console.log(r); */
     let tmp = await fs.promises.readdir(r.path);
 
     if (!tmp[0]) continue;
@@ -361,7 +360,7 @@ ipcMain.handle('update-covers', async () => {
     }
   }
   return updatedFolders;
-});
+}); */
 
 /*  */
 

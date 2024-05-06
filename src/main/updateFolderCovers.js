@@ -42,10 +42,10 @@ const run = async (cb) => {
   return cb(results);
 };
 
-const initCovers = async () => {
+/* const initCovers = async () => {
   return new Promise((res, rej) => {
     run((result) => res(result));
   });
-};
+}; */
 
 export default initCovers;
