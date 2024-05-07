@@ -42,12 +42,9 @@ import {
   getFiles,
   getAllPkeys,
   getAllTracks,
-  /*   getMissingCovers, */
   deleteAlbum,
   allTracks,
   refreshMetadata
-  /* createFoldersTable,
-  createFilesTable */
 } from './sql.js';
 
 import {

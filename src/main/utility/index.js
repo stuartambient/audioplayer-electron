@@ -4,6 +4,7 @@ import app from 'electron';
 /* import { Buffer } from "node:buffer"; */
 import { v4 as uuidv4 } from 'uuid';
 import { parseFile } from 'music-metadata';
+import { File } from 'node-taglib-sharp';
 import { roots } from '../../constant/constants';
 import { error } from 'node:console';
 
@@ -69,62 +70,71 @@ const updateMeta = async (files) => {
   return updatedMetadata;
 };
 
+const checkDataType = (entry) => {
+  if (entry === undefined || entry === null) {
+    return null;
+  } else if (Array.isArray(entry)) {
+    return entry.join(', ');
+  } else if (typeof entry === 'object' && !Array.isArray(entry)) {
+    return Object.values(entry).join(', ');
+  } else if (typeof entry === 'string') {
+    return entry;
+  } else if (typeof entry === 'number') {
+    return Number(entry);
+  } else if (typeof entry === 'boolean') {
+    if (entry === true) return 1;
+    return 0;
+  }
+};
+
 const parseMeta = async (files) => {
-  const filesWMetadata = [];
-  for (const audiofile of files) {
-    /*  writeFile(audiofile, './meta-processed.txt'); */
-    let root;
-    for (const r of roots) {
-      if (audiofile.startsWith(r)) {
-        root = r;
-      }
-    }
-    const modified = fs.statSync(audiofile).mtimeMs;
+  const filesMetadata = [];
+  for (const file of files) {
     try {
-      const metadata = await parseFile(audiofile);
-      console.log(
-        'format: ',
-        metadata.format,
-        'common: ',
-        metadata.common,
-        'trackInfo: ',
-        metadata.trackInfo,
-        'native: ',
-        metadata.native
-      );
-      let { year, title, artist, album, genre, picture } = metadata.common;
-      const { lossless, bitrate, sampleRate } = metadata.format;
-      const afid = uuidv4();
-
-      filesWMetadata.push({
-        afid,
-
-        audiofile,
-        modified,
-        extension: path.extname(audiofile),
-        year,
-        title,
-        artist,
-        album,
-        genre: genre ? (genre = genre.join(',')) : null,
-        picture: picture ? 1 : null,
-        lossless: lossless === false ? 0 : 1,
-        bitrate,
-        sampleRate,
+      const myFile = File.createFromPath(file);
+      filesMetadata.push({
+        afid: uuidv4(),
+        file: file,
+        modified: fs.statSync(file).mtimeMs,
         like: 0,
-        root
+        albumArtists: checkDataType(myFile.tag.albumArtists),
+        album: checkDataType(myFile.tag.album),
+        audioBitrate: checkDataType(myFile.properties.audioBitrate),
+        audioSampleRate: checkDataType(myFile.properties.audioSampleRate),
+        bpm: checkDataType(myFile.tag.beatsPerMinute),
+        codecs: checkDataType(myFile.properties.description),
+        composers: checkDataType(myFile.tag.composers),
+        conductor: checkDataType(myFile.tag.conductor),
+        copyright: checkDataType(myFile.tag.copyright),
+        comment: checkDataType(myFile.tag.comment),
+        dateTagged: checkDataType(myFile.tag.dateTagged),
+        disc: checkDataType(myFile.tag.disc),
+        discCount: checkDataType(myFile.tag.discCount),
+        description: checkDataType(myFile.tag.description),
+        duration: checkDataType(myFile.properties.durationMilliseconds),
+        genre: checkDataType(myFile.tag.genres),
+        isCompilation: checkDataType(myFile.tag.isCompilation),
+        isrc: checkDataType(myFile.tag.isrc),
+        lyrics: checkDataType(myFile.tag.lyrics),
+        performers: checkDataType(myFile.tag.performers),
+        performersRole: checkDataType(myFile.tag.performersRole),
+        pictures: myFile.tag.pictures ? 1 : 0,
+        publisher: checkDataType(myFile.tag.publisher),
+        remixedBy: checkDataType(myFile.tag.remixedBy),
+        replayGainAlbumGain: checkDataType(myFile.tag.replayGainAlbumGain),
+        replayGainAlbumPeak: checkDataType(myFile.tag.replayGainAlbumPeak),
+        replayGainTrackGain: checkDataType(myFile.tag.replayGainTrackGain),
+        replayGainTrackPeak: checkDataType(myFile.tag.replayGainTrackPeak),
+        title: checkDataType(myFile.tag.title),
+        track: checkDataType(myFile.tag.track),
+        trackCount: checkDataType(myFile.tag.trackCount),
+        year: checkDataType(myFile.tag.year)
       });
-    } catch (err) {
-      writeFile(audiofile, './metadataErrors.txt');
-      /*    writeFile(
-        audiofile,
-        `${app.getPath('appData')}/musicplayer-electron/logs/metadataErrors.txt`
-      ); */
-      /* fs.renameSync(`${audiofile}`, `${audiofile}.bad`); */
-      console.error(`${audiofile} -- ${err.message}`);
+    } catch (error) {
+      console.error(`Error processing file ${file}: ${error.message}`);
     }
   }
-  return filesWMetadata;
+  return filesMetadata;
 };
 
 export { parseMeta, writeFile, updateMeta, convertToUTC };

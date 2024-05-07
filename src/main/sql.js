@@ -11,22 +11,49 @@ db.pragma('mmap_size = 30000000000');
 db.pragma('temp_store = memory'); */
 
 /* SELECT foldername, fullpath FROM albums where unaccent(foldername) LIKE '%Koner%' ORDER BY lower(unaccent(foldername)) */
+const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )`;
 
-const createFoldersTable = () => {
-  const ct = db.prepare(
-    'CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )'
-  );
-  const createtable = ct.run();
-  /* db.close(); */
-};
+const createTracksTable = `CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )`;
 
-const createFilesTable = () => {
-  const ct = db.prepare(
-    'CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )'
-  );
-  const createtable = ct.run();
-  /* db.close(); */
-};
+const createAudioTracks = `
+CREATE TABLE IF NOT EXISTS "audio-tracks" (
+  afid,
+    file,
+    modified,
+    like,
+    created_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    albumArtists,
+    album,
+    audioBitrate,
+    audioSampleRate,
+    bpm,
+    codecs,
+    composers,
+    conductor,copyright,
+    comment,
+    dateTagged,
+    disc,
+    discCount,
+    description,
+    duration,
+    genre,
+    isCompilation,
+    isrc,
+    lyrics,
+    performers,
+    performersRole,
+    pictures,
+    publisher,
+    remixedBy,
+    replayGainAlbumGain,
+    replayGainAlbumPeak,
+    replayGainTrackGain,
+    replayGainTrackPeak,
+    title,
+    track,
+    trackCount,
+    year
+);`;
 
 /* const createIndex = () => {
   const createIdx = db.prepare('CREATE INDEX audiofile_idx ON tracks(audiofile)');
@@ -34,9 +61,16 @@ const createFilesTable = () => {
   db.close();
 }; */
 
+db.exec(createAudioTracks);
+db.exec(createAlbumsTable);
+db.exec(createTracksTable);
+
 const insertFiles = (files) => {
   const insert = db.prepare(
-    'INSERT INTO tracks (afid, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, sampleRate, like, picture) VALUES (@afid, @root, @audiofile, @modified, @extension, @year, @title, @artist, @album, @genre, @lossless, @bitrate, @sampleRate, @like, @picture)'
+    'INSERT INTO tracks (afid, file, modified, like,albumArtists, album, audioBitrate,audioSampleRate,bpm,codecs,composers,
+conductor,copyright,comment,dateTagged,disc,discCount,description,duration,genre,isCompilation,isrc,lyrics, performers,
+    performersRole, pictures, publisher,remixedBy,replayGainAlbumGain,replayGainAlbumPeak,replayGainTrackGain,replayGainTrackPeak,
+    title,track,trackCount,year) VALUES ()'
   );
 
   const insertMany = db.transaction((files) => {
@@ -335,9 +369,6 @@ const isLiked = (id) => {
   return isLiked.like;
 };
 
-createFoldersTable();
-createFilesTable();
-
 export {
   insertFiles,
   insertAlbums,
@@ -356,8 +387,6 @@ export {
   filesByAlbum,
   likeTrack,
   isLiked,
-  createFoldersTable,
-  createFilesTable,
   getPlaylist,
   allCoversByScroll,
   getAllTracks,
