@@ -286,11 +286,18 @@ const processUpdateResult = (type, result) => {
       return;
   }
   /* console.log(filename); */
-  if (Array.isArray(result.new)) {
+  /*   if (Array.isArray(result.new)) {
     writeFile(`\nDate: ${Date()} \nAdditions:\n`, `${updatesFolder}\\${filename}`);
     result.new.forEach((res) => {
       writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
     });
+  } */
+  if (Array.isArray(result.new)) {
+    const buffer = [];
+    buffer.push(`\nDate: ${new Date()} \nAdditions:\n`);
+    buffer.push(...result.new);
+
+    writeFile(buffer, `${filename}`).catch((err) => console.error(err));
   }
   if (Array.isArray(result.deleted)) {
     writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}\\${filename}`);

@@ -1,5 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { promisify } from 'node:util';
+import { finished } from 'node:stream';
 import app from 'electron';
 /* import { Buffer } from "node:buffer"; */
 import { v4 as uuidv4 } from 'uuid';
@@ -8,6 +10,8 @@ import { File } from 'node-taglib-sharp';
 import db from '../connection';
 import { roots } from '../../constant/constants';
 import { error } from 'node:console';
+
+const streamFinished = promisify(finished);
 
 const convertToUTC = (milliseconds) => {
   const date = new Date(milliseconds);
@@ -33,6 +37,8 @@ const convertToUTC = (milliseconds) => {
   console.log(`Time: ${formattedTime}`); */
 };
 
+/* const streamFinished = util.promisify(require('stream').finished);
+
 const writeFile = async (data, filename) => {
   return new Promise((resolve, reject) => {
     const writer = fs.createWriteStream(filename, { flags: 'a' });
@@ -46,6 +52,20 @@ const writeFile = async (data, filename) => {
       writer.end();
     });
   });
+}; */
+
+const writeFile = async (data, filename) => {
+  //const fullpath = path.join(updatesFolder, filename);
+  const writer = fs.createWriteStream(filename, { flags: 'a' });
+  writer.write(data.join('\n') + '\n'); // Join the array and write it at once
+  writer.end();
+
+  try {
+    await streamFinished(writer); // Wait for the stream to finish
+  } catch (error) {
+    console.error('Stream failed to finish:', error);
+    throw error;
+  }
 };
 
 const updateMeta = async (files) => {
@@ -99,7 +119,9 @@ const checkDataType = (entry) => {
 
 const parseMeta = async (files) => {
   const filesMetadata = [];
+  let index = 0;
   for (const file of files) {
+    console.log(`Processing ${file} at index ${index}`);
     try {
       const myFile = await File.createFromPath(file);
       const fileStats = await fs.promises.stat(file);
@@ -107,8 +129,9 @@ const parseMeta = async (files) => {
         afid: uuidv4(),
         root: findRoot(file),
         file: file,
-        modified: fileStats.mtimeMs,
+        modified: fileStats.mtimeMs || null,
         like: 0,
+        error: null,
         albumArtists: checkDataType(myFile.tag.albumArtists),
         album: checkDataType(myFile.tag.album),
         audioBitrate: checkDataType(myFile.properties.audioBitrate),
@@ -133,10 +156,10 @@ const parseMeta = async (files) => {
         pictures: myFile.tag.pictures ? 1 : 0,
         publisher: checkDataType(myFile.tag.publisher),
         remixedBy: checkDataType(myFile.tag.remixedBy),
-        replayGainAlbumGain: checkDataType(myFile.tag.replayGainAlbumGain),
-        replayGainAlbumPeak: checkDataType(myFile.tag.replayGainAlbumPeak),
-        replayGainTrackGain: checkDataType(myFile.tag.replayGainTrackGain),
-        replayGainTrackPeak: checkDataType(myFile.tag.replayGainTrackPeak),
+        replayGainAlbumGain: checkDataType(myFile.tag.replayGainAlbumGain) || null,
+        replayGainAlbumPeak: checkDataType(myFile.tag.replayGainAlbumPeak) || null,
+        replayGainTrackGain: checkDataType(myFile.tag.replayGainTrackGain) || null,
+        replayGainTrackPeak: checkDataType(myFile.tag.replayGainTrackPeak) || null,
         title: checkDataType(myFile.tag.title),
         track: checkDataType(myFile.tag.track),
         trackCount: checkDataType(myFile.tag.trackCount),
@@ -144,11 +167,52 @@ const parseMeta = async (files) => {
       });
     } catch (error) {
       console.error(`Error processing file ${file}: ${error.message}`);
-      db.prepare('INSERT INTO audio_track_errors (file_path, error_message) VALUES (?, ?)').run(
+      /*     db.prepare('INSERT INTO audio_track_errors (file_path, error_message) VALUES (?, ?)').run(
         file,
         error.toString()
-      );
+      ); */
+      filesMetadata.push({
+        afid: uuidv4(),
+        root: findRoot(file),
+        file: file,
+        modified: null,
+        like: 0,
+        error: error.toString(),
+        albumArtists: null,
+        album: null,
+        audioBitrate: null,
+        audioSampleRate: null,
+        bpm: null,
+        codecs: null,
+        composers: null,
+        conductor: null,
+        copyright: null,
+        comment: null,
+        dateTagged: null,
+        disc: null,
+        discCount: null,
+        description: null,
+        duration: null,
+        genre: null,
+        isCompilation: null,
+        isrc: null,
+        lyrics: null,
+        performers: null,
+        performersRole: null,
+        pictures: null,
+        publisher: null,
+        remixedBy: null,
+        replayGainAlbumGain: null,
+        replayGainAlbumPeak: null,
+        replayGainTrackGain: null,
+        replayGainTrackPeak: null,
+        title: null,
+        track: null,
+        trackCount: null,
+        year: null
+      });
     }
+    index++;
   }
   return filesMetadata;
 };
