@@ -5,6 +5,7 @@ import app from 'electron';
 import { v4 as uuidv4 } from 'uuid';
 import { parseFile } from 'music-metadata';
 import { File } from 'node-taglib-sharp';
+import db from '../connection';
 import { roots } from '../../constant/constants';
 import { error } from 'node:console';
 
@@ -70,6 +71,15 @@ const updateMeta = async (files) => {
   return updatedMetadata;
 };
 
+const findRoot = (filePath) => {
+  for (const root of roots) {
+    if (filePath.startsWith(root)) {
+      return root;
+    }
+  }
+  return 'No root found';
+};
+
 const checkDataType = (entry) => {
   if (entry === undefined || entry === null) {
     return null;
@@ -91,11 +101,13 @@ const parseMeta = async (files) => {
   const filesMetadata = [];
   for (const file of files) {
     try {
-      const myFile = File.createFromPath(file);
+      const myFile = await File.createFromPath(file);
+      const fileStats = await fs.promises.stat(file);
       filesMetadata.push({
         afid: uuidv4(),
+        root: findRoot(file),
         file: file,
-        modified: fs.statSync(file).mtimeMs,
+        modified: fileStats.mtimeMs,
         like: 0,
         albumArtists: checkDataType(myFile.tag.albumArtists),
         album: checkDataType(myFile.tag.album),
@@ -132,6 +144,10 @@ const parseMeta = async (files) => {
       });
     } catch (error) {
       console.error(`Error processing file ${file}: ${error.message}`);
+      db.prepare('INSERT INTO audio_track_errors (file_path, error_message) VALUES (?, ?)').run(
+        file,
+        error.toString()
+      );
     }
   }
   return filesMetadata;

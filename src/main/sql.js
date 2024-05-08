@@ -17,7 +17,8 @@ const createTracksTable = `CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY,
 
 const createAudioTracks = `
 CREATE TABLE IF NOT EXISTS "audio-tracks" (
-  afid,
+    afid,
+    root,
     file,
     modified,
     like,
@@ -55,23 +56,97 @@ CREATE TABLE IF NOT EXISTS "audio-tracks" (
     year
 );`;
 
-/* const createIndex = () => {
-  const createIdx = db.prepare('CREATE INDEX audiofile_idx ON tracks(audiofile)');
-  const idx = createIdx.run();
-  db.close();
-}; */
+const createAudioTrackErrors = `
+CREATE TABLE IF NOT EXISTS audio_track_errors (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_path TEXT NOT NULL,
+  error_message TEXT NOT NULL,
+  error_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
 
 db.exec(createAudioTracks);
 db.exec(createAlbumsTable);
 db.exec(createTracksTable);
+db.exec(createAudioTrackErrors);
 
 const insertFiles = (files) => {
-  const insert = db.prepare(
-    'INSERT INTO tracks (afid, file, modified, like,albumArtists, album, audioBitrate,audioSampleRate,bpm,codecs,composers,
-conductor,copyright,comment,dateTagged,disc,discCount,description,duration,genre,isCompilation,isrc,lyrics, performers,
-    performersRole, pictures, publisher,remixedBy,replayGainAlbumGain,replayGainAlbumPeak,replayGainTrackGain,replayGainTrackPeak,
-    title,track,trackCount,year) VALUES ()'
-  );
+  const insert = db.prepare(`
+  INSERT INTO "audio-tracks"
+            (afid,
+             root,
+             file,
+             modified,
+             like,
+             albumartists,
+             album,
+             audiobitrate,
+             audiosamplerate,
+             bpm,
+             codecs,
+             composers,
+             conductor,
+             copyright,
+             comment,
+             datetagged,
+             disc,
+             disccount,
+             description,
+             duration,
+             genre,
+             iscompilation,
+             isrc,
+             lyrics,
+             performers,
+             performersrole,
+             pictures,
+             publisher,
+             remixedby,
+             replaygainalbumgain,
+             replaygainalbumpeak,
+             replaygaintrackgain,
+             replaygaintrackpeak,
+             title,
+             track,
+             trackcount,
+             year)
+VALUES      (@afid,
+             @root
+             @file,
+             @modified,
+             @like,
+             @albumArtists,
+             @album,
+             @audioBitrate,
+             @audioSampleRate,
+             @bpm,
+             @codecs,
+             @composers,
+             @conductor,
+             @copyright,
+             @comment,
+             @dateTagged,
+             @disc,
+             @discCount,
+             @description,
+             @duration,
+             @genre,
+             @isCompilation,
+             @isrc,
+             @lyrics,
+             @performers,
+             @performersRole,
+             @pictures,
+             @publisher,
+             @remixedBy,
+             @replayGainAlbumGain,
+             @replayGainAlbumPeak,
+             @replayGainTrackGain,
+             @replayGainTrackPeak,
+             @title,
+             @track,
+             @trackCount,
+             @year) `);
 
   const insertMany = db.transaction((files) => {
     for (const f of files) insert.run(f);
@@ -140,7 +215,11 @@ const getAlbum = (id) => {
 };
 
 const getFiles = () => {
-  const allFiles = db.prepare('SELECT audiofile FROM tracks');
+  /* const allFiles = db.prepare('SELECT audiofile FROM tracks');
+  const files = allFiles.all();
+  return files; */
+
+  const allFiles = db.prepare('SELECT file FROM "audio-tracks"');
   const files = allFiles.all();
   return files;
 };

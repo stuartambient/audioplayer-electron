@@ -22,7 +22,8 @@ const difference = (setA, setB) => {
 const compareDbRecords = async (files) => {
   const status = { new: '', deleted: '', nochange: false };
   const dbFiles = getFiles();
-  const dbAll = dbFiles.map((d) => d.audiofile);
+  /* const dbAll = dbFiles.map((d) => d.audiofile); */
+  const dbAll = dbFiles.map((d) => d.file);
 
   const allfiles = new Set(files);
   const dbentries = new Set(dbAll);
