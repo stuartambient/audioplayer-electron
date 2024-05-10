@@ -58,19 +58,19 @@ CREATE TABLE IF NOT EXISTS "audio-tracks" (
     year
 );`;
 
-const createAudioTrackErrors = `
+/* const createAudioTrackErrors = `
 CREATE TABLE IF NOT EXISTS audio_track_errors (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   file_path TEXT NOT NULL,
   error_message TEXT NOT NULL,
   error_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-`;
+`; */
 
 db.exec(createAudioTracks);
 db.exec(createAlbumsTable);
 db.exec(createTracksTable);
-db.exec(createAudioTrackErrors);
+/* db.exec(createAudioTrackErrors); */
 
 const insertFiles = (files) => {
   const insert = db.prepare(`
@@ -152,11 +152,17 @@ VALUES      (@afid,
              @trackCount,
              @year) `);
 
-  const insertMany = db.transaction((files) => {
-    for (const f of files) insert.run(f);
-  });
+  try {
+    const insertMany = db.transaction((files) => {
+      for (const f of files) insert.run(f);
+    });
 
-  const info = insertMany(files);
+    const info = insertMany(files);
+    return { success: true, message: 'Files inserted successfully' };
+  } catch (error) {
+    console.error('Error inserting files:', error);
+    return { success: false, message: `Error inserting files: ${error.message}` };
+  }
 };
 
 /* const getMissingCovers = () => {

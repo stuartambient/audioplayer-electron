@@ -20,6 +20,7 @@ import http from 'node:http';
 import * as stream from 'stream';
 import { promisify } from 'util';
 import { Buffer } from 'buffer';
+import { Worker } from 'worker_threads';
 import { parseFile } from 'music-metadata';
 import { File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
@@ -27,6 +28,7 @@ import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, updateMeta, convertToUTC } from './utility';
 /* import Database from 'better-sqlite3'; */
+import createWorker from './databaseWorker?nodeWorker';
 import {
   allTracksByScroll,
   allTracksBySearchTerm,
@@ -269,9 +271,7 @@ app.on('window-all-closed', () => {
 });
 
 const processUpdateResult = (type, result) => {
-  /* console.log('result: ', result); */
   let filename;
-  /*  type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt'); */
   switch (type) {
     case 'folder':
       filename = 'folder-updates.txt';
@@ -285,19 +285,12 @@ const processUpdateResult = (type, result) => {
     default:
       return;
   }
-  /* console.log(filename); */
-  /*   if (Array.isArray(result.new)) {
-    writeFile(`\nDate: ${Date()} \nAdditions:\n`, `${updatesFolder}\\${filename}`);
-    result.new.forEach((res) => {
-      writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
-    });
-  } */
   if (Array.isArray(result.new)) {
     const buffer = [];
     buffer.push(`\nDate: ${new Date()} \nAdditions:\n`);
     buffer.push(...result.new);
 
-    writeFile(buffer, `${filename}`).catch((err) => console.error(err));
+    writeFile(buffer, `${updatesFolder}\\${filename}`).catch((err) => console.error(err));
   }
   if (Array.isArray(result.deleted)) {
     writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}\\${filename}`);

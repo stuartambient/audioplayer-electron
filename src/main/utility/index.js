@@ -55,6 +55,7 @@ const writeFile = async (data, filename) => {
 }; */
 
 const writeFile = async (data, filename) => {
+  console.log('writeFile: ', data, filename);
   //const fullpath = path.join(updatesFolder, filename);
   const writer = fs.createWriteStream(filename, { flags: 'a' });
   writer.write(data.join('\n') + '\n'); // Join the array and write it at once
@@ -121,7 +122,7 @@ const parseMeta = async (files) => {
   const filesMetadata = [];
   let index = 0;
   for (const file of files) {
-    console.log(`Processing ${file} at index ${index}`);
+    /* console.log(`Processing ${file} at index ${index}`); */
     try {
       const myFile = await File.createFromPath(file);
       const fileStats = await fs.promises.stat(file);

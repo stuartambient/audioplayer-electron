@@ -9,6 +9,8 @@ import {
   audioExtensions,
   fileExtensions
 } from '../constant/constants.js';
+import { workerData } from 'worker_threads';
+import createWorker from './databaseWorker?nodeWorker';
 import { getFiles, insertFiles, deleteFiles } from './sql.js';
 
 const difference = (setA, setB) => {
@@ -17,6 +19,14 @@ const difference = (setA, setB) => {
     _difference.delete(elem);
   }
   return _difference;
+};
+
+const triggerInsert = (parsed) => {
+  createWorker({ workerData: { id: 'arbitrary', functionName: 'insertFiles', params: parsed } })
+    .on('message', (message) => {
+      console.log(`Message from worker: ${message}`);
+    })
+    .postMessage('sent message');
 };
 
 const compareDbRecords = async (files) => {
@@ -34,7 +44,7 @@ const compareDbRecords = async (files) => {
 
   if (newEntries.length > 0) {
     await parseMeta(newEntries)
-      .then((parsed) => insertFiles(parsed))
+      .then((parsed) => triggerInsert(parsed))
       .then(() => (status.new = newEntries));
   }
 
