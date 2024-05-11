@@ -15,7 +15,7 @@ port.on('message', (msg) => {
   const func = functions[workerData.functionName];
   if (func) {
     const result = func(workerData.params);
-    port.postMessage(`Function result: ${result.message}`);
+    port.postMessage(`Function result: ${result.success}`);
   } else {
     port.postMessage('Function not found');
   }

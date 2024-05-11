@@ -21,12 +21,26 @@ const difference = (setA, setB) => {
   return _difference;
 };
 
-const triggerInsert = (parsed) => {
-  createWorker({ workerData: { id: 'arbitrary', functionName: 'insertFiles', params: parsed } })
+/* const triggerInsert = (parsed) => {
+  createWorker({ workerData: { id: 'insertFiles', functionName: 'insertFiles', params: parsed } })
     .on('message', (message) => {
       console.log(`Message from worker: ${message}`);
     })
-    .postMessage('sent message');
+    .postMessage('');
+};
+ */
+const triggerInsert = (parsed) => {
+  return new Promise((resolve, reject) => {
+    createWorker({ workerData: { id: 'insertFiles', functionName: 'insertFiles', params: parsed } })
+      .on('message', (message) => {
+        resolve(message); // Resolve the promise with the message from the worker
+      })
+      .on('error', (err) => {
+        console.error('Worker error:', err);
+        reject(err); // Reject the promise on error
+      })
+      .postMessage('');
+  });
 };
 
 const compareDbRecords = async (files) => {
@@ -45,7 +59,17 @@ const compareDbRecords = async (files) => {
   if (newEntries.length > 0) {
     await parseMeta(newEntries)
       .then((parsed) => triggerInsert(parsed))
-      .then(() => (status.new = newEntries));
+      .then((message) => {
+        if (message) {
+          status.new = newEntries; // Update status only if the insertion was successful
+          console.log('Insertion successful!');
+        } else {
+          console.error('Insertion failed with message:', message);
+        }
+      })
+      .catch((error) => {
+        console.error('Error in processing:', error);
+      });
   }
 
   if (missingEntries.length > 0) {

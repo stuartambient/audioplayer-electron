@@ -55,7 +55,6 @@ const writeFile = async (data, filename) => {
 }; */
 
 const writeFile = async (data, filename) => {
-  console.log('writeFile: ', data, filename);
   //const fullpath = path.join(updatesFolder, filename);
   const writer = fs.createWriteStream(filename, { flags: 'a' });
   writer.write(data.join('\n') + '\n'); // Join the array and write it at once
@@ -127,9 +126,9 @@ const parseMeta = async (files) => {
       const myFile = await File.createFromPath(file);
       const fileStats = await fs.promises.stat(file);
       filesMetadata.push({
-        afid: uuidv4(),
+        track_id: uuidv4(),
         root: findRoot(file),
-        file: file,
+        audiotrack: file,
         modified: fileStats.mtimeMs || null,
         like: 0,
         error: null,
@@ -173,9 +172,9 @@ const parseMeta = async (files) => {
         error.toString()
       ); */
       filesMetadata.push({
-        afid: uuidv4(),
+        track_id: uuidv4(),
         root: findRoot(file),
-        file: file,
+        audiotrack: file,
         modified: null,
         like: 0,
         error: error.toString(),
