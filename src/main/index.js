@@ -23,7 +23,7 @@ import { Buffer } from 'buffer';
 import { Worker } from 'worker_threads';
 import { parseFile } from 'music-metadata';
 
-import { Picture } from 'node-taglib-sharp';
+import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
@@ -411,20 +411,16 @@ ipcMain.on('test-real-stream', async (event, ...args) => {
 });
 
 ipcMain.handle('get-cover', async (event, arg) => {
-  console.log('arg: ', arg);
-  /*   const track = await requestedFile(arg);
-  const myPic = Picture.fromPath(track.audiotrack);
-
-  const pic = await myPic.data._bytes;
-  console.log('pic: ', pic);
-  if (!pic) return 0;
-  return pic; */
   const track = await requestedFile(arg);
-  console.log(track);
+  const myFile = await File.createFromPath(track.audiotrack);
+
+  const pic = await myPic.data;
+  if (!pic) return 0;
+  return myFile.tag.pictures[0].data._bytes;
+  /*   const track = await requestedFile(arg);
   const meta = await parseFile(track.audiotrack);
   if (!meta.common.picture) return 0;
-  console.log(meta.common.picture[0].data);
-  return meta.common.picture[0].data;
+  return meta.common.picture[0].data; */
 });
 
 ipcMain.handle('file-update-details', async (event, ...args) => {

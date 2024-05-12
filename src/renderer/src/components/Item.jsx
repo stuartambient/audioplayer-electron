@@ -15,7 +15,6 @@ const Item = forwardRef((props, ref) => {
   };
 
   const loadFile = async (file, id) => {
-    console.log('file: ', file, 'id: ', id);
     try {
       state.audioRef.current.src = await `streaming://${file}`;
       /* const buf = await state.audioRef.current.src.arrayBuffer(); */
@@ -39,7 +38,6 @@ const Item = forwardRef((props, ref) => {
   };
 
   const handleTrackSelect = (event, ...params) => {
-    console.log('params: ', params);
     event.preventDefault();
     let listType;
     if (!event.target.getAttribute('fromlisttype')) {

@@ -153,7 +153,7 @@ const parseMeta = async (files) => {
         lyrics: checkDataType(myFile.tag.lyrics),
         performers: checkDataType(myFile.tag.performers),
         performersRole: checkDataType(myFile.tag.performersRole),
-        pictures: myFile.tag.pictures ? 1 : 0,
+        pictures: myFile.tag.pictures?.[0]?.data ? 1 : 0,
         publisher: checkDataType(myFile.tag.publisher),
         remixedBy: checkDataType(myFile.tag.remixedBy),
         replayGainAlbumGain: checkDataType(myFile.tag.replayGainAlbumGain) || null,

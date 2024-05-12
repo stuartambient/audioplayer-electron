@@ -265,7 +265,7 @@ const AppState = () => {
           playlistTracks: [
             ...state.playlistTracks,
             ...action.playlistTracks.filter(
-              (p) => !state.playlistTracks.find((d) => d.afid === p.afid)
+              (p) => !state.playlistTracks.find((d) => d.track_id === p.track_id)
             )
           ]
         };
@@ -292,7 +292,7 @@ const AppState = () => {
           playlistTracks: [
             ...state.playlistTracks,
             ...action.playlistTracks.filter(
-              (p) => !state.playlistTracks.find((d) => d.afid === p.afid)
+              (p) => !state.playlistTracks.find((d) => d.track_id === p.track_id)
             )
           ]
         };

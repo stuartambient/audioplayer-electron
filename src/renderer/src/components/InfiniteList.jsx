@@ -341,7 +341,7 @@ const InfiniteList = memo(() => {
         key={getKey()}
         divId={`${item.track_id}--item-div`}
         className={
-          `${state.active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'
+          `${state.active}--item-div` === `${item.track_id}--item-div` ? 'item active' : 'item'
         }
         ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
         href={item.track_id}
