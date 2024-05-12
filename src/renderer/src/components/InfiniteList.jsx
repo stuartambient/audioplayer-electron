@@ -73,9 +73,9 @@ const InfiniteList = memo(() => {
   const albumsTracks = albumTracks.map((track) => {
     console.log('mapped: ', track);
     if (track.title) {
-      return <li key={track.afid}>{track.title}</li>;
+      return <li key={track.track_id}>{track.title}</li>;
     } else {
-      return <li key={track.afid}>{track.audiofile}</li>;
+      return <li key={track.track_id}>{track.audiotrack}</li>;
     }
   });
 
@@ -87,13 +87,13 @@ const InfiniteList = memo(() => {
         /* console.log('next up: ', state.tracks[+state.newtrack + 1]); */
         dispatch({
           type: 'set-next-track',
-          nextTrack: state.tracks[+state.newtrack + 1].afid
+          nextTrack: state.tracks[+state.newtrack + 1].track_id
         });
       }
       if (state.newtrack >= 1 && state.tracks[+state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: state.tracks[+state.newtrack - 1].afid
+          prevTrack: state.tracks[+state.newtrack - 1].track_id
         });
       }
     }
@@ -101,13 +101,13 @@ const InfiniteList = memo(() => {
       if (state.newtrack >= 0 && state.playlistTracks[state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: state.playlistTracks[+state.newtrack + 1].afid
+          nextTrack: state.playlistTracks[+state.newtrack + 1].track_id
         });
       }
       if (state.newtrack >= 1 && state.playlistTracks[state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: state.playlistTracks[+state.newtrack - 1].afid
+          prevTrack: state.playlistTracks[+state.newtrack - 1].track_id
         });
       }
     }
@@ -115,13 +115,13 @@ const InfiniteList = memo(() => {
       if (state.newtrack >= 0 && shuffledPlaylist[+state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
-          nextTrack: shuffledPlaylist[+state.newtrack + 1].afid
+          nextTrack: shuffledPlaylist[+state.newtrack + 1].track_id
         });
       }
       if (state.newtrack >= 1 && shuffledPlaylist[+state.newtrack - 1]) {
         dispatch({
           type: 'set-prev-track',
-          prevTrack: shuffledPlaylist[+state.newtrack - 1].afid
+          prevTrack: shuffledPlaylist[+state.newtrack - 1].track_id
         });
       }
     }
@@ -339,23 +339,23 @@ const InfiniteList = memo(() => {
       <Item
         type="file"
         key={getKey()}
-        divId={`${item.afid}--item-div`}
+        divId={`${item.track_id}--item-div`}
         className={
           `${state.active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'
         }
         ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
-        href={item.afid}
-        id={item.afid}
+        href={item.track_id}
+        id={item.track_id}
         like={item.like}
-        audiofile={item.audiofile}
+        audiofile={item.audiotrack}
         val={index}
-        artist={item.artist ? item.artist : 'not available'}
+        artist={item.performers ? item.performers : 'not available'}
         title={item.title ? item.title : item.audiofile}
         album={item.album ? item.album : 'not available'}
         genre={item.genre ? item.genre : 'not available'}
-        lossless={item.lossless === 1 ? 'true' : 'false'}
-        bitrate={item.bitrate ? item.bitrate : 'not available'}
-        samplerate={item.samplerate ? item.samplerate : 'not available'}
+        codecs={item.codecs ? item.codecs : 'not available'}
+        bitrate={item.audioBitrate ? item.audioBitrate : 'not available'}
+        samplerate={item.audioSampleRate ? item.audioSampleRate : 'not available'}
       />
     );
   });
@@ -389,17 +389,17 @@ const InfiniteList = memo(() => {
       <Item
         type="playlist"
         key={getKey()}
-        divId={`${item.afid}--item-div`}
+        divId={`${item.track_id}--item-div`}
         className={
-          `${state.active}--item-div` === `${item.afid}--item-div` ? 'item active' : 'item'
+          `${state.active}--item-div` === `${item.track_id}--item-div` ? 'item active' : 'item'
         }
-        href={item.afid}
-        id={item.afid}
+        href={item.track_id}
+        id={item.track_id}
         like={item.like}
-        audiofile={item.audiofile}
+        audiofile={item.audiotrack}
         val={index}
-        artist={item.artist ? item.artist : 'not available'}
-        title={item.title ? item.title : item.audiofile}
+        artist={item.performers ? item.performers : 'not available'}
+        title={item.title ? item.title : item.audiotrack}
         album={item.album ? item.album : 'not available'}
       />
     );

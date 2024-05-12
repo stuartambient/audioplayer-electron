@@ -216,7 +216,7 @@ const audioPlayerReducer = (state, action) => {
         playlistTracks: [
           ...state.playlistTracks,
           ...action.playlistTracks.filter(
-            (p) => !state.playlistTracks.find((d) => d.afid === p.afid)
+            (p) => !state.playlistTracks.find((d) => d.track_id === p.track_id)
           )
         ]
       };
@@ -243,7 +243,7 @@ const audioPlayerReducer = (state, action) => {
         playlistTracks: [
           ...state.playlistTracks,
           ...action.playlistTracks.filter(
-            (p) => !state.playlistTracks.find((d) => d.afid === p.afid)
+            (p) => !state.playlistTracks.find((d) => d.track_id === p.track_id)
           )
         ]
       };
@@ -288,7 +288,7 @@ const audioPlayerReducer = (state, action) => {
     case 'remove-track': {
       return {
         ...state,
-        playlistTracks: state.playlistTracks.filter((track) => track.afid !== action.id)
+        playlistTracks: state.playlistTracks.filter((track) => track.track_id !== action.id)
       };
     }
 

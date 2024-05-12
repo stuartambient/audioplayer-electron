@@ -14,14 +14,14 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
     const cleanup = window.api.onContextMenuCommand((command) => {
       switch (command) {
         case 'add-track-to-playlist':
-          const track = state.tracks.find((item) => item.afid === contextMenuItem.id);
+          const track = state.tracks.find((item) => item.track_id === contextMenuItem.id);
           if (track) {
             /* if (!state.playlistTracks.find((e) => e.afid === contextMenuItem.id)) { */
             dispatch({
               type: 'track-to-playlist',
               playlistTracks: [...state.playlistTracks, track]
             });
-            if (!state.playlistTracks.find((e) => e.afid === contextMenuItem.id)) {
+            if (!state.playlistTracks.find((e) => e.track_id === contextMenuItem.id)) {
               dispatch({
                 type: 'flash-div',
                 flashDiv: contextMenuItem
@@ -43,7 +43,7 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
               playlistTracks: albumTracks
             });
             const diff = albumTracks.filter(
-              (p) => !state.playlistTracks.find((d) => d.afid === p.afid)
+              (p) => !state.playlistTracks.find((d) => d.track_id === p.track_id)
             );
             if (diff.length > 0) {
               dispatch({

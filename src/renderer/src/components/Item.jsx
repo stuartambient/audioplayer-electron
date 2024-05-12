@@ -9,11 +9,13 @@ import '../style/FlashEffect.css';
 const Item = forwardRef((props, ref) => {
   const { state, dispatch } = useAudioPlayer();
   const handlePicture = (buffer) => {
+    console.log('buffer: ', buffer);
     const bufferToString = Buffer.from(buffer).toString('base64');
     return `data:${buffer.format};base64,${bufferToString}`;
   };
 
   const loadFile = async (file, id) => {
+    console.log('file: ', file, 'id: ', id);
     try {
       state.audioRef.current.src = await `streaming://${file}`;
       /* const buf = await state.audioRef.current.src.arrayBuffer(); */
@@ -37,6 +39,7 @@ const Item = forwardRef((props, ref) => {
   };
 
   const handleTrackSelect = (event, ...params) => {
+    console.log('params: ', params);
     event.preventDefault();
     let listType;
     if (!event.target.getAttribute('fromlisttype')) {
