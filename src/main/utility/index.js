@@ -91,9 +91,9 @@ const updateMeta = async (files) => {
   return updatedMetadata;
 };
 
-const findRoot = (filePath) => {
+const findRoot = (file) => {
   for (const root of roots) {
-    if (filePath.startsWith(root)) {
+    if (file.startsWith(root)) {
       return root;
     }
   }

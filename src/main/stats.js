@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import db from './connection';
 
 const totalTracks = () => {
-  const tracksStmt = db.prepare('SELECT COUNT(*) FROM tracks');
+  const tracksStmt = db.prepare('SELECT COUNT(*) FROM "audio-tracks"');
   const albumsStmt = db.prepare('SELECT COUNT(*) FROM albums');
   const tracksInfo = tracksStmt.get();
   const albumsInfo = albumsStmt.get();
@@ -11,7 +11,7 @@ const totalTracks = () => {
 
 const topHundredArtists = () => {
   const stmt = db.prepare(
-    'SELECT artist, COUNT(*) as count FROM tracks GROUP BY artist ORDER BY count DESC'
+    'SELECT performers, COUNT(*) as count FROM "audio-tracks" GROUP BY performers ORDER BY count DESC'
   );
   const result = stmt.all();
 
@@ -20,22 +20,21 @@ const topHundredArtists = () => {
 
 const allTracksByArtist = (artist) => {
   const stmt = db.prepare(
-    `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE artist = ?`
+    `SELECT track_id, audiotrack, year, title, performers, album, genre FROM "audio-tracks" WHERE performers = ?`
   );
   const result = stmt.all(artist);
   return result;
 };
 
 const allTracksByGenre = (genre) => {
-  console.log('genre: ', genre);
   let query, params;
   if (genre === 'No Genre Specified') {
     // Query to handle special category
-    query = `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE genre IS NULL OR genre = '' OR genre = ' '`;
+    query = `SELECT track_id, audiotrack, year, title, performers, album, genre FROM "audio-tracks" WHERE genre IS NULL OR genre = '' OR genre = ' '`;
     params = [];
   } else {
     // Standard query for specific genres
-    query = `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE genre = ?`;
+    query = `SELECT track_id, audiotrack, year, title, performers, album, genre FROM "audio-tracks" WHERE genre = ?`;
     params = [genre];
   }
   const stmt = db.prepare(query);
@@ -46,7 +45,7 @@ const allTracksByGenre = (genre) => {
 const allTracksByRoot = (root) => {
   // Corrected SQL query string and removed the extra `}`
   const stmt = db.prepare(
-    `SELECT afid, audiofile, year, title, artist, album, genre FROM tracks WHERE root = ?`
+    `SELECT track_id, audiotrack, year, title, performers, album, genre FROM tracks WHERE root = ?`
   );
   // Execute the prepared statement with `root` as the parameter
   const result = stmt.all(root);
@@ -74,7 +73,7 @@ const genresWithCount = () => {
         ELSE genre 
       END as genre_display,
       COUNT(*) as count 
-    FROM tracks 
+    FROM "audio-tracks" 
     GROUP BY genre_display 
     ORDER BY 
       CASE 
@@ -93,7 +92,7 @@ const foldersWithCount = (dirs) => {
   let placeholders = dirs.map(() => '?').join(', ');
   let sql = `
     SELECT root, COUNT(*) as count 
-    FROM tracks 
+    FROM "audio-tracks" 
     WHERE root IN (${placeholders})
     GROUP BY root 
     ORDER BY lower(root)
@@ -116,7 +115,7 @@ const albumsByTopFolder = (folder) => {
 
 const nullMetadata = () => {
   const stmt = db.prepare(
-    `SELECT audiofile FROM tracks WHERE artist IS NULL OR title IS NULL OR album IS NULL ORDER BY audiofile`
+    `SELECT audiotrack FROM "audio-tracks" WHERE performers IS NULL OR title IS NULL OR album IS NULL ORDER BY audiotrack`
   );
   return stmt.all();
 };

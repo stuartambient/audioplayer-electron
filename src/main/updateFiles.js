@@ -47,7 +47,7 @@ const compareDbRecords = async (files) => {
   const status = { new: '', deleted: '', nochange: false };
   const dbFiles = getFiles();
   /* const dbAll = dbFiles.map((d) => d.audiofile); */
-  const dbAll = dbFiles.map((d) => d.file);
+  const dbAll = dbFiles.map((d) => d.audiotrack);
 
   const allfiles = new Set(files);
   const dbentries = new Set(dbAll);
@@ -61,7 +61,7 @@ const compareDbRecords = async (files) => {
       .then((parsed) => triggerInsert(parsed))
       .then((message) => {
         if (message) {
-          status.new = newEntries; // Update status only if the insertion was successful
+          status.new = newEntries.length; // Update status only if the insertion was successful
           console.log('Insertion successful!');
         } else {
           console.error('Insertion failed with message:', message);
@@ -74,7 +74,7 @@ const compareDbRecords = async (files) => {
 
   if (missingEntries.length > 0) {
     deleteFiles(missingEntries);
-    status.deleted = missingEntries;
+    status.deleted = missingEntries.length;
   }
   if (!newEntries.length && !missingEntries.length) {
     status.nochange = true;

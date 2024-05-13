@@ -122,8 +122,8 @@ const Update = () => {
       <div className="file-update-results">
         {fileUpdateResults && (
           <>
-            <p>New: {fileUpdateResults.new.length}</p>
-            <p>Deleted: {fileUpdateResults.deleted.length}</p>
+            <p>New: {fileUpdateResults.new}</p>
+            <p>Deleted: {fileUpdateResults.deleted}</p>
             {fileUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
           </>
         )}
@@ -131,8 +131,8 @@ const Update = () => {
       <div className="folder-update-results">
         {folderUpdateResults && (
           <>
-            <p>New: {folderUpdateResults.new.length}</p>
-            <p>Deleted: {folderUpdateResults.deleted.length}</p>
+            <p>New: {folderUpdateResults.new}</p>
+            <p>Deleted: {folderUpdateResults.deleted}</p>
             {folderUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
           </>
         )}

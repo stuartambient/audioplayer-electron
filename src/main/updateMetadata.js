@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { allTracks, refreshMetadata } from './sql.js';
-import { updateMeta } from './utility';
+import { parseMeta } from './utility';
 
 const run = async (cb) => {
   let status = { deleted: '', new: '', nochange: false };
@@ -9,11 +9,10 @@ const run = async (cb) => {
 
   for await (const r of result) {
     if (!r) return;
-    const stats = await fs.promises.stat(r.audiofile);
+    const stats = await fs.promises.stat(r.audiotrack);
     const lastModified = stats.mtimeMs;
-    console.log(lastModified);
     if (lastModified > r.modified) {
-      updatedTracks.push(r);
+      updatedTracks.push(r.audiotrack);
     }
   }
   if (!updatedTracks.length) {
@@ -21,10 +20,10 @@ const run = async (cb) => {
     return Promise.resolve(cb(status));
   }
 
-  const updatedMeta = await updateMeta(updatedTracks);
+  const updatedMeta = await parseMeta(updatedTracks);
   /* Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta)); */
   Promise.resolve(await refreshMetadata(updatedMeta))
-    .then(() => (status.new = updatedMeta.map((f) => f.audiofile)))
+    .then(() => (status.new = updatedMeta.map((f) => f.audiotrack)))
     .then(() => cb(status));
 };
 

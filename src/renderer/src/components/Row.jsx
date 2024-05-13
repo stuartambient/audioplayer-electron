@@ -29,8 +29,8 @@ const Row = ({ index, style, data, onClick, stat }) => {
     <div style={rowStyles}>
       {stat === 'stat-artists' && (
         <>
-          <span style={itemStyles}>{data.artist}</span>
-          <span id={data.artist} onClick={onClick} style={countStyles}>
+          <span style={itemStyles}>{data.performers}</span>
+          <span id={data.performers} onClick={onClick} style={countStyles}>
             {data.count}
           </span>
         </>

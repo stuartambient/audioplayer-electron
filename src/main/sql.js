@@ -237,24 +237,96 @@ const getFiles = () => {
 const refreshMetadata = (tracks) => {
   const transaction = db.transaction(() => {
     const updateStmt = db.prepare(`
-      UPDATE "audio-tracks" SET modified = ?, year = ?, title = ?, performers = ?, album = ?, genre = ? WHERE track_id = ? AND audiotrack = ?`);
+      UPDATE "audio-tracks" SET 
+        root = @root,
+        modified = @modified
+        like = @like,
+        error = @error,
+        albumArtists = @albumArtists,
+        album = @album,
+        audioBitrate = @audioBitrate,
+        audioSampleRate = @audioSampleRate,
+        bpm = @bpm,
+        codecs = @codecs,
+        composers = @composers,
+        conductor = @conductor,
+        copyright = @copyright,
+        comment = @comment,
+        dateTagged = @dateTagged,
+        disc = @disc,
+        discCount = @discCount,
+        description = @description,
+        duration = @duration,
+        genre = @genre,
+        isCompilation = @isCompilation,
+        isrc = @isrc,
+        lyrics = @lyrics,
+        performers = @performers,
+        performersRole = @performersRole,
+        pictures = @pictures,
+        publisher = @publisher,
+        remixedBy = @remixedBy,
+        replayGainAlbumGain = @replayGainAlbumGain,
+        replayGainAlbumPeak = @replayGainAlbumPeak,
+        replayGainTrackGain = @replayGainTrackGain,
+        replayGainTrackPeak = @replayGainTrackPeak,
+        title = @title,
+        track = @track,
+        trackCount = @trackCount,
+        year = @year
+      
+      WHERE 
+d        audiotrack = @audiotrack
+      `);
 
     for (const track of tracks) {
-      const { modified, year, title, artist, album, genre, track_id, audiotrack } = track;
-      updateStmt.run(modified, year, title, performers, album, genre, track_id, audiotrack);
+      updateStmt.run({
+        root: track.root,
+        modified: track.modified,
+        like: track.like,
+        error: track.error,
+        albumArtists: track.albumArtists,
+        album: track.album,
+        audioBitrate: track.audioBitrate,
+        audioSampleRate: track.audioSampleRate,
+        bpm: track.bpm,
+        codecs: track.codecs,
+        composers: track.composers,
+        conductor: track.conductor,
+        copyright: track.copyright,
+        comment: track.comment,
+        dateTagged: track.dateTagged,
+        disc: track.disc,
+        discCount: track.discCount,
+        description: track.description,
+        duration: track.duration,
+        genre: track.genre,
+        isCompilation: track.isCompilation,
+        isrc: track.isrc,
+        lyrics: track.lyrics,
+        performers: track.performers,
+        performersRole: track.performersRole,
+        pictures: track.pictures,
+        publisher: track.publisher,
+        remixedBy: track.remixedBy,
+        replayGainAlbumGain: track.replayGainAlbumGain,
+        replayGainAlbumPeak: track.replayGainAlbumPeak,
+        replayGainTrackGain: track.replayGainTrackGain,
+        replayGainTrackPeak: track.replayGainTrackPeak,
+        title: track.title,
+        track: track.track,
+        trackCount: track.trackCount,
+        year: track.year
+      });
     }
   });
   try {
-    // Run the transaction
     transaction();
 
     return 'Records updated successfully!';
   } catch (error) {
     console.error('Error updating records:', error);
-  } /* finally {
-    
-    db.close();
-  } */
+  }
 };
 
 const allTracks = () => {

@@ -315,19 +315,22 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
 
 ipcMain.handle('update-folders', async () => {
   const result = await initAlbums();
-  processUpdateResult('folder', result);
+  /* processUpdateResult('folder', result); */
+  console.log('result: ', result);
   return result;
 });
 
 ipcMain.handle('update-files', async () => {
   const result = await initFiles();
-  processUpdateResult('file', result);
+  /* processUpdateResult('file', result); */
+  console.log('result: ', result);
   return result;
 });
 
 ipcMain.handle('update-meta', async () => {
   const result = await initUpdateMetadata();
-  processUpdateResult('meta', result);
+  /* processUpdateResult('meta', result); */
+  console.log('meta result: ', result);
   return result;
 });
 
@@ -414,8 +417,9 @@ ipcMain.handle('get-cover', async (event, arg) => {
   const track = await requestedFile(arg);
   const myFile = await File.createFromPath(track.audiotrack);
 
-  const pic = await myPic.data;
-  if (!pic) return 0;
+  /*   const pic = await myPic.data;
+  if (!pic) return 0; */
+  if (!myFile.tag.pictures?.[0]?.data) return 0;
   return myFile.tag.pictures[0].data._bytes;
   /*   const track = await requestedFile(arg);
   const meta = await parseFile(track.audiotrack);
