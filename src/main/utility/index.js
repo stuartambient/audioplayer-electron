@@ -117,18 +117,17 @@ const checkDataType = (entry) => {
   }
 };
 
-const parseMeta = async (files) => {
+const parseMeta = async (files, op) => {
   const filesMetadata = [];
   let index = 0;
   for (const file of files) {
-    /* console.log(`Processing ${file} at index ${index}`); */
     try {
-      const myFile = await File.createFromPath(file);
-      const fileStats = await fs.promises.stat(file);
+      const myFile = await File.createFromPath(op === 'new' ? file : file.audiotrack);
+      const fileStats = await fs.promises.stat(op === 'new' ? file : file.audiotrack);
       filesMetadata.push({
-        track_id: uuidv4(),
-        root: findRoot(file),
-        audiotrack: file,
+        track_id: op === 'new' ? uuidv4() : file.track_id,
+        root: findRoot(op === 'new' ? file : file.audiotrack),
+        audiotrack: op === 'new' ? file : file.audiotrack,
         modified: fileStats.mtimeMs || null,
         like: 0,
         error: null,
@@ -167,15 +166,12 @@ const parseMeta = async (files) => {
       });
     } catch (error) {
       console.error(`Error processing file ${file}: ${error.message}`);
-      /*     db.prepare('INSERT INTO audio_track_errors (file_path, error_message) VALUES (?, ?)').run(
-        file,
-        error.toString()
-      ); */
+      const fileStats = await fs.promises.stat(op === 'new' ? file : file.audiotrack);
       filesMetadata.push({
-        track_id: uuidv4(),
-        root: findRoot(file),
-        audiotrack: file,
-        modified: null,
+        track_id: op === 'new' ? uuidv4() : file.track_id,
+        root: findRoot(op === 'new' ? file : file.audiotrack),
+        audiotrack: op === 'new' ? file : file.audiotrack,
+        modified: fileStats.mtimeMs || null,
         like: 0,
         error: error.toString(),
         albumArtists: null,

@@ -11,6 +11,7 @@ import {
 } from '../constant/constants.js';
 import { workerData } from 'worker_threads';
 import createWorker from './databaseWorker?nodeWorker';
+import workerTrigger from './wokerTrigger.js';
 import { getFiles, insertFiles, deleteFiles } from './sql.js';
 
 const difference = (setA, setB) => {
@@ -33,11 +34,11 @@ const triggerInsert = (parsed) => {
   return new Promise((resolve, reject) => {
     createWorker({ workerData: { id: 'insertFiles', functionName: 'insertFiles', params: parsed } })
       .on('message', (message) => {
-        resolve(message); // Resolve the promise with the message from the worker
+        resolve(message);
       })
       .on('error', (err) => {
         console.error('Worker error:', err);
-        reject(err); // Reject the promise on error
+        reject(err);
       })
       .postMessage('');
   });
@@ -57,8 +58,8 @@ const compareDbRecords = async (files) => {
   /*  console.log(files.length); */
 
   if (newEntries.length > 0) {
-    await parseMeta(newEntries)
-      .then((parsed) => triggerInsert(parsed))
+    await parseMeta(newEntries, 'new')
+      .then((parsed) => workerTrigger(parsed, 'insertFiles'))
       .then((message) => {
         if (message) {
           status.new = newEntries.length; // Update status only if the insertion was successful

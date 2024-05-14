@@ -330,7 +330,7 @@ ipcMain.handle('update-files', async () => {
 ipcMain.handle('update-meta', async () => {
   const result = await initUpdateMetadata();
   /* processUpdateResult('meta', result); */
-  console.log('meta result: ', result);
+  /* console.log('meta result: ', result); */
   return result;
 });
 

@@ -239,7 +239,7 @@ const refreshMetadata = (tracks) => {
     const updateStmt = db.prepare(`
       UPDATE "audio-tracks" SET 
         root = @root,
-        modified = @modified
+        modified = @modified,
         like = @like,
         error = @error,
         albumArtists = @albumArtists,
@@ -274,13 +274,14 @@ const refreshMetadata = (tracks) => {
         track = @track,
         trackCount = @trackCount,
         year = @year
-      
       WHERE 
-d        audiotrack = @audiotrack
+        audiotrack = @audiotrack
       `);
 
     for (const track of tracks) {
-      updateStmt.run({
+      const info = updateStmt.run({
+        track_id: track.track_id,
+        audiotrack: track.audiotrack,
         root: track.root,
         modified: track.modified,
         like: track.like,
@@ -318,6 +319,7 @@ d        audiotrack = @audiotrack
         trackCount: track.trackCount,
         year: track.year
       });
+      console.log('update info: ', info);
     }
   });
   try {
@@ -326,6 +328,24 @@ d        audiotrack = @audiotrack
     return 'Records updated successfully!';
   } catch (error) {
     console.error('Error updating records:', error);
+    throw new Error(error);
+  }
+};
+
+const checkRecordsExist = (tracks) => {
+  for (const track of tracks) {
+    const record = db
+      .prepare(
+        `
+      SELECT * FROM "audio-tracks"
+      WHERE audiotrack = @audiotrack AND track_id = @track_id
+    `
+      )
+      .get({
+        audiotrack: track.audiotrack,
+        track_id: track.track_id
+      });
+    console.log('Record:', record);
   }
 };
 
@@ -553,7 +573,8 @@ export {
   getAllTracks,
   /*   getMissingCovers, */
   allTracks,
-  refreshMetadata
+  refreshMetadata,
+  checkRecordsExist
 };
 
 /*

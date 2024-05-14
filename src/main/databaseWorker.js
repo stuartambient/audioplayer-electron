@@ -1,8 +1,9 @@
 import { parentPort, workerData } from 'worker_threads';
-import { insertFiles } from './sql.js';
+import { insertFiles, refreshMetadata } from './sql.js';
 
 const functions = {
-  insertFiles // Ensure this function can handle an array of objects as input
+  insertFiles,
+  refreshMetadata // Ensure this function can handle an array of objects as input
 };
 
 /* console.log(workerData); */
