@@ -68,29 +68,6 @@ const writeFile = async (data, filename) => {
   }
 };
 
-const updateMeta = async (files) => {
-  const updatedMetadata = [];
-  for await (const file of files) {
-    let stats = await fs.promises.stat(file.audiofile);
-    let modified = stats.mtimeMs;
-    const metadata = await parseFile(file.audiofile);
-    let { year, title, artist, album, genre, picture } = metadata.common;
-    const { lossless, bitrate, sampleRate } = metadata.format;
-    updatedMetadata.push({
-      afid: file.afid,
-      audiofile: file.audiofile,
-      modified,
-      year,
-      title,
-      artist,
-      album,
-      genre: genre ? (genre = genre.join(',')) : null,
-      picture: picture ? 1 : null
-    });
-  }
-  return updatedMetadata;
-};
-
 const findRoot = (file) => {
   for (const root of roots) {
     if (file.startsWith(root)) {
@@ -213,4 +190,4 @@ const parseMeta = async (files, op) => {
   return filesMetadata;
 };
 
-export { parseMeta, writeFile, updateMeta, convertToUTC };
+export { parseMeta, writeFile, convertToUTC };

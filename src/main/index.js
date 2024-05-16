@@ -27,7 +27,7 @@ import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { writeFile, updateMeta, convertToUTC } from './utility';
+import { writeFile, convertToUTC } from './utility';
 /* import Database from 'better-sqlite3'; */
 import createWorker from './databaseWorker?nodeWorker';
 import {

@@ -172,12 +172,21 @@ const AGGrid = ({ data }) => {
     console.log('save');
   };
 
-  const autoSize = useCallback((skipHeader) => {
+  /*   const autoSize = useCallback((skipHeader) => {
     const allColumnIds = [];
     gridRef.current.columnApi.getColumns().forEach((column) => {
       allColumnIds.push(column.getId());
     });
     gridRef.current.columnApi.autoSizeColumns(allColumnIds, skipHeader);
+  }, []); */
+
+  const autoSize = useCallback((skipHeader = false) => {
+    if (gridRef.current) {
+      const allColumnIds = gridRef.current.columnApi
+        .getAllColumns()
+        .map((column) => column.getColId());
+      gridRef.current.columnApi.autoSizeColumns(allColumnIds, skipHeader);
+    }
   }, []);
 
   const sizeToFit = useCallback(() => {
@@ -253,7 +262,9 @@ const AGGrid = ({ data }) => {
   const defaultColDef = useMemo(() => ({
     resizable: true,
     sortable: true,
-    editable: true
+    editable: true,
+    autoSize: true,
+    autoSizeAllColumns: true
     /* enableCellChangeFlash: true */
   }));
 
@@ -268,7 +279,7 @@ const AGGrid = ({ data }) => {
       },
       { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false },
       {
-        field: 'audiofile',
+        field: 'audiotrack',
         filter: true,
         hide: false,
         editable: false,
@@ -292,13 +303,44 @@ const AGGrid = ({ data }) => {
         }
       },
       { field: 'title', filter: true, hide: false },
-      { field: 'artist', filter: true, hide: false },
+      { field: 'performers', filter: true, hide: false },
       { field: 'album', filter: true, hide: false },
       {
         field: 'genre',
         filter: true,
         hide: false
-      }
+      },
+      { field: 'like', filter: true, hide: false },
+      { field: 'error', filter: true, hide: false },
+      { field: 'albumArtists', filter: true, hide: false },
+      { field: 'audioBitrate', filter: true, editable: false, hide: false },
+      { field: 'audioSamplerate', filter: true, editable: false, hide: false },
+      { field: 'codecs', filter: true, editable: false, hide: false },
+      { field: 'bpm' },
+      { field: 'composers' },
+      { field: 'conductor' },
+      { field: 'copyright' },
+      { field: 'comment' },
+      { field: 'disc' },
+      { field: 'discCount' },
+      { field: 'description' },
+      { field: 'duration' },
+      { field: 'isCompilation' },
+      { field: 'isrc' },
+      { field: 'lyrics' },
+      { field: 'performersRole' },
+      { field: 'pictures' },
+      { field: 'publisher' },
+      { field: 'remixedBy' },
+      { field: 'replayGainAlbumGain' },
+      { field: 'replayGainAlbumPeak' },
+      { field: 'replayGainTrackGain' },
+      { field: 'replayGainTrackPeak' },
+      { field: 'title' },
+      { field: 'track' },
+      { field: 'trackCount' },
+      { field: 'year' }
+
       /*     {
         field: 'Icon',
         cellRenderer: (params) => <CiPlay1 />,
@@ -345,6 +387,7 @@ const AGGrid = ({ data }) => {
           rowSelection="multiple" // Options - allows click selection of rows
           /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
           //enableRangeSelection={true}
+          autoSizeStrategy="fitCellContents"
           headerHeight={25}
           rowMultiSelectWithClick={true}
           onCellValueChanged={handleCellValueChanged}

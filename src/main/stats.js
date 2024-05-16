@@ -19,9 +19,7 @@ const topHundredArtists = () => {
 };
 
 const allTracksByArtist = (artist) => {
-  const stmt = db.prepare(
-    `SELECT track_id, audiotrack, year, title, performers, album, genre FROM "audio-tracks" WHERE performers = ?`
-  );
+  const stmt = db.prepare(`SELECT * FROM "audio-tracks" WHERE performers = ?`);
   const result = stmt.all(artist);
   return result;
 };
@@ -30,11 +28,11 @@ const allTracksByGenre = (genre) => {
   let query, params;
   if (genre === 'No Genre Specified') {
     // Query to handle special category
-    query = `SELECT track_id, audiotrack, year, title, performers, album, genre FROM "audio-tracks" WHERE genre IS NULL OR genre = '' OR genre = ' '`;
+    query = `SELECT * FROM "audio-tracks" WHERE genre IS NULL OR genre = '' OR genre = ' '`;
     params = [];
   } else {
     // Standard query for specific genres
-    query = `SELECT track_id, audiotrack, year, title, performers, album, genre FROM "audio-tracks" WHERE genre = ?`;
+    query = `SELECT * FROM "audio-tracks" WHERE genre = ?`;
     params = [genre];
   }
   const stmt = db.prepare(query);
@@ -44,9 +42,7 @@ const allTracksByGenre = (genre) => {
 
 const allTracksByRoot = (root) => {
   // Corrected SQL query string and removed the extra `}`
-  const stmt = db.prepare(
-    `SELECT track_id, audiotrack, year, title, performers, album, genre FROM tracks WHERE root = ?`
-  );
+  const stmt = db.prepare(`SELECT * FROM "audio-tracks" WHERE root = ?`);
   // Execute the prepared statement with `root` as the parameter
   const result = stmt.all(root);
   return result;

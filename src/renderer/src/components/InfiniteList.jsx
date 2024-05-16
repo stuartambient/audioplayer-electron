@@ -350,7 +350,7 @@ const InfiniteList = memo(() => {
         audiofile={item.audiotrack}
         val={index}
         artist={item.performers ? item.performers : 'not available'}
-        title={item.title ? item.title : item.audiofile}
+        title={item.title ? item.title : item.audiotrack}
         album={item.album ? item.album : 'not available'}
         genre={item.genre ? item.genre : 'not available'}
         codecs={item.codecs ? item.codecs : 'not available'}
