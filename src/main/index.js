@@ -28,6 +28,7 @@ import transformTags from './transformTags.js';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC } from './utility';
+import db from './connection.js';
 /* import Database from 'better-sqlite3'; */
 import createWorker from './databaseWorker?nodeWorker';
 import {
@@ -66,6 +67,7 @@ import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
 import initUpdateMetadata from './updateMetadata';
+import checkDataTypes from './checkDataTypes.js';
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'streaming',
@@ -178,6 +180,20 @@ let primaryDisplay;
 
 app.whenReady().then(async () => {
   await session.defaultSession.loadExtension(reactDevToolsPath);
+
+  /*  const scriptPath = path.join(__dirname, 'checkDataTypes.js'); */
+  console.log('__dirname: ', __dirname);
+  /*   db.execFile('node', [scriptPath], (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing script: ${error}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Script stderr: ${stderr}`);
+      return;
+    }
+    console.log(`Script output:\n${stdout}`);
+  }); */
 });
 /* 
 app.on('ready', async () => { */

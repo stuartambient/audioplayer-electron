@@ -10,6 +10,44 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
     setIsPanelVisible(!isPanelVisible);
   };
 
+  const fields = [
+    { name: 'audiotrack', label: 'audiotrack', defaultChecked: true },
+    { name: 'year', label: 'year', defaultChecked: true },
+    { name: 'title', label: 'title', defaultChecked: true },
+    { name: 'performers', label: 'performers', defaultChecked: true },
+    { name: 'album', label: 'album', defaultChecked: true },
+    { name: 'genre', label: 'genre', defaultChecked: true },
+    { name: 'like', label: 'like', defaultChecked: true },
+    { name: 'error', label: 'error', defaultChecked: true },
+    { name: 'albumArtists', label: 'albumArtists', defaultChecked: true },
+    { name: 'audioBitrate', label: 'audioBitrate', defaultChecked: true },
+    { name: 'audioSamplerate', label: 'audioSamplerate', defaultChecked: true },
+    { name: 'codecs', label: 'codecs', defaultChecked: true },
+    { name: 'bpm', label: 'bpm', defaultChecked: true },
+    { name: 'composers', label: 'composers', defaultChecked: true },
+    { name: 'conductor', label: 'conductor', defaultChecked: true },
+    { name: 'copyright', label: 'copyright', defaultChecked: true },
+    { name: 'comment', label: 'comment', defaultChecked: true },
+    { name: 'disc', label: 'disc', defaultChecked: true },
+    { name: 'discCount', label: 'discCount', defaultChecked: true },
+    { name: 'description', label: 'description', defaultChecked: true },
+    { name: 'duration', label: 'duration', defaultChecked: true },
+    { name: 'isCompilation', label: 'isCompilation', defaultChecked: true },
+    { name: 'isrc', label: 'isrc', defaultChecked: true },
+    { name: 'lyrics', label: 'lyrics', defaultChecked: true },
+    { name: 'performersRole', label: 'performersRole', defaultChecked: true },
+    { name: 'pictures', label: 'pictures', defaultChecked: true },
+    { name: 'publisher', label: 'publisher', defaultChecked: true },
+    { name: 'remixedBy', label: 'remixedBy', defaultChecked: true },
+    { name: 'replayGainAlbumGain', label: 'replayGainAlbumGain', defaultChecked: true },
+    { name: 'replayGainAlbumPeak', label: 'replayGainAlbumPeak', defaultChecked: true },
+    { name: 'replayGainTrackGain', label: 'replayGainTrackGain', defaultChecked: true },
+    { name: 'replayGainTrackPeak', label: 'replayGainTrackPeak', defaultChecked: true },
+    { name: 'track', label: 'track', defaultChecked: true },
+    { name: 'trackCount', label: 'trackCount', defaultChecked: true },
+    { name: 'year', label: 'year', defaultChecked: true }
+  ];
+
   return (
     <>
       <button className="hamburger-btn" onClick={togglePanelVisibility}>
@@ -19,16 +57,29 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
       </button>
       <div className={`column-panel ${isPanelVisible ? '' : 'hidden'}`}>
         <fieldset /* style={{ display: 'flex' }} */>
-          <div>
+          {fields.map((field) => (
+            <div key={field.name}>
+              <input
+                type="checkbox"
+                name={field.name}
+                id={field.name}
+                defaultChecked={field.defaultChecked}
+                onChange={onChange}
+                value={true}
+              />
+              <label htmlFor={field.name}>{field.label}</label>
+            </div>
+          ))}
+          {/* <div>
             <input
               type="checkbox"
-              name="audiofile"
-              id="audiofile"
+              name="audiotrack"
+              id="audiotrack"
               onChange={onChange}
               defaultChecked
               value={true}
             />
-            <label htmlFor="">file</label>
+            <label htmlFor="">audiotrack</label>
           </div>
           <div>
             <input
@@ -84,7 +135,7 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
               value={true}
             />
             <label htmlFor="">genre</label>
-          </div>
+          </div> */}
           <div>
             <button id="auto-size-all" className="auto-size-all" onClick={onClick}>
               Auto Size All
