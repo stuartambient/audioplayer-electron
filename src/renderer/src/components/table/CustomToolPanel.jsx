@@ -1,10 +1,15 @@
 import { useState } from 'react';
 import EditForm from './EditForm';
+import Modal from '../Modal';
 import './styles/CustomToolPanel.css';
 
 const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
   const [onForm, setOnForm] = useState(false);
   const [isPanelVisible, setIsPanelVisible] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const togglePanelVisibility = () => {
     setIsPanelVisible(!isPanelVisible);
@@ -12,7 +17,6 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
 
   const fields = [
     { name: 'audiotrack', label: 'audiotrack', defaultChecked: true },
-    { name: 'year', label: 'year', defaultChecked: true },
     { name: 'title', label: 'title', defaultChecked: true },
     { name: 'performers', label: 'performers', defaultChecked: true },
     { name: 'album', label: 'album', defaultChecked: true },
@@ -55,9 +59,17 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
         <span></span>
         <span></span>
       </button>
+      <button onClick={openModal}>Open Settings</button>
       <div className={`column-panel ${isPanelVisible ? '' : 'hidden'}`}>
         <fieldset /* style={{ display: 'flex' }} */>
-          {fields.map((field) => (
+          <Modal
+            fields={fields}
+            openModal={openModal}
+            closeModal={closeModal}
+            isModalOpen={isModalOpen}
+            onChange={onChange}
+          />
+          {/* {fields.map((field) => (
             <div key={field.name}>
               <input
                 type="checkbox"
@@ -69,73 +81,7 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
               />
               <label htmlFor={field.name}>{field.label}</label>
             </div>
-          ))}
-          {/* <div>
-            <input
-              type="checkbox"
-              name="audiotrack"
-              id="audiotrack"
-              onChange={onChange}
-              defaultChecked
-              value={true}
-            />
-            <label htmlFor="">audiotrack</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              name="year"
-              id="year"
-              defaultChecked
-              onChange={onChange}
-              value={true}
-            />
-            <label htmlFor="">year</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              name="title"
-              id="title"
-              defaultChecked
-              onChange={onChange}
-              value={true}
-            />
-            <label htmlFor="">title</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              name="artist"
-              id="artist"
-              defaultChecked
-              onChange={onChange}
-              value={true}
-            />
-            <label htmlFor="">artist</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              name="album"
-              id="album"
-              defaultChecked
-              onChange={onChange}
-              value={true}
-            />
-            <label htmlFor="">album</label>
-          </div>
-          <div>
-            <input
-              type="checkbox"
-              name="genre"
-              id="genre"
-              defaultChecked
-              onChange={onChange}
-              value={true}
-            />
-            <label htmlFor="">genre</label>
-          </div> */}
+          ))} */}
           <div>
             <button id="auto-size-all" className="auto-size-all" onClick={onClick}>
               Auto Size All

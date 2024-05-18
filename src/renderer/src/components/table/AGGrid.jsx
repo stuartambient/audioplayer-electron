@@ -72,7 +72,7 @@ const AGGrid = ({ data }) => {
         const change = {
           rowId: node.id, // Ensure this is how you access the ID correctly
           field: event.colDef.field,
-          file: event.data.audiofile,
+          file: event.data.audiotrack,
           newValue: event.newValue,
           oldValue: event.oldValue
         };
@@ -211,7 +211,7 @@ const AGGrid = ({ data }) => {
         const updatesByRow = undos.reduce((acc, undo) => {
           if (!acc[undo.rowId]) {
             acc[undo.rowId] = {
-              id: originalData[undo.rowId].audiofile,
+              id: originalData[undo.rowId].track_id,
               changes: {}
             };
           }
@@ -339,7 +339,8 @@ const AGGrid = ({ data }) => {
       { field: 'title', filter: true },
       { field: 'track' },
       { field: 'trackCount' },
-      { field: 'year' }
+      { field: 'year' },
+      { field: 'created_datetime' }
 
       /*     {
         field: 'Icon',

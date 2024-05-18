@@ -59,7 +59,12 @@ function EditForm({ onUpdate, nodesSelected }) {
     <form onSubmit={handleSubmit}>
       <input name="year" value={formData.year} onChange={handleChange} placeholder="Year" />
       <input name="title" value={formData.title} onChange={handleChange} placeholder="Title" />
-      <input name="artist" value={formData.artist} onChange={handleChange} placeholder="Artist" />
+      <input
+        name="performers"
+        value={formData.performers}
+        onChange={handleChange}
+        placeholder="Performers (Artist)"
+      />
       <input name="album" value={formData.album} onChange={handleChange} placeholder="Album" />
       <input name="genre" value={formData.genre} onChange={handleChange} placeholder="Genre" />
       <button type="submit">Update Selected Rows</button>
