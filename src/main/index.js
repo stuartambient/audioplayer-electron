@@ -57,7 +57,7 @@ import {
   genresWithCount,
   nullMetadata,
   allTracksByArtist,
-  allTracksByGenre,
+  allTracksByGenres,
   distinctDirectories,
   foldersWithCount,
   allTracksByRoot,
@@ -68,6 +68,7 @@ import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
 import initUpdateMetadata from './updateMetadata';
 import checkDataTypes from './checkDataTypes.js';
+import { Genres } from '../renderer/src/components/StatsComponents.jsx';
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'streaming',
@@ -536,9 +537,9 @@ ipcMain.handle('distinct-directories', async () => {
   }
 });
 
-ipcMain.handle('get-tracks-by-genre', async (_, arg) => {
+ipcMain.handle('get-tracks-by-genres', async (_, arg) => {
   try {
-    const tracks = await allTracksByGenre(arg);
+    const tracks = await allTracksByGenres(arg);
     return tracks;
   } catch (err) {
     console.error(err.message);
@@ -705,39 +706,46 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 });
 
 const tagKeys = {
-  albumArtists:,
-  album:,
-  bpm:,
-  composers:,
-  conductor:,
-  comment:,
-  disc:,
-  discCount:,
-  description:,
-  genre:,
-  isCompilation:,
-  isrc:,
-  lyrics:,
-  performers:,
-  performersRole:,
-  pictures:,
-  publisher:,
-  remixedBy:,
-  replayGainAlbumGain:,
-  replayGainAlbumPeak:,
-  replayGainTrackGain:,
-  replayGainTrackPeak:,
-  title:,
-  track:,
-  trackCount:,
-  year:
+  albumArtists: (param) => param.split(', '),
+  album: (param) => param.trim(),
+  bpm: (param) => Number(param.trim()),
+  composers: (param) => param.split(', '),
+  conductor: (param) => param.trim(),
+  comment: (param) => param.trim(),
+  disc: (param) => Number(param.trim()),
+  discCount: (param) => Number(param.trim()),
+  description: (param) => param.trim(),
+  genres: (param) => param.split(', '),
+  isCompilation: (param) => (param === 1 ? 1 : 0),
+  isrc: (param) => param.trim(),
+  lyrics: (param) => param.trim(),
+  performers: (param) => param.split(', '),
+  performersRole: (param) => param.split(', '),
+  pictures: 'binary',
+  publisher: (param) => param.trim(),
+  remixedBy: (param) => param.trim(),
+  replayGainAlbumGain: (param) => Number(param.trim()),
+  replayGainAlbumPeak: (param) => Number(param.trim()),
+  replayGainTrackGain: (param) => Number(param.trim()),
+  replayGainTrackPeak: (param) => Number(param.trim()),
+  title: (param) => param.trim(),
+  track: (param) => Number(param.trim()),
+  trackCount: (param) => Number(param.trim()),
+  year: (param) => Number(param.trim())
 };
 
 ipcMain.handle('update-tags', async (_, arr) => {
   arr.forEach((a) => {
-    console.log(a.id);
+    const myFile = File.createFromPath(a.id);
     for (const [key, value] of Object.entries(a.updates)) {
-      console.log(key, '-------', value);
+      /* console.log(key, '---', tagKeys[key], '-------', value); */
+      console.log(key);
+      console.log('value: ', value);
+      const t = tagKeys[key](value);
+      console.log('t: ', t);
+      console.log(myFile.tag[key]);
+      myFile.tag[key] = t;
+      myFile.save();
     }
   });
 });

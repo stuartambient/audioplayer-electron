@@ -65,8 +65,8 @@ export const Genres = () => {
   const [genres, setGenres] = useState([]);
   useGenres(setGenres);
   const getGenres = async (e) => {
-    const genre = e.target.id;
-    const results = await window.api.getTracksByGenre(genre);
+    const genres = e.target.id;
+    const results = await window.api.getTracksByGenres(genres);
     if (results) {
       openChildWindow(
         'table-data',

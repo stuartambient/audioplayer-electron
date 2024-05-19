@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS "audio-tracks" (
     discCount,
     description,
     duration,
-    genre,
+    genres,
     isCompilation,
     isrc,
     lyrics,
@@ -96,7 +96,7 @@ const insertFiles = (files) => {
              discCount,
              description,
              duration,
-             genre,
+             genres,
              isCompilation,
              isrc,
              lyrics,
@@ -134,7 +134,7 @@ VALUES      (@track_id,
              @discCount,
              @description,
              @duration,
-             @genre,
+             @genres,
              @isCompilation,
              @isrc,
              @lyrics,
@@ -257,7 +257,7 @@ const refreshMetadata = (tracks) => {
         discCount = @discCount,
         description = @description,
         duration = @duration,
-        genre = @genre,
+        genres = @genres,
         isCompilation = @isCompilation,
         isrc = @isrc,
         lyrics = @lyrics,
@@ -301,7 +301,7 @@ const refreshMetadata = (tracks) => {
         discCount: track.discCount,
         description: track.description,
         duration: track.duration,
-        genre: track.genre,
+        genres: track.genres,
         isCompilation: track.isCompilation,
         isrc: track.isrc,
         lyrics: track.lyrics,
@@ -402,8 +402,8 @@ const allTracksByScroll = (offsetNum, sort) => {
     case 'title':
       query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET $offset`;
       break;
-    case 'genre':
-      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(genre)) DESC LIMIT 50 OFFSET $offset`;
+    case 'genres':
+      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(genres)) DESC LIMIT 50 OFFSET $offset`;
       break;
     default:
       return;
@@ -429,8 +429,8 @@ const allTracksBySearchTerm = (offsetNum, text, sort) => {
       query = `SELECT * FROM "audio-tracks" WHERE title LIKE ? ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET ?`;
       params = [term, offsetNum * 50];
       break;
-    case 'genre':
-      query = `SELECT * FROM "audio-tracks" WHERE genre LIKE ? ORDER BY unaccent(lower(genre)) DESC LIMIT 50 OFFSET ?`;
+    case 'genres':
+      query = `SELECT * FROM "audio-tracks" WHERE genres LIKE ? ORDER BY unaccent(lower(genres)) DESC LIMIT 50 OFFSET ?`;
       params = [term, offsetNum * 50];
       break;
     default:

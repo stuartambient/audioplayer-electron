@@ -55,7 +55,7 @@ contextBridge.exposeInMainWorld('api', {
   foldersStat: (dirs) => ipcRenderer.invoke('folders-stat', dirs),
   distinctDirectories: () => ipcRenderer.invoke('distinct-directories'),
   getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
-  getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
+  getTracksByGenres: (genres) => ipcRenderer.invoke('get-tracks-by-genres', genres),
   getTracksByRoot: (root) => ipcRenderer.invoke('get-tracks-by-root', root),
   /* getAlbumsByTopFolder: (folder) => ipcRenderer.invoke('get-albums-by-top-folder', folder), */
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),

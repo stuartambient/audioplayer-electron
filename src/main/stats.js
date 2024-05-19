@@ -24,16 +24,16 @@ const allTracksByArtist = (artist) => {
   return result;
 };
 
-const allTracksByGenre = (genre) => {
+const allTracksByGenres = (genres) => {
   let query, params;
-  if (genre === 'No Genre Specified') {
+  if (genres === 'No Genres Specified') {
     // Query to handle special category
-    query = `SELECT * FROM "audio-tracks" WHERE genre IS NULL OR genre = '' OR genre = ' '`;
+    query = `SELECT * FROM "audio-tracks" WHERE genres IS NULL OR genres = '' OR genres = ' '`;
     params = [];
   } else {
     // Standard query for specific genres
-    query = `SELECT * FROM "audio-tracks" WHERE genre = ?`;
-    params = [genre];
+    query = `SELECT * FROM "audio-tracks" WHERE genres = ?`;
+    params = [genres];
   }
   const stmt = db.prepare(query);
   const result = stmt.all(...params);
@@ -65,15 +65,15 @@ const genresWithCount = () => {
     `
     SELECT 
       CASE 
-        WHEN genre IS NULL OR genre = '' OR genre = ' ' THEN 'No Genre Specified' 
-        ELSE genre 
+        WHEN genres IS NULL OR genres = '' OR genres = ' ' THEN 'No Genres Specified' 
+        ELSE genres 
       END as genre_display,
       COUNT(*) as count 
     FROM "audio-tracks" 
     GROUP BY genre_display 
     ORDER BY 
       CASE 
-        WHEN genre_display = 'No Genre Specified' THEN 1 
+        WHEN genre_display = 'No Genres Specified' THEN 1 
         ELSE 2 
       END, lower(genre_display)
   `
@@ -123,7 +123,7 @@ export {
   foldersWithCount,
   nullMetadata,
   allTracksByArtist,
-  allTracksByGenre,
+  allTracksByGenres,
   allTracksByRoot,
   distinctDirectories,
   albumsByTopFolder

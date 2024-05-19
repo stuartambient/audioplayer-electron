@@ -20,7 +20,7 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
     { name: 'title', label: 'title', defaultChecked: true },
     { name: 'performers', label: 'performers', defaultChecked: true },
     { name: 'album', label: 'album', defaultChecked: true },
-    { name: 'genre', label: 'genre', defaultChecked: true },
+    { name: 'genres', label: 'genres', defaultChecked: true },
     { name: 'like', label: 'like', defaultChecked: true },
     { name: 'error', label: 'error', defaultChecked: true },
     { name: 'albumArtists', label: 'albumArtists', defaultChecked: true },

@@ -172,6 +172,10 @@ const AGGrid = ({ data }) => {
     console.log('save');
   };
 
+  const booleanCellRenderer = (params) => {
+    return <span>{params.value === 1 ? 'true' : 'false'}</span>;
+  };
+
   /*   const autoSize = useCallback((skipHeader) => {
     const allColumnIds = [];
     gridRef.current.columnApi.getColumns().forEach((column) => {
@@ -211,7 +215,7 @@ const AGGrid = ({ data }) => {
         const updatesByRow = undos.reduce((acc, undo) => {
           if (!acc[undo.rowId]) {
             acc[undo.rowId] = {
-              id: originalData[undo.rowId].track_id,
+              id: originalData[undo.rowId].audiotrack,
               changes: {}
             };
           }
@@ -306,11 +310,16 @@ const AGGrid = ({ data }) => {
       { field: 'performers', filter: true, hide: false },
       { field: 'album', filter: true, hide: false },
       {
-        field: 'genre',
+        field: 'genres',
         filter: true,
         hide: false
       },
-      { field: 'like', filter: true, hide: false },
+      {
+        field: 'like',
+        filter: true,
+        hide: false,
+        cellRenderer: (params) => <span>{params.value === 1 ? 'true' : 'false'}</span>
+      },
       { field: 'error', filter: true, hide: false },
       { field: 'albumArtists', filter: true, hide: false },
       { field: 'audioBitrate', filter: true, editable: false, hide: false },
@@ -325,11 +334,27 @@ const AGGrid = ({ data }) => {
       { field: 'discCount' },
       { field: 'description' },
       { field: 'duration', editable: false },
-      { field: 'isCompilation' },
+      {
+        field: 'isCompilation',
+        cellRenderer: (params) => <span>{params.value === 1 ? 'true' : 'false'}</span>,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+          values: ['true', 'false']
+        },
+        /* valueFormatter: (params) => {
+          return params.value === 1 ? 'true' : 'false';
+        }, */
+        valueParser: (params) => {
+          return params.newValue === 'true' ? 1 : 0;
+        }
+      },
       { field: 'isrc' },
       { field: 'lyrics' },
       { field: 'performersRole' },
-      { field: 'pictures' },
+      {
+        field: 'pictures',
+        cellRenderer: (params) => <span>{params.value === 1 ? 'true' : 'false'}</span>
+      },
       { field: 'publisher' },
       { field: 'remixedBy' },
       { field: 'replayGainAlbumGain' },
@@ -395,6 +420,7 @@ const AGGrid = ({ data }) => {
           undoRedoCellEditing={false}
           rowDragManaged={true}
           rowDragMultiRow={true}
+          /*     frameworkComponents={{ booleanCellRenderer: BooleanCellRenderer }} */
         />
       </div>
       {/*       {isRowsSelected.current && isRowsSelected.current.length > 0 && (

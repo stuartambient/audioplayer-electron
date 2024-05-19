@@ -6,7 +6,7 @@ function EditForm({ onUpdate, nodesSelected }) {
     title: '',
     artist: '',
     album: '',
-    genre: ''
+    genres: ''
   });
 
   // Populate form data when selectedRowData changes
@@ -66,7 +66,7 @@ function EditForm({ onUpdate, nodesSelected }) {
         placeholder="Performers (Artist)"
       />
       <input name="album" value={formData.album} onChange={handleChange} placeholder="Album" />
-      <input name="genre" value={formData.genre} onChange={handleChange} placeholder="Genre" />
+      <input name="genres" value={formData.genres} onChange={handleChange} placeholder="Genres" />
       <button type="submit">Update Selected Rows</button>
     </form>
   );
