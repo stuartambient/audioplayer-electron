@@ -58,21 +58,27 @@ const AGGrid = ({ data }) => {
 
   const handleMultiRowUpdate = (edits) => {
     edits.forEach((edit) => {
+      console.log('edit: ', edit);
       const rowNode = gridRef.current.api.getRowNode(edit.rowId);
       rowNode.setDataValue(edit.field, edit.newValue);
     });
-    /* setUndos((prevUndos) => [...prevUndos, ...change]); */
   };
 
   const handleCellValueChanged = useCallback(
     (event) => {
       if (!isUndoAction && !isRedoAction) {
         const { api, node, colDef, newValue } = event;
-        console.log('event: ', event);
+        console.log(
+          'event: ',
+          event.colDef.field,
+          event.data.audiotrack,
+          event.newValue,
+          event.oldValue
+        );
         const change = {
           rowId: node.id, // Ensure this is how you access the ID correctly
           field: event.colDef.field,
-          file: event.data.audiotrack,
+          audiotrack: event.data.audiotrack,
           newValue: event.newValue,
           oldValue: event.oldValue
         };
@@ -123,7 +129,7 @@ const AGGrid = ({ data }) => {
       {
         rowId: lastEdit.rowId,
         field: lastEdit.field,
-        file: lastEdit.audiofile,
+        audiotrack: lastEdit.audiotrack,
         oldValue: gridRef.current.api.getValue(
           lastEdit.field,
           gridRef.current.api.getRowNode(lastEdit.rowId)
@@ -150,7 +156,7 @@ const AGGrid = ({ data }) => {
       {
         rowId: lastRedo.rowId,
         field: lastRedo.field,
-        file: lastRedo.audiofile,
+        audiotrack: lastRedo.audiotrack,
         oldValue: gridRef.current.api.getValue(
           lastRedo.field,
           gridRef.current.api.getRowNode(lastRedo.rowId)
@@ -261,7 +267,7 @@ const AGGrid = ({ data }) => {
     }
   };
 
-  const getRowId = useMemo(() => (params) => params.data.afid, []);
+  const getRowId = useMemo(() => (params) => params.data.audiotrack, []);
 
   const defaultColDef = useMemo(() => ({
     resizable: true,
@@ -309,16 +315,25 @@ const AGGrid = ({ data }) => {
       { field: 'title', filter: true, hide: false },
       { field: 'performers', filter: true, hide: false },
       { field: 'album', filter: true, hide: false },
-      {
-        field: 'genres',
-        filter: true,
-        hide: false
-      },
+      { field: 'genres', filter: true, hide: false },
       {
         field: 'like',
-        filter: true,
-        hide: false,
-        cellRenderer: (params) => <span>{params.value === 1 ? 'true' : 'false'}</span>
+        cellRenderer: (params) => <span>{params.value ? 'true' : 'false'}</span>,
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+          values: ['true', 'false']
+        },
+        valueParser: (params) => {
+          return params.newValue === 'true';
+        },
+        valueSetter: (params) => {
+          params.data.like = params.newValue ? 1 : 0;
+          return true;
+        },
+        valueGetter: (params) => {
+          return params.data.like === 1;
+        },
+        editable: true
       },
       { field: 'error', filter: true, hide: false },
       { field: 'albumArtists', filter: true, hide: false },
@@ -336,17 +351,31 @@ const AGGrid = ({ data }) => {
       { field: 'duration', editable: false },
       {
         field: 'isCompilation',
-        cellRenderer: (params) => <span>{params.value === 1 ? 'true' : 'false'}</span>,
+        cellRenderer: (params) => {
+          console.log('Rendering value:', params.value);
+          return <span>{params.value === 1 ? 'true' : 'false'}</span>;
+        },
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
           values: ['true', 'false']
         },
-        /* valueFormatter: (params) => {
-          return params.value === 1 ? 'true' : 'false';
-        }, */
         valueParser: (params) => {
+          console.log('Parsing new value:', params.newValue);
           return params.newValue === 'true' ? 1 : 0;
-        }
+        },
+        valueSetter: (params) => {
+          console.log('Setting new value:', params.newValue);
+          if (params.newValue === 'true' || params.newValue === 'false') {
+            params.data.isCompilation = params.newValue === 'true' ? 1 : 0;
+            return true;
+          }
+          return false;
+        },
+        valueGetter: (params) => {
+          console.log('Getting value for rendering:', params.data.isCompilation);
+          return params.data.isCompilation;
+        },
+        editable: true
       },
       { field: 'isrc' },
       { field: 'lyrics' },

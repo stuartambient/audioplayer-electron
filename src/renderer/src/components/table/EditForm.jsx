@@ -25,6 +25,7 @@ function EditForm({ onUpdate, nodesSelected }) {
 
   // Utility function to convert data types based on the field name
   function convertToCorrectType(key, value) {
+    console.log('key: ', key, 'value: ', value);
     // Add more cases as necessary for other specific fields or types
     if (key === 'year') {
       return Number(value);
@@ -36,8 +37,6 @@ function EditForm({ onUpdate, nodesSelected }) {
     e.preventDefault();
     const multiRowChanges = [];
     nodesSelected.forEach((node) => {
-      //console.log(node.id, node.data); // Assuming you always want to print this regardless
-
       Object.keys(formData).forEach((key) => {
         if (formData[key]) {
           const newValue = convertToCorrectType(key, formData[key]);

@@ -708,15 +708,16 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 const tagKeys = {
   albumArtists: (param) => param.split(', '),
   album: (param) => param.trim(),
-  bpm: (param) => Number(param.trim()),
+  bpm: (param) => Number(param),
   composers: (param) => param.split(', '),
   conductor: (param) => param.trim(),
   comment: (param) => param.trim(),
-  disc: (param) => Number(param.trim()),
-  discCount: (param) => Number(param.trim()),
+  disc: (param) => Number(param),
+  discCount: (param) => Number(param),
   description: (param) => param.trim(),
   genres: (param) => param.split(', '),
   isCompilation: (param) => (param === 1 ? 1 : 0),
+  like: (param) => (param === 1 ? 1 : 0),
   isrc: (param) => param.trim(),
   lyrics: (param) => param.trim(),
   performers: (param) => param.split(', '),
@@ -724,28 +725,28 @@ const tagKeys = {
   pictures: 'binary',
   publisher: (param) => param.trim(),
   remixedBy: (param) => param.trim(),
-  replayGainAlbumGain: (param) => Number(param.trim()),
-  replayGainAlbumPeak: (param) => Number(param.trim()),
-  replayGainTrackGain: (param) => Number(param.trim()),
-  replayGainTrackPeak: (param) => Number(param.trim()),
+  replayGainAlbumGain: (param) => Number(param),
+  replayGainAlbumPeak: (param) => Number(param),
+  replayGainTrackGain: (param) => Number(param),
+  replayGainTrackPeak: (param) => Number(param),
   title: (param) => param.trim(),
-  track: (param) => Number(param.trim()),
-  trackCount: (param) => Number(param.trim()),
-  year: (param) => Number(param.trim())
+  track: (param) => Number(param),
+  trackCount: (param) => Number(param),
+  year: (param) => Number(param)
 };
 
 ipcMain.handle('update-tags', async (_, arr) => {
   arr.forEach((a) => {
+    console.log('id: ', a.id);
     const myFile = File.createFromPath(a.id);
     for (const [key, value] of Object.entries(a.updates)) {
       /* console.log(key, '---', tagKeys[key], '-------', value); */
-      console.log(key);
-      console.log('value: ', value);
+
       const t = tagKeys[key](value);
-      console.log('t: ', t);
-      console.log(myFile.tag[key]);
-      myFile.tag[key] = t;
-      myFile.save();
+      console.log('key: ', key, 'value: ', value, 't: ', t, 'current: ', myFile.tag[key]);
+
+      /* myFile.tag[key] = t;
+      myFile.save(); */
     }
   });
 });
