@@ -56,25 +56,42 @@ const AGGrid = ({ data }) => {
     }
   };
 
-  const handleMultiRowUpdate = (edits) => {
-    edits.forEach((edit) => {
-      console.log('edit: ', edit);
-      const rowNode = gridRef.current.api.getRowNode(edit.rowId);
-      rowNode.setDataValue(edit.field, edit.newValue);
+  /*   const handleColumnPanel = (e) => {
+    const col = e.target.name;
+    const column = gridRef.current.columnApi.getColumn(col);
+    if (column) {
+      const newVisibility = !gridRef.current.columnApi
+        .getColumnState()
+        .find((colState) => colState.colId === col).hide;
+      gridRef.current.columnApi.setColumnVisible(column, newVisibility);
+      setFields((prevFields) =>
+        prevFields.map((field) =>
+          field.name === col ? { ...field, defaultChecked: newVisibility } : field
+        )
+      );
+    }
+  }; */
+
+  const handleMultiRowUpdate = (multiRowChanges) => {
+    multiRowChanges.forEach((edit) => {
+      // Iterate over all displayed rows
+      gridRef.current.api.forEachNodeAfterFilterAndSort((rowNode) => {
+        // Match the row using rowIndex
+        if (rowNode.rowIndex === edit.rowId) {
+          // Apply the edit
+          rowNode.setDataValue(edit.field, edit.newValue);
+        }
+      });
     });
+
+    // Optionally refresh the grid after updates to ensure it reflects the changes
+    gridRef.current.api.refreshCells({ force: true });
   };
 
   const handleCellValueChanged = useCallback(
     (event) => {
       if (!isUndoAction && !isRedoAction) {
         const { api, node, colDef, newValue } = event;
-        console.log(
-          'event: ',
-          event.colDef.field,
-          event.data.audiotrack,
-          event.newValue,
-          event.oldValue
-        );
         const change = {
           rowId: node.id, // Ensure this is how you access the ID correctly
           field: event.colDef.field,
@@ -386,10 +403,10 @@ const AGGrid = ({ data }) => {
       },
       { field: 'publisher' },
       { field: 'remixedBy' },
-      { field: 'replayGainAlbumGain' },
-      { field: 'replayGainAlbumPeak' },
-      { field: 'replayGainTrackGain' },
-      { field: 'replayGainTrackPeak' },
+      { field: 'replayGainAlbumGain', hide: true },
+      { field: 'replayGainAlbumPeak', hide: true },
+      { field: 'replayGainTrackGain', hide: true },
+      { field: 'replayGainTrackPeak', hide: true },
       { field: 'title', filter: true },
       { field: 'track' },
       { field: 'trackCount' },

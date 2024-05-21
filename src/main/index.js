@@ -539,6 +539,7 @@ ipcMain.handle('distinct-directories', async () => {
 
 ipcMain.handle('get-tracks-by-genres', async (_, arg) => {
   try {
+    console.log('once');
     const tracks = await allTracksByGenres(arg);
     return tracks;
   } catch (err) {
@@ -547,8 +548,13 @@ ipcMain.handle('get-tracks-by-genres', async (_, arg) => {
 });
 
 ipcMain.handle('get-tracks-by-root', async (event, root) => {
+  const start = Date.now();
+  console.log(`Query start: ${start}`);
   const rootTracks = await allTracksByRoot(root);
   /* console.log(rootTracks); */
+  const end = Date.now();
+  console.log(`Query end: ${end}`);
+  console.log(`Query duration: ${end - start}ms`);
   return rootTracks;
 });
 
@@ -737,6 +743,7 @@ const tagKeys = {
 
 ipcMain.handle('update-tags', async (_, arr) => {
   arr.forEach((a) => {
+    console.log('arr: ', arr);
     console.log('id: ', a.id);
     const myFile = File.createFromPath(a.id);
     for (const [key, value] of Object.entries(a.updates)) {
@@ -745,8 +752,8 @@ ipcMain.handle('update-tags', async (_, arr) => {
       const t = tagKeys[key](value);
       console.log('key: ', key, 'value: ', value, 't: ', t, 'current: ', myFile.tag[key]);
 
-      /* myFile.tag[key] = t;
-      myFile.save(); */
+      myFile.tag[key] = t;
+      myFile.save();
     }
   });
 });

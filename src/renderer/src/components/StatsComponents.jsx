@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { useTracksByRoot } from '../hooks/useDb';
+/* import { useTracksByRoot } from '../hooks/useDb'; */
 /* import { FixedSizeList as List } from 'react-window'; */
 import List from './List';
 import { openChildWindow } from './ChildWindows/openChildWindow';
@@ -113,7 +113,8 @@ export const AlbumsByRoot = ({ albums }) => {
   );
 };
 
-export const TracksByRoot = ({ root }) => {
+/* export const TracksByRoot = ({ root }) => {
+  console.log('tbr: ', root);
   const [tracks, setTracks] = useState([]);
   useTracksByRoot(root, setTracks);
 
@@ -135,5 +136,40 @@ export const TracksByRoot = ({ root }) => {
         tracks
       );
     }
-  }, [tracks]);
+  }, [root, tracks]);
+}; */
+
+export const TracksByRoot = ({ root }) => {
+  console.log('root: ', root);
+  const getTracks = async (root) => {
+    console.log('Fetching tracks for root: ', root);
+    try {
+      const results = await window.api.getTracksByRoot(root);
+      console.log('results length: ', results.length);
+      if (results) {
+        openChildWindow(
+          'table-data',
+          'root-tracks',
+          {
+            width: 1200,
+            height: 550,
+            show: false,
+            resizable: true,
+            preload: 'metadataEditing',
+            sandbox: false,
+            webSecurity: false,
+            contextIsolation: true
+          },
+          results
+        );
+      }
+    } catch (error) {
+      console.error('error: ', error);
+    }
+  };
+
+  if (root) {
+    getTracks(root);
+  }
+  return null;
 };

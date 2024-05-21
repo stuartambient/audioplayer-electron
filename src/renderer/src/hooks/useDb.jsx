@@ -228,21 +228,27 @@ const useGenres = (setGenres) => {
   /* return genres; */
 };
 
-const useTracksByRoot = (root, setTracks) => {
+/* const useTracksByRoot = (root, setTracks) => {
+  const start = Date.now();
+  console.log(`Fetch start: ${start}`);
   useEffect(() => {
     let isSubscribed = true;
-    const getTracksByRoot = async () => {
+    const tracksByRoot = async () => {
+      console.log('calling IPC');
       const results = await window.api.getTracksByRoot(root);
       if (results && isSubscribed) {
-        // Instead of setting the state here, call the callback with the results
+        const end = Date.now();
+        console.log(`Fetch end: ${end}`);
+        console.log(`Fetch duration: ${end - start}ms`);
         setTracks(results);
       }
     };
-
-    getTracksByRoot();
+    if (root) {
+      tracksByRoot();
+    }
     return () => (isSubscribed = false);
-  }, [root]); // Include onTracksFetched in the dependencies array
-};
+  }, [root, setTracks]); // Include onTracksFetched in the dependencies array
+}; */
 
 const useAllAlbumsCovers = (
   coversPageNumber,
@@ -403,6 +409,6 @@ export {
   usePlaylistDialog,
   useGetPlaylists,
   useAllAlbumsCovers,
-  useDistinctDirectories,
-  useTracksByRoot
+  useDistinctDirectories
+  /* useTracksByRoot */
 };

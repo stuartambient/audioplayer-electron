@@ -18,7 +18,7 @@ const MetadataEditingApp = () => {
     };
     if (subscribed) getArgs();
     return () => (subscribed = false);
-  });
+  }, []);
 
   return (
     <>

@@ -1,6 +1,17 @@
+import { useEffect } from 'react';
 import '../style/Modal.css';
 
 const Modal = ({ fields, openModal, closeModal, isModalOpen, onChange }) => {
+  /*   useEffect(() => {
+    if (gridRef.current) {
+      fields.forEach((field) => {
+        const column = gridRef.current.columnApi.getColumn(field.name);
+        if (column) {
+          gridRef.current.columnApi.setColumnVisible(column, field.defaultChecked);
+        }
+      });
+    }
+  }, [gridRef.current]); */
   return (
     <>
       {isModalOpen && (

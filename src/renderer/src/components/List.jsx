@@ -2,7 +2,6 @@ import { Virtuoso } from 'react-virtuoso';
 import Row from './Row';
 
 const List = ({ height, data, width, className, onClick, stat }) => {
-  console.log('stat: ', stat);
   return (
     <Virtuoso
       style={{ height, width }}

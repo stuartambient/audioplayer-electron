@@ -2,12 +2,17 @@ import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 
 // Custom APIs for renderer
-const metadataEditingApi = {
+/* const metadataEditingApi = {
   onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg)),
   updateTags: (arr) => ipcRenderer.invoke('update-tags', arr)
-};
+}; */
 
-if (process.contextIsolated) {
+contextBridge.exposeInMainWorld('metadataEditingApi', {
+  onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg)),
+  updateTags: (arr) => ipcRenderer.invoke('update-tags', arr)
+});
+
+/* if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI);
     contextBridge.exposeInMainWorld('metadataEditingApi', metadataEditingApi);
@@ -17,7 +22,7 @@ if (process.contextIsolated) {
 } else {
   window.electron = electronAPI;
   window.metadataEditingApi = metadataEditingApi;
-}
+} */
 
 /* releases.release[0].results
 releases.release[0].path

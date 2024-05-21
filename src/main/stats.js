@@ -41,6 +41,7 @@ const allTracksByGenres = (genres) => {
 };
 
 const allTracksByRoot = (root) => {
+  console.log('called');
   // Corrected SQL query string and removed the extra `}`
   const stmt = db.prepare(`SELECT * FROM "audio-tracks" WHERE root = ?`);
   // Execute the prepared statement with `root` as the parameter

@@ -31,6 +31,10 @@ const Stats = () => {
     }
   }, [isSubmenuOpen, reqDirectories]);
 
+  useEffect(() => {
+    console.log(root);
+  }, [root]);
+
   const toggleSubmenu = (event) => {
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
       setIsSubmenuOpen(!isSubmenuOpen);

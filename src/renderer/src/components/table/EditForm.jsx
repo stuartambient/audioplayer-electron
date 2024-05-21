@@ -25,7 +25,6 @@ function EditForm({ onUpdate, nodesSelected }) {
 
   // Utility function to convert data types based on the field name
   function convertToCorrectType(key, value) {
-    console.log('key: ', key, 'value: ', value);
     // Add more cases as necessary for other specific fields or types
     if (key === 'year') {
       return Number(value);
