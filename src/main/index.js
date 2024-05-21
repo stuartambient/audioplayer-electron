@@ -67,8 +67,8 @@ import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
 import initUpdateMetadata from './updateMetadata';
-import checkDataTypes from './checkDataTypes.js';
-import { Genres } from '../renderer/src/components/StatsComponents.jsx';
+/* import checkDataTypes from './checkDataTypes.js'; */
+/* import { Genres } from '../renderer/src/components/StatsComponents.jsx'; */
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'streaming',
@@ -183,7 +183,7 @@ app.whenReady().then(async () => {
   await session.defaultSession.loadExtension(reactDevToolsPath);
 
   /*  const scriptPath = path.join(__dirname, 'checkDataTypes.js'); */
-  console.log('__dirname: ', __dirname);
+
   /*   db.execFile('node', [scriptPath], (error, stdout, stderr) => {
     if (error) {
       console.error(`Error executing script: ${error}`);
@@ -340,7 +340,6 @@ ipcMain.handle('update-folders', async () => {
 ipcMain.handle('update-files', async () => {
   const result = await initFiles();
   /* processUpdateResult('file', result); */
-  console.log('result: ', result);
   return result;
 });
 
@@ -389,6 +388,7 @@ ipcMain.handle('create-table', () => {
 });
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
+  /* console.log('get-tracks'); */
   /* console.log('sort: ', args[2]); */
   if (args[1] === '') {
     const alltracks = await allTracksByScroll(args[0], args[2]);
@@ -519,6 +519,7 @@ ipcMain.handle('top-hundred-artists-stat', async () => {
 });
 
 ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
+  /* console.log('get tracks by artist'); */
   try {
     const tracks = await allTracksByArtist(arg);
     return tracks;
@@ -539,7 +540,6 @@ ipcMain.handle('distinct-directories', async () => {
 
 ipcMain.handle('get-tracks-by-genres', async (_, arg) => {
   try {
-    console.log('once');
     const tracks = await allTracksByGenres(arg);
     return tracks;
   } catch (err) {
@@ -552,9 +552,11 @@ ipcMain.handle('get-tracks-by-root', async (event, root) => {
   console.log(`Query start: ${start}`);
   const rootTracks = await allTracksByRoot(root);
   /* console.log(rootTracks); */
+  console.log('root tracks length: ', rootTracks.length);
   const end = Date.now();
   console.log(`Query end: ${end}`);
   console.log(`Query duration: ${end - start}ms`);
+  console.log('-----------------------------------');
   return rootTracks;
 });
 
@@ -750,7 +752,7 @@ ipcMain.handle('update-tags', async (_, arr) => {
       /* console.log(key, '---', tagKeys[key], '-------', value); */
 
       const t = tagKeys[key](value);
-      console.log('key: ', key, 'value: ', value, 't: ', t, 'current: ', myFile.tag[key]);
+      /* console.log('key: ', key, 'value: ', value, 't: ', t, 'current: ', myFile.tag[key]); */
 
       myFile.tag[key] = t;
       myFile.save();

@@ -2,6 +2,7 @@ import Database from 'better-sqlite3';
 import db from './connection';
 
 const totalTracks = () => {
+  console.log('totalTracks');
   const tracksStmt = db.prepare('SELECT COUNT(*) FROM "audio-tracks"');
   const albumsStmt = db.prepare('SELECT COUNT(*) FROM albums');
   const tracksInfo = tracksStmt.get();
@@ -10,6 +11,7 @@ const totalTracks = () => {
 };
 
 const topHundredArtists = () => {
+  console.log('topHundredArtists');
   const stmt = db.prepare(
     'SELECT performers, COUNT(*) as count FROM "audio-tracks" GROUP BY performers ORDER BY count DESC'
   );
@@ -19,12 +21,14 @@ const topHundredArtists = () => {
 };
 
 const allTracksByArtist = (artist) => {
+  console.log('allTracksByArtist');
   const stmt = db.prepare(`SELECT * FROM "audio-tracks" WHERE performers = ?`);
   const result = stmt.all(artist);
   return result;
 };
 
 const allTracksByGenres = (genres) => {
+  console.log('allTracksByGenres');
   let query, params;
   if (genres === 'No Genres Specified') {
     // Query to handle special category
@@ -41,7 +45,7 @@ const allTracksByGenres = (genres) => {
 };
 
 const allTracksByRoot = (root) => {
-  console.log('called');
+  console.log('allTracksByRoot');
   // Corrected SQL query string and removed the extra `}`
   const stmt = db.prepare(`SELECT * FROM "audio-tracks" WHERE root = ?`);
   // Execute the prepared statement with `root` as the parameter
@@ -50,6 +54,7 @@ const allTracksByRoot = (root) => {
 };
 
 const distinctDirectories = () => {
+  console.log('distinctDirectories');
   // Define the SQL query to get unique color values
   const sql = 'SELECT DISTINCT rootlocation FROM albums';
 
@@ -62,6 +67,7 @@ const distinctDirectories = () => {
 };
 
 const genresWithCount = () => {
+  console.log('genresWithCount');
   const stmt = db.prepare(
     `
     SELECT 
@@ -84,6 +90,7 @@ const genresWithCount = () => {
 };
 
 const foldersWithCount = (dirs) => {
+  console.log('foldersWithCount');
   // Assuming dirs is an array of folder paths, e.g., ['path1', 'path2']
   // Prepare a query string with placeholders for 'dirs' values
   let placeholders = dirs.map(() => '?').join(', ');
@@ -104,6 +111,7 @@ const foldersWithCount = (dirs) => {
 };
 
 const albumsByTopFolder = (folder) => {
+  console.log('albumsByTopFolder');
   const stmt = db.prepare('SELECT * FROM albums WHERE rootlocation = ?');
 
   const results = stmt.all(folder);
@@ -111,6 +119,7 @@ const albumsByTopFolder = (folder) => {
 };
 
 const nullMetadata = () => {
+  console.log('nullMetadata');
   const stmt = db.prepare(
     `SELECT audiotrack FROM "audio-tracks" WHERE performers IS NULL OR title IS NULL OR album IS NULL ORDER BY audiotrack`
   );

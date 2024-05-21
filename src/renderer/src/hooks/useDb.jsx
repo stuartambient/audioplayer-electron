@@ -172,26 +172,6 @@ const usePlaylist = (id, dispatch) => {
   return;
 };
 
-const useTotalTracksStat = (setTotalTracks) => {
-  /* const [totalTracks, setTotalTracks] = useState(); */
-  const [error, setError] = useState([]);
-
-  useEffect(() => {
-    let subscribed = true;
-    const getTotalTracks = async () => {
-      const totalTracksRequest = await window.api.totalTracksStat();
-      if (totalTracksRequest && subscribed) {
-        setTotalTracks(totalTracksRequest);
-      } else {
-        return;
-      }
-    };
-
-    getTotalTracks();
-    return () => (subscribed = false);
-  }, []);
-};
-
 const useTopHundredArtistsStat = () => {
   const [topHundredArtists, setTopHundredArtists] = useState([]);
   useEffect(() => {
@@ -402,7 +382,6 @@ export {
   useTracks,
   useAlbums,
   useAlbumTracks,
-  useTotalTracksStat,
   useTopHundredArtistsStat,
   useGenres,
   usePlaylist,

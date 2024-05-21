@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 /* import { useTracksByRoot } from '../hooks/useDb'; */
 /* import { FixedSizeList as List } from 'react-window'; */
@@ -7,11 +7,9 @@ import { openChildWindow } from './ChildWindows/openChildWindow';
 /* import AGGrid from '../table/AGGrid'; */
 /* import Row from './Row'; */
 
-import { useTotalTracksStat, useTopHundredArtistsStat, useGenres } from '../hooks/useDb';
+import { useGenres } from '../hooks/useDb';
 
-export const TotalMedia = () => {
-  const [totalTracks, setTotalTracks] = useState();
-  const req = useTotalTracksStat(setTotalTracks);
+export const TotalMedia = ({ totalTracks }) => {
   return (
     <>
       {totalTracks ? (
@@ -25,8 +23,9 @@ export const TotalMedia = () => {
   );
 };
 
-export const TopHundredArtists = () => {
-  const { topHundredArtists } = useTopHundredArtistsStat();
+export const TopHundredArtists = ({ topArtists }) => {
+  /*   console.log('TopHundredArtists');
+  const { topHundredArtists } = useTopHundredArtistsStat(); */
   const getArtistTracks = async (e) => {
     const artist = e.target.id;
     const results = await window.api.getTracksByArtist(artist);
@@ -51,7 +50,7 @@ export const TopHundredArtists = () => {
 
   return (
     <List
-      data={topHundredArtists}
+      data={topArtists}
       height="100%" // Specify the desired height of the list
       width="100%"
       className="stats--list"
@@ -111,65 +110,4 @@ export const AlbumsByRoot = ({ albums }) => {
       stat="stat-albums"
     />
   );
-};
-
-/* export const TracksByRoot = ({ root }) => {
-  console.log('tbr: ', root);
-  const [tracks, setTracks] = useState([]);
-  useTracksByRoot(root, setTracks);
-
-  useEffect(() => {
-    if (tracks.length > 0) {
-      openChildWindow(
-        'table-data',
-        'root-tracks',
-        {
-          width: 1200,
-          height: 550,
-          show: false,
-          resizable: true,
-          preload: 'metadataEditing',
-          sandbox: false,
-          webSecurity: false,
-          contextIsolation: true
-        },
-        tracks
-      );
-    }
-  }, [root, tracks]);
-}; */
-
-export const TracksByRoot = ({ root }) => {
-  console.log('root: ', root);
-  const getTracks = async (root) => {
-    console.log('Fetching tracks for root: ', root);
-    try {
-      const results = await window.api.getTracksByRoot(root);
-      console.log('results length: ', results.length);
-      if (results) {
-        openChildWindow(
-          'table-data',
-          'root-tracks',
-          {
-            width: 1200,
-            height: 550,
-            show: false,
-            resizable: true,
-            preload: 'metadataEditing',
-            sandbox: false,
-            webSecurity: false,
-            contextIsolation: true
-          },
-          results
-        );
-      }
-    } catch (error) {
-      console.error('error: ', error);
-    }
-  };
-
-  if (root) {
-    getTracks(root);
-  }
-  return null;
 };

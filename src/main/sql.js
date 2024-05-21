@@ -169,6 +169,7 @@ VALUES      (@track_id,
 }; */
 
 const deleteFiles = (files) => {
+  console.log('deleteFiles');
   const deleteFile = db.prepare('DELETE FROM "audio-tracks" WHERE audiotrack = ?');
 
   const deleteMany = db.transaction((files) => {
@@ -179,6 +180,7 @@ const deleteFiles = (files) => {
 };
 
 const insertAlbums = (data) => {
+  console.log('insertAlbums');
   const insert = db.prepare(
     'INSERT INTO albums(id, rootlocation, foldername, fullpath) VALUES (@id, @root, @name, @fullpath)'
   );
@@ -191,6 +193,7 @@ const insertAlbums = (data) => {
 };
 
 const deleteAlbums = async (data) => {
+  console.log('deleteAlbums');
   const deleteA = db.prepare('DELETE FROM albums WHERE fullpath = ?');
   const deleteMany = db.transaction((data) => {
     for (const d of data) deleteA.run(d);
@@ -199,17 +202,20 @@ const deleteAlbums = async (data) => {
 };
 
 const deleteAlbum = async (data) => {
+  console.log('deleteAlbum');
   const deleteSingleAlbum = db.prepare('DELETE FROM albums WHERE fullpath = ?');
   deleteSingleAlbum.run();
 };
 
 const getAlbums = () => {
+  console.log('getAlbums');
   const getAllAlbums = db.prepare('SELECT fullpath FROM albums');
   const albums = getAllAlbums.all();
   return albums;
 };
 
 const getAlbum = (id) => {
+  console.log('getAlbum');
   const getAnAlbum = db.prepare('SELECT fullpath FROM albums WHERE id = ?');
   const album = getAnAlbum.get(id);
   const files = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ?');
@@ -222,6 +228,7 @@ const getAlbum = (id) => {
 };
 
 const getFiles = () => {
+  console.log('getFiles');
   /* const allFiles = db.prepare('SELECT audiofile FROM tracks');
   const files = allFiles.all();
   return files; */
@@ -232,6 +239,8 @@ const getFiles = () => {
 };
 
 const refreshMetadata = (tracks) => {
+  console.log('refreshMetadata');
+  console.log('tracks: ', Array.isArray(tracks), tracks.length);
   const transaction = db.transaction(() => {
     const updateStmt = db.prepare(`
       UPDATE "audio-tracks" SET 
@@ -328,6 +337,7 @@ const refreshMetadata = (tracks) => {
 };
 
 const checkRecordsExist = (tracks) => {
+  console.log('checkRecordsExist');
   for (const track of tracks) {
     const record = db
       .prepare(
@@ -345,17 +355,20 @@ const checkRecordsExist = (tracks) => {
 };
 
 const allTracks = () => {
+  console.log('allTracks');
   const alltracks = db.prepare('SELECT track_id, audiotrack, modified FROM "audio-tracks"');
   const tracks = alltracks.all();
   return tracks;
 };
 
 const getAllPkeys = () => {
+  console.log('getAllPkeys');
   const alltracks = db.prepare('SELECT track_id FROM "audio-tracks"');
 
   return alltracks.all();
 };
 const getAllTracks = (rows) => {
+  console.log('getAllTracks');
   const tracks = db.prepare('SELECT * FROM "audio-tracks" WHERE track_id = ?');
 
   const shuffledTracks = [];
@@ -376,6 +389,7 @@ const getAllTracks = (rows) => {
 };
 
 const searchAlbums = async () => {
+  console.log('searchAlbums');
   const stmt = db.prepare(
     "SELECT rootloc, foldername FROM albums WHERE foldername LIKE '%braxton%'"
   );
@@ -386,6 +400,7 @@ const searchAlbums = async () => {
 /* sort by artist, createdon, title genre */
 
 const allTracksByScroll = (offsetNum, sort) => {
+  console.log('allTracksByScroll');
   let query;
   switch (sort) {
     case 'createdon':
@@ -408,6 +423,7 @@ const allTracksByScroll = (offsetNum, sort) => {
 };
 
 const allTracksBySearchTerm = (offsetNum, text, sort) => {
+  console.log('allTracksBySearchTerm');
   const term = `%${text}%`;
   let query;
   let params;
@@ -436,6 +452,7 @@ const allTracksBySearchTerm = (offsetNum, text, sort) => {
 };
 
 const getPlaylist = (playlist) => {
+  console.log('getPlaylist');
   const plfile = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack = ?');
   /* const assocFiles = files.all(`${albumPath}%`); */
   const albumFiles = [];
@@ -449,6 +466,7 @@ const getPlaylist = (playlist) => {
 };
 
 const allAlbumsByScroll = (offsetNum, sort) => {
+  console.log('allAlbumsByScroll');
   let query;
   switch (sort) {
     case 'foldername':
@@ -469,6 +487,7 @@ const allAlbumsByScroll = (offsetNum, sort) => {
 };
 
 const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
+  console.log('allAlbumsBySearchTerm');
   const term = `%${text}%`;
 
   let query;
@@ -495,6 +514,7 @@ const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
 };
 
 const allCoversByScroll = (offsetNum, term = null) => {
+  console.log('allCoversByScroll');
   if (term === '') {
     const stmt = db.prepare(
       `SELECT id, foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET ${
@@ -514,11 +534,13 @@ const allCoversByScroll = (offsetNum, term = null) => {
 };
 
 const requestedFile = (trackId) => {
+  console.log('requestedFile');
   const reqTrack = db.prepare(`Select * from "audio-tracks" where track_id = ? `);
   return reqTrack.get(trackId);
 };
 
 const filesByAlbum = (albumPath) => {
+  console.log('filesByAlbum');
   /*   const album = db.prepare('SELECT fullpath FROM albums WHERE fullpath = ?');
   const getAlbum = album.get(albumPath); */
   /* const stmt = db.prepare("SELECT audioFile FROM files WHERE "); */
@@ -530,6 +552,7 @@ const filesByAlbum = (albumPath) => {
 };
 
 const likeTrack = (fileId) => {
+  console.log('likeTrack');
   let status;
   const isLiked = db.prepare('SELECT like FROM "audio-tracks" WHERE track_id = ?');
   const currentLike = isLiked.get(fileId);
@@ -540,6 +563,7 @@ const likeTrack = (fileId) => {
 };
 
 const isLiked = (id) => {
+  console.log('isLiked');
   const isLiked = db.prepare('SELECT like FROM "audio-tracks" WHERE track_id = ?');
   const currentLike = isLiked.get(id);
   return isLiked.like;

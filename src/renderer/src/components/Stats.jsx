@@ -1,14 +1,8 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
-/* import { useTotalTracksStat, useTopHundredArtistsStat } from '../hooks/useDb'; */
 import { PiFolderOpenLight } from 'react-icons/pi';
-import {
-  TotalMedia,
-  TopHundredArtists,
-  Genres,
-  AlbumsByRoot,
-  TracksByRoot
-} from './StatsComponents';
+import { TotalMedia, TopHundredArtists, Genres, AlbumsByRoot } from './StatsComponents';
 import { useDistinctDirectories /* , useAlbumsByRoot */ } from '../hooks/useDb';
+import { openChildWindow } from './ChildWindows/openChildWindow';
 /* import { AiOutlineTrophy } from 'react-icons'; */
 import '../style/Stats.css';
 
@@ -20,7 +14,10 @@ const Stats = () => {
   const [reqDirectories, setReqDirectories] = useState([]);
   const [albumsByRoot, setAlbumsByRoot] = useState([]);
   const [reqDir, setReqDir] = useState('');
-  const [root, setRoot] = useState(null);
+  const [root, setRoot] = useState('');
+  const [rootTracks, setRootTracks] = useState();
+  const [totalTracksData, setTotalTracksData] = useState(null);
+  const [topArtistsData, setTopArtistsData] = useState(null);
   useDistinctDirectories(setDirectories);
 
   useEffect(() => {
@@ -32,7 +29,29 @@ const Stats = () => {
   }, [isSubmenuOpen, reqDirectories]);
 
   useEffect(() => {
-    console.log(root);
+    const getTracks = async () => {
+      const results = await window.api.getTracksByRoot(root);
+      /* setRootTracks(results); */
+      /* console.log('results: ', results.length); */
+
+      openChildWindow(
+        'table-data',
+        'root-tracks',
+        {
+          width: 1200,
+          height: 550,
+          show: false,
+          resizable: true,
+          preload: 'metadataEditing',
+          sandbox: false,
+          webSecurity: false,
+          contextIsolation: true
+        },
+        results
+      );
+    };
+    if (root) getTracks();
+    return () => setRoot('');
   }, [root]);
 
   const toggleSubmenu = (event) => {
@@ -71,16 +90,35 @@ const Stats = () => {
     }
   };
 
-  const handleStatReq = (e) => {
+  const handleStatReq = async (e) => {
     if (e.currentTarget.id !== 'directories' && isSubmenuOpen) {
       setIsSubmenuOpen(false);
       setAlbumsByRoot([]);
     }
     setStatReq(e.currentTarget.id);
+    if (e.currentTarget.id !== 'totalmedia' && totalTracksData) {
+      setTotalTracksData(null);
+    }
+    if (e.currentTarget.id !== 'topArtists' && topArtistsData) {
+      setTopArtistsData(null);
+    }
+    if (e.currentTarget.id === 'totalmedia' && !totalTracksData) {
+      const totalTracksRequest = await window.api.totalTracksStat();
+      setTotalTracksData(totalTracksRequest);
+    }
+
+    if (e.currentTarget.id === 'topArtists' && !topArtistsData) {
+      const topArtistsRequest = await window.api.topHundredArtistsStat();
+      setTopArtistsData(topArtistsRequest);
+    }
   };
 
   const handleOpenFolder = (e) => {
-    setRoot(e.target.id);
+    const newRoot = e.target.id;
+    if (newRoot !== root) {
+      console.log(`Updating root from ${root} to ${newRoot}`);
+      setRoot(newRoot);
+    }
   };
 
   const handleSort = (e) => {
@@ -119,7 +157,7 @@ const Stats = () => {
                       onChange={(e) => handleCheckboxChange(e, item)}
                     />
                     {item}
-                    <PiFolderOpenLight id={item} style={{}} onClick={handleOpenFolder} />
+                    <PiFolderOpenLight key={item} id={item} style={{}} onClick={handleOpenFolder} />
                   </li>
                 );
               })}
@@ -141,13 +179,13 @@ const Stats = () => {
       </ul>
 
       <div className="stats--results">
-        {statReq === 'totalmedia' && <TotalMedia />}
+        {statReq === 'totalmedia' && <TotalMedia totalTracks={totalTracksData} />}
         {statReq === 'genres' && (
           <>
             <Genres />
           </>
         )}
-        {root && <TracksByRoot root={root} />}
+        {/*       {rootTracks && <TracksByRoot rootTracks={rootTracks} />} */}
         {statReq === 'directories' && (
           <>
             <div className="stats--length">
@@ -158,7 +196,7 @@ const Stats = () => {
         )}
         {statReq === 'topArtists' && (
           <>
-            <TopHundredArtists />
+            <TopHundredArtists topArtists={topArtistsData} />
           </>
         )}
       </div>
