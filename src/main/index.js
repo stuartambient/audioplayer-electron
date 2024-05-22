@@ -747,7 +747,11 @@ ipcMain.handle('update-tags', async (_, arr) => {
   arr.forEach((a) => {
     console.log('arr: ', arr);
     console.log('id: ', a.id);
-    const myFile = File.createFromPath(a.id);
+    try {
+      const myFile = File.createFromPath(a.id);
+    } catch (error) {
+      console.error('error: ', error);
+    }
     for (const [key, value] of Object.entries(a.updates)) {
       /* console.log(key, '---', tagKeys[key], '-------', value); */
 
