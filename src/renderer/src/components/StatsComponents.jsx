@@ -60,9 +60,7 @@ export const TopHundredArtists = ({ topArtists }) => {
   );
 };
 
-export const Genres = () => {
-  const [genres, setGenres] = useState([]);
-  useGenres(setGenres);
+export const Genres = ({ allGenres }) => {
   const getGenres = async (e) => {
     const genres = e.target.id;
     const results = await window.api.getTracksByGenres(genres);
@@ -90,7 +88,7 @@ export const Genres = () => {
       height="100%"
       width="100%"
       className="stats--list"
-      data={genres}
+      data={allGenres}
       onClick={getGenres}
       stat="stat-genres"
       /* itemSize={50} */

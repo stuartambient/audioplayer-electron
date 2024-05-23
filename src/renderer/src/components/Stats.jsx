@@ -18,6 +18,7 @@ const Stats = () => {
   const [rootTracks, setRootTracks] = useState();
   const [totalTracksData, setTotalTracksData] = useState(null);
   const [topArtistsData, setTopArtistsData] = useState(null);
+  const [allGenres, setAllGenres] = useState(null);
   useDistinctDirectories(setDirectories);
 
   useEffect(() => {
@@ -53,6 +54,36 @@ const Stats = () => {
     if (root) getTracks();
     return () => setRoot('');
   }, [root]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (statReq === 'totalmedia' && !totalTracksData) {
+        const totalTracksRequest = await window.api.totalTracksStat();
+        setTotalTracksData(totalTracksRequest);
+      } else if (statReq === 'topArtists' && !topArtistsData) {
+        const topArtistsRequest = await window.api.topHundredArtistsStat();
+        setTopArtistsData(topArtistsRequest);
+      } else if (statReq === 'genres' && !allGenres) {
+        const allGenresRequest = await window.api.genresStat();
+        setAllGenres(allGenresRequest);
+      }
+    };
+
+    fetchData();
+
+    // Cleanup function to reset data when statReq changes
+    return () => {
+      if (statReq !== 'totalmedia') {
+        setTotalTracksData(null);
+      }
+      if (statReq !== 'topArtists') {
+        setTopArtistsData(null);
+      }
+      if (statReq !== 'genres') {
+        setAllGenres(null);
+      }
+    };
+  }, [statReq, totalTracksData, topArtistsData, allGenres]);
 
   const toggleSubmenu = (event) => {
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
@@ -96,21 +127,29 @@ const Stats = () => {
       setAlbumsByRoot([]);
     }
     setStatReq(e.currentTarget.id);
-    if (e.currentTarget.id !== 'totalmedia' && totalTracksData) {
+    /* if (statReq !== 'totalmedia' && totalTracksData) {
       setTotalTracksData(null);
     }
-    if (e.currentTarget.id !== 'topArtists' && topArtistsData) {
+    if (statReq !== 'topArtists' && topArtistsData) {
       setTopArtistsData(null);
     }
-    if (e.currentTarget.id === 'totalmedia' && !totalTracksData) {
+    if (statReq !== 'genres' && allGenres) {
+      setAllGenres(null);
+    }
+
+    if (statReq === 'totalmedia' && !totalTracksData) {
       const totalTracksRequest = await window.api.totalTracksStat();
       setTotalTracksData(totalTracksRequest);
     }
 
-    if (e.currentTarget.id === 'topArtists' && !topArtistsData) {
+    if (statReq === 'topArtists' && !topArtistsData) {
       const topArtistsRequest = await window.api.topHundredArtistsStat();
       setTopArtistsData(topArtistsRequest);
     }
+    if (statReq === 'genres' && !allGenres) {
+      const allGenresRequest = await window.api.genresStat();
+      setAllGenres(allGenresRequest);
+    } */
   };
 
   const handleOpenFolder = (e) => {
@@ -180,11 +219,7 @@ const Stats = () => {
 
       <div className="stats--results">
         {statReq === 'totalmedia' && <TotalMedia totalTracks={totalTracksData} />}
-        {statReq === 'genres' && (
-          <>
-            <Genres />
-          </>
-        )}
+        {statReq === 'genres' && <Genres allGenres={allGenres} />}
         {/*       {rootTracks && <TracksByRoot rootTracks={rootTracks} />} */}
         {statReq === 'directories' && (
           <>
