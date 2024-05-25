@@ -1,53 +1,44 @@
-import fs from 'node:fs/promises';
+/* import fs from 'node:fs/promises'; */
+import fs from 'fs';
 import path from 'path';
-import ffmpeg from 'fluent-ffmpeg';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 
-// Function to process a file with FFmpeg and create a copy
-function processFile(filePath) {
-  return new Promise((resolve, reject) => {
-    const fileDir = path.dirname(filePath);
-    const fileExt = path.extname(filePath);
-    const fileName = path.basename(filePath, fileExt);
-    const copyFilePath = path.join(fileDir, `${fileName}_copy${fileExt}`);
+/* const execAsync = promisify(exec);
+const renameAsync = promisify(fs.rename); */
 
-    ffmpeg(filePath)
-      .output(copyFilePath)
-      .on('end', () => {
-        console.log(`Created copy: ${copyFilePath}`);
-        resolve();
-      })
-      .on('error', (err) => {
-        console.error(`Error processing ${filePath}:`, err.message);
-        reject(err);
-      })
-      .run();
-  });
-}
+async function processFile(filePath) {
+  const fileDir = path.dirname(filePath);
+  const fileExt = path.extname(filePath);
+  const fileName = path.basename(filePath, fileExt);
+  const tempFilePath = path.join(fileDir, `${fileName}_temp${fileExt}`);
 
-/* async function processFilesInFolder(folderPath) {
-  try {
-    const files = fs.readdirSync(folderPath);
+  const command = `ffmpeg -hide_banner -loglevel error -i "${filePath}" -c copy "${tempFilePath}"`;
 
-    for (const file of files) {
-      const filePath = path.join(folderPath, file);
-      const fileExt = path.extname(file).toLowerCase();
-
-      if (fileExt === '.mp3' || fileExt === '.flac') {
-        try {
-          await processFile(filePath);
-          console.log(`Processed and copied: ${file}`);
-        } catch (error) {
-          console.error(`Failed to process ${file}:`, error.message);
-        }
-      } else {
-        console.log(`Skipping unsupported file: ${file}`);
-      }
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
     }
-  } catch (error) {
-    console.error('Error reading folder:', error.message);
-  }
+    console.log(`stdout: ${stdout}`);
+    console.error(`stderr: ${stderr}`);
+  });
+
+  //console.log(`Running command: ${command}`);
+  /*   try {
+    const { stderr } = await execAsync(command);
+    if (stderr) {
+      console.error(`Error processing ${filePath}: ${stderr}`);
+      fs.appendFileSync('error_log.txt', `Error processing ${filePath}: ${stderr}\n`);
+      throw new Error(stderr);
+    }
+    await renameAsync(tempFilePath, filePath);
+    console.log(`Successfully processed and overwritten: ${filePath}`);
+  } catch (err) {
+    console.error(`Error in processFile for ${filePath}: ${err.message}`);
+    fs.unlink(tempFilePath, () => {}); // Clean up temp file
+    throw err;
+  } */
 }
 
-const folderPath = 'path/to/your/folder';
-
-processFilesInFolder(folderPath); */
+export default processFile;

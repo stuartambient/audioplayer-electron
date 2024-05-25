@@ -9,6 +9,7 @@ import { parseFile } from 'music-metadata';
 import { File } from 'node-taglib-sharp';
 import db from '../connection';
 import { roots } from '../../constant/constants';
+import processFile from '../processProblemTracks';
 import { error } from 'node:console';
 
 const streamFinished = promisify(finished);
@@ -94,6 +95,119 @@ const checkDataType = (entry) => {
   }
 };
 
+/* const extractMetadata = async (file, op) => {
+  const filePath = op === 'new' ? file : file.audiotrack;
+  const myFile = await File.createFromPath(filePath);
+  const fileStats = await fs.promises.stat(filePath);
+
+  return {
+    track_id: op === 'new' ? uuidv4() : file.track_id,
+    root: findRoot(filePath),
+    audiotrack: filePath,
+    modified: fileStats.mtimeMs || null,
+    like: 0,
+    error: null,
+    albumArtists: checkDataType(myFile.tag.albumArtists),
+    album: checkDataType(myFile.tag.album),
+    audioBitrate: checkDataType(myFile.properties.audioBitrate),
+    audioSampleRate: checkDataType(myFile.properties.audioSampleRate),
+    bpm: checkDataType(myFile.tag.beatsPerMinute),
+    codecs: checkDataType(myFile.properties.description),
+    composers: checkDataType(myFile.tag.composers),
+    conductor: checkDataType(myFile.tag.conductor),
+    copyright: checkDataType(myFile.tag.copyright),
+    comment: checkDataType(myFile.tag.comment),
+    disc: checkDataType(myFile.tag.disc),
+    discCount: checkDataType(myFile.tag.discCount),
+    description: checkDataType(myFile.tag.description),
+    duration: checkDataType(myFile.properties.durationMilliseconds),
+    genres: checkDataType(myFile.tag.genres),
+    isCompilation: checkDataType(myFile.tag.isCompilation),
+    isrc: checkDataType(myFile.tag.isrc),
+    lyrics: checkDataType(myFile.tag.lyrics),
+    performers: checkDataType(myFile.tag.performers),
+    performersRole: checkDataType(myFile.tag.performersRole),
+    pictures: myFile.tag.pictures?.[0]?.data ? 1 : 0,
+    publisher: checkDataType(myFile.tag.publisher),
+    remixedBy: checkDataType(myFile.tag.remixedBy),
+    replayGainAlbumGain: checkDataType(myFile.tag.replayGainAlbumGain) || null,
+    replayGainAlbumPeak: checkDataType(myFile.tag.replayGainAlbumPeak) || null,
+    replayGainTrackGain: checkDataType(myFile.tag.replayGainTrackGain) || null,
+    replayGainTrackPeak: checkDataType(myFile.tag.replayGainTrackPeak) || null,
+    title: checkDataType(myFile.tag.title),
+    track: checkDataType(myFile.tag.track),
+    trackCount: checkDataType(myFile.tag.trackCount),
+    year: checkDataType(myFile.tag.year)
+  };
+}; */
+
+// Function to parse metadata and handle errors with processFile integration
+/* const parseMeta = async (files, op) => {
+  const filesMetadata = [];
+  for (const file of files) {
+    const filePath = op === 'new' ? file : file.audiotrack;
+    console.log(`Processing file: ${filePath}`);
+    try {
+      const metadata = await extractMetadata(file, op);
+      filesMetadata.push(metadata);
+      console.log(`Metadata extracted for file: ${filePath}`);
+    } catch (error) {
+      console.error(`Error extracting metadata for file ${filePath}: ${error.message}`);
+      try {
+        console.log(`Attempting to repair file with FFmpeg: ${filePath}`);
+        await processFile(filePath);
+        console.log(`Successfully repaired file ${filePath} with FFmpeg`);
+        const metadata = await extractMetadata(file, op);
+        filesMetadata.push(metadata);
+        console.log(`Metadata re-extracted for repaired file: ${filePath}`);
+      } catch (processError) {
+        console.error(`Error repairing file ${filePath} with FFmpeg: ${processError.message}`);
+        const fileStats = await fs.promises.stat(filePath);
+        filesMetadata.push({
+          track_id: op === 'new' ? uuidv4() : file.track_id,
+          root: findRoot(filePath),
+          audiotrack: filePath,
+          modified: fileStats.mtimeMs || null,
+          like: 0,
+          error: processError.toString(),
+          albumArtists: null,
+          album: null,
+          audioBitrate: null,
+          audioSampleRate: null,
+          bpm: null,
+          codecs: null,
+          composers: null,
+          conductor: null,
+          copyright: null,
+          comment: null,
+          disc: null,
+          discCount: null,
+          description: null,
+          duration: null,
+          genres: null,
+          isCompilation: null,
+          isrc: null,
+          lyrics: null,
+          performers: null,
+          performersRole: null,
+          pictures: null,
+          publisher: null,
+          remixedBy: null,
+          replayGainAlbumGain: null,
+          replayGainAlbumPeak: null,
+          replayGainTrackGain: null,
+          replayGainTrackPeak: null,
+          title: null,
+          track: null,
+          trackCount: null,
+          year: null
+        });
+      }
+    }
+  }
+  return filesMetadata;
+}; */
+
 const parseMeta = async (files, op) => {
   const filesMetadata = [];
   let index = 0;
@@ -141,7 +255,9 @@ const parseMeta = async (files, op) => {
         year: checkDataType(myFile.tag.year)
       });
     } catch (error) {
-      console.error(`Error processing file ${file}: ${error.message}`);
+      //console.error(`Error processing file ${file}: ${error.message}`);
+      const repair = await processFile(file);
+      console.log('repair: ', repair);
       const fileStats = await fs.promises.stat(op === 'new' ? file : file.audiotrack);
       filesMetadata.push({
         track_id: op === 'new' ? uuidv4() : file.track_id,
