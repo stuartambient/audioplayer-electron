@@ -255,9 +255,9 @@ const parseMeta = async (files, op) => {
         year: checkDataType(myFile.tag.year)
       });
     } catch (error) {
-      //console.error(`Error processing file ${file}: ${error.message}`);
-      const repair = await processFile(file);
-      console.log('repair: ', repair);
+      console.error(`Error processing file ${file}: ${error.message}`);
+      /* const repair = await processFile(file);
+      console.log('repair: ', repair); */
       const fileStats = await fs.promises.stat(op === 'new' ? file : file.audiotrack);
       filesMetadata.push({
         track_id: op === 'new' ? uuidv4() : file.track_id,
