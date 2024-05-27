@@ -10,6 +10,39 @@ import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 import './styles/AGGrid.css';
 
+const editableColumns = [
+  'audiotrack',
+  'year',
+  'title',
+  'performers',
+  'album',
+  'genres',
+  'like',
+  'albumArtists',
+  'bpm',
+  'composers',
+  'conductor',
+  'copyright',
+  'comment',
+  'disc',
+  'discCount',
+  'description',
+  'duration',
+  'isCompilation',
+  'isrc',
+  'lyrics',
+  'performersRole',
+  'pictures',
+  'publisher',
+  'remixedBy',
+  'replayGainAlbumGain',
+  'replayGainAlbumPeak',
+  'replayGainTrackGain',
+  'replayGainTrackPeak',
+  'track',
+  'trackCount'
+];
+
 const AGGrid = ({ data }) => {
   const [originalData, setOriginalData] = useState([]);
   const [nodesSelected, setNodesSelected] = useState([]);
@@ -48,13 +81,18 @@ const AGGrid = ({ data }) => {
     </div>
   );
 
-  const handleColumnPanel = (e) => {
+  /*   const handleColumnPanel = (e) => {
     const col = e.target.name;
     const column = gridRef.current.columnApi.getColumn(col);
     if (column) {
-      gridRef.current.columnApi.setColumnVisible(column, !column.visible);
+      const isVisible = !gridRef.current.columnApi.getColumnState().find((c) => c.colId === col)
+        .hide;
+      gridRef.current.columnApi.setColumnVisible(column, !isVisible);
+      setVisibleColumns((prev) =>
+        isVisible ? prev.filter((field) => field !== col) : [...prev, col]
+      );
     }
-  };
+  }; */
 
   /*   const handleColumnPanel = (e) => {
     const col = e.target.name;
@@ -71,6 +109,14 @@ const AGGrid = ({ data }) => {
       );
     }
   }; */
+
+  const handleColumnPanel = (e) => {
+    const col = e.target.name;
+    const column = gridRef.current.columnApi.getColumn(col);
+    if (column) {
+      gridRef.current.columnApi.setColumnVisible(column, !column.visible);
+    }
+  };
 
   const handleMultiRowUpdate = (multiRowChanges) => {
     multiRowChanges.forEach((edit) => {
@@ -291,7 +337,8 @@ const AGGrid = ({ data }) => {
     sortable: true,
     editable: true,
     autoSize: true,
-    autoSizeAllColumns: true
+    autoSizeAllColumns: true,
+    singleClickEdit: true
     /* enableCellChangeFlash: true */
   }));
 
@@ -407,10 +454,8 @@ const AGGrid = ({ data }) => {
       { field: 'replayGainAlbumPeak', hide: true },
       { field: 'replayGainTrackGain', hide: true },
       { field: 'replayGainTrackPeak', hide: true },
-      { field: 'title', filter: true },
       { field: 'track' },
       { field: 'trackCount' },
-      { field: 'year' },
       { field: 'created_datetime' }
 
       /*     {
@@ -423,7 +468,9 @@ const AGGrid = ({ data }) => {
     ],
     []
   );
-
+  const [visibleColumns, setVisibleColumns] = useState(() =>
+    columnDefs.filter((col) => !col.hide).map((col) => col.field)
+  );
   // Example of consuming Grid Event
   /*   const cellClickedListener = useCallback((event) => {
     console.log('cellClicked', gridRef.current.api.getEditingCells());

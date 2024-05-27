@@ -210,15 +210,17 @@ const checkDataType = (entry) => {
 
 const parseMeta = async (files, op) => {
   const filesMetadata = [];
-  let index = 0;
+
   for (const file of files) {
     try {
-      const myFile = await File.createFromPath(op === 'new' ? file : file.audiotrack);
-      const fileStats = await fs.promises.stat(op === 'new' ? file : file.audiotrack);
+      const filePath = op === 'new' ? file : file.audiotrack;
+      console.log('filePath: ', filePath);
+      const myFile = await File.createFromPath(filePath);
+      const fileStats = await fs.promises.stat(filePath);
       filesMetadata.push({
         track_id: op === 'new' ? uuidv4() : file.track_id,
         root: findRoot(op === 'new' ? file : file.audiotrack),
-        audiotrack: op === 'new' ? file : file.audiotrack,
+        audiotrack: filePath /* op === 'new' ? file : file.audiotrack, */,
         modified: fileStats.mtimeMs || null,
         like: 0,
         error: null,
@@ -256,8 +258,6 @@ const parseMeta = async (files, op) => {
       });
     } catch (error) {
       console.error(`Error processing file ${file}: ${error.message}`);
-      /* const repair = await processFile(file);
-      console.log('repair: ', repair); */
       const fileStats = await fs.promises.stat(op === 'new' ? file : file.audiotrack);
       filesMetadata.push({
         track_id: op === 'new' ? uuidv4() : file.track_id,
@@ -299,7 +299,6 @@ const parseMeta = async (files, op) => {
         year: null
       });
     }
-    index++;
   }
   return filesMetadata;
 };

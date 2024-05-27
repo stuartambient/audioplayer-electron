@@ -1,5 +1,38 @@
 import { useState, useEffect } from 'react';
 
+const editableColumns = [
+  'audiotrack',
+  'year',
+  'title',
+  'performers',
+  'album',
+  'genres',
+  'like',
+  'albumArtists',
+  'bpm',
+  'composers',
+  'conductor',
+  'copyright',
+  'comment',
+  'disc',
+  'discCount',
+  'description',
+  'duration',
+  'isCompilation',
+  'isrc',
+  'lyrics',
+  'performersRole',
+  'pictures',
+  'publisher',
+  'remixedBy',
+  'replayGainAlbumGain',
+  'replayGainAlbumPeak',
+  'replayGainTrackGain',
+  'replayGainTrackPeak',
+  'track',
+  'trackCount'
+];
+
 function EditForm({ onUpdate, nodesSelected }) {
   const [formData, setFormData] = useState({
     year: '',
