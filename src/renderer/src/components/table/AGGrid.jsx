@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
+
 /* import 'ag-grid-community'; */
 import { FaSave } from 'react-icons/fa';
 import { CiPlay1 } from 'react-icons/ci';
 import { ImCancelCircle } from 'react-icons/im';
 import CustomToolPanel from './CustomToolPanel';
+import columnDefs from './ColumnDefs';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
@@ -48,6 +50,8 @@ const AGGrid = ({ data }) => {
   const [nodesSelected, setNodesSelected] = useState([]);
   const [isUndoAction, setIsUndoAction] = useState(false);
   const [isRedoAction, setIsRedoAction] = useState(false);
+  const [columnApi, setColumnApi] = useState(null);
+  const [hiddenColumns, setHiddenColumns] = useState([]);
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
@@ -73,6 +77,18 @@ const AGGrid = ({ data }) => {
 
   const onGridReady = (params) => {
     gridApi = params.api;
+    const columnApi = params.columnApi;
+    setColumnApi(columnApi);
+    updateHiddenColumns(columnApi);
+
+    /* console.log(columnApi); */
+
+    // Get all columns and filter out the hidden ones
+    /* const hiddenColumns = columnApi.getAllColumns().filter((col) => !col.isVisible());
+    console.log(
+      'Hidden Columns:',
+      hiddenColumns.map((col) => col.getColId())
+    ); */
   };
 
   const IconCellRenderer = () => (
@@ -80,35 +96,6 @@ const AGGrid = ({ data }) => {
       <CiPlay1 />
     </div>
   );
-
-  /*   const handleColumnPanel = (e) => {
-    const col = e.target.name;
-    const column = gridRef.current.columnApi.getColumn(col);
-    if (column) {
-      const isVisible = !gridRef.current.columnApi.getColumnState().find((c) => c.colId === col)
-        .hide;
-      gridRef.current.columnApi.setColumnVisible(column, !isVisible);
-      setVisibleColumns((prev) =>
-        isVisible ? prev.filter((field) => field !== col) : [...prev, col]
-      );
-    }
-  }; */
-
-  /*   const handleColumnPanel = (e) => {
-    const col = e.target.name;
-    const column = gridRef.current.columnApi.getColumn(col);
-    if (column) {
-      const newVisibility = !gridRef.current.columnApi
-        .getColumnState()
-        .find((colState) => colState.colId === col).hide;
-      gridRef.current.columnApi.setColumnVisible(column, newVisibility);
-      setFields((prevFields) =>
-        prevFields.map((field) =>
-          field.name === col ? { ...field, defaultChecked: newVisibility } : field
-        )
-      );
-    }
-  }; */
 
   const handleColumnPanel = (e) => {
     const col = e.target.name;
@@ -136,7 +123,8 @@ const AGGrid = ({ data }) => {
 
   const handleCellValueChanged = useCallback(
     (event) => {
-      if (!isUndoAction && !isRedoAction) {
+      console.log('Cell value changed: ', event);
+      if (!isUndoAction && !isRedoAction && event.oldValue !== event.newValue) {
         const { api, node, colDef, newValue } = event;
         const change = {
           rowId: node.id, // Ensure this is how you access the ID correctly
@@ -245,14 +233,6 @@ const AGGrid = ({ data }) => {
     return <span>{params.value === 1 ? 'true' : 'false'}</span>;
   };
 
-  /*   const autoSize = useCallback((skipHeader) => {
-    const allColumnIds = [];
-    gridRef.current.columnApi.getColumns().forEach((column) => {
-      allColumnIds.push(column.getId());
-    });
-    gridRef.current.columnApi.autoSizeColumns(allColumnIds, skipHeader);
-  }, []); */
-
   const autoSize = useCallback((skipHeader = false) => {
     if (gridRef.current) {
       const allColumnIds = gridRef.current.columnApi
@@ -337,12 +317,50 @@ const AGGrid = ({ data }) => {
     sortable: true,
     editable: true,
     autoSize: true,
-    autoSizeAllColumns: true,
-    singleClickEdit: true
+    autoSizeAllColumns: true
+    /*  singleClickEdit: true */
     /* enableCellChangeFlash: true */
   }));
 
-  const columnDefs = useMemo(
+  const columnTypes = useMemo(() => {
+    return {
+      bool: {
+        cellRenderer: (params) => {
+          /* console.log('params value: ', params.value); */
+          /* console.log('Rendering:', params.value); */
+          return <span>{params.value === 1 ? 'true' : 'false'}</span>;
+        },
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+          values: ['true', 'false']
+        },
+        valueParser: (params) => {
+          console.log('ValueParser:', params.newValue);
+          return params.newValue === 'true' ? 1 : 0;
+        },
+        valueSetter: (params) => {
+          console.log('valueSetter:', params.newValue);
+          const newValue = params.newValue === 'true' ? 1 : 0;
+          /*   if (params.data[params.colDef.field] !== newValue) {
+            params.data[params.colDef.field] = newValue;
+            return true;
+          } */
+          return false;
+        },
+        valueGetter: (params) => {
+          /* console.log('valueGetter:', params.data[params.colDef.field]); */
+          return params.data[params.colDef.field];
+        },
+        editable: true
+      },
+      valueFormatter: (params) => {
+        return params.value === 1 ? 'true' : 'false';
+      },
+      useFormatter: true
+    };
+  }, []);
+
+  /*   const columnDefs = useMemo(
     () => [
       {
         field: 'Icon',
@@ -355,31 +373,26 @@ const AGGrid = ({ data }) => {
       {
         field: 'audiotrack',
         filter: true,
-        hide: false,
         editable: false,
         rowDrag: true
-        /*         cellClassRules: {
-          'rag-green': (params) => params.value.startsWith('H:/')
-        } */
-      },
+        },
       {
         field: 'year',
         filter: 'agNumberColumnFilter',
-        hide: false,
         type: 'numericColumn',
         valueSetter: (params) => {
           const newValue = Number(params.newValue);
           if (!isNaN(newValue) && params.data.year !== newValue) {
             params.data.year = newValue;
-            return true; // Indicate the value has been updated
+            return true;
           }
-          return false; // No valid update occurred
+          return false; 
         }
       },
-      { field: 'title', filter: true, hide: false },
-      { field: 'performers', filter: true, hide: false },
-      { field: 'album', filter: true, hide: false },
-      { field: 'genres', filter: true, hide: false },
+      { field: 'title', filter: true },
+      { field: 'performers', filter: true  },
+      { field: 'album', filter: true },
+      { field: 'genres', filter: true  },
       {
         field: 'like',
         cellRenderer: (params) => <span>{params.value ? 'true' : 'false'}</span>,
@@ -399,11 +412,11 @@ const AGGrid = ({ data }) => {
         },
         editable: true
       },
-      { field: 'error', filter: true, hide: false },
-      { field: 'albumArtists', filter: true, hide: false },
-      { field: 'audioBitrate', filter: true, editable: false, hide: false },
-      { field: 'audioSamplerate', filter: true, editable: false, hide: false },
-      { field: 'codecs', filter: true, editable: false, hide: false },
+      { field: 'error', filter: true  },
+      { field: 'albumArtists', filter: true / },
+      { field: 'audioBitrate', filter: true, editable: false  },
+      { field: 'audioSamplerate', filter: true, editable: false },
+      { field: 'codecs', filter: true, editable: false },
       { field: 'bpm', filter: true },
       { field: 'composers', filter: true },
       { field: 'conductor', filter: true },
@@ -457,24 +470,20 @@ const AGGrid = ({ data }) => {
       { field: 'track' },
       { field: 'trackCount' },
       { field: 'created_datetime' }
-
-      /*     {
-        field: 'Icon',
-        cellRenderer: (params) => <CiPlay1 />,
-        width: 50,
-        editable: false,
-        resizable: false
-      } */ // Optional: Center the cell content }
     ],
     []
-  );
-  const [visibleColumns, setVisibleColumns] = useState(() =>
-    columnDefs.filter((col) => !col.hide).map((col) => col.field)
-  );
-  // Example of consuming Grid Event
-  /*   const cellClickedListener = useCallback((event) => {
-    console.log('cellClicked', gridRef.current.api.getEditingCells());
-  }, []); */
+  ); */
+
+  const updateHiddenColumns = (api) => {
+    const hiddenCols = api.getAllColumns().filter((col) => !col.isVisible());
+    setHiddenColumns(hiddenCols.map((col) => col.getColId()));
+  };
+
+  const onColumnVisible = useCallback(() => {
+    if (columnApi) {
+      updateHiddenColumns(columnApi);
+    }
+  }, [columnApi]);
 
   const deselectAll = useCallback((e) => {
     gridRef.current.api.deselectAll();
@@ -490,6 +499,7 @@ const AGGrid = ({ data }) => {
         onClick={handleGridMenu}
         onUpdate={handleMultiRowUpdate}
         nodesSelected={nodesSelected}
+        hiddenColumns={hiddenColumns}
       />
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
       <div className="ag-theme-alpine-dark" style={{ width: '100%', height: '100%' }}>
@@ -500,6 +510,7 @@ const AGGrid = ({ data }) => {
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}
           onSelectionChanged={onSelectionChanged}
+          columnTypes={columnTypes}
           /* getRowId={getRowId} */
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
@@ -510,6 +521,7 @@ const AGGrid = ({ data }) => {
           headerHeight={25}
           rowMultiSelectWithClick={true}
           onCellValueChanged={handleCellValueChanged}
+          onColumnVisible={onColumnVisible}
           undoRedoCellEditing={false}
           rowDragManaged={true}
           rowDragMultiRow={true}

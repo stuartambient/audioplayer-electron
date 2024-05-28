@@ -1,17 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import '../style/Modal.css';
 
-const Modal = ({ fields, openModal, closeModal, isModalOpen, onChange }) => {
+const Modal = ({ fields, openModal, closeModal, isModalOpen, onChange, hiddenColumns }) => {
   /*   useEffect(() => {
-    if (gridRef.current) {
-      fields.forEach((field) => {
-        const column = gridRef.current.columnApi.getColumn(field.name);
-        if (column) {
-          gridRef.current.columnApi.setColumnVisible(column, field.defaultChecked);
-        }
-      });
-    }
-  }, [gridRef.current]); */
+    console.log('hidden columns: ', hiddenColumns);
+  }, [hiddenColumns]); */
+
   return (
     <>
       {isModalOpen && (
@@ -27,7 +21,7 @@ const Modal = ({ fields, openModal, closeModal, isModalOpen, onChange }) => {
                     type="checkbox"
                     name={field.name}
                     id={field.name}
-                    defaultChecked={field.defaultChecked}
+                    defaultChecked={!hiddenColumns.includes(field.name)}
                     onChange={onChange}
                     value={true}
                   />

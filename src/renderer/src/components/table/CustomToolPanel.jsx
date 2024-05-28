@@ -3,7 +3,7 @@ import EditForm from './EditForm';
 import Modal from '../Modal';
 import './styles/CustomToolPanel.css';
 
-const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
+const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected, hiddenColumns }) => {
   const [onForm, setOnForm] = useState(false);
   const [isPanelVisible, setIsPanelVisible] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,6 +68,7 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected }) => {
             closeModal={closeModal}
             isModalOpen={isModalOpen}
             onChange={onChange}
+            hiddenColumns={hiddenColumns}
           />
           {/* {fields.map((field) => (
             <div key={field.name}>

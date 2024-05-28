@@ -601,7 +601,7 @@ ipcMain.handle('save-playlist', async (_, args) => {
   if (save.canceled) return 'action cancelled';
 
   args.forEach((a, index) => {
-    const tmp = a.audiofile.replaceAll('/', '\\');
+    const tmp = a.audiotrack.replaceAll('/', '\\');
     if (index === args.length - 1) {
       fs.writeFileSync(save.filePath, `${tmp}`, {
         flag: 'a'
