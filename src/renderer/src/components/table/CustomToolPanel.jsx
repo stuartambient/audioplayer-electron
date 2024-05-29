@@ -115,7 +115,13 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected, hiddenCol
             </button>
           </div>
         </fieldset>
-        {nodesSelected.length > 0 && <EditForm onUpdate={onUpdate} nodesSelected={nodesSelected} />}
+        {nodesSelected.length > 0 && (
+          <EditForm
+            onUpdate={onUpdate}
+            nodesSelected={nodesSelected}
+            hiddenColumns={hiddenColumns}
+          />
+        )}
       </div>
     </>
   );

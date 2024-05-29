@@ -1,46 +1,14 @@
 import { useState, useEffect } from 'react';
+import { editableColumns } from './EditableColumns';
 
-const editableColumns = [
-  'audiotrack',
-  'year',
-  'title',
-  'performers',
-  'album',
-  'genres',
-  'like',
-  'albumArtists',
-  'bpm',
-  'composers',
-  'conductor',
-  'copyright',
-  'comment',
-  'disc',
-  'discCount',
-  'description',
-  'duration',
-  'isCompilation',
-  'isrc',
-  'lyrics',
-  'performersRole',
-  'pictures',
-  'publisher',
-  'remixedBy',
-  'replayGainAlbumGain',
-  'replayGainAlbumPeak',
-  'replayGainTrackGain',
-  'replayGainTrackPeak',
-  'track',
-  'trackCount'
-];
+function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
+  console.log('hidden columns: ', hiddenColumns);
+  const initialState = editableColumns.reduce((acc, col) => {
+    acc[col] = '';
+    return acc;
+  }, {});
 
-function EditForm({ onUpdate, nodesSelected }) {
-  const [formData, setFormData] = useState({
-    year: '',
-    title: '',
-    artist: '',
-    album: '',
-    genres: ''
-  });
+  const [formData, setFormData] = useState(initialState);
 
   // Populate form data when selectedRowData changes
   /*   useEffect(() => {
@@ -88,17 +56,20 @@ function EditForm({ onUpdate, nodesSelected }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input name="year" value={formData.year} onChange={handleChange} placeholder="Year" />
-      <input name="title" value={formData.title} onChange={handleChange} placeholder="Title" />
-      <input
-        name="performers"
-        value={formData.performers}
-        onChange={handleChange}
-        placeholder="Performers (Artist)"
-      />
-      <input name="album" value={formData.album} onChange={handleChange} placeholder="Album" />
-      <input name="genres" value={formData.genres} onChange={handleChange} placeholder="Genres" />
-      <button type="submit">Update Selected Rows</button>
+      {editableColumns.map((col) => {
+        return !hiddenColumns.includes(col) ? (
+          <div key={col}>
+            <input
+              name={col}
+              id={col}
+              value={formData[col]}
+              placeholder={col}
+              onChange={handleChange}
+            />
+          </div>
+        ) : null;
+      })}
+      <button type="submit">Submit</button>
     </form>
   );
 }
