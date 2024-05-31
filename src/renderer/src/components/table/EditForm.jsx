@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { editableColumns } from './EditableColumns';
 import './styles/EditForm.css';
 
-function EditForm({ onUpdate, /* nodesSelected,  */ hiddenColumns }) {
+function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
   const initialState = editableColumns.reduce((acc, col) => {
     acc[col] = '';
     return acc;
@@ -55,16 +55,22 @@ function EditForm({ onUpdate, /* nodesSelected,  */ hiddenColumns }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ gridRow: '3/4' }}>
+    <form onSubmit={handleSubmit} /* style={{ gridRow: '3/4' }} */>
       {editableColumns.map((col) => {
         return !hiddenColumns.includes(col) ? (
-          <div key={col}>
+          <div
+            key={col} /* style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }} */
+          >
+            <label htmlFor={col} /* style={{ marginRight: '8px', whiteSpace: 'nowrap' }} */>
+              {`${col} :`}
+            </label>
             <input
               name={col}
               id={col}
               value={formData[col]}
-              placeholder={col}
+              /* placeholder={col} */
               onChange={handleChange}
+              style={{ flex: '1', minWidth: '0' }}
             />
           </div>
         ) : null;

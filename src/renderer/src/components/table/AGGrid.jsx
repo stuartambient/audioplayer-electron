@@ -75,14 +75,23 @@ const AGGrid = ({ data }) => {
     }
   };
 
+  const checkForBool = (value) => {
+    if (value === 'true') {
+      return 1;
+    } else if (value === 'false') {
+      return 0;
+    } else value;
+  };
+
   const handleMultiRowUpdate = (multiRowChanges) => {
     multiRowChanges.forEach((edit) => {
+      console.log('multi change: ', edit);
       // Iterate over all displayed rows
       gridRef.current.api.forEachNodeAfterFilterAndSort((rowNode) => {
         // Match the row using rowIndex
         if (rowNode.rowIndex === edit.rowId) {
-          // Apply the edit
-          rowNode.setDataValue(edit.field, edit.newValue);
+          const checkValue = checkForBool(edit.newValue);
+          rowNode.setDataValue(edit.field, checkValue);
         }
       });
     });
@@ -314,6 +323,11 @@ const AGGrid = ({ data }) => {
     'two-column': numNodes > 1
   });
 
+  const editFormClassname = classNames('edit-form', {
+    'no-panel': !isPanelVisible,
+    hidden: numNodes <= 1
+  });
+
   return (
     <>
       {/* Example using Grid's API */}
@@ -327,8 +341,12 @@ const AGGrid = ({ data }) => {
         togglePanelVisibility={togglePanelVisibility}
       />
       {nodesSelected.length > 1 && (
-        <div className="edit-form" style={{ gridColumn: '1 / 2', gridRow: '4/5' }}>
-          <EditForm onUpdate={handleMultiRowUpdate} hiddenColumns={hiddenColumns} />
+        <div className={editFormClassname}>
+          <EditForm
+            onUpdate={handleMultiRowUpdate}
+            nodesSelected={nodesSelected}
+            hiddenColumns={hiddenColumns}
+          />
         </div>
       )}
 
