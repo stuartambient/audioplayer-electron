@@ -6,10 +6,21 @@ body {
 }
 #metadata-editing {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  /* display: flex;
+  flex-direction: column; */
+  display: grid;
+  grid-template-rows: 2em 2em 3em 1fr;
+  grid-template-columns: 20% 80%;
 }
+
+/* .metadata-editing--nopanel {
+  grid-template-rows: repeast(2, 2em) 1fr;
+} */
 
 body::-webkit-scrollbar {
   display: none;
+}
+
+.modal-content {
+  border-radius: 5px;
 }

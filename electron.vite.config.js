@@ -13,7 +13,8 @@ export default defineConfig({
         input: {
           index: resolve(__dirname, 'src/preload/index.js'),
           coverSearch: resolve(__dirname, 'src/preload/coverSearch.js'),
-          metadataEditing: resolve(__dirname, 'src/preload/metadataEditing.js')
+          metadataEditing: resolve(__dirname, 'src/preload/metadataEditing.js'),
+          tagForm: resolve(__dirname, 'src/preload/tagForm.js')
         }
       }
     }
@@ -30,7 +31,8 @@ export default defineConfig({
         input: {
           main: resolve(__dirname, 'src/renderer/index.html'),
           coverSearch: resolve(__dirname, 'src/renderer/coverSearch.html'),
-          metadataEditing: resolve(__dirname, 'src/renderer/metadataEditing.html')
+          metadataEditing: resolve(__dirname, 'src/renderer/metadataEditing.html'),
+          tagForm: resolve(__dirname, 'src/renderer/tagForm.html')
         }
       }
     },

@@ -9,7 +9,8 @@ import { electronAPI } from '@electron-toolkit/preload';
 
 contextBridge.exposeInMainWorld('metadataEditingApi', {
   onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg)),
-  updateTags: (arr) => ipcRenderer.invoke('update-tags', arr)
+  updateTags: (arr) => ipcRenderer.invoke('update-tags', arr),
+  showChild: (args) => ipcRenderer.invoke('show-child', args)
 });
 
 /* if (process.contextIsolated) {

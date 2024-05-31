@@ -1,19 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import EditForm from './EditForm';
 import Modal from '../Modal';
+import { openChildWindow } from '../ChildWindows/openChildWindow';
 import './styles/CustomToolPanel.css';
 
-const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected, hiddenColumns }) => {
+const CustomToolPanel = ({
+  onChange,
+  onClick,
+  /* onUpdate, */
+  isPanelVisible,
+  togglePanelVisibility,
+  /*   nodesSelected, */
+  hiddenColumns
+}) => {
   const [onForm, setOnForm] = useState(false);
-  const [isPanelVisible, setIsPanelVisible] = useState(true);
+  /*  const [isPanelVisible, setIsPanelVisible] = useState(true); */
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const togglePanelVisibility = () => {
+  /*   const togglePanelVisibility = () => {
     setIsPanelVisible(!isPanelVisible);
-  };
+  }; */
 
   const fields = [
     { name: 'audiotrack', label: 'audiotrack', defaultChecked: true },
@@ -54,15 +63,18 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected, hiddenCol
 
   return (
     <>
-      <button className="hamburger-btn" onClick={togglePanelVisibility}>
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-      <button onClick={openModal}>Open Settings</button>
+      <div>
+        <button className="hamburger-btn" onClick={togglePanelVisibility}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+
       <div className={`column-panel ${isPanelVisible ? '' : 'hidden'}`}>
         <fieldset /* style={{ display: 'flex' }} */>
           <Modal
+            className="modal"
             fields={fields}
             openModal={openModal}
             closeModal={closeModal}
@@ -70,19 +82,7 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected, hiddenCol
             onChange={onChange}
             hiddenColumns={hiddenColumns}
           />
-          {/* {fields.map((field) => (
-            <div key={field.name}>
-              <input
-                type="checkbox"
-                name={field.name}
-                id={field.name}
-                defaultChecked={field.defaultChecked}
-                onChange={onChange}
-                value={true}
-              />
-              <label htmlFor={field.name}>{field.label}</label>
-            </div>
-          ))} */}
+
           <div>
             <button id="auto-size-all" className="auto-size-all" onClick={onClick}>
               Auto Size All
@@ -113,18 +113,53 @@ const CustomToolPanel = ({ onChange, onClick, onUpdate, nodesSelected, hiddenCol
             <button id="redo-last" className="redo-last" onClick={onClick}>
               Redo
             </button>
+            <button onClick={openModal} /* style={{ gridColumn: '1/-1' }} */>
+              Column Preferences
+            </button>
           </div>
         </fieldset>
+        {/*      {nodesSelected.length > 0 && (
+          <EditForm
+            id="menu"
+            className="menu hidden"
+            onUpdate={onUpdate}
+            nodesSelected={nodesSelected}
+            hiddenColumns={hiddenColumns}
+          />
+        )} */}
+      </div>
+      {/*    <div className="edit-form">
         {nodesSelected.length > 0 && (
           <EditForm
+            style={{ width: '20%' }}
+            id="menu"
+            className="menu hidden"
             onUpdate={onUpdate}
             nodesSelected={nodesSelected}
             hiddenColumns={hiddenColumns}
           />
         )}
-      </div>
+      </div> */}
     </>
   );
 };
 
 export default CustomToolPanel;
+
+/* {nodesSelected.length > 0 &&
+  openChildWindow(
+    'tag-form',
+    'tag-batch',
+    {
+      width: 1200,
+      parent: 'table-data',
+      height: 550,
+      show: false,
+      resizable: true,
+      preload: 'tagForm',
+      sandbox: false,
+      webSecurity: false,
+      contextIsolation: true
+    },
+    ['a', 'b', 'c']
+  )} */

@@ -2,10 +2,12 @@ import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
 
 /* import 'ag-grid-community'; */
+import classNames from 'classnames';
 import { FaSave } from 'react-icons/fa';
 import { CiPlay1 } from 'react-icons/ci';
 import { ImCancelCircle } from 'react-icons/im';
 import CustomToolPanel from './CustomToolPanel';
+import EditForm from './EditForm';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
@@ -15,6 +17,8 @@ import './styles/AGGrid.css';
 const AGGrid = ({ data }) => {
   const [originalData, setOriginalData] = useState([]);
   const [nodesSelected, setNodesSelected] = useState([]);
+  const [numNodes, setNumNodes] = useState(0);
+  const [isPanelVisible, setIsPanelVisible] = useState(true);
   const [isUndoAction, setIsUndoAction] = useState(false);
   const [isRedoAction, setIsRedoAction] = useState(false);
   const [columnApi, setColumnApi] = useState(null);
@@ -33,6 +37,10 @@ const AGGrid = ({ data }) => {
       setOriginalData(data);
     }
   }, [data]);
+
+  useEffect(() => {
+    setNumNodes(nodesSelected.length);
+  }, [nodesSelected]);
 
   let gridApi;
 
@@ -54,6 +62,10 @@ const AGGrid = ({ data }) => {
       <CiPlay1 />
     </div>
   );
+
+  const togglePanelVisibility = () => {
+    setIsPanelVisible(!isPanelVisible);
+  };
 
   const handleColumnPanel = (e) => {
     const col = e.target.name;
@@ -297,18 +309,32 @@ const AGGrid = ({ data }) => {
     setNodesSelected([]);
   }, []);
 
+  const gridClassName = classNames('ag-theme-alpine-dark', {
+    'no-panel': !isPanelVisible,
+    'two-column': numNodes > 1
+  });
+
   return (
     <>
       {/* Example using Grid's API */}
       <CustomToolPanel
         onChange={handleColumnPanel}
         onClick={handleGridMenu}
-        onUpdate={handleMultiRowUpdate}
+        /* onUpdate={handleMultiRowUpdate} */
         nodesSelected={nodesSelected}
         hiddenColumns={hiddenColumns}
+        isPanelVisible={isPanelVisible}
+        togglePanelVisibility={togglePanelVisibility}
       />
+      {nodesSelected.length > 1 && (
+        <div className="edit-form" style={{ gridColumn: '1 / 2', gridRow: '4/5' }}>
+          <EditForm onUpdate={handleMultiRowUpdate} hiddenColumns={hiddenColumns} />
+        </div>
+      )}
+
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-      <div className="ag-theme-alpine-dark" style={{ width: '100%', height: '100%' }}>
+      {/* < div className={isPanelVisible ? 'ag-theme-alpine-dark' : 'ag-theme-alpine-dark no-panel'}> */}
+      <div className={gridClassName}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
           rowData={originalData} // Row Data for Rows

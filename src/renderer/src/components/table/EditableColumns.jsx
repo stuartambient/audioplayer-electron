@@ -1,5 +1,4 @@
 export const editableColumns = [
-  'audiotrack',
   'year',
   'title',
   'performers',

@@ -16,6 +16,8 @@ function createOrUpdateChildWindow(name, config, data) {
       width: config.width,
       height: config.height,
       show: config.show,
+      parent: windows.get(config.parent) || null,
+      modal: !!config.parent,
       resizable: config.resizable,
       webPreferences: {
         preload: path.join(__dirname, `../preload/${config.preload}.js`),
@@ -46,4 +48,8 @@ function createOrUpdateChildWindow(name, config, data) {
   }
 }
 
-export default createOrUpdateChildWindow;
+function getWindowNames() {
+  return Array.from(windows.keys());
+}
+
+export { createOrUpdateChildWindow, getWindowNames };

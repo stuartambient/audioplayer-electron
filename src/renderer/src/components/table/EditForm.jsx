@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { editableColumns } from './EditableColumns';
+import './styles/EditForm.css';
 
-function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
-  console.log('hidden columns: ', hiddenColumns);
+function EditForm({ onUpdate, /* nodesSelected,  */ hiddenColumns }) {
   const initialState = editableColumns.reduce((acc, col) => {
     acc[col] = '';
     return acc;
@@ -55,7 +55,7 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} style={{ gridRow: '3/4' }}>
       {editableColumns.map((col) => {
         return !hiddenColumns.includes(col) ? (
           <div key={col}>
