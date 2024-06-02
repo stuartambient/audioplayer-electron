@@ -11,6 +11,7 @@ body {
   display: grid;
   grid-template-rows: 2em 3.2em 1fr;
   grid-template-columns: 20% 80%;
+  background-color: #302b2b;
 }
 
 /* .metadata-editing--nopanel {

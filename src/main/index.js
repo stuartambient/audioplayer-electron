@@ -758,11 +758,10 @@ ipcMain.handle('update-tags', async (_, arr) => {
       console.log(tagKeys[key], 'key: ', key, 'value: ', value);
 
       const t = tagKeys[key](value);
-      console.log('t: ', t);
       /* console.log('key: ', key, 'value: ', value, 't: ', t, 'current: ', myFile.tag[key]); */
 
-      /* myFile.tag[key] = t;
-      myFile.save(); */
+      myFile.tag[key] = t;
+      myFile.save();
     }
   });
 });

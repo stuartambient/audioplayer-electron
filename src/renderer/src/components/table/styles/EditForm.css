@@ -1,10 +1,23 @@
 .edit-form {
-  overflow: scroll;
+  overflow-y: scroll;
   grid-row: 3 / 4;
   grid-column: 1 / 2;
   justify-self: center;
   width: 100%;
   margin-left: 0.5rem;
+}
+
+.edit-form::-webkit-scrollbar {
+  background: aquamarine;
+  width: 10px;
+}
+
+.edit-form::-webkit-scrollbar-thumb {
+  background: orange;
+}
+
+.edit-form::-webkit-scrollbar--track {
+  background: red;
 }
 
 .no-panel {
@@ -41,6 +54,7 @@
 
 .edit-form form div input {
   border-radius: 5px;
+  color: black;
 }
 
 .edit-form form div label {
@@ -49,6 +63,7 @@
 
   padding: 0.2rem;
   margin-left: 0.5rem;
+  color: white;
 }
 
 .edit-form form div input {
@@ -56,7 +71,7 @@
   margin: 0.2em 0 0.2em 0;
   height: 2rem;
   width: 95%;
-  color: white;
+  color: black;
   border: none;
   border: 1px inset blue;
 }

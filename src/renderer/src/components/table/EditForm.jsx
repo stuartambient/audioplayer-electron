@@ -47,6 +47,7 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
             newValue,
             oldValue: node.data[key]
           };
+          console.log('changeObj: ', changeObj);
           multiRowChanges.push(changeObj);
         }
       });

@@ -90,8 +90,8 @@ const AGGrid = ({ data }) => {
       gridRef.current.api.forEachNodeAfterFilterAndSort((rowNode) => {
         // Match the row using rowIndex
         if (rowNode.rowIndex === edit.rowId) {
-          const checkValue = checkForBool(edit.newValue);
-          rowNode.setDataValue(edit.field, checkValue);
+          /* const checkValue = checkForBool(edit.newValue); */
+          rowNode.setDataValue(edit.field, edit.newValue);
         }
       });
     });
@@ -352,7 +352,7 @@ const AGGrid = ({ data }) => {
 
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
       {/* < div className={isPanelVisible ? 'ag-theme-alpine-dark' : 'ag-theme-alpine-dark no-panel'}> */}
-      <div className={gridClassName}>
+      <div className={gridClassName} style={{ width: '100%', height: '100%' }}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
           rowData={originalData} // Row Data for Rows
