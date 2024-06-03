@@ -81,6 +81,13 @@
   color: black;
 }
 
+.hamburger-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column: 1 / -1;
+}
+
 .hamburger-btn {
   cursor: pointer;
   height: 16px;
@@ -98,7 +105,7 @@
 .hamburger-btn span {
   height: 2px;
   width: 24px;
-  background-color: #333; /* Dark color for contrast */
+  background-color: #a7edfc; /* Dark color for contrast */
   border-radius: 2px;
   transition: all 0.3s linear;
 }

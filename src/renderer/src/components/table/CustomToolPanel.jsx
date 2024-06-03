@@ -63,7 +63,7 @@ const CustomToolPanel = ({
 
   return (
     <>
-      <div>
+      <div className="hamburger-container">
         <button className="hamburger-btn" onClick={togglePanelVisibility}>
           <span></span>
           <span></span>

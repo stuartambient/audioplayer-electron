@@ -11,8 +11,14 @@ export const useColumnDefinitions = () => {
         editable: false,
         resizable: false
       },
-      { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false },
-      { field: 'audiotrack', filter: true, editable: false, rowDrag: true },
+      /* { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false }, */
+      {
+        field: 'audiotrack',
+        checkboxSelection: true,
+        filter: true,
+        editable: false,
+        rowDrag: true
+      },
       {
         field: 'year',
         filter: 'agNumberColumnFilter',

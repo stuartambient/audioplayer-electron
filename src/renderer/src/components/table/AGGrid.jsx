@@ -35,6 +35,9 @@ const AGGrid = ({ data }) => {
   useEffect(() => {
     if (data) {
       setOriginalData(data);
+      setUndos([]);
+      setRedos([]);
+      setNodesSelected([]);
     }
   }, [data]);
 
@@ -75,23 +78,20 @@ const AGGrid = ({ data }) => {
     }
   };
 
-  const checkForBool = (value) => {
-    if (value === 'true') {
-      return 1;
-    } else if (value === 'false') {
-      return 0;
-    } else value;
-  };
-
   const handleMultiRowUpdate = (multiRowChanges) => {
     multiRowChanges.forEach((edit) => {
-      console.log('multi change: ', edit);
       // Iterate over all displayed rows
       gridRef.current.api.forEachNodeAfterFilterAndSort((rowNode) => {
         // Match the row using rowIndex
         if (rowNode.rowIndex === edit.rowId) {
-          /* const checkValue = checkForBool(edit.newValue); */
-          rowNode.setDataValue(edit.field, edit.newValue);
+          switch (edit.newValue) {
+            case 'true':
+              return rowNode.setDataValue(edit.field, 1);
+            case 'false':
+              return rowNode.setDataValue(edit.field, 0);
+            default:
+              rowNode.setDataValue(edit.field, edit.newValue);
+          }
         }
       });
     });
@@ -102,7 +102,6 @@ const AGGrid = ({ data }) => {
 
   const handleCellValueChanged = useCallback(
     (event) => {
-      console.log('Cell value changed: ', event);
       if (!isUndoAction && !isRedoAction) {
         const { api, node, colDef, newValue } = event;
         const change = {
@@ -295,6 +294,7 @@ const AGGrid = ({ data }) => {
     resizable: true,
     sortable: true,
     editable: true
+
     /* autoSize: true, */
     /*     autoSizeAllColumns: true */
     /*  singleClickEdit: true */
@@ -304,6 +304,12 @@ const AGGrid = ({ data }) => {
   const updateHiddenColumns = (api) => {
     const hiddenCols = api.getColumns().filter((col) => !col.isVisible());
     setHiddenColumns(hiddenCols.map((col) => col.getColId()));
+  };
+
+  const onRowClicked = (event) => {
+    if (event.ctrlKey || event.metaKey) {
+      event.node.setSelected(!event.node.isSelected());
+    }
   };
 
   const onColumnVisible = useCallback(() => {
@@ -365,6 +371,7 @@ const AGGrid = ({ data }) => {
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
+          suppressRowClickSelection={true}
           /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
           //enableRangeSelection={true}
           autoSizeStrategy="fitCellContents"
@@ -375,6 +382,7 @@ const AGGrid = ({ data }) => {
           undoRedoCellEditing={false}
           rowDragManaged={true}
           rowDragMultiRow={true}
+          onRowClicked={onRowClicked}
           /*     frameworkComponents={{ booleanCellRenderer: BooleanCellRenderer }} */
         />
       </div>
