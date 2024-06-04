@@ -39,8 +39,22 @@ export const useColumnDefinitions = () => {
       { field: 'like', editable: true, type: 'bool' },
       { field: 'error', filter: true },
       { field: 'albumArtists', filter: true },
-      { field: 'audioBitrate', filter: true, editable: false },
-      { field: 'audioSamplerate', filter: true, editable: false },
+      {
+        field: 'audioBitrate',
+        filter: true,
+        editable: false
+        /*  cellStyle: (params) => {
+          return !params.colDef.editable ? { backgroundColor: '#2f4f4f', color: '#000000' } : {};
+        } */
+      },
+      {
+        field: 'audioSampleRate',
+        filter: true,
+        editable: false
+        /* cellStyle: (params) => {
+          return !params.colDef.editable ? { backgroundColor: '#2f4f4f', color: '#000000' } : {};
+        } */
+      },
       { field: 'codecs', filter: true, editable: false },
       { field: 'bpm', filter: true },
       { field: 'composers', filter: true },
