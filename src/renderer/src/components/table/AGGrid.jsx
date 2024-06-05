@@ -9,12 +9,13 @@ import { ImCancelCircle } from 'react-icons/im';
 import CustomToolPanel from './CustomToolPanel';
 import EditForm from './EditForm';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
+import PlayButtonRenderer from './PlayButtonRenderer';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 import './styles/AGGrid.css';
 
-const AGGrid = ({ data }) => {
+const AGGrid = ({ data, playButton }) => {
   const [originalData, setOriginalData] = useState([]);
   const [nodesSelected, setNodesSelected] = useState([]);
   const [numNodes, setNumNodes] = useState(0);
@@ -367,6 +368,7 @@ const AGGrid = ({ data }) => {
           animateRows={true}
           onSelectionChanged={onSelectionChanged}
           columnTypes={useColumnTypes()}
+          components={{ PlayButtonRenderer }}
           /* getRowId={getRowId} */
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}

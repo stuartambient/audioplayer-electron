@@ -1,0 +1,11 @@
+.playButton {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.playIcon {
+  width: 20px;
+  height: 20px;
+}

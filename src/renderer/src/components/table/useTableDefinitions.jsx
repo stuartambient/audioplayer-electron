@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
+import PlayButtonRenderer from './PlayButtonRenderer';
 import { CiPlay1 } from 'react-icons/ci';
 
 export const useColumnDefinitions = () => {
   const columnDefs = useMemo(
     () => [
       {
-        field: 'Icon',
-        cellRenderer: (params) => <CiPlay1 />,
-        width: 50,
+        field: 'Play',
+        width: 70,
         editable: false,
-        resizable: false
+        resizable: false,
+        headerName: 'Play',
+        cellRenderer: 'PlayButtonRenderer'
       },
       /* { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false }, */
       {
