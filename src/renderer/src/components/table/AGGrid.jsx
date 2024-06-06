@@ -33,14 +33,36 @@ const AGGrid = ({ data, playButton }) => {
 
   const isRowsSelected = useRef([]);
 
+  const resetAudio = () => {
+    const event = new Event('resetAudio');
+    window.dispatchEvent(event);
+  };
+
+  useEffect(() => {
+    // Example of resetting audio when loading new data
+    // You would call resetAudio in your actual logic where appropriate
+    return () => {
+      resetAudio();
+    };
+  }, []);
+
+  const getRowId = useMemo(() => (params) => params.data.track_id, []);
+
   useEffect(() => {
     if (data) {
       setOriginalData(data);
       setUndos([]);
       setRedos([]);
       setNodesSelected([]);
+      resetAudio();
     }
   }, [data]);
+
+  // Function to dispatch the custom event
+  /*   const resetAudio = () => {
+    const event = new Event('resetAudio');
+    window.dispatchEvent(event);
+  }; */
 
   useEffect(() => {
     setNumNodes(nodesSelected.length);
@@ -289,8 +311,6 @@ const AGGrid = ({ data, playButton }) => {
     }
   };
 
-  const getRowId = useMemo(() => (params) => params.data.audiotrack, []);
-
   const defaultColDef = useMemo(() => ({
     resizable: true,
     sortable: true,
@@ -369,13 +389,14 @@ const AGGrid = ({ data, playButton }) => {
           onSelectionChanged={onSelectionChanged}
           columnTypes={useColumnTypes()}
           components={{ PlayButtonRenderer }}
-          /* getRowId={getRowId} */
+          getRowId={getRowId}
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
           suppressRowClickSelection={true}
           /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
           //enableRangeSelection={true}
+          /* getRowNodeId={getRowNodeId} */
           autoSizeStrategy="fitCellContents"
           headerHeight={25}
           rowMultiSelectWithClick={true}
