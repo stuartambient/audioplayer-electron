@@ -1,16 +1,11 @@
 import fs from 'node:fs';
-import path from 'node:path';
 import { promisify } from 'node:util';
 import { finished } from 'node:stream';
-import app from 'electron';
-/* import { Buffer } from "node:buffer"; */
 import { v4 as uuidv4 } from 'uuid';
-import { parseFile } from 'music-metadata';
 import { File } from 'node-taglib-sharp';
 import db from '../connection';
 import { roots } from '../../constant/constants';
 import processFile from '../processProblemTracks';
-import { error } from 'node:console';
 
 const streamFinished = promisify(finished);
 

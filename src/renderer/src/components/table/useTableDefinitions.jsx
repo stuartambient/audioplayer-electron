@@ -6,7 +6,7 @@ export const useColumnDefinitions = () => {
   const columnDefs = useMemo(
     () => [
       {
-        field: 'Play',
+        field: 'playing',
         width: 70,
         editable: false,
         resizable: false,

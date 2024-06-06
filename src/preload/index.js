@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
-import axios from 'axios';
 
 const fixedEncodeURIComponent = (str) => {
   return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {

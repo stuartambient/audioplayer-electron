@@ -1,4 +1,3 @@
-import { app } from 'electron';
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
 import db from './connection';
