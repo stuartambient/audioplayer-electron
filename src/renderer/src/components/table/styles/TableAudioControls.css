@@ -1,0 +1,13 @@
+.centralControlContainer {
+  display: flex;
+  align-items: center;
+  margin: 10px;
+}
+
+.stopButton {
+  margin-right: 10px;
+}
+
+.volumeSlider {
+  width: 100%;
+}

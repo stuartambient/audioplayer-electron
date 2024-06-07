@@ -81,9 +81,15 @@ const compareDbRecords = async (files) => {
   return status;
 };
 
+function escapeSpecialChars(path) {
+  return path.replace(/[\[\]\(\)]/g, '\\$&');
+  ///[\[\]\(\)\{\}\*\?\!\\\/\:\|\^]/g, '\\$&'
+}
+
 const glob = async (patterns) => {
   /* console.log(patterns); */
-  const entries = await fg(patterns, {
+  const escapedPatterns = patterns.map(escapeSpecialChars);
+  const entries = await fg(escapedPatterns, {
     caseSensitiveMatch: false,
     suppressErrors: true
   })
