@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef, useState } from 'react';
+import React, { createContext, useContext, useRef, useState, useEffect } from 'react';
 
 const AudioContext = createContext();
 
@@ -29,6 +29,19 @@ export const AudioProvider = ({ children }) => {
     audioRef.current.volume = newVolume;
     setVolume(newVolume);
   };
+
+  useEffect(() => {
+    const handleResetAudio = () => {
+      stopTrack();
+    };
+
+    window.addEventListener('resetAudio', handleResetAudio);
+
+    return () => {
+      window.removeEventListener('resetAudio', handleResetAudio);
+      handleResetAudio(); // Ensure audio is stopped when the component is unmounted
+    };
+  }, []);
 
   return (
     <AudioContext.Provider value={{ currentTrack, playTrack, stopTrack, volume, changeVolume }}>

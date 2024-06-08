@@ -34,6 +34,7 @@ const AGGrid = ({ data, playButton }) => {
   const isRowsSelected = useRef([]);
 
   const resetAudio = () => {
+    console.log('reset audio');
     const event = new Event('resetAudio');
     window.dispatchEvent(event);
   };
@@ -50,11 +51,11 @@ const AGGrid = ({ data, playButton }) => {
 
   useEffect(() => {
     if (data) {
+      resetAudio();
       setOriginalData(data);
       setUndos([]);
       setRedos([]);
       setNodesSelected([]);
-      resetAudio();
     }
   }, [data]);
 
@@ -382,6 +383,7 @@ const AGGrid = ({ data, playButton }) => {
       <div className={gridClassName} style={{ width: '100%', height: '100%' }}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
+          /* rowModelType="viewport" */
           rowData={originalData} // Row Data for Rows
           columnDefs={useColumnDefinitions()} // Column Defs for Columns
           defaultColDef={defaultColDef} // Default Column Properties
