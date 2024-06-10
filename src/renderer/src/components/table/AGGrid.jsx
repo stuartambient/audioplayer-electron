@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { FaSave } from 'react-icons/fa';
 import { CiPlay1 } from 'react-icons/ci';
 import { ImCancelCircle } from 'react-icons/im';
+import CustomLoadingOverlay from './customLoadingOverlay.jsx';
 import CustomToolPanel from './CustomToolPanel';
 import EditForm from './EditForm';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
@@ -15,8 +16,8 @@ import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 import './styles/AGGrid.css';
 
-const AGGrid = ({ data, playButton }) => {
-  const [originalData, setOriginalData] = useState([]);
+const AGGrid = ({ reset, data, playButton }) => {
+  const [originalData, setOriginalData] = useState(null);
   const [nodesSelected, setNodesSelected] = useState([]);
   const [numNodes, setNumNodes] = useState(0);
   const [isPanelVisible, setIsPanelVisible] = useState(true);
@@ -32,6 +33,12 @@ const AGGrid = ({ data, playButton }) => {
   const [redos, setRedos] = useState([]);
 
   const isRowsSelected = useRef([]);
+
+  useEffect(() => {
+    if (reset) {
+      setOriginalData(null);
+    }
+  }, [reset]);
 
   const resetAudio = () => {
     console.log('reset audio');
@@ -50,12 +57,12 @@ const AGGrid = ({ data, playButton }) => {
   const getRowId = useMemo(() => (params) => params.data.track_id, []);
 
   useEffect(() => {
-    if (data) {
+    if (data && data.length > 0) {
       resetAudio();
-      setOriginalData(data);
       setUndos([]);
       setRedos([]);
       setNodesSelected([]);
+      setOriginalData(data);
     }
   }, [data]);
 
@@ -93,6 +100,25 @@ const AGGrid = ({ data, playButton }) => {
   const togglePanelVisibility = () => {
     setIsPanelVisible(!isPanelVisible);
   };
+
+  const loadingOverlayComponent = useMemo(() => {
+    return CustomLoadingOverlay;
+  }, []);
+
+  useEffect(() => {
+    if (reset) {
+      gridRef.current.api.showLoadingOverlay();
+    }
+  });
+  /*   const onBtShowLoading = useCallback(() => {
+    gridRef.current.api.showLoadingOverlay();
+  }, []); */
+
+  /*   const loadingOverlayComponentParams = useMemo(() => {
+    return {
+      loadingMessage: 'One moment please...'
+    };
+  }, []); */
 
   const handleColumnPanel = (e) => {
     const col = e.target.name;
@@ -258,6 +284,8 @@ const AGGrid = ({ data, playButton }) => {
         return autoSize();
       case 'reset-window':
         return sizeToFit();
+      case 'reset':
+        return setOriginalData(undefined);
       case 'cancel-all':
         return handleCancel();
       case 'save-all':
@@ -334,6 +362,10 @@ const AGGrid = ({ data, playButton }) => {
     }
   };
 
+  /*   const loadingOverlayComponent = useMemo(() => {
+    return CustomLoadingOverlay;
+  }, []); */
+
   const onColumnVisible = useCallback(() => {
     if (columnApi) {
       updateHiddenColumns(columnApi);
@@ -408,6 +440,9 @@ const AGGrid = ({ data, playButton }) => {
           rowDragManaged={true}
           rowDragMultiRow={true}
           onRowClicked={onRowClicked}
+          loadingOverlayComponent={loadingOverlayComponent}
+          /* loadingOverlayComponent={loadingOverlayComponent}
+          loadingOverlayComponentParams={loadingOverlayComponentParams} */
           /*     frameworkComponents={{ booleanCellRenderer: BooleanCellRenderer }} */
         />
       </div>

@@ -36,7 +36,7 @@ export const TopHundredArtists = ({ topArtists }) => {
         {
           width: 1200,
           height: 550,
-          show: false,
+          show: true,
           resizable: true,
           preload: 'metadataEditing',
           sandbox: false,

@@ -14,7 +14,7 @@ import {
 import * as path from 'path';
 import fs from 'fs';
 /* import { spawn } from 'child_process'; */
-import { createOrUpdateChildWindow, getWindowNames } from './windowManager.js';
+import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowManager.js';
 import url, { pathToFileURL } from 'url';
 import http from 'node:http';
 import * as stream from 'stream';
@@ -458,8 +458,6 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  const allWindows = getWindowNames();
-  console.log('allWindows: ', allWindows);
   console.log('screen-mode-change: ', args[0]);
   if (args[0] === 'mini') {
     await mainWindow.setMinimumSize(290, 350);
@@ -561,6 +559,18 @@ ipcMain.handle('get-tracks-by-root', async (event, root) => {
   return rootTracks;
 });
 
+ipcMain.handle('check-for-open-table', async (event, name) => {
+  const names = await getWindowNames();
+  if (names.includes(name)) {
+    return true;
+  }
+  return false;
+});
+
+ipcMain.handle('clear-table', async (event) => {
+  const targetWindow = await getWindow('table-data');
+  targetWindow.webContents.send('clear-table', 'red');
+});
 /* ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
   const folderAlbums = await albumsByTopFolder(folder);
   return folderAlbums;

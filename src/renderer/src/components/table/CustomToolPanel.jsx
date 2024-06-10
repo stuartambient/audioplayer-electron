@@ -115,6 +115,9 @@ const CustomToolPanel = ({
             <button id="redo-last" className="redo-last" onClick={onClick}>
               Redo
             </button>
+            <button id="reset" className="reset" onClick={onClick}>
+              reset
+            </button>
             <button onClick={openModal} /* style={{ gridColumn: '1/-1' }} */>
               Column Preferences
             </button>

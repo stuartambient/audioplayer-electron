@@ -32,7 +32,8 @@ export default defineConfig({
           main: resolve(__dirname, 'src/renderer/index.html'),
           coverSearch: resolve(__dirname, 'src/renderer/coverSearch.html'),
           metadataEditing: resolve(__dirname, 'src/renderer/metadataEditing.html'),
-          tagForm: resolve(__dirname, 'src/renderer/tagForm.html')
+          tagForm: resolve(__dirname, 'src/renderer/tagForm.html'),
+          splash: resolve(__dirname, 'src/renderer/splash.html')
         }
       }
     },

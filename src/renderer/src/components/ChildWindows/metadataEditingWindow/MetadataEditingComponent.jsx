@@ -9,36 +9,37 @@ import './style.css';
 
 const MetadataEditingApp = () => {
   const [listType, setListType] = useState([]);
+  const [reset, setReset] = useState(false);
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const dataRef = useRef([]);
 
   useEffect(() => {
-    let subscribed = true;
-    const getArgs = async () => {
-      await window.metadataEditingApi.onSendToChild((e) => {
-        if (subscribed) {
-          setListType((prevListType) => (prevListType !== e.listType ? e.listType : prevListType));
-          setData(e.results);
-          setLoading(false); // Stop loading once data is fetched
-        }
-        /*  setListType(e.listType);
-        setData(e.results); */
-        /*  if (subscribed) {
-          setListType((prevListType) => (prevListType !== e.listType ? e.listType : prevListType));
-          setData((prevData) => (prevData !== e.results ? e.results : prevData));
-        } */
-      });
+    const handleClearTable = () => {
+      setReset(true);
+      setData([]); // Trigger grid to show loading state
     };
-    /* if (subscribed)  */ getArgs();
-    return () => (subscribed = false);
+
+    window.metadataEditingApi.onClearTable(handleClearTable);
+
+    return () => {
+      window.metadataEditingApi.off('clear-table', handleClearTable);
+    };
   }, []);
 
-  return (
-    <Suspense fallback={<TableLoader />}>
-      {loading ? <TableLoader /> : <AGGrid data={data} />}
-    </Suspense>
-  );
+  useEffect(() => {
+    const handleSendToChild = (e) => {
+      setListType(e.listType);
+      setData(e.results);
+      setReset(false);
+    };
+
+    window.metadataEditingApi.onSendToChild(handleSendToChild);
+
+    return () => {
+      window.metadataEditingApi.off('send-to-child', handleSendToChild);
+    };
+  }, []);
+
+  return <AGGrid reset={reset} data={data} />;
 };
 
 export default MetadataEditingApp;

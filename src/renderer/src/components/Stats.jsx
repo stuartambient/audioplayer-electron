@@ -31,6 +31,10 @@ const Stats = () => {
 
   useEffect(() => {
     const getTracks = async () => {
+      const openTable = await window.api.checkForOpenTable('table-data');
+      if (openTable) {
+        await window.api.clearTable();
+      }
       const results = await window.api.getTracksByRoot(root);
       /* setRootTracks(results); */
       /* console.log('results: ', results.length); */

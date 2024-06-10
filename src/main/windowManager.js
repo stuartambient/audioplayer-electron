@@ -2,14 +2,40 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 const path = require('path');
 
-// Store windows by name
 const windows = new Map();
+/* let splash;
+const createSplash = () => {
+
+  splash = new BrowserWindow({
+    width: 400,
+    height: 300,
+    frame: false,
+    alwaysOnTop: true,
+    show: false
+  });
+
+  const url =
+    is.dev && process.env['ELECTRON_RENDERER_URL']
+      ? `${process.env['ELECTRON_RENDERER_URL']}/splash.html`
+      : path.join(__dirname, `../renderer/splash.html`);
+
+  is.dev ? splash.loadURL(url) : splash.loadFile(url);
+}; */
 
 function createOrUpdateChildWindow(name, config, data) {
   let window = windows.get(name);
+  /*   if (!window) {
+    createSplash();
+    splash.show();
+  } */
   if (window) {
     return window.webContents.send('send-to-child', data);
   }
+
+  /*  if (!window) {
+    createSplash();
+    splash.show();
+  } */
 
   if (!window) {
     window = new BrowserWindow({
@@ -40,6 +66,9 @@ function createOrUpdateChildWindow(name, config, data) {
 
     windows.set(name, window);
     /* console.log(windows); */
+    /* app.on('ready', () => {
+      createSplash();
+    }); */
 
     window.once('ready-to-show', () => {
       window.show();
@@ -48,8 +77,12 @@ function createOrUpdateChildWindow(name, config, data) {
   }
 }
 
+function getWindow(win) {
+  return windows.get(win);
+}
+
 function getWindowNames() {
   return Array.from(windows.keys());
 }
 
-export { createOrUpdateChildWindow, getWindowNames };
+export { createOrUpdateChildWindow, getWindowNames, getWindow };
