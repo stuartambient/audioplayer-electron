@@ -173,7 +173,7 @@ function createWindow() {
 
 const reactDevToolsPath =
   /* 'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.1_0'; */
-  'C:/Users/sambi/documents/Devtools/4.27.1_0';
+  'C:/Users/sambi/documents/Devtools2/4.27.1_0';
 /*   'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi'; */
 /* 'C:/Users/sambi/documents/Devtools2/5.0.2_0'; */
 

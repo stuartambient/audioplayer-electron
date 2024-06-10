@@ -1,8 +1,8 @@
 import { GiExpandedRays } from 'react-icons/gi';
 
 const Row = ({ index, style, data, onClick, stat }) => {
-  /* console.log('index: ', index, 'data: ', data, 'onClick: ', onClick, 'stat: ', stat); */
-  const rowData = data[index];
+  /* console.log('data: ', data);
+    const rowData = data[index];  */
 
   const rowStyles = {
     display: 'flex',
@@ -45,9 +45,8 @@ const Row = ({ index, style, data, onClick, stat }) => {
           )}
         </>
       )}
-      {stat === 'stat-folder' && (
+      {/*       {stat === 'stat-folder' && (
         <>
-          {/*  <span style={itemStyles}>{!rowData.root ? 'null' : rowData.root}</span> */}
           {rowData.root && (
             <>
               <span id={rowData.root} onClick={onClick} style={{ cursor: 'pointer' }}>
@@ -60,7 +59,7 @@ const Row = ({ index, style, data, onClick, stat }) => {
             </>
           )}
         </>
-      )}
+      )} */}
       {stat === 'stat-albums' && (
         <span key={data.id} id={data.fullpath}>
           {data.foldername}
