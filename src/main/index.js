@@ -174,13 +174,14 @@ function createWindow() {
 const reactDevToolsPath =
   /* 'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.1_0'; */
   'C:/Users/sambi/documents/Devtools2/4.27.1_0';
-/*   'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi'; */
+
+/*  'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/5.0.2_0'; */
 /* 'C:/Users/sambi/documents/Devtools2/5.0.2_0'; */
 
 let primaryDisplay;
 
 app.whenReady().then(async () => {
-  await session.defaultSession.loadExtension(reactDevToolsPath);
+  await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
 
   /*  const scriptPath = path.join(__dirname, 'checkDataTypes.js'); */
 

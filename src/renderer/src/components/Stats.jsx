@@ -30,6 +30,28 @@ const Stats = () => {
   }, [isSubmenuOpen, reqDirectories]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      switch (statReq) {
+        case 'totalmedia':
+          const totalTracksRequest = await window.api.totalTracksStat();
+          setTotalTracksData(totalTracksRequest);
+          break;
+        case 'topArtists':
+          const topArtistsRequest = await window.api.topHundredArtistsStat();
+          setTopArtistsData(topArtistsRequest);
+          break;
+        case 'genres':
+          const allGenresRequest = await window.api.genresStat();
+          setAllGenres(allGenresRequest);
+          break;
+        default:
+          return;
+      }
+    };
+    fetchData();
+  }, [statReq]);
+
+  useEffect(() => {
     const getTracks = async () => {
       const openTable = await window.api.checkForOpenTable('table-data');
       if (openTable) {
@@ -59,7 +81,7 @@ const Stats = () => {
     return () => setRoot('');
   }, [root]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const fetchData = async () => {
       if (statReq === 'totalmedia' && !totalTracksData) {
         const totalTracksRequest = await window.api.totalTracksStat();
@@ -71,12 +93,12 @@ const Stats = () => {
         const allGenresRequest = await window.api.genresStat();
         setAllGenres(allGenresRequest);
       }
-    };
+    }; */
+  /* 
+    fetchData(); */
 
-    fetchData();
-
-    // Cleanup function to reset data when statReq changes
-    return () => {
+  // Cleanup function to reset data when statReq changes
+  /*    return () => {
       if (statReq !== 'totalmedia') {
         setTotalTracksData(null);
       }
@@ -87,7 +109,7 @@ const Stats = () => {
         setAllGenres(null);
       }
     };
-  }, [statReq, totalTracksData, topArtistsData, allGenres]);
+  }, [statReq]); */
 
   const toggleSubmenu = (event) => {
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
