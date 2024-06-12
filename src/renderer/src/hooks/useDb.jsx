@@ -1,5 +1,5 @@
 /* import { is } from '@electron-toolkit/utils'; */
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
 
 const useTracks = (
@@ -378,6 +378,51 @@ const useDistinctDirectories = (setDirectories) => {
   }, []);
 };
 
+const useTotalTracksStat = (setTotalTracks) => {
+  console.log('hit ');
+  const [error, setError] = useState([]);
+
+  useEffect(() => {
+    let isSubscribed = true;
+    const getTotalTracks = async () => {
+      try {
+        const totalTracksRequest = await window.api.totalTracksStat();
+        if (totalTracksRequest && isSubscribed) {
+          setTotalTracks(totalTracksRequest);
+        }
+      } catch (e) {
+        if (isSubscribed) {
+          setError((prevErrors) => [...prevErrors, e.message]);
+        }
+      }
+    };
+    getTotalTracks();
+    return () => {
+      isSubscribed = false;
+    };
+  }, [setTotalTracks]);
+
+  /*  return error; */
+};
+
+const useTracksByRoot = (root, setTracks) => {
+  useEffect(() => {
+    let isSubscribed = true;
+    const getTracksByRoot = async () => {
+      const results = await window.api.getTracksByRoot(root);
+      if (results && isSubscribed) {
+        // Instead of setting the state here, call the callback with the results
+        setTracks(results);
+      }
+    };
+
+    getTracksByRoot();
+    return () => {
+      isSubscribed = false;
+    };
+  }, [root, setTracks]); // Include onTracksFetched in the dependencies array
+};
+
 export {
   useTracks,
   useAlbums,
@@ -388,6 +433,7 @@ export {
   usePlaylistDialog,
   useGetPlaylists,
   useAllAlbumsCovers,
-  useDistinctDirectories
-  /* useTracksByRoot */
+  useDistinctDirectories,
+  useTotalTracksStat,
+  useTracksByRoot
 };
