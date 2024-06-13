@@ -548,19 +548,21 @@ ipcMain.handle('get-tracks-by-genres', async (_, arg) => {
 });
 
 ipcMain.handle('get-tracks-by-root', async (event, root) => {
+  /*   console.log('get-tracks-by-root');
   const start = Date.now();
-  console.log(`Query start: ${start}`);
+  console.log(`Query start: ${start}`); */
   const rootTracks = await allTracksByRoot(root);
   /* console.log(rootTracks); */
-  console.log('root tracks length: ', rootTracks.length);
+  /*   console.log('root tracks length: ', rootTracks.length);
   const end = Date.now();
   console.log(`Query end: ${end}`);
-  console.log(`Query duration: ${end - start}ms`);
+  console.log(`Query duration: ${end - start}ms`); */
   console.log('-----------------------------------');
   return rootTracks;
 });
 
 ipcMain.handle('check-for-open-table', async (event, name) => {
+  console.log('check for open table');
   const names = await getWindowNames();
   if (names.includes(name)) {
     return true;
@@ -569,6 +571,7 @@ ipcMain.handle('check-for-open-table', async (event, name) => {
 });
 
 ipcMain.handle('clear-table', async (event) => {
+  console.log('clear table');
   const targetWindow = await getWindow('table-data');
   targetWindow.webContents.send('clear-table', 'red');
 });
@@ -867,8 +870,8 @@ ipcMain.handle('show-text-input-menu', (event) => {
 });
 
 ipcMain.handle('show-child', (event, args) => {
-  const { name, winConfig, data } = args;
-  createOrUpdateChildWindow(name, winConfig, data);
+  const { name, type, winConfig, data } = args;
+  createOrUpdateChildWindow(name, type, winConfig, data);
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {

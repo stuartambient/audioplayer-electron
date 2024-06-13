@@ -3,6 +3,7 @@ export const openChildWindow = (name, type, config, data) => {
   /* window.api.showChild({ */
   apipreload.showChild({
     name: name,
+    type: type,
     winConfig: {
       width: config.width,
       height: config.height,

@@ -22,7 +22,7 @@ const createSplash = () => {
   is.dev ? splash.loadURL(url) : splash.loadFile(url);
 }; */
 
-function createOrUpdateChildWindow(name, config, data) {
+function createOrUpdateChildWindow(name, type, config, data) {
   let window = windows.get(name);
   /*   if (!window) {
     createSplash();

@@ -177,6 +177,7 @@ const Stats = () => {
           </>
         )}
         {root && <TracksByRoot root={root} />}
+        {root && <div>Viewing root: {root}</div>}
         {statReq === 'directories' && (
           <>
             <div className="stats--length"></div>
