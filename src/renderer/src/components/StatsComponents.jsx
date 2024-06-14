@@ -10,7 +10,6 @@ import {
 } from '../hooks/useDb';
 
 const openMetadataTables = async (type, data = null) => {
-  console.log('type: ', type, 'data: ', data);
   const name = 'table-data';
   const config = {
     width: 1200,
@@ -79,19 +78,53 @@ export const TopHundredArtists = () => {
   );
 };
 
+const useGenre = (genre) => {
+  useEffect(() => {
+    let isSubscribed = true;
+    const openTable = async () => {
+      const openTable = await window.api.checkForOpenTable('table-data');
+      if (openTable) {
+        await window.api.clearTable();
+      } else {
+        openMetadataTables('top-genres');
+      }
+
+      const results = await window.api.getTracksByGenres(genre);
+      /* openMetadataTables('root-tracks', tracksResult); */
+    };
+    if (isSubscribed && genre) openTable();
+    return () => {
+      isSubscribed = false;
+    };
+  }, [genre]);
+};
 export const Genres = () => {
   const [genres, setGenres] = useState([]);
+  const [genre, setGenre] = useState('');
   useGenres(setGenres);
+  useGenre(genre);
   const getGenres = async (e) => {
-    const genre = e.target.id;
-    const openTable = await window.api.checkForOpenTable('table-data');
-    if (openTable) {
-      await window.api.clearTable();
-    } else {
-      openMetadataTables('top-genres');
-    }
+    console.log(e.target.id);
+    setGenre(e.target.id);
+    /*    const genre = e.target.id;
     const results = await window.api.getTracksByGenres(genre);
-    openMetadataTables('top-genres', results);
+    if (results) {
+      openChildWindow(
+        'table-data',
+        'top-genres',
+        {
+          width: 1200,
+          height: 550,
+          show: false,
+          resizable: true,
+          preload: 'metadataEditing',
+          sandbox: false,
+          webSecurity: false,
+          contextIsolation: true
+        },
+        results
+      );
+    } */
   };
 
   return (
@@ -133,7 +166,7 @@ export const TracksByRoot = ({ root }) => {
       }
 
       const tracksResult = await window.api.getTracksByRoot(root);
-      openMetadataTables('root-tracks', tracksResult);
+      /*  openMetadataTables('root-tracks', tracksResult); */
     };
     openTable();
     return () => {
@@ -141,3 +174,28 @@ export const TracksByRoot = ({ root }) => {
     };
   }, [root]);
 };
+
+/* export const TracksByRoot = ({ root }) => {
+  const [tracks, setTracks] = useState([]);
+  useTracksByRoot(root, setTracks);
+
+  useEffect(() => {
+    if (tracks.length > 0) {
+      openChildWindow(
+        'table-data',
+        'root-tracks',
+        {
+          width: 1200,
+          height: 550,
+          show: false,
+          resizable: true,
+          preload: 'metadataEditing',
+          sandbox: false,
+          webSecurity: false,
+          contextIsolation: true
+        },
+        tracks
+      );
+    }
+  }, [tracks]);
+}; */

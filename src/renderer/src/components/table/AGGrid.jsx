@@ -17,6 +17,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 import './styles/AGGrid.css';
 
 const AGGrid = ({ reset, data, playButton }) => {
+  console.log('data: ', data);
   const [originalData, setOriginalData] = useState(null);
   const [nodesSelected, setNodesSelected] = useState([]);
   const [numNodes, setNumNodes] = useState(0);

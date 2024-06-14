@@ -13,7 +13,8 @@ const MetadataEditingApp = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    const handleClearTable = () => {
+    const handleClearTable = (e) => {
+      /* console.log(e); */
       setReset(true);
       setData([]); // Trigger grid to show loading state
     };
@@ -27,6 +28,7 @@ const MetadataEditingApp = () => {
 
   useEffect(() => {
     const handleSendToChild = (e) => {
+      /* console.log('e: ', e); */
       setListType(e.listType);
       setData(e.results);
       setReset(false);

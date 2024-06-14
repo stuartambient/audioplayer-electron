@@ -539,27 +539,63 @@ ipcMain.handle('distinct-directories', async () => {
 });
 
 ipcMain.handle('get-tracks-by-genres', async (_, arg) => {
+  console.log('genre: ', arg);
   try {
     const tracks = await allTracksByGenres(arg);
-    return tracks;
+    const targetWindow = await getWindow('table-data');
+    targetWindow.webContents.on('did-finish-load', () => {
+      targetWindow.webContents.send('send-to-child', {
+        listType: 'top-genre',
+        results: tracks
+      });
+    });
+    return true;
   } catch (err) {
-    console.error(err.message);
+    console.error('message: ', err.message);
   }
 });
 
-ipcMain.handle('get-tracks-by-root', async (event, root) => {
-  /*   console.log('get-tracks-by-root');
+ipcMain.handle(
+  'get-tracks-by-root',
+  async (event, root) => {
+    /*   console.log('get-tracks-by-root');
   const start = Date.now();
   console.log(`Query start: ${start}`); */
-  const rootTracks = await allTracksByRoot(root);
-  /* console.log(rootTracks); */
-  /*   console.log('root tracks length: ', rootTracks.length);
+    const rootTracks = await allTracksByRoot(root);
+    /* console.log(rootTracks); */
+    /*   console.log('root tracks length: ', rootTracks.length);
   const end = Date.now();
   console.log(`Query end: ${end}`);
   console.log(`Query duration: ${end - start}ms`); */
-  console.log('-----------------------------------');
-  return rootTracks;
-});
+    console.log('-----------------------------------');
+    console.log('root tracks length: ', rootTracks.length);
+
+    const targetWindow = await getWindow('table-data');
+    if (targetWindow) {
+      if (targetWindow.webContents.isLoading()) {
+        targetWindow.webContents.once('did-finish-load', () => {
+          console.log('Window loaded. Sending data:' /* , rootTracks */);
+          targetWindow.webContents.send('send-to-child', {
+            listType: 'root-tracks',
+            results: rootTracks
+          });
+        });
+      } else {
+        console.log('Window already loaded. Sending data:' /* , rootTracks */);
+        targetWindow.webContents.send('send-to-child', {
+          listType: 'root-tracks',
+          results: rootTracks
+        });
+      }
+    } else {
+      console.error('Target window not found');
+    }
+  }
+
+  /* return rootTracks; */
+
+  //return true;
+);
 
 ipcMain.handle('check-for-open-table', async (event, name) => {
   console.log('check for open table');
@@ -573,7 +609,7 @@ ipcMain.handle('check-for-open-table', async (event, name) => {
 ipcMain.handle('clear-table', async (event) => {
   console.log('clear table');
   const targetWindow = await getWindow('table-data');
-  targetWindow.webContents.send('clear-table', 'red');
+  targetWindow.webContents.send('clear-table', 'clear');
 });
 /* ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
   const folderAlbums = await albumsByTopFolder(folder);
