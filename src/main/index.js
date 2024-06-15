@@ -518,11 +518,34 @@ ipcMain.handle('top-hundred-artists-stat', async () => {
   return topHundred.slice(1);
 });
 
-ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
-  /* console.log('get tracks by artist'); */
+async function openWindowAndSendData(queryResults, listType) {
+  const targetWindow = await getWindow('table-data');
+
+  if (targetWindow) {
+    if (targetWindow.webContents.isLoading()) {
+      targetWindow.webContents.once('did-finish-load', () => {
+        console.log('Window loaded. Sending data');
+        targetWindow.webContents.send('send-to-child', {
+          listType,
+          results: queryResults
+        });
+      });
+    } else {
+      console.log('Window already loaded. Sending data');
+      targetWindow.webContents.send('send-to-child', {
+        listType,
+        results: queryResults
+      });
+    }
+  } else {
+    console.error('Target window not found');
+  }
+}
+
+ipcMain.handle('get-tracks-by-artist', async (event, artist, listType) => {
+  const artistTracks = await allTracksByArtist(artist);
   try {
-    const tracks = await allTracksByArtist(arg);
-    return tracks;
+    await openWindowAndSendData(artistTracks, listType);
   } catch (err) {
     console.error(err.message);
   }
@@ -538,64 +561,23 @@ ipcMain.handle('distinct-directories', async () => {
   }
 });
 
-ipcMain.handle('get-tracks-by-genres', async (_, arg) => {
-  console.log('genre: ', arg);
+ipcMain.handle('get-tracks-by-genre', async (event, genre, listType) => {
+  const genreTracks = await allTracksByGenres(genre);
   try {
-    const tracks = await allTracksByGenres(arg);
-    const targetWindow = await getWindow('table-data');
-    targetWindow.webContents.on('did-finish-load', () => {
-      targetWindow.webContents.send('send-to-child', {
-        listType: 'top-genre',
-        results: tracks
-      });
-    });
-    return true;
+    await openWindowAndSendData(genreTracks, listType);
   } catch (err) {
     console.error('message: ', err.message);
   }
 });
 
-ipcMain.handle(
-  'get-tracks-by-root',
-  async (event, root) => {
-    /*   console.log('get-tracks-by-root');
-  const start = Date.now();
-  console.log(`Query start: ${start}`); */
-    const rootTracks = await allTracksByRoot(root);
-    /* console.log(rootTracks); */
-    /*   console.log('root tracks length: ', rootTracks.length);
-  const end = Date.now();
-  console.log(`Query end: ${end}`);
-  console.log(`Query duration: ${end - start}ms`); */
-    console.log('-----------------------------------');
-    console.log('root tracks length: ', rootTracks.length);
-
-    const targetWindow = await getWindow('table-data');
-    if (targetWindow) {
-      if (targetWindow.webContents.isLoading()) {
-        targetWindow.webContents.once('did-finish-load', () => {
-          console.log('Window loaded. Sending data:' /* , rootTracks */);
-          targetWindow.webContents.send('send-to-child', {
-            listType: 'root-tracks',
-            results: rootTracks
-          });
-        });
-      } else {
-        console.log('Window already loaded. Sending data:' /* , rootTracks */);
-        targetWindow.webContents.send('send-to-child', {
-          listType: 'root-tracks',
-          results: rootTracks
-        });
-      }
-    } else {
-      console.error('Target window not found');
-    }
+ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
+  const rootTracks = await allTracksByRoot(root);
+  try {
+    await openWindowAndSendData(rootTracks, listType);
+  } catch (e) {
+    console.error(e.message);
   }
-
-  /* return rootTracks; */
-
-  //return true;
-);
+});
 
 ipcMain.handle('check-for-open-table', async (event, name) => {
   console.log('check for open table');

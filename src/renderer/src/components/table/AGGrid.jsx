@@ -352,6 +352,12 @@ const AGGrid = ({ reset, data, playButton }) => {
     /* enableCellChangeFlash: true */
   }));
 
+  const loadingOverlayComponentParams = useMemo(() => {
+    return {
+      loadingMessage: 'One moment please...'
+    };
+  }, []);
+
   const updateHiddenColumns = (api) => {
     const hiddenCols = api.getColumns().filter((col) => !col.isVisible());
     setHiddenColumns(hiddenCols.map((col) => col.getColId()));
@@ -442,6 +448,7 @@ const AGGrid = ({ reset, data, playButton }) => {
           rowDragMultiRow={true}
           onRowClicked={onRowClicked}
           loadingOverlayComponent={loadingOverlayComponent}
+          loadingOverlayComponentParams={loadingOverlayComponent}
           /* loadingOverlayComponent={loadingOverlayComponent}
           loadingOverlayComponentParams={loadingOverlayComponentParams} */
           /*     frameworkComponents={{ booleanCellRenderer: BooleanCellRenderer }} */

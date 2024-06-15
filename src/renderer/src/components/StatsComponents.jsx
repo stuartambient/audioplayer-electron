@@ -9,7 +9,7 @@ import {
   useTracksByRoot
 } from '../hooks/useDb';
 
-const openMetadataTables = async (type, data = null) => {
+const initTable = async (type, data = null) => {
   const name = 'table-data';
   const config = {
     width: 1200,
@@ -22,6 +22,20 @@ const openMetadataTables = async (type, data = null) => {
     contextIsolation: true
   };
   openChildWindow(name, type, config, data);
+};
+
+const tableStatus = async () => {
+  try {
+    const openTable = await window.api.checkForOpenTable('table-data');
+    if (openTable) {
+      await window.api.clearTable();
+
+      return true;
+    }
+  } catch (e) {
+    return e.message;
+  }
+  return false;
 };
 
 export const TotalMedia = () => {
@@ -42,28 +56,30 @@ export const TotalMedia = () => {
   );
 };
 
+const useArtist = (artist) => {
+  useEffect(() => {
+    let isSubscribed = true;
+    const getTable = async () => {
+      const tableStat = await tableStatus();
+      if (!tableStat) {
+        initTable('artist-tracks');
+      }
+      const results = await window.api.getTracksByArtist(artist, 'artist-tracks');
+    };
+    if (isSubscribed && artist) getTable();
+    return () => {
+      isSubscribed = false;
+    };
+  }, [artist]);
+};
+
 export const TopHundredArtists = () => {
   const { topHundredArtists } = useTopHundredArtistsStat();
+  const [artist, setArtist] = useState('');
+
+  useArtist(artist);
   const getArtistTracks = async (e) => {
-    const artist = e.target.id;
-    const results = await window.api.getTracksByArtist(artist);
-    if (results) {
-      openChildWindow(
-        'table-data',
-        'top-artists',
-        {
-          width: 1200,
-          height: 550,
-          show: false,
-          resizable: true,
-          preload: 'metadataEditing',
-          sandbox: false,
-          webSecurity: false,
-          contextIsolation: true
-        },
-        results
-      );
-    }
+    setArtist(e.target.id);
   };
 
   return (
@@ -81,18 +97,14 @@ export const TopHundredArtists = () => {
 const useGenre = (genre) => {
   useEffect(() => {
     let isSubscribed = true;
-    const openTable = async () => {
-      const openTable = await window.api.checkForOpenTable('table-data');
-      if (openTable) {
-        await window.api.clearTable();
-      } else {
-        openMetadataTables('top-genres');
+    const getTable = async () => {
+      const tableStat = await tableStatus();
+      if (!tableStat) {
+        initTable('genre-tracks');
       }
-
-      const results = await window.api.getTracksByGenres(genre);
-      /* openMetadataTables('root-tracks', tracksResult); */
+      const results = await window.api.getTracksByGenre(genre, 'genre-tracks');
     };
-    if (isSubscribed && genre) openTable();
+    if (isSubscribed && genre) getTable();
     return () => {
       isSubscribed = false;
     };
@@ -106,25 +118,6 @@ export const Genres = () => {
   const getGenres = async (e) => {
     console.log(e.target.id);
     setGenre(e.target.id);
-    /*    const genre = e.target.id;
-    const results = await window.api.getTracksByGenres(genre);
-    if (results) {
-      openChildWindow(
-        'table-data',
-        'top-genres',
-        {
-          width: 1200,
-          height: 550,
-          show: false,
-          resizable: true,
-          preload: 'metadataEditing',
-          sandbox: false,
-          webSecurity: false,
-          contextIsolation: true
-        },
-        results
-      );
-    } */
   };
 
   return (
@@ -157,18 +150,14 @@ export const AlbumsByRoot = ({ albums }) => {
 export const TracksByRoot = ({ root }) => {
   useEffect(() => {
     let isSubscribed = true;
-    const openTable = async () => {
-      const openTable = await window.api.checkForOpenTable('table-data');
-      if (openTable) {
-        await window.api.clearTable();
-      } else {
-        openMetadataTables('root-tracks');
+    const getTable = async () => {
+      const tableStat = await tableStatus();
+      if (!tableStat) {
+        initTable('root-tracks');
       }
-
-      const tracksResult = await window.api.getTracksByRoot(root);
-      /*  openMetadataTables('root-tracks', tracksResult); */
+      const tracksResult = await window.api.getTracksByRoot(root, 'root-tracks');
     };
-    openTable();
+    getTable();
     return () => {
       isSubscribed = false;
     };
