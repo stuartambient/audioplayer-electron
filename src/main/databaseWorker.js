@@ -1,9 +1,11 @@
 import { parentPort, workerData } from 'worker_threads';
 import { insertFiles, refreshMetadata } from './sql.js';
+import updateTags from './updateTags';
 
 const functions = {
   insertFiles,
-  refreshMetadata // Ensure this function can handle an array of objects as input
+  refreshMetadata,
+  updateTags // Ensure this function can handle an array of objects as input
 };
 
 /* console.log(workerData); */

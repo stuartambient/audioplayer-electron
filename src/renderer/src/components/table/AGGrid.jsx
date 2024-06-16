@@ -17,7 +17,6 @@ import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 import './styles/AGGrid.css';
 
 const AGGrid = ({ reset, data, playButton }) => {
-  console.log('data: ', data);
   const [originalData, setOriginalData] = useState(null);
   const [nodesSelected, setNodesSelected] = useState([]);
   const [numNodes, setNumNodes] = useState(0);
@@ -295,7 +294,7 @@ const AGGrid = ({ reset, data, playButton }) => {
         const updatesByRow = undos.reduce((acc, undo) => {
           if (!acc[undo.rowId]) {
             acc[undo.rowId] = {
-              id: originalData[undo.rowId].audiotrack,
+              id: undo.audiotrack,
               changes: {}
             };
           }
@@ -308,6 +307,7 @@ const AGGrid = ({ reset, data, playButton }) => {
           updates: row.changes
         }));
         /* console.log('save all: ', saveAll); */
+        console.log('save-all: ', saveAll);
         return updateTags(saveAll);
       /*  if (undos.length === 0) return;
 

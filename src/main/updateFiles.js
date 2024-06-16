@@ -28,7 +28,7 @@ const difference = (setA, setB) => {
     .postMessage('');
 };
  */
-const triggerInsert = (parsed) => {
+/* const triggerInsert = (parsed) => {
   return new Promise((resolve, reject) => {
     createWorker({ workerData: { id: 'insertFiles', functionName: 'insertFiles', params: parsed } })
       .on('message', (message) => {
@@ -40,7 +40,7 @@ const triggerInsert = (parsed) => {
       })
       .postMessage('');
   });
-};
+}; */
 
 const compareDbRecords = async (files) => {
   const status = { new: '', deleted: '', nochange: false };

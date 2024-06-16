@@ -31,6 +31,7 @@ import { writeFile, convertToUTC } from './utility';
 import db from './connection.js';
 /* import Database from 'better-sqlite3'; */
 import createWorker from './databaseWorker?nodeWorker';
+import workerTrigger from './wokerTrigger.js';
 import {
   allTracksByScroll,
   allTracksBySearchTerm,
@@ -67,6 +68,7 @@ import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
 import initUpdateMetadata from './updateMetadata';
+import updateTags from './updateTags';
 /* import checkDataTypes from './checkDataTypes.js'; */
 /* import { Genres } from '../renderer/src/components/StatsComponents.jsx'; */
 protocol.registerSchemesAsPrivileged([
@@ -746,7 +748,7 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   }
 });
 
-const tagKeys = {
+/* const tagKeys = {
   albumArtists: (param) => param.split(', '),
   album: (param) => param.trim(),
   bpm: (param) => Number(param),
@@ -774,27 +776,36 @@ const tagKeys = {
   track: (param) => Number(param),
   trackCount: (param) => Number(param),
   year: (param) => Number(param)
-};
+}; */
 
 ipcMain.handle('update-tags', async (_, arr) => {
-  arr.forEach((a) => {
-    try {
+  await workerTrigger(arr, 'updateTags')
+    .then((message) => {
+      if (message) {
+        /* status.new = newEntries.length; */ // Update status only if the insertion was successful
+        console.log('Update tags successful');
+      } else {
+        console.error('Tag update failed with:', message);
+      }
+    })
+    .catch((error) => {
+      console.error('Error in processing:', error);
+    });
+  /*   const updateTags = () => {
+    arr.forEach((a) => {
+      console.log('a: ', a.id);
+      //try {
       const myFile = File.createFromPath(a.id);
-    } catch (error) {
-      console.error('error: ', error);
-    }
-    for (const [key, value] of Object.entries(a.updates)) {
-      /* console.log(key, '---', tagKeys[key], '-------', value); */
+      myFile.tag;
+      for (const [key, value] of Object.entries(a.updates)) {
+        console.log(tagKeys[key], 'key: ', key, 'value: ', value);
 
-      console.log(tagKeys[key], 'key: ', key, 'value: ', value);
-
-      const t = tagKeys[key](value);
-      /* console.log('key: ', key, 'value: ', value, 't: ', t, 'current: ', myFile.tag[key]); */
-
-      myFile.tag[key] = t;
-      myFile.save();
-    }
-  });
+        const t = tagKeys[key](value);
+        myFile.tag[key] = t;
+        myFile.save();
+      }
+    });
+  }; */
 });
 
 ipcMain.on('show-context-menu', (event, id, type) => {
