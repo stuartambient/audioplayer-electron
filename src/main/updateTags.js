@@ -35,17 +35,15 @@ const updateTags = (arr) => {
     arr.forEach((a) => {
       const myFile = File.createFromPath(a.id);
       for (const [key, value] of Object.entries(a.updates)) {
-        console.log(tagKeys[key], 'key: ', key, 'value: ', value);
-
         const t = tagKeys[key](value);
         myFile.tag[key] = t;
         myFile.save();
       }
     });
+    return 'Tag updates successful';
   } catch (e) {
     console.error(e.message);
   }
-  return 'Tag updates successful';
 };
 
 export default updateTags;
