@@ -1,4 +1,5 @@
 import { GiExpandedRays } from 'react-icons/gi';
+import '../style/Row.css';
 
 const handleSort = (column) => {
   // Sort the data based on the column
@@ -24,7 +25,7 @@ const Row = ({ index, style, data, onClick, stat }) => {
   const rowStyles = {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     height: '50px',
     backgroundColor: index % 2 === 0 ? 'hsl(0, 0%, 13%)' : 'rgb(55, 71, 79)'
     // Add more styles as needed
@@ -32,13 +33,15 @@ const Row = ({ index, style, data, onClick, stat }) => {
 
   const itemStyles = {
     marginLeft: '10px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    cursor: 'pointer'
     // Add more styles as needed
   };
 
   const countStyles = {
     marginRight: '10px',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    margin: '0 10px'
     // Add more styles as needed
   };
 
@@ -54,9 +57,11 @@ const Row = ({ index, style, data, onClick, stat }) => {
       )}
       {stat === 'stat-genres' && (
         <>
-          <span style={itemStyles}>{!data.genre_display ? 'null' : data.genre_display}</span>
+          <span style={itemStyles} id={data.genre_display} onClick={onClick}>
+            {!data.genre_display ? 'null' : data.genre_display}
+          </span>
           {data.genre_display && (
-            <span id={data.genre_display} onClick={onClick} style={countStyles}>
+            <span id={data.genre_display} style={countStyles}>
               {data.count}
             </span>
           )}
@@ -78,10 +83,20 @@ const Row = ({ index, style, data, onClick, stat }) => {
         </>
       )} */}
       {stat === 'stat-albums' && (
-        <span key={data.id} id={data.fullpath}>
-          <input type="checkbox" />
-          {data.foldername}
-        </span>
+        <>
+          <label className="list-checkbox">
+            <input type="checkbox" id={data.fullpath} />
+          </label>
+          <span
+            key={data.id}
+            className="list-item"
+            id={data.fullpath}
+            onClick={onClick}
+            style={itemStyles}
+          >
+            {data.foldername}
+          </span>
+        </>
       )}
     </div>
   );

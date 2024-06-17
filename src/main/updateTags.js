@@ -30,16 +30,39 @@ const tagKeys = {
   year: (param) => Number(param)
 };
 
-const updateTags = (arr) => {
+/* const updateTags = (arr) => {
   try {
     arr.forEach((a) => {
       const myFile = File.createFromPath(a.id);
       for (const [key, value] of Object.entries(a.updates)) {
+        console.log('processing file....: ', a.id);
         const t = tagKeys[key](value);
         myFile.tag[key] = t;
         myFile.save();
       }
     });
+    return 'Tag updates successful';
+  } catch (e) {
+    console.error(e.message);
+  }
+}; */
+
+const updateTags = async (arr) => {
+  try {
+    // Create an array of promises to wait for all updates to complete
+    const promises = arr.map(async (a) => {
+      const myFile = File.createFromPath(a.id);
+      for (const [key, value] of Object.entries(a.updates)) {
+        console.log('processing file....: ', a.id);
+        const t = tagKeys[key](value);
+        myFile.tag[key] = t;
+      }
+      // Ensure save is awaited
+      await myFile.save();
+    });
+
+    // Wait for all promises to resolve
+    await Promise.all(promises);
     return 'Tag updates successful';
   } catch (e) {
     console.error(e.message);

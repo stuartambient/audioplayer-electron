@@ -1,0 +1,110 @@
+.list-checkbox input[type='checkbox'] {
+  --active: #275efe;
+  --active-inner: #fff;
+  --focus: 2px rgba(39, 94, 254, 0.3);
+  --border: #bbc1e1;
+  --border-hover: #275efe;
+  --background: #fff;
+  --disabled: #f6f8ff;
+  --disabled-inner: #e1e6f9;
+  height: 16px;
+  outline: none;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  margin: 0 10px;
+  cursor: pointer;
+  border: 1px solid var(--bc, var(--border));
+  background: var(--b, var(--background));
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.2s;
+}
+
+.list-checkbox input[type='checkbox']:after {
+  content: '';
+  display: block;
+  left: 0;
+  top: 0;
+  position: absolute;
+  transition: transform var(--d-t, 0.3s) var(--d-t-e, ease), opacity var(--d-o, 0.2s);
+}
+
+.list-checkbox input[type='checkbox']:checked {
+  --b: var(--active);
+  --bc: var(--active);
+  --d-o: 0.3s;
+  --d-t: 0.6s;
+  --d-t-e: cubic-bezier(0.2, 0.85, 0.32, 1.2);
+}
+
+.list-checkbox input[type='checkbox']:disabled {
+  --b: var(--disabled);
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+.list-checkbox input[type='checkbox']:disabled:checked {
+  --b: var(--disabled-inner);
+  --bc: var(--border);
+}
+
+.list-checkbox input[type='checkbox']:disabled + label {
+  cursor: not-allowed;
+}
+
+.list-checkbox input[type='checkbox']:hover:not(:checked):not(:disabled) {
+  --bc: var(--border-hover);
+}
+
+.list-checkbox input[type='checkbox']:focus {
+  box-shadow: 0 0 0 var(--focus);
+}
+
+.list-checkbox input[type='checkbox']:not(.switch) {
+  width: 21px;
+  border-radius: 7px;
+}
+
+.list-checkbox input[type='checkbox']:not(.switch):after {
+  opacity: var(--o, 0);
+  width: 5px;
+  height: 9px;
+  border: 2px solid var(--active-inner);
+  border-top: 0;
+  border-left: 0;
+  left: 7px;
+  top: 4px;
+  transform: rotate(var(--r, 20deg));
+}
+
+.list-checkbox input[type='checkbox']:not(.switch):checked {
+  --r: 43deg;
+  --o: 1;
+}
+
+.list-checkbox input[type='checkbox'] + label {
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.list-checkbox * {
+  box-sizing: inherit;
+}
+
+.list-checkbox *:before,
+.list-checkbox *:after {
+  box-sizing: inherit;
+}
+
+.list-item {
+  /*   padding: 0.4em;
+  border: 1px solid lightblue;
+  border-radius: 5px; */
+  transition: all 0.3s;
+}
+
+.list-item:hover {
+  transform: translateX(10px);
+  font-size: 1rem;
+}

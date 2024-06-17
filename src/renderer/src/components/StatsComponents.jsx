@@ -133,7 +133,30 @@ export const Genres = () => {
   );
 };
 
+const useAlbum = (album) => {
+  useEffect(() => {
+    let isSubscribed = true;
+    const getTable = async () => {
+      const tableStat = await tableStatus();
+      if (!tableStat) {
+        initTable('album-tracks');
+      }
+      const results = await window.api.getTracksByAlbum(album, 'album-tracks');
+    };
+    if (isSubscribed && album) getTable();
+    return () => {
+      isSubscribed = false;
+    };
+  }, [album]);
+};
+
 export const AlbumsByRoot = ({ albums }) => {
+  const [album, setAlbum] = useState('');
+  useAlbum(album);
+  const getAlbum = async (e) => {
+    console.log(e.target.id);
+    setAlbum(e.target.id);
+  };
   return (
     <List
       data={albums}
@@ -141,7 +164,7 @@ export const AlbumsByRoot = ({ albums }) => {
       /* itemSize={50} // Specify the height of each item in the list */
       width="100%" // Specify the desired width of the list
       className="stats--list"
-      /* onClick={getGenres} */
+      onClick={getAlbum}
       stat="stat-albums"
     />
   );

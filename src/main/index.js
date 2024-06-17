@@ -581,6 +581,20 @@ ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
   }
 });
 
+ipcMain.handle('get-tracks-by-album', async (event, album, listType) => {
+  try {
+    const albumTracks = await filesByAlbum(album);
+    console.log(albumTracks);
+    if (albumTracks) {
+      await openWindowAndSendData(albumTracks, listType);
+    } else {
+      return 'empty folder . no tracks';
+    }
+  } catch (e) {
+    console.error(e.message);
+  }
+});
+
 ipcMain.handle('check-for-open-table', async (event, name) => {
   console.log('check for open table');
   const names = await getWindowNames();
@@ -779,10 +793,15 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 }; */
 
 ipcMain.handle('update-tags', async (_, arr) => {
-  await workerTrigger(arr, 'updateTags')
+  try {
+    const result = await updateTags(arr);
+    console.log('result: ', result);
+  } catch (error) {
+    console.error('Error updating tags: ', error.message);
+  }
+  /*   await workerTrigger(arr, 'updateTags')
     .then((message) => {
       if (message) {
-        /* status.new = newEntries.length; */ // Update status only if the insertion was successful
         console.log('Update tags successful');
       } else {
         console.error('Tag update failed with:', message);
@@ -790,7 +809,7 @@ ipcMain.handle('update-tags', async (_, arr) => {
     })
     .catch((error) => {
       console.error('Error in processing:', error);
-    });
+    }); */
   /*   const updateTags = () => {
     arr.forEach((a) => {
       console.log('a: ', a.id);

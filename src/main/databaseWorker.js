@@ -1,3 +1,4 @@
+// WORKER SCRIPT
 import { parentPort, workerData } from 'worker_threads';
 import { insertFiles, refreshMetadata } from './sql.js';
 import updateTags from './updateTags';

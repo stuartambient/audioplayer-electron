@@ -4,7 +4,7 @@
   grid-row: 3 / 4;
   color: white;
   display: grid;
-  grid-template-columns: 15% 80%;
+  grid-template-columns: 25% 75%;
 }
 
 .stats--nav {
