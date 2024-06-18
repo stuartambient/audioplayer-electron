@@ -39,8 +39,21 @@
   width: max-content; 
 } */
 
-.stats--list::-webkit-scrollbar {
+/* .stats--list::-webkit-scrollbar {
   display: none;
+} */
+
+.stats--list::-webkit-scrollbar {
+  background: rgb(0, 212, 255);
+  width: 10px;
+}
+
+.stats--list::-webkit-scrollbar-thumb {
+  background: #4a148c;
+}
+
+.stats--list::-webkit-scrollbar--track {
+  background: red;
 }
 
 .stats--results::-webkit-scrollbar {
@@ -98,10 +111,11 @@
   background: black;
   color: white;
   border: 1px solid green;
-  overflow-y: hidden;
-  overflow-x: hidden;
+  /*   overflow-y: hidden;
+  overflow-x: hidden; */
   scroll-behavior: smooth;
   resize: both;
+  overflow-y: scroll;
 }
 
 .stats ul {

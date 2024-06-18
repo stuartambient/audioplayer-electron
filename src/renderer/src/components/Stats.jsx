@@ -180,8 +180,7 @@ const Stats = () => {
         {root && <div>Viewing root: {root}</div>}
         {statReq === 'directories' && (
           <>
-            <div className="stats--length"></div>
-            <AlbumsByRoot albums={albumsByRoot} />
+            <AlbumsByRoot albums={albumsByRoot} amountLoaded={albumsByRoot.length} />
           </>
         )}
         {statReq === 'topArtists' && (

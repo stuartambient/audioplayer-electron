@@ -150,7 +150,7 @@ const useAlbum = (album) => {
   }, [album]);
 };
 
-export const AlbumsByRoot = ({ albums }) => {
+export const AlbumsByRoot = ({ albums, amountLoaded }) => {
   const [album, setAlbum] = useState('');
   useAlbum(album);
   const getAlbum = async (e) => {
@@ -166,6 +166,7 @@ export const AlbumsByRoot = ({ albums }) => {
       className="stats--list"
       onClick={getAlbum}
       stat="stat-albums"
+      amountLoaded={amountLoaded}
     />
   );
 };
