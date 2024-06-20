@@ -2,12 +2,34 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import List from './List';
 import { openChildWindow } from './ChildWindows/openChildWindow';
+import CustomLoadingOverlay from './table/customLoadingOverlay.jsx';
 import {
   useTotalTracksStat,
   useTopHundredArtistsStat,
   useGenres,
   useTracksByRoot
 } from '../hooks/useDb';
+
+const Header = () => {
+  return (
+    <div
+      style={{
+        position: 'sticky',
+        display: 'flex',
+        alignItems: 'center',
+        background: 'black',
+        width: '100%',
+        height: '2rem',
+        zIndex: '1',
+        paddingRight: '16px',
+        boxSizing: 'border-box',
+        overflow: 'hidden'
+      }}
+    >
+      <h3>Albums loaded: </h3>
+    </div>
+  );
+};
 
 const initTable = async (type, data = null) => {
   const name = 'table-data';
@@ -150,24 +172,32 @@ const useAlbum = (album) => {
   }, [album]);
 };
 
-export const AlbumsByRoot = ({ albums, amountLoaded }) => {
+export const AlbumsByRoot = ({ albums, amountLoaded, dimensions }) => {
   const [album, setAlbum] = useState('');
   useAlbum(album);
   const getAlbum = async (e) => {
     console.log(e.target.id);
     setAlbum(e.target.id);
   };
+
+  const albumsSorted = albums.sort((a, b) =>
+    a.foldername.localeCompare(b.foldername, undefined, { sensitivity: 'base' })
+  );
+
   return (
-    <List
-      data={albums}
-      height="100%" // Specify the desired height of the list
-      /* itemSize={50} // Specify the height of each item in the list */
-      width="100%" // Specify the desired width of the list
-      className="stats--list"
-      onClick={getAlbum}
-      stat="stat-albums"
-      amountLoaded={amountLoaded}
-    />
+    <>
+      <List
+        data={albumsSorted}
+        height="100%" // Specify the desired height of the list
+        /* itemSize={50} // Specify the height of each item in the list */
+        width="100%" // Specify the desired width of the list
+        className="stats--list"
+        onClick={getAlbum}
+        stat="stat-albums"
+        amountLoaded={amountLoaded}
+        dimensions={dimensions}
+      />
+    </>
   );
 };
 

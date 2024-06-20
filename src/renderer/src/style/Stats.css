@@ -107,15 +107,10 @@
   grid-column: 2 / 3;
   grid-row: 1 / 2;
   height: 100%;
-  /* padding: 0.2rem; */
   background: black;
   color: white;
-  border: 1px solid green;
-  /*   overflow-y: hidden;
-  overflow-x: hidden; */
   scroll-behavior: smooth;
   resize: both;
-  overflow-y: scroll;
 }
 
 .stats ul {

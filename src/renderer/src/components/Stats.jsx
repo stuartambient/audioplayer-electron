@@ -18,6 +18,8 @@ const Stats = () => {
   const [reqDirectories, setReqDirectories] = useState([]);
   const [albumsByRoot, setAlbumsByRoot] = useState([]);
   const [root, setRoot] = useState('');
+  const resultsRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   useDistinctDirectories(setDirectories);
 
   useEffect(() => {
@@ -28,44 +30,36 @@ const Stats = () => {
     }
   }, [isSubmenuOpen, reqDirectories]);
 
-  /* useEffect(() => {
-    const getTracks = async () => {
-      const openTable = await window.api.checkForOpenTable('table-data');
-      if (openTable) {
-        await window.api.clearTable();
-      } else {
-        openChildWindow('table-data', 'root-tracks', {
-          width: 1200,
-          height: 550,
-          show: false,
-          resizable: true,
-          preload: 'metadataEditing',
-          sandbox: false,
-          webSecurity: false,
-          contextIsolation: true
+  useEffect(() => {
+    const observedElement = resultsRef.current;
+
+    if (!observedElement) {
+      console.error('Observed element is null or undefined');
+      return;
+    }
+
+    if (!(observedElement instanceof Element)) {
+      console.error('Observed element is not a valid DOM element');
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height
         });
       }
-      const results = await window.api.getTracksByRoot(root);
+    });
 
-      openChildWindow(
-        'table-data',
-        'root-tracks',
-        {
-          width: 1200,
-          height: 550,
-          show: false,
-          resizable: true,
-          preload: 'metadataEditing',
-          sandbox: false,
-          webSecurity: false,
-          contextIsolation: true
-        },
-        results
-      );
+    observer.observe(observedElement);
+
+    // Cleanup function
+    return () => {
+      observer.unobserve(observedElement);
+      observer.disconnect();
     };
-    if (root) getTracks();
-    return () => setRoot('');
-  }, [root]); */
+  }, []);
 
   const toggleSubmenu = (event) => {
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
@@ -169,7 +163,7 @@ const Stats = () => {
         </li>
       </ul>
 
-      <div className="stats--results">
+      <div className="stats--results" ref={resultsRef}>
         {statReq === 'totalmedia' && <TotalMedia />}
         {statReq === 'genres' && (
           <>
@@ -178,9 +172,13 @@ const Stats = () => {
         )}
         {root && <TracksByRoot root={root} />}
         {root && <div>Viewing root: {root}</div>}
-        {statReq === 'directories' && (
+        {statReq === 'directories' && albumsByRoot.length > 0 && (
           <>
-            <AlbumsByRoot albums={albumsByRoot} amountLoaded={albumsByRoot.length} />
+            <AlbumsByRoot
+              albums={albumsByRoot}
+              amountLoaded={albumsByRoot.length}
+              dimensions={dimensions}
+            />
           </>
         )}
         {statReq === 'topArtists' && (
