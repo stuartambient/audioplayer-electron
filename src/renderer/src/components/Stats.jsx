@@ -167,7 +167,7 @@ const Stats = () => {
         {statReq === 'totalmedia' && <TotalMedia />}
         {statReq === 'genres' && (
           <>
-            <Genres />
+            <Genres dimensions={dimensions} />
           </>
         )}
         {root && <TracksByRoot root={root} />}
@@ -183,7 +183,7 @@ const Stats = () => {
         )}
         {statReq === 'topArtists' && (
           <>
-            <TopHundredArtists />
+            <TopHundredArtists dimensions={dimensions} />
           </>
         )}
       </div>

@@ -95,7 +95,7 @@ const useArtist = (artist) => {
   }, [artist]);
 };
 
-export const TopHundredArtists = () => {
+export const TopHundredArtists = ({ dimensions }) => {
   const { topHundredArtists } = useTopHundredArtistsStat();
   const [artist, setArtist] = useState('');
 
@@ -112,6 +112,8 @@ export const TopHundredArtists = () => {
       className="stats--list"
       onClick={getArtistTracks}
       stat="stat-artists"
+      dimensions={dimensions}
+      amountLoaded={topHundredArtists.length}
     />
   );
 };
@@ -132,7 +134,7 @@ const useGenre = (genre) => {
     };
   }, [genre]);
 };
-export const Genres = () => {
+export const Genres = ({ dimensions }) => {
   const [genres, setGenres] = useState([]);
   const [genre, setGenre] = useState('');
   useGenres(setGenres);
@@ -142,15 +144,20 @@ export const Genres = () => {
     setGenre(e.target.id);
   };
 
+  const genresSorted = genres.sort((a, b) =>
+    a.genre_display.localeCompare(b.genre_display, undefined, { sensitivity: 'base' })
+  );
+
   return (
     <List
       height="100%"
       width="100%"
       className="stats--list"
-      data={genres}
+      data={genresSorted}
       onClick={getGenres}
       stat="stat-genres"
-      /* itemSize={50} */
+      dimensions={dimensions}
+      amountLoaded={genres.length}
     />
   );
 };

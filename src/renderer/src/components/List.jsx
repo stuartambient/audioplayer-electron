@@ -5,10 +5,11 @@ import '../style/List.css';
 
 const Header = ({
   'data-role': dataRole,
-  albumsLoaded,
+  amountLoaded,
   dimensions,
   filterValue,
-  setFilterValue
+  setFilterValue,
+  stat
 }) => {
   if (!dimensions || !dimensions.width) {
     return null;
@@ -16,6 +17,8 @@ const Header = ({
 
   const inputRef = useRef(null);
   const childRef = useRef(null);
+  const type = stat.split('-')[1];
+  const listType = type.charAt(0).toUpperCase() + type.slice(1);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -60,7 +63,9 @@ const Header = ({
             alignItems: 'center'
           }}
         >
-          <h3>Albums loaded: {albumsLoaded}</h3>
+          <h3>
+            {listType} loaded: {amountLoaded}
+          </h3>
           <input
             value={filterValue}
             onChange={handleFilter}
@@ -88,6 +93,14 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
   const [filterValue, setFilterValue] = useState('');
   const [filteredData, setFilteredData] = useState(data);
 
+  /*  console.log('data: ', data); */
+
+  const fields = {
+    'stat-albums': 'foldername',
+    'stat-genres': 'genre_display',
+    'stat-artists': 'performers'
+  };
+
   /*   useEffect(() => {
     if (!filterValue) return setFilteredData(data);
     setFilteredData(data.filter((d) => d.foldername.includes(filterValue)));
@@ -99,13 +112,21 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
     } else {
       const lowercasedFilter = filterValue.toLowerCase().trim();
       console.log('lowercasedFilter: ', lowercasedFilter);
-      const filtered = data.filter((item) =>
-        item.foldername.toLowerCase().includes(lowercasedFilter)
-      );
+      const filtered = data.filter((item) => {
+        const field = fields[stat];
+        console.log('field: ', field, item[field]);
+        return item[field].toLowerCase().includes(lowercasedFilter);
+      });
       setFilteredData(filtered);
       console.log('filtered: ', filtered);
     }
   }, [filterValue, data, filteredData]);
+
+  useEffect(() => {
+    if (stat !== 'stat-albums') {
+      setFilteredData(data);
+    }
+  }, [stat, data]);
 
   useEffect(() => {
     if (filterValue) {
@@ -123,11 +144,12 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
       components={{
         Header: () => (
           <Header
-            albumsLoaded={amountLoaded}
+            amountLoaded={amountLoaded}
             data-role={role}
             dimensions={dimensions}
             filterValue={filterValue}
             setFilterValue={setFilterValue}
+            stat={stat}
           />
         )
       }}
