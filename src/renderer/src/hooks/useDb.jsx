@@ -379,7 +379,6 @@ const useDistinctDirectories = (setDirectories) => {
 };
 
 const useTotalTracksStat = (setTotalTracks) => {
-  console.log('hit ');
   const [error, setError] = useState([]);
 
   useEffect(() => {

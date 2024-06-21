@@ -1,34 +1,46 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Virtuoso, TableVirtuoso } from 'react-virtuoso';
 import Row from './Row';
+import '../style/List.css';
 
-const Header = ({ albumsLoaded, dimensions, filterValue, setFilterValue }) => {
-  /* const [filterValue, setFilterValue] = useState(''); */
+const Header = ({
+  'data-role': dataRole,
+  albumsLoaded,
+  dimensions,
+  filterValue,
+  setFilterValue
+}) => {
   if (!dimensions || !dimensions.width) {
     return null;
   }
 
   const inputRef = useRef(null);
+  const childRef = useRef(null);
 
   useEffect(() => {
-    // Focus on the input field whenever value changes
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, [filterValue]);
-  /* 
+
   useEffect(() => {
-    filterResults(filterValue);
-  }, [filterValue]); */
+    if (childRef.current) {
+      const parentElement = childRef.current.parentElement;
+      if (parentElement) {
+        parentElement.classList.add('highlighted');
+      }
+    }
+  }, []);
 
   const handleFilter = (e) => {
-    setFilterValue(event.target.value);
-    /* filterResults(filterValue); */
+    setFilterValue(e.target.value);
   };
 
   return (
     <>
       <div
+        ref={childRef}
+        data-role={dataRole}
         style={{
           position: 'fixed',
           display: 'flex',
@@ -45,8 +57,7 @@ const Header = ({ albumsLoaded, dimensions, filterValue, setFilterValue }) => {
             display: 'flex',
             justifyContent: 'space-between',
             width: '100%',
-            alignItems: 'center',
-            height: '100vh'
+            alignItems: 'center'
           }}
         >
           <h3>Albums loaded: {albumsLoaded}</h3>
@@ -56,7 +67,7 @@ const Header = ({ albumsLoaded, dimensions, filterValue, setFilterValue }) => {
             ref={inputRef}
             style={{
               width: '100%',
-              maxWidth: '200px' /* Optional max-width for the input box */,
+              maxWidth: '200px',
               height: '2rem',
               padding: '0.5rem',
               fontSize: '1rem',
@@ -77,26 +88,32 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
   const [filterValue, setFilterValue] = useState('');
   const [filteredData, setFilteredData] = useState(data);
 
-  useEffect(() => {
-    if (!filterValue) setFilteredData(data);
-    setFilteredData(data.filter((d) => d.foldername.startsWith(filterValue)));
-  }, [filterValue, data]);
+  /*   useEffect(() => {
+    if (!filterValue) return setFilteredData(data);
+    setFilteredData(data.filter((d) => d.foldername.includes(filterValue)));
+  }, [filterValue, data]); */
 
-  /*   const filterData = useCallback(() => {
-    if (!filterValue) {
+  const filterData = useCallback(() => {
+    if (!filterValue.trim()) {
       setFilteredData(data);
     } else {
-      const lowercasedFilter = filterValue.toLowerCase();
-      const filtered = data.filter(
-        (item) => item.foldername.toLowerCase().startsWith(lowercasedFilter) // Adjust this to match the structure of your data
+      const lowercasedFilter = filterValue.toLowerCase().trim();
+      console.log('lowercasedFilter: ', lowercasedFilter);
+      const filtered = data.filter((item) =>
+        item.foldername.toLowerCase().includes(lowercasedFilter)
       );
       setFilteredData(filtered);
+      console.log('filtered: ', filtered);
     }
-  }, [filterValue, data]);
+  }, [filterValue, data, filteredData]);
 
   useEffect(() => {
-    filterData();
-  }, [filterValue, data, filteredData]); */
+    if (filterValue) {
+      filterData();
+    }
+  }, [filterValue]);
+
+  const role = 'virtuoso-header';
 
   return (
     <Virtuoso
@@ -107,7 +124,7 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
         Header: () => (
           <Header
             albumsLoaded={amountLoaded}
-            data-role="virtuoso-header"
+            data-role={role}
             dimensions={dimensions}
             filterValue={filterValue}
             setFilterValue={setFilterValue}
@@ -122,7 +139,6 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
           stat={stat}
         />
       )}
-      /* itemSize={itemSize} */
     />
   );
 };
