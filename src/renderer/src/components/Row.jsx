@@ -49,10 +49,10 @@ const Row = ({ index, style, data, onClick, stat }) => {
     <div style={rowStyles}>
       {stat === 'stat-artists' && (
         <>
-          <span style={itemStyles}>{data.performers}</span>
-          <span id={data.performers} onClick={onClick} style={countStyles}>
-            {data.count}
+          <span id={data.performers} onClick={onClick} style={itemStyles}>
+            {data.performers}
           </span>
+          <span style={countStyles}>{data.count}</span>
         </>
       )}
       {stat === 'stat-genres' && (

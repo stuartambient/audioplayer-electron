@@ -115,6 +115,7 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
       const filtered = data.filter((item) => {
         const field = fields[stat];
         console.log('field: ', field, item[field]);
+        if (!item[field]) return;
         return item[field].toLowerCase().includes(lowercasedFilter);
       });
       setFilteredData(filtered);
@@ -131,6 +132,8 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
   useEffect(() => {
     if (filterValue) {
       filterData();
+    } else if (!filterValue) {
+      setFilteredData(data);
     }
   }, [filterValue]);
 

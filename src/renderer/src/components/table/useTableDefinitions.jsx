@@ -21,6 +21,11 @@ export const useColumnDefinitions = () => {
         editable: false,
         rowDrag: true
       },
+      { field: 'title', filter: true },
+      { field: 'performers', filter: true },
+      { field: 'performersRole' },
+      { field: 'albumArtists', filter: true },
+      { field: 'album', filter: true },
       {
         field: 'year',
         filter: 'agNumberColumnFilter',
@@ -34,52 +39,42 @@ export const useColumnDefinitions = () => {
           return false; // No valid update occurred
         }
       },
-      { field: 'title', filter: true },
-      { field: 'performers', filter: true },
-      { field: 'album', filter: true },
       { field: 'genres', filter: true },
+      { field: 'composers', filter: true },
+      { field: 'conductor', filter: true },
+      { field: 'comment' },
+      { field: 'description' },
+      { field: 'disc' },
+      { field: 'discCount' },
+      { field: 'track' },
+      { field: 'trackCount' },
+      { field: 'isCompilation', editable: true, type: 'bool' },
+      { field: 'publisher' },
+      { field: 'isrc' },
+      { field: 'copyright', filter: true },
+      { field: 'pictures', type: 'bool' },
+      { field: 'duration', editable: false },
+      { field: 'bpm', filter: true },
+      { field: 'lyrics' },
+      { field: 'remixedBy' },
       { field: 'like', editable: true, type: 'bool' },
       { field: 'error', filter: true },
-      { field: 'albumArtists', filter: true },
       {
         field: 'audioBitrate',
         filter: true,
         editable: false
-        /*  cellStyle: (params) => {
-          return !params.colDef.editable ? { backgroundColor: '#2f4f4f', color: '#000000' } : {};
-        } */
       },
       {
         field: 'audioSampleRate',
         filter: true,
         editable: false
-        /* cellStyle: (params) => {
-          return !params.colDef.editable ? { backgroundColor: '#2f4f4f', color: '#000000' } : {};
-        } */
       },
       { field: 'codecs', filter: true, editable: false },
-      { field: 'bpm', filter: true },
-      { field: 'composers', filter: true },
-      { field: 'conductor', filter: true },
-      { field: 'copyright', filter: true },
-      { field: 'comment' },
-      { field: 'disc' },
-      { field: 'discCount' },
-      { field: 'description' },
-      { field: 'duration', editable: false },
-      { field: 'isCompilation', editable: true, type: 'bool' },
-      { field: 'isrc' },
-      { field: 'lyrics' },
-      { field: 'performersRole' },
-      { field: 'pictures', type: 'bool' },
-      { field: 'publisher' },
-      { field: 'remixedBy' },
+
       { field: 'replayGainAlbumGain', hide: true },
       { field: 'replayGainAlbumPeak', hide: true },
       { field: 'replayGainTrackGain', hide: true },
       { field: 'replayGainTrackPeak', hide: true },
-      { field: 'track' },
-      { field: 'trackCount' },
       { field: 'created_datetime' }
     ],
     []
