@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
+import { editableColumns } from './EditableColumns';
+import './styles/EditForm.css';
 
-function EditForm({ onUpdate, nodesSelected }) {
-  const [formData, setFormData] = useState({
-    year: '',
-    title: '',
-    artist: '',
-    album: '',
-    genre: ''
-  });
+function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
+  const initialState = editableColumns.reduce((acc, col) => {
+    acc[col] = '';
+    return acc;
+  }, {});
+
+  const [formData, setFormData] = useState(initialState);
 
   // Populate form data when selectedRowData changes
   /*   useEffect(() => {
@@ -36,8 +37,6 @@ function EditForm({ onUpdate, nodesSelected }) {
     e.preventDefault();
     const multiRowChanges = [];
     nodesSelected.forEach((node) => {
-      //console.log(node.id, node.data); // Assuming you always want to print this regardless
-
       Object.keys(formData).forEach((key) => {
         if (formData[key]) {
           const newValue = convertToCorrectType(key, formData[key]);
@@ -48,6 +47,7 @@ function EditForm({ onUpdate, nodesSelected }) {
             newValue,
             oldValue: node.data[key]
           };
+          console.log('changeObj: ', changeObj);
           multiRowChanges.push(changeObj);
         }
       });
@@ -56,13 +56,27 @@ function EditForm({ onUpdate, nodesSelected }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input name="year" value={formData.year} onChange={handleChange} placeholder="Year" />
-      <input name="title" value={formData.title} onChange={handleChange} placeholder="Title" />
-      <input name="artist" value={formData.artist} onChange={handleChange} placeholder="Artist" />
-      <input name="album" value={formData.album} onChange={handleChange} placeholder="Album" />
-      <input name="genre" value={formData.genre} onChange={handleChange} placeholder="Genre" />
-      <button type="submit">Update Selected Rows</button>
+    <form onSubmit={handleSubmit} /* style={{ gridRow: '3/4' }} */>
+      {editableColumns.map((col) => {
+        return !hiddenColumns.includes(col) ? (
+          <div
+            key={col} /* style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }} */
+          >
+            <label htmlFor={col} /* style={{ marginRight: '8px', whiteSpace: 'nowrap' }} */>
+              {`${col} :`}
+            </label>
+            <input
+              name={col}
+              id={col}
+              value={formData[col]}
+              /* placeholder={col} */
+              onChange={handleChange}
+              style={{ flex: '1', minWidth: '0' }}
+            />
+          </div>
+        ) : null;
+      })}
+      <button type="submit">Submit</button>
     </form>
   );
 }

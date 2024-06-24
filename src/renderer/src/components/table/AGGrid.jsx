@@ -1,20 +1,30 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react'; // the AG Grid React Component
+
 /* import 'ag-grid-community'; */
+import classNames from 'classnames';
 import { FaSave } from 'react-icons/fa';
 import { CiPlay1 } from 'react-icons/ci';
 import { ImCancelCircle } from 'react-icons/im';
+import CustomLoadingOverlay from './customLoadingOverlay.jsx';
 import CustomToolPanel from './CustomToolPanel';
+import EditForm from './EditForm';
+import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
+import PlayButtonRenderer from './PlayButtonRenderer';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
 import './styles/AGGrid.css';
 
-const AGGrid = ({ data }) => {
-  const [originalData, setOriginalData] = useState([]);
+const AGGrid = ({ reset, data, playButton }) => {
+  const [originalData, setOriginalData] = useState(null);
   const [nodesSelected, setNodesSelected] = useState([]);
+  const [numNodes, setNumNodes] = useState(0);
+  const [isPanelVisible, setIsPanelVisible] = useState(true);
   const [isUndoAction, setIsUndoAction] = useState(false);
   const [isRedoAction, setIsRedoAction] = useState(false);
+  const [columnApi, setColumnApi] = useState(null);
+  const [hiddenColumns, setHiddenColumns] = useState([]);
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
@@ -25,21 +35,60 @@ const AGGrid = ({ data }) => {
   const isRowsSelected = useRef([]);
 
   useEffect(() => {
-    if (data) {
+    if (reset) {
+      setOriginalData(null);
+    }
+  }, [reset]);
+
+  const resetAudio = () => {
+    console.log('reset audio');
+    const event = new Event('resetAudio');
+    window.dispatchEvent(event);
+  };
+
+  useEffect(() => {
+    // Example of resetting audio when loading new data
+    // You would call resetAudio in your actual logic where appropriate
+    return () => {
+      resetAudio();
+    };
+  }, []);
+
+  const getRowId = useMemo(() => (params) => params.data.track_id, []);
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      resetAudio();
+      setUndos([]);
+      setRedos([]);
+      setNodesSelected([]);
       setOriginalData(data);
     }
   }, [data]);
 
-  /*   useEffect(() => {
-    if (nodesSelected.length > 0) {
-      console.log('rows selected');
-    }
-  }, [nodesSelected]); */
+  // Function to dispatch the custom event
+  /*   const resetAudio = () => {
+    const event = new Event('resetAudio');
+    window.dispatchEvent(event);
+  }; */
+
+  useEffect(() => {
+    setNumNodes(nodesSelected.length);
+  }, [nodesSelected]);
 
   let gridApi;
 
   const onGridReady = (params) => {
     gridApi = params.api;
+    const columnApi = params.columnApi;
+    setColumnApi(columnApi);
+    updateHiddenColumns(columnApi);
+    // Get all columns and filter out the hidden ones
+    /* const hiddenColumns = columnApi.getAllColumns().filter((col) => !col.isVisible());
+    console.log(
+      'Hidden Columns:',
+      hiddenColumns.map((col) => col.getColId())
+    ); */
   };
 
   const IconCellRenderer = () => (
@@ -47,6 +96,29 @@ const AGGrid = ({ data }) => {
       <CiPlay1 />
     </div>
   );
+
+  const togglePanelVisibility = () => {
+    setIsPanelVisible(!isPanelVisible);
+  };
+
+  const loadingOverlayComponent = useMemo(() => {
+    return CustomLoadingOverlay;
+  }, []);
+
+  useEffect(() => {
+    if (reset) {
+      gridRef.current.api.showLoadingOverlay();
+    }
+  });
+  /*   const onBtShowLoading = useCallback(() => {
+    gridRef.current.api.showLoadingOverlay();
+  }, []); */
+
+  /*   const loadingOverlayComponentParams = useMemo(() => {
+    return {
+      loadingMessage: 'One moment please...'
+    };
+  }, []); */
 
   const handleColumnPanel = (e) => {
     const col = e.target.name;
@@ -56,23 +128,36 @@ const AGGrid = ({ data }) => {
     }
   };
 
-  const handleMultiRowUpdate = (edits) => {
-    edits.forEach((edit) => {
-      const rowNode = gridRef.current.api.getRowNode(edit.rowId);
-      rowNode.setDataValue(edit.field, edit.newValue);
+  const handleMultiRowUpdate = (multiRowChanges) => {
+    multiRowChanges.forEach((edit) => {
+      // Iterate over all displayed rows
+      gridRef.current.api.forEachNodeAfterFilterAndSort((rowNode) => {
+        // Match the row using rowIndex
+        if (rowNode.rowIndex === edit.rowId) {
+          switch (edit.newValue) {
+            case 'true':
+              return rowNode.setDataValue(edit.field, 1);
+            case 'false':
+              return rowNode.setDataValue(edit.field, 0);
+            default:
+              rowNode.setDataValue(edit.field, edit.newValue);
+          }
+        }
+      });
     });
-    /* setUndos((prevUndos) => [...prevUndos, ...change]); */
+
+    // Optionally refresh the grid after updates to ensure it reflects the changes
+    gridRef.current.api.refreshCells({ force: true });
   };
 
   const handleCellValueChanged = useCallback(
     (event) => {
       if (!isUndoAction && !isRedoAction) {
         const { api, node, colDef, newValue } = event;
-        console.log('event: ', event);
         const change = {
           rowId: node.id, // Ensure this is how you access the ID correctly
           field: event.colDef.field,
-          file: event.data.audiofile,
+          audiotrack: event.data.audiotrack,
           newValue: event.newValue,
           oldValue: event.oldValue
         };
@@ -123,7 +208,7 @@ const AGGrid = ({ data }) => {
       {
         rowId: lastEdit.rowId,
         field: lastEdit.field,
-        file: lastEdit.audiofile,
+        audiotrack: lastEdit.audiotrack,
         oldValue: gridRef.current.api.getValue(
           lastEdit.field,
           gridRef.current.api.getRowNode(lastEdit.rowId)
@@ -150,7 +235,7 @@ const AGGrid = ({ data }) => {
       {
         rowId: lastRedo.rowId,
         field: lastRedo.field,
-        file: lastRedo.audiofile,
+        audiotrack: lastRedo.audiotrack,
         oldValue: gridRef.current.api.getValue(
           lastRedo.field,
           gridRef.current.api.getRowNode(lastRedo.rowId)
@@ -172,12 +257,17 @@ const AGGrid = ({ data }) => {
     console.log('save');
   };
 
-  const autoSize = useCallback((skipHeader) => {
-    const allColumnIds = [];
-    gridRef.current.columnApi.getColumns().forEach((column) => {
-      allColumnIds.push(column.getId());
-    });
-    gridRef.current.columnApi.autoSizeColumns(allColumnIds, skipHeader);
+  const booleanCellRenderer = (params) => {
+    return <span>{params.value === 1 ? 'true' : 'false'}</span>;
+  };
+
+  const autoSize = useCallback((skipHeader = false) => {
+    if (gridRef.current) {
+      const allColumnIds = gridRef.current.columnApi
+        .getColumns()
+        .map((column) => column.getColId());
+      gridRef.current.columnApi.autoSizeColumns(allColumnIds, skipHeader);
+    }
   }, []);
 
   const sizeToFit = useCallback(() => {
@@ -194,6 +284,8 @@ const AGGrid = ({ data }) => {
         return autoSize();
       case 'reset-window':
         return sizeToFit();
+      case 'reset':
+        return setOriginalData(undefined);
       case 'cancel-all':
         return handleCancel();
       case 'save-all':
@@ -202,7 +294,7 @@ const AGGrid = ({ data }) => {
         const updatesByRow = undos.reduce((acc, undo) => {
           if (!acc[undo.rowId]) {
             acc[undo.rowId] = {
-              id: originalData[undo.rowId].audiofile,
+              id: undo.audiotrack,
               changes: {}
             };
           }
@@ -215,6 +307,7 @@ const AGGrid = ({ data }) => {
           updates: row.changes
         }));
         /* console.log('save all: ', saveAll); */
+        console.log('save-all: ', saveAll);
         return updateTags(saveAll);
       /*  if (undos.length === 0) return;
 
@@ -248,72 +341,43 @@ const AGGrid = ({ data }) => {
     }
   };
 
-  const getRowId = useMemo(() => (params) => params.data.afid, []);
-
   const defaultColDef = useMemo(() => ({
     resizable: true,
     sortable: true,
     editable: true
+
+    /* autoSize: true, */
+    /*     autoSizeAllColumns: true */
+    /*  singleClickEdit: true */
     /* enableCellChangeFlash: true */
   }));
 
-  const columnDefs = useMemo(
-    () => [
-      {
-        field: 'Icon',
-        cellRenderer: (params) => <CiPlay1 />,
-        width: 50,
-        editable: false,
-        resizable: false
-      },
-      { field: 'select', checkboxSelection: true, maxWidth: 20, resizable: false },
-      {
-        field: 'audiofile',
-        filter: true,
-        hide: false,
-        editable: false,
-        rowDrag: true
-        /*         cellClassRules: {
-          'rag-green': (params) => params.value.startsWith('H:/')
-        } */
-      },
-      {
-        field: 'year',
-        filter: 'agNumberColumnFilter',
-        hide: false,
-        type: 'numericColumn',
-        valueSetter: (params) => {
-          const newValue = Number(params.newValue);
-          if (!isNaN(newValue) && params.data.year !== newValue) {
-            params.data.year = newValue;
-            return true; // Indicate the value has been updated
-          }
-          return false; // No valid update occurred
-        }
-      },
-      { field: 'title', filter: true, hide: false },
-      { field: 'artist', filter: true, hide: false },
-      { field: 'album', filter: true, hide: false },
-      {
-        field: 'genre',
-        filter: true,
-        hide: false
-      }
-      /*     {
-        field: 'Icon',
-        cellRenderer: (params) => <CiPlay1 />,
-        width: 50,
-        editable: false,
-        resizable: false
-      } */ // Optional: Center the cell content }
-    ],
-    []
-  );
+  const loadingOverlayComponentParams = useMemo(() => {
+    return {
+      loadingMessage: 'One moment please...'
+    };
+  }, []);
 
-  // Example of consuming Grid Event
-  /*   const cellClickedListener = useCallback((event) => {
-    console.log('cellClicked', gridRef.current.api.getEditingCells());
+  const updateHiddenColumns = (api) => {
+    const hiddenCols = api.getColumns().filter((col) => !col.isVisible());
+    setHiddenColumns(hiddenCols.map((col) => col.getColId()));
+  };
+
+  const onRowClicked = (event) => {
+    if (event.ctrlKey || event.metaKey) {
+      event.node.setSelected(!event.node.isSelected());
+    }
+  };
+
+  /*   const loadingOverlayComponent = useMemo(() => {
+    return CustomLoadingOverlay;
   }, []); */
+
+  const onColumnVisible = useCallback(() => {
+    if (columnApi) {
+      updateHiddenColumns(columnApi);
+    }
+  }, [columnApi]);
 
   const deselectAll = useCallback((e) => {
     gridRef.current.api.deselectAll();
@@ -321,36 +385,73 @@ const AGGrid = ({ data }) => {
     setNodesSelected([]);
   }, []);
 
+  const gridClassName = classNames('ag-theme-alpine-dark', {
+    'no-panel': !isPanelVisible,
+    'two-column': numNodes > 1
+  });
+
+  const editFormClassname = classNames('edit-form', {
+    'no-panel': !isPanelVisible,
+    hidden: numNodes <= 1
+  });
+
   return (
     <>
       {/* Example using Grid's API */}
       <CustomToolPanel
         onChange={handleColumnPanel}
         onClick={handleGridMenu}
-        onUpdate={handleMultiRowUpdate}
+        /* onUpdate={handleMultiRowUpdate} */
         nodesSelected={nodesSelected}
+        hiddenColumns={hiddenColumns}
+        isPanelVisible={isPanelVisible}
+        togglePanelVisibility={togglePanelVisibility}
       />
+      {nodesSelected.length > 1 && (
+        <div className={editFormClassname}>
+          <EditForm
+            onUpdate={handleMultiRowUpdate}
+            nodesSelected={nodesSelected}
+            hiddenColumns={hiddenColumns}
+          />
+        </div>
+      )}
+
       {/* On div wrapping Grid a) specify theme CSS Class Class and b) sets Grid size */}
-      <div className="ag-theme-alpine-dark" style={{ width: '100%', height: '100%' }}>
+      {/* < div className={isPanelVisible ? 'ag-theme-alpine-dark' : 'ag-theme-alpine-dark no-panel'}> */}
+      <div className={gridClassName} style={{ width: '100%', height: '100%' }}>
         <AgGridReact
           ref={gridRef} // Ref for accessing Grid's API
+          /* rowModelType="viewport" */
           rowData={originalData} // Row Data for Rows
-          columnDefs={columnDefs} // Column Defs for Columns
+          columnDefs={useColumnDefinitions()} // Column Defs for Columns
           defaultColDef={defaultColDef} // Default Column Properties
           animateRows={true}
           onSelectionChanged={onSelectionChanged}
-          /* getRowId={getRowId} */
+          columnTypes={useColumnTypes()}
+          components={{ PlayButtonRenderer }}
+          getRowId={getRowId}
           /* onGridReady={(e) => console.log('gridReady: ', e)} */ // Optional - set to 'true' to have rows animate when sorted
           onGridReady={onGridReady}
           rowSelection="multiple" // Options - allows click selection of rows
+          suppressRowClickSelection={true}
           /* onCellClicked={cellClickedListener}  */ // Optional - registering for Grid Event
           //enableRangeSelection={true}
+          /* getRowNodeId={getRowNodeId} */
+          autoSizeStrategy="fitCellContents"
           headerHeight={25}
           rowMultiSelectWithClick={true}
           onCellValueChanged={handleCellValueChanged}
+          onColumnVisible={onColumnVisible}
           undoRedoCellEditing={false}
           rowDragManaged={true}
           rowDragMultiRow={true}
+          onRowClicked={onRowClicked}
+          loadingOverlayComponent={loadingOverlayComponent}
+          loadingOverlayComponentParams={loadingOverlayComponent}
+          /* loadingOverlayComponent={loadingOverlayComponent}
+          loadingOverlayComponentParams={loadingOverlayComponentParams} */
+          /*     frameworkComponents={{ booleanCellRenderer: BooleanCellRenderer }} */
         />
       </div>
       {/*       {isRowsSelected.current && isRowsSelected.current.length > 0 && (

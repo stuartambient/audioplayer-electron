@@ -14,6 +14,7 @@ const Item = forwardRef((props, ref) => {
   };
 
   const loadFile = async (file, id) => {
+    console.log('file: ', file, 'id: ', id);
     try {
       state.audioRef.current.src = await `streaming://${file}`;
       /* const buf = await state.audioRef.current.src.arrayBuffer(); */
@@ -100,10 +101,10 @@ const Item = forwardRef((props, ref) => {
           <br></br>
           Album: {props.album}
           <br></br>
-          Genre: {props.genre}
+          {/* Genre: {props.genre}
           Lossless: {props.lossless}
-          Bitrate: {props.bitrate / 1000}
-          samplerate: {props.samplerate}
+          Bitrate: {parseFloat(Math.round(props.bitrate).toPrecision(4))}
+          samplerate: {props.samplerate} */}
         </a>
         <div className="item-menu">
           <ContextMenu fromlisttype={props.type} id={props.id} divid={props.divId} />

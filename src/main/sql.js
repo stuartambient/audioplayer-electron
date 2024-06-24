@@ -1,4 +1,3 @@
-import { app } from 'electron';
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
 import db from './connection';
@@ -11,39 +10,155 @@ db.pragma('mmap_size = 30000000000');
 db.pragma('temp_store = memory'); */
 
 /* SELECT foldername, fullpath FROM albums where unaccent(foldername) LIKE '%Koner%' ORDER BY lower(unaccent(foldername)) */
+const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )`;
 
-const createFoldersTable = () => {
-  const ct = db.prepare(
-    'CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )'
-  );
-  const createtable = ct.run();
-  /* db.close(); */
-};
+const createTracksTable = `CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )`;
 
-const createFilesTable = () => {
-  const ct = db.prepare(
-    'CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )'
-  );
-  const createtable = ct.run();
-  /* db.close(); */
-};
+const createAudioTracks = `
+CREATE TABLE IF NOT EXISTS "audio-tracks" (
+    track_id PRIMARY KEY,
+    root,
+    audiotrack,
+    modified,
+    like,
+    created_datetime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    error,
+    albumArtists,
+    album,
+    audioBitrate,
+    audioSampleRate,
+    bpm,
+    codecs,
+    composers,
+    conductor,
+    copyright,
+    comment,
+    disc,
+    discCount,
+    description,
+    duration,
+    genres,
+    isCompilation,
+    isrc,
+    lyrics,
+    performers,
+    performersRole,
+    pictures,
+    publisher,
+    remixedBy,
+    replayGainAlbumGain,
+    replayGainAlbumPeak,
+    replayGainTrackGain,
+    replayGainTrackPeak,
+    title,
+    track,
+    trackCount,
+    year
+);`;
 
-/* const createIndex = () => {
-  const createIdx = db.prepare('CREATE INDEX audiofile_idx ON tracks(audiofile)');
-  const idx = createIdx.run();
-  db.close();
-}; */
+/* const createAudioTrackErrors = `
+CREATE TABLE IF NOT EXISTS audio_track_errors (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_path TEXT NOT NULL,
+  error_message TEXT NOT NULL,
+  error_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`; */
+
+db.exec(createAudioTracks);
+db.exec(createAlbumsTable);
+db.exec(createTracksTable);
+/* db.exec(createAudioTrackErrors); */
 
 const insertFiles = (files) => {
-  const insert = db.prepare(
-    'INSERT INTO tracks (afid, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, sampleRate, like, picture) VALUES (@afid, @root, @audiofile, @modified, @extension, @year, @title, @artist, @album, @genre, @lossless, @bitrate, @sampleRate, @like, @picture)'
-  );
+  const insert = db.prepare(`
+  INSERT INTO "audio-tracks"
+            (track_id,
+             root,
+             audiotrack,
+             modified,
+             like,
+             error,
+             albumArtists,
+             album,
+             audioBitrate,
+             audioSamplerate,
+             bpm,
+             codecs,
+             composers,
+             conductor,
+             copyright,
+             comment,
+             disc,
+             discCount,
+             description,
+             duration,
+             genres,
+             isCompilation,
+             isrc,
+             lyrics,
+             performers,
+             performersRole,
+             pictures,
+             publisher,
+             remixedBy,
+             replayGainAlbumGain,
+             replayGainAlbumPeak,
+             replayGainTrackGain,
+             replayGainTrackPeak,
+             title,
+             track,
+             trackCount,
+             year)
+VALUES      (@track_id,
+             @root,
+             @audiotrack,
+             @modified,
+             @like,
+             @error,
+             @albumArtists,
+             @album,
+             @audioBitrate,
+             @audioSampleRate,
+             @bpm,
+             @codecs,
+             @composers,
+             @conductor,
+             @copyright,
+             @comment,
+             @disc,
+             @discCount,
+             @description,
+             @duration,
+             @genres,
+             @isCompilation,
+             @isrc,
+             @lyrics,
+             @performers,
+             @performersRole,
+             @pictures,
+             @publisher,
+             @remixedBy,
+             @replayGainAlbumGain,
+             @replayGainAlbumPeak,
+             @replayGainTrackGain,
+             @replayGainTrackPeak,
+             @title,
+             @track,
+             @trackCount,
+             @year) `);
 
-  const insertMany = db.transaction((files) => {
-    for (const f of files) insert.run(f);
-  });
+  try {
+    const insertMany = db.transaction((files) => {
+      for (const f of files) insert.run(f);
+    });
 
-  const info = insertMany(files);
+    const info = insertMany(files);
+    return { success: true, message: 'Files inserted successfully' };
+  } catch (error) {
+    console.error('Error inserting files:', error);
+    return { success: false, message: `Error inserting files: ${error.message}` };
+  }
 };
 
 /* const getMissingCovers = () => {
@@ -53,7 +168,8 @@ const insertFiles = (files) => {
 }; */
 
 const deleteFiles = (files) => {
-  const deleteFile = db.prepare('DELETE FROM tracks WHERE audiofile = ?');
+  console.log('deleteFiles');
+  const deleteFile = db.prepare('DELETE FROM "audio-tracks" WHERE audiotrack = ?');
 
   const deleteMany = db.transaction((files) => {
     for (const f of files) deleteFile.run(f);
@@ -63,6 +179,7 @@ const deleteFiles = (files) => {
 };
 
 const insertAlbums = (data) => {
+  console.log('insertAlbums');
   const insert = db.prepare(
     'INSERT INTO albums(id, rootlocation, foldername, fullpath) VALUES (@id, @root, @name, @fullpath)'
   );
@@ -75,6 +192,7 @@ const insertAlbums = (data) => {
 };
 
 const deleteAlbums = async (data) => {
+  console.log('deleteAlbums');
   const deleteA = db.prepare('DELETE FROM albums WHERE fullpath = ?');
   const deleteMany = db.transaction((data) => {
     for (const d of data) deleteA.run(d);
@@ -83,20 +201,23 @@ const deleteAlbums = async (data) => {
 };
 
 const deleteAlbum = async (data) => {
+  console.log('deleteAlbum');
   const deleteSingleAlbum = db.prepare('DELETE FROM albums WHERE fullpath = ?');
   deleteSingleAlbum.run();
 };
 
 const getAlbums = () => {
+  console.log('getAlbums');
   const getAllAlbums = db.prepare('SELECT fullpath FROM albums');
   const albums = getAllAlbums.all();
   return albums;
 };
 
 const getAlbum = (id) => {
+  console.log('getAlbum');
   const getAnAlbum = db.prepare('SELECT fullpath FROM albums WHERE id = ?');
   const album = getAnAlbum.get(id);
-  const files = db.prepare('SELECT * FROM tracks WHERE audiofile LIKE ?');
+  const files = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ?');
   const assocFiles = files.all(`${album.fullpath}%`);
   const albumFiles = [];
   assocFiles.forEach((a) => {
@@ -106,56 +227,157 @@ const getAlbum = (id) => {
 };
 
 const getFiles = () => {
-  const allFiles = db.prepare('SELECT audiofile FROM tracks');
+  console.log('getFiles');
+  /* const allFiles = db.prepare('SELECT audiofile FROM tracks');
+  const files = allFiles.all();
+  return files; */
+
+  const allFiles = db.prepare('SELECT audiotrack FROM "audio-tracks"');
   const files = allFiles.all();
   return files;
 };
 
 const refreshMetadata = (tracks) => {
+  console.log('refreshMetadata');
+  console.log('tracks: ', Array.isArray(tracks), tracks.length);
   const transaction = db.transaction(() => {
     const updateStmt = db.prepare(`
-      UPDATE tracks SET modified = ?, year = ?, title = ?, artist = ?, album = ?, genre = ? WHERE afid = ? AND audiofile = ?`);
+      UPDATE "audio-tracks" SET 
+        root = @root,
+        modified = @modified,
+        like = @like,
+        error = @error,
+        albumArtists = @albumArtists,
+        album = @album,
+        audioBitrate = @audioBitrate,
+        audioSampleRate = @audioSampleRate,
+        bpm = @bpm,
+        codecs = @codecs,
+        composers = @composers,
+        conductor = @conductor,
+        copyright = @copyright,
+        comment = @comment,
+        disc = @disc,
+        discCount = @discCount,
+        description = @description,
+        duration = @duration,
+        genres = @genres,
+        isCompilation = @isCompilation,
+        isrc = @isrc,
+        lyrics = @lyrics,
+        performers = @performers,
+        performersRole = @performersRole,
+        pictures = @pictures,
+        publisher = @publisher,
+        remixedBy = @remixedBy,
+        replayGainAlbumGain = @replayGainAlbumGain,
+        replayGainAlbumPeak = @replayGainAlbumPeak,
+        replayGainTrackGain = @replayGainTrackGain,
+        replayGainTrackPeak = @replayGainTrackPeak,
+        title = @title,
+        track = @track,
+        trackCount = @trackCount,
+        year = @year
+      WHERE 
+        audiotrack = @audiotrack
+      `);
 
     for (const track of tracks) {
-      const { modified, year, title, artist, album, genre, afid, audiofile } = track;
-      updateStmt.run(modified, year, title, artist, album, genre, afid, audiofile);
+      const info = updateStmt.run({
+        track_id: track.track_id,
+        audiotrack: track.audiotrack,
+        root: track.root,
+        modified: track.modified,
+        like: track.like,
+        error: track.error,
+        albumArtists: track.albumArtists,
+        album: track.album,
+        audioBitrate: track.audioBitrate,
+        audioSampleRate: track.audioSampleRate,
+        bpm: track.bpm,
+        codecs: track.codecs,
+        composers: track.composers,
+        conductor: track.conductor,
+        copyright: track.copyright,
+        comment: track.comment,
+        disc: track.disc,
+        discCount: track.discCount,
+        description: track.description,
+        duration: track.duration,
+        genres: track.genres,
+        isCompilation: track.isCompilation,
+        isrc: track.isrc,
+        lyrics: track.lyrics,
+        performers: track.performers,
+        performersRole: track.performersRole,
+        pictures: track.pictures,
+        publisher: track.publisher,
+        remixedBy: track.remixedBy,
+        replayGainAlbumGain: track.replayGainAlbumGain,
+        replayGainAlbumPeak: track.replayGainAlbumPeak,
+        replayGainTrackGain: track.replayGainTrackGain,
+        replayGainTrackPeak: track.replayGainTrackPeak,
+        title: track.title,
+        track: track.track,
+        trackCount: track.trackCount,
+        year: track.year
+      });
+      console.log('update info: ', info);
     }
   });
   try {
-    // Run the transaction
     transaction();
 
     return 'Records updated successfully!';
   } catch (error) {
     console.error('Error updating records:', error);
-  } /* finally {
-    
-    db.close();
-  } */
+    throw new Error(error);
+  }
+};
+
+const checkRecordsExist = (tracks) => {
+  console.log('checkRecordsExist');
+  for (const track of tracks) {
+    const record = db
+      .prepare(
+        `
+      SELECT * FROM "audio-tracks"
+      WHERE audiotrack = @audiotrack AND track_id = @track_id
+    `
+      )
+      .get({
+        audiotrack: track.audiotrack,
+        track_id: track.track_id
+      });
+    console.log('Record:', record);
+  }
 };
 
 const allTracks = () => {
-  const alltracks = db.prepare('SELECT afid, audiofile, modified FROM tracks');
+  console.log('allTracks');
+  const alltracks = db.prepare('SELECT track_id, audiotrack, modified FROM "audio-tracks"');
   const tracks = alltracks.all();
   return tracks;
 };
 
 const getAllPkeys = () => {
-  const alltracks = db.prepare('SELECT afid FROM tracks');
+  console.log('getAllPkeys');
+  const alltracks = db.prepare('SELECT track_id FROM "audio-tracks"');
 
   return alltracks.all();
 };
 const getAllTracks = (rows) => {
-  const tracks = db.prepare('SELECT * FROM tracks WHERE afid = ?');
+  console.log('getAllTracks');
+  const tracks = db.prepare('SELECT * FROM "audio-tracks" WHERE track_id = ?');
 
   const shuffledTracks = [];
   for (const r of rows) {
     try {
-      const track = tracks.get(r.afid);
+      const track = tracks.get(r.track_id);
       if (track) {
         shuffledTracks.push(track);
       } else if (!track) {
-        console.log('no track avail: ', r.afid);
+        console.log('no track avail: ', r.track_id);
       }
     } catch (error) {
       console.error(`Error retrieving rowid ${r}:`, error);
@@ -166,6 +388,7 @@ const getAllTracks = (rows) => {
 };
 
 const searchAlbums = async () => {
+  console.log('searchAlbums');
   const stmt = db.prepare(
     "SELECT rootloc, foldername FROM albums WHERE foldername LIKE '%braxton%'"
   );
@@ -176,19 +399,20 @@ const searchAlbums = async () => {
 /* sort by artist, createdon, title genre */
 
 const allTracksByScroll = (offsetNum, sort) => {
+  console.log('allTracksByScroll');
   let query;
   switch (sort) {
     case 'createdon':
-      query = `SELECT * FROM tracks ORDER BY createdon DESC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY created_datetime DESC LIMIT 50 OFFSET $offset`;
       break;
     case 'artist':
-      query = `SELECT * FROM tracks ORDER BY unaccent(lower(artist)) ASC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(performers)) ASC LIMIT 50 OFFSET $offset`;
       break;
     case 'title':
-      query = `SELECT * FROM tracks ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET $offset`;
       break;
-    case 'genre':
-      query = `SELECT * FROM tracks ORDER BY unaccent(lower(genre)) DESC LIMIT 50 OFFSET $offset`;
+    case 'genres':
+      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(genres)) DESC LIMIT 50 OFFSET $offset`;
       break;
     default:
       return;
@@ -198,24 +422,25 @@ const allTracksByScroll = (offsetNum, sort) => {
 };
 
 const allTracksBySearchTerm = (offsetNum, text, sort) => {
+  console.log('allTracksBySearchTerm');
   const term = `%${text}%`;
   let query;
   let params;
   switch (sort) {
     case 'createdon':
-      query = `SELECT * FROM tracks WHERE audiofile LIKE ? ORDER BY createdon DESC LIMIT 50 OFFSET ?`;
+      query = `SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ? ORDER BY created_datetime DESC LIMIT 50 OFFSET ?`;
       params = [term, offsetNum * 50];
       break;
     case 'artist':
-      query = `SELECT * FROM tracks WHERE artist LIKE ? ORDER BY unaccent(lower(artist)) ASC LIMIT 50 OFFSET ?`;
+      query = `SELECT * FROM "audio-tracks" WHERE performers LIKE ? ORDER BY unaccent(lower(performers)) ASC LIMIT 50 OFFSET ?`;
       params = [term, offsetNum * 50];
       break;
     case 'title':
-      query = `SELECT * FROM tracks WHERE title LIKE ? ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET ?`;
+      query = `SELECT * FROM "audio-tracks" WHERE title LIKE ? ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET ?`;
       params = [term, offsetNum * 50];
       break;
-    case 'genre':
-      query = `SELECT * FROM tracks WHERE genre LIKE ? ORDER BY unaccent(lower(genre)) DESC LIMIT 50 OFFSET ?`;
+    case 'genres':
+      query = `SELECT * FROM "audio-tracks" WHERE genres LIKE ? ORDER BY unaccent(lower(genres)) DESC LIMIT 50 OFFSET ?`;
       params = [term, offsetNum * 50];
       break;
     default:
@@ -226,7 +451,8 @@ const allTracksBySearchTerm = (offsetNum, text, sort) => {
 };
 
 const getPlaylist = (playlist) => {
-  const plfile = db.prepare('SELECT * FROM tracks WHERE audiofile = ?');
+  console.log('getPlaylist');
+  const plfile = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack = ?');
   /* const assocFiles = files.all(`${albumPath}%`); */
   const albumFiles = [];
   playlist.forEach((pl) => {
@@ -239,6 +465,7 @@ const getPlaylist = (playlist) => {
 };
 
 const allAlbumsByScroll = (offsetNum, sort) => {
+  console.log('allAlbumsByScroll');
   let query;
   switch (sort) {
     case 'foldername':
@@ -259,6 +486,7 @@ const allAlbumsByScroll = (offsetNum, sort) => {
 };
 
 const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
+  console.log('allAlbumsBySearchTerm');
   const term = `%${text}%`;
 
   let query;
@@ -285,6 +513,7 @@ const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
 };
 
 const allCoversByScroll = (offsetNum, term = null) => {
+  console.log('allCoversByScroll');
   if (term === '') {
     const stmt = db.prepare(
       `SELECT id, foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET ${
@@ -304,39 +533,40 @@ const allCoversByScroll = (offsetNum, term = null) => {
 };
 
 const requestedFile = (trackId) => {
-  const reqTrack = db.prepare(`Select * from tracks where afid = ? `);
+  console.log('requestedFile');
+  const reqTrack = db.prepare(`Select * from "audio-tracks" where track_id = ? `);
   return reqTrack.get(trackId);
 };
 
 const filesByAlbum = (albumPath) => {
+  console.log('filesByAlbum');
   /*   const album = db.prepare('SELECT fullpath FROM albums WHERE fullpath = ?');
   const getAlbum = album.get(albumPath); */
   /* const stmt = db.prepare("SELECT audioFile FROM files WHERE "); */
   /* const albumpath = getAlbum.fullpath; */
-  const files = db.prepare('SELECT * FROM tracks WHERE audiofile LIKE ?');
+  const files = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ?');
   const albumFiles = files.all(`${albumPath}%`);
 
   return albumFiles;
 };
 
 const likeTrack = (fileId) => {
+  console.log('likeTrack');
   let status;
-  const isLiked = db.prepare('SELECT like FROM tracks WHERE afid = ?');
+  const isLiked = db.prepare('SELECT like FROM "audio-tracks" WHERE track_id = ?');
   const currentLike = isLiked.get(fileId);
   currentLike.like === 1 ? (status = 0) : (status = 1);
-  const updateLike = db.prepare('UPDATE tracks SET like = ? WHERE afid = ? ');
+  const updateLike = db.prepare('UPDATE "audio-tracks" SET like = ? WHERE track_id = ? ');
   const info = updateLike.run(status, fileId);
   return info;
 };
 
 const isLiked = (id) => {
-  const isLiked = db.prepare('SELECT like FROM tracks WHERE afid = ?');
+  console.log('isLiked');
+  const isLiked = db.prepare('SELECT like FROM "audio-tracks" WHERE track_id = ?');
   const currentLike = isLiked.get(id);
   return isLiked.like;
 };
-
-createFoldersTable();
-createFilesTable();
 
 export {
   insertFiles,
@@ -356,14 +586,13 @@ export {
   filesByAlbum,
   likeTrack,
   isLiked,
-  createFoldersTable,
-  createFilesTable,
   getPlaylist,
   allCoversByScroll,
   getAllTracks,
   /*   getMissingCovers, */
   allTracks,
-  refreshMetadata
+  refreshMetadata,
+  checkRecordsExist
 };
 
 /*

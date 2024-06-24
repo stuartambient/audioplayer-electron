@@ -1,5 +1,7 @@
 /* Main container for the custom tool panel */
 .column-panel {
+  grid-column: 1 / -1;
+  grid-row: 2 / 3;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -79,6 +81,13 @@
   color: black;
 }
 
+.hamburger-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-column: 1 / -1;
+}
+
 .hamburger-btn {
   cursor: pointer;
   height: 16px;
@@ -90,12 +99,13 @@
   background: transparent;
   border: none;
   padding: 0;
+  grid-row: 1 / 2;
 }
 
 .hamburger-btn span {
   height: 2px;
   width: 24px;
-  background-color: #333; /* Dark color for contrast */
+  background-color: #a7edfc; /* Dark color for contrast */
   border-radius: 2px;
   transition: all 0.3s linear;
 }

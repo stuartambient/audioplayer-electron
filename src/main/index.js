@@ -14,19 +14,24 @@ import {
 import * as path from 'path';
 import fs from 'fs';
 /* import { spawn } from 'child_process'; */
-import createOrUpdateChildWindow from './windowManager.js';
+import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowManager.js';
 import url, { pathToFileURL } from 'url';
 import http from 'node:http';
 import * as stream from 'stream';
 import { promisify } from 'util';
 import { Buffer } from 'buffer';
+import { Worker } from 'worker_threads';
 import { parseFile } from 'music-metadata';
-import { File } from 'node-taglib-sharp';
+
+import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { writeFile, updateMeta, convertToUTC } from './utility';
+import { writeFile, convertToUTC } from './utility';
+import db from './connection.js';
 /* import Database from 'better-sqlite3'; */
+import createWorker from './databaseWorker?nodeWorker';
+import workerTrigger from './wokerTrigger.js';
 import {
   allTracksByScroll,
   allTracksBySearchTerm,
@@ -42,12 +47,9 @@ import {
   getFiles,
   getAllPkeys,
   getAllTracks,
-  /*   getMissingCovers, */
   deleteAlbum,
   allTracks,
   refreshMetadata
-  /* createFoldersTable,
-  createFilesTable */
 } from './sql.js';
 
 import {
@@ -56,7 +58,7 @@ import {
   genresWithCount,
   nullMetadata,
   allTracksByArtist,
-  allTracksByGenre,
+  allTracksByGenres,
   distinctDirectories,
   foldersWithCount,
   allTracksByRoot,
@@ -66,6 +68,9 @@ import initAlbums from './updateFolders';
 import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
 import initUpdateMetadata from './updateMetadata';
+import updateTags from './updateTags';
+/* import checkDataTypes from './checkDataTypes.js'; */
+/* import { Genres } from '../renderer/src/components/StatsComponents.jsx'; */
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'streaming',
@@ -110,7 +115,7 @@ process.on('unhandledRejection', (err) => {
 const capitalizeDriveLetter = (str) => {
   return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
 };
-let mainWindow;
+export let mainWindow;
 
 function createWindow() {
   // Create the browser window.
@@ -170,14 +175,29 @@ function createWindow() {
 
 const reactDevToolsPath =
   /* 'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/4.27.1_0'; */
-  'C:/Users/sambi/documents/Devtools/4.27.1_0';
-/*   'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi'; */
+  'C:/Users/sambi/documents/Devtools2/4.27.1_0';
+
+/*  'C:/Users/sambi/AppData/Local/Google/Chrome/User Data/Default/Extensions/fmkadmapgofadopljbjfkapdkoienihi/5.0.2_0'; */
 /* 'C:/Users/sambi/documents/Devtools2/5.0.2_0'; */
 
 let primaryDisplay;
 
 app.whenReady().then(async () => {
-  await session.defaultSession.loadExtension(reactDevToolsPath);
+  await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
+
+  /*  const scriptPath = path.join(__dirname, 'checkDataTypes.js'); */
+
+  /*   db.execFile('node', [scriptPath], (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error executing script: ${error}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Script stderr: ${stderr}`);
+      return;
+    }
+    console.log(`Script output:\n${stdout}`);
+  }); */
 });
 /* 
 app.on('ready', async () => { */
@@ -272,9 +292,7 @@ app.on('window-all-closed', () => {
 });
 
 const processUpdateResult = (type, result) => {
-  /* console.log('result: ', result); */
   let filename;
-  /*  type === 'folder' ? (filename = 'folder-updates.txt') : (filename = 'file-updates.txt'); */
   switch (type) {
     case 'folder':
       filename = 'folder-updates.txt';
@@ -288,12 +306,12 @@ const processUpdateResult = (type, result) => {
     default:
       return;
   }
-  /* console.log(filename); */
   if (Array.isArray(result.new)) {
-    writeFile(`\nDate: ${Date()} \nAdditions:\n`, `${updatesFolder}\\${filename}`);
-    result.new.forEach((res) => {
-      writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
-    });
+    const buffer = [];
+    buffer.push(`\nDate: ${new Date()} \nAdditions:\n`);
+    buffer.push(...result.new);
+
+    writeFile(buffer, `${updatesFolder}\\${filename}`).catch((err) => console.error(err));
   }
   if (Array.isArray(result.deleted)) {
     writeFile(`\nDate: ${Date()} \nDeletions:\n`, `${updatesFolder}\\${filename}`);
@@ -317,23 +335,25 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
 
 ipcMain.handle('update-folders', async () => {
   const result = await initAlbums();
-  processUpdateResult('folder', result);
+  /* processUpdateResult('folder', result); */
+  console.log('result: ', result);
   return result;
 });
 
 ipcMain.handle('update-files', async () => {
   const result = await initFiles();
-  processUpdateResult('file', result);
+  /* processUpdateResult('file', result); */
   return result;
 });
 
 ipcMain.handle('update-meta', async () => {
   const result = await initUpdateMetadata();
-  processUpdateResult('meta', result);
+  /* processUpdateResult('meta', result); */
+  /* console.log('meta result: ', result); */
   return result;
 });
 
-ipcMain.handle('update-covers', async () => {
+/* ipcMain.handle('update-covers', async () => {
   let result;
   try {
     result = await initCovers();
@@ -343,7 +363,6 @@ ipcMain.handle('update-covers', async () => {
 
   let updatedFolders = [];
   for await (const r of result) {
-    /* console.log(r); */
     let tmp = await fs.promises.readdir(r.path);
 
     if (!tmp[0]) continue;
@@ -362,7 +381,7 @@ ipcMain.handle('update-covers', async () => {
   }
   return updatedFolders;
 });
-
+ */
 /*  */
 
 ipcMain.handle('create-table', () => {
@@ -371,6 +390,7 @@ ipcMain.handle('create-table', () => {
 });
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
+  /* console.log('get-tracks'); */
   /* console.log('sort: ', args[2]); */
   if (args[1] === '') {
     const alltracks = await allTracksByScroll(args[0], args[2]);
@@ -414,9 +434,16 @@ ipcMain.on('test-real-stream', async (event, ...args) => {
 
 ipcMain.handle('get-cover', async (event, arg) => {
   const track = await requestedFile(arg);
-  const meta = await parseFile(track.audiofile);
+  const myFile = await File.createFromPath(track.audiotrack);
+
+  /*   const pic = await myPic.data;
+  if (!pic) return 0; */
+  if (!myFile.tag.pictures?.[0]?.data) return 0;
+  return myFile.tag.pictures[0].data._bytes;
+  /*   const track = await requestedFile(arg);
+  const meta = await parseFile(track.audiotrack);
   if (!meta.common.picture) return 0;
-  return meta.common.picture[0].data;
+  return meta.common.picture[0].data; */
 });
 
 ipcMain.handle('file-update-details', async (event, ...args) => {
@@ -493,10 +520,34 @@ ipcMain.handle('top-hundred-artists-stat', async () => {
   return topHundred.slice(1);
 });
 
-ipcMain.handle('get-tracks-by-artist', async (_, arg) => {
+async function openWindowAndSendData(queryResults, listType) {
+  const targetWindow = await getWindow('table-data');
+
+  if (targetWindow) {
+    if (targetWindow.webContents.isLoading()) {
+      targetWindow.webContents.once('did-finish-load', () => {
+        console.log('Window loaded. Sending data');
+        targetWindow.webContents.send('send-to-child', {
+          listType,
+          results: queryResults
+        });
+      });
+    } else {
+      console.log('Window already loaded. Sending data');
+      targetWindow.webContents.send('send-to-child', {
+        listType,
+        results: queryResults
+      });
+    }
+  } else {
+    console.error('Target window not found');
+  }
+}
+
+ipcMain.handle('get-tracks-by-artist', async (event, artist, listType) => {
+  const artistTracks = await allTracksByArtist(artist);
   try {
-    const tracks = await allTracksByArtist(arg);
-    return tracks;
+    await openWindowAndSendData(artistTracks, listType);
   } catch (err) {
     console.error(err.message);
   }
@@ -512,21 +563,52 @@ ipcMain.handle('distinct-directories', async () => {
   }
 });
 
-ipcMain.handle('get-tracks-by-genre', async (_, arg) => {
+ipcMain.handle('get-tracks-by-genre', async (event, genre, listType) => {
+  const genreTracks = await allTracksByGenres(genre);
   try {
-    const tracks = await allTracksByGenre(arg);
-    return tracks;
+    await openWindowAndSendData(genreTracks, listType);
   } catch (err) {
-    console.error(err.message);
+    console.error('message: ', err.message);
   }
 });
 
-ipcMain.handle('get-tracks-by-root', async (event, root) => {
+ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
   const rootTracks = await allTracksByRoot(root);
-  /* console.log(rootTracks); */
-  return rootTracks;
+  try {
+    await openWindowAndSendData(rootTracks, listType);
+  } catch (e) {
+    console.error(e.message);
+  }
 });
 
+ipcMain.handle('get-tracks-by-album', async (event, album, listType) => {
+  try {
+    const albumTracks = await filesByAlbum(album);
+    console.log(albumTracks);
+    if (albumTracks) {
+      await openWindowAndSendData(albumTracks, listType);
+    } else {
+      return 'empty folder . no tracks';
+    }
+  } catch (e) {
+    console.error(e.message);
+  }
+});
+
+ipcMain.handle('check-for-open-table', async (event, name) => {
+  console.log('check for open table');
+  const names = await getWindowNames();
+  if (names.includes(name)) {
+    return true;
+  }
+  return false;
+});
+
+ipcMain.handle('clear-table', async (event) => {
+  console.log('clear table');
+  const targetWindow = await getWindow('table-data');
+  targetWindow.webContents.send('clear-table', 'clear');
+});
 /* ipcMain.handle('get-albums-by-top-folder', async (event, folder) => {
   const folderAlbums = await albumsByTopFolder(folder);
   return folderAlbums;
@@ -568,7 +650,7 @@ ipcMain.handle('save-playlist', async (_, args) => {
   if (save.canceled) return 'action cancelled';
 
   args.forEach((a, index) => {
-    const tmp = a.audiofile.replaceAll('/', '\\');
+    const tmp = a.audiotrack.replaceAll('/', '\\');
     if (index === args.length - 1) {
       fs.writeFileSync(save.filePath, `${tmp}`, {
         flag: 'a'
@@ -680,75 +762,69 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   }
 });
 
+/* const tagKeys = {
+  albumArtists: (param) => param.split(', '),
+  album: (param) => param.trim(),
+  bpm: (param) => Number(param),
+  composers: (param) => param.split(', '),
+  conductor: (param) => param.trim(),
+  comment: (param) => param.trim(),
+  disc: (param) => Number(param),
+  discCount: (param) => Number(param),
+  description: (param) => param.trim(),
+  genres: (param) => param.split(', '),
+  isCompilation: (param) => (param === 1 ? 1 : 0),
+  like: (param) => (param === 1 ? 1 : 0),
+  isrc: (param) => param.trim(),
+  lyrics: (param) => param.trim(),
+  performers: (param) => param.split(', '),
+  performersRole: (param) => param.split(', '),
+  pictures: 'binary',
+  publisher: (param) => param.trim(),
+  remixedBy: (param) => param.trim(),
+  replayGainAlbumGain: (param) => Number(param),
+  replayGainAlbumPeak: (param) => Number(param),
+  replayGainTrackGain: (param) => Number(param),
+  replayGainTrackPeak: (param) => Number(param),
+  title: (param) => param.trim(),
+  track: (param) => Number(param),
+  trackCount: (param) => Number(param),
+  year: (param) => Number(param)
+}; */
+
 ipcMain.handle('update-tags', async (_, arr) => {
-  const updateTags = async (updates) => {
-    for await (const file of updates) {
-      const myFile = await File.createFromPath(file.id);
-      const {
-        albumArtists,
-        album,
-        composers,
-        conductor,
-        comment,
-        dateTagged,
-        disc,
-        discCount,
-        description,
-        genres,
-        isrc,
-        performers,
-        pictures,
-        publisher,
-        sizeOnDisk,
-        title,
-        track,
-        trackCount,
-        year
-      } = myFile.tag;
-      const { audioBitrate, audioSampleRate, codecs, durationMilliseconds, mediaTypes } =
-        myFile.properties;
-      /* console.log(file);
-      console.log('-------------------------------');
-      console.log(
-        albumArtists, // common.albumArtist
-        album, //common.album
-        composers, //common.composer
-        conductor, //common.conductor
-        comment, // common.comment
-        dateTagged, // common.data (YYYY-MM-DD_
-        disc, //common.disk
-        discCount, // common.totaldiscs
-        description, // common.description
-        genres, // common.genre
-        isrc,
-        performers, // common.artist
-        pictures, // common.picture
-        publisher,
-        sizeOnDisk,
-        title, //common.title
-        track, //common.track
-        trackCount, // common.totaltracks
-        year, //common.year
-        audioBitrate, //format.bitrate
-        audioSampleRate, //format.sampleRate
-        codecs, //format.codec
-        durationMilliseconds, //format.duration
-        mediaTypes
-      ); */
-
-      /* myFile.tag.year = 2002; */
-      /* myFile.tag.genres = ['Experimental'];
-      myFile.save(); */
-      myFile.dispose();
-
-      /* console.log('performers: ', myFile.tag.performers);
-      console.log('albumArtists: ', myFile.tag.albumArtists);
-      console.log('generes: ', myFile.tag.genres); */
-    }
-  };
-  if (arr.length > 0) {
-    updateTags(arr);
+  try {
+    const result = await updateTags(arr);
+    console.log('result: ', result);
+  } catch (error) {
+    console.error('Error updating tags: ', error.message);
   }
+  /*   await workerTrigger(arr, 'updateTags')
+    .then((message) => {
+      if (message) {
+        console.log('Update tags successful');
+      } else {
+        console.error('Tag update failed with:', message);
+      }
+    })
+    .catch((error) => {
+      console.error('Error in processing:', error);
+    }); */
+  /*   const updateTags = () => {
+    arr.forEach((a) => {
+      console.log('a: ', a.id);
+      //try {
+      const myFile = File.createFromPath(a.id);
+      myFile.tag;
+      for (const [key, value] of Object.entries(a.updates)) {
+        console.log(tagKeys[key], 'key: ', key, 'value: ', value);
+
+        const t = tagKeys[key](value);
+        myFile.tag[key] = t;
+        myFile.save();
+      }
+    });
+  }; */
 });
 
 ipcMain.on('show-context-menu', (event, id, type) => {
@@ -842,8 +918,8 @@ ipcMain.handle('show-text-input-menu', (event) => {
 });
 
 ipcMain.handle('show-child', (event, args) => {
-  const { name, winConfig, data } = args;
-  createOrUpdateChildWindow(name, winConfig, data);
+  const { name, type, winConfig, data } = args;
+  createOrUpdateChildWindow(name, type, winConfig, data);
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {

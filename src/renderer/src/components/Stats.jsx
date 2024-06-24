@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
-/* import { useTotalTracksStat, useTopHundredArtistsStat } from '../hooks/useDb'; */
 import { PiFolderOpenLight } from 'react-icons/pi';
+import { FaMeta } from 'react-icons/fa6';
 import {
   TotalMedia,
   TopHundredArtists,
@@ -8,20 +8,32 @@ import {
   AlbumsByRoot,
   TracksByRoot
 } from './StatsComponents';
-import { useDistinctDirectories /* , useAlbumsByRoot */ } from '../hooks/useDb';
-/* import { AiOutlineTrophy } from 'react-icons'; */
+import { useDistinctDirectories } from '../hooks/useDb';
+import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/Stats.css';
 
 const Stats = () => {
-  const [statReq, setStatReq] = useState('');
-  const [sort, setSort] = useState('col1');
+  const [statReq, setStatReq] = useState('totalmedia');
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [directories, setDirectories] = useState([]);
   const [reqDirectories, setReqDirectories] = useState([]);
   const [albumsByRoot, setAlbumsByRoot] = useState([]);
-  const [reqDir, setReqDir] = useState('');
-  const [root, setRoot] = useState(null);
+  const [root, setRoot] = useState('');
+  const resultsRef = useRef(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   useDistinctDirectories(setDirectories);
+
+  useEffect(() => {
+    const handleWindowClosed = (name) => {
+      console.log(`Window with name ${name} has been closed.`);
+      setRoot('');
+    };
+
+    window.api.onChildWindowClosed(handleWindowClosed);
+    return () => {
+      window.api.removeChildWindowClosedListener(handleWindowClosed);
+    };
+  }, []);
 
   useEffect(() => {
     if (isSubmenuOpen && reqDirectories.length > 0) {
@@ -30,6 +42,37 @@ const Stats = () => {
       setReqDirectories([]);
     }
   }, [isSubmenuOpen, reqDirectories]);
+
+  useEffect(() => {
+    const observedElement = resultsRef.current;
+
+    if (!observedElement) {
+      console.error('Observed element is null or undefined');
+      return;
+    }
+
+    if (!(observedElement instanceof Element)) {
+      console.error('Observed element is not a valid DOM element');
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      for (let entry of entries) {
+        setDimensions({
+          width: entry.contentRect.width,
+          height: entry.contentRect.height
+        });
+      }
+    });
+
+    observer.observe(observedElement);
+
+    // Cleanup function
+    return () => {
+      observer.unobserve(observedElement);
+      observer.disconnect();
+    };
+  }, []);
 
   const toggleSubmenu = (event) => {
     if (event.target.id === 'directories' || event.target.id === 'directories-p') {
@@ -41,11 +84,9 @@ const Stats = () => {
   const addRoot = (item) => {
     const rootItems = async (item) => {
       const results = await window.api.getAlbumsByRoot(item);
-      /* console.log(results); */
       setAlbumsByRoot((prevItems) => [...prevItems, ...results]);
     };
     if (!reqDirectories.includes(item)) {
-      /* setReqDirectories((prevItems) => [...prevItems, item]); */
       rootItems(item);
     }
   };
@@ -59,7 +100,6 @@ const Stats = () => {
     event.stopPropagation();
     if (event.target.checked) {
       setReqDirectories([...reqDirectories, item]);
-      //setStatReq('directories');
       addRoot(item);
     } else {
       setReqDirectories(reqDirectories.filter((directory) => directory !== item));
@@ -67,7 +107,8 @@ const Stats = () => {
     }
   };
 
-  const handleStatReq = (e) => {
+  const handleStatReq = async (e) => {
+    console.log(e.currentTarget.id);
     if (e.currentTarget.id !== 'directories' && isSubmenuOpen) {
       setIsSubmenuOpen(false);
       setAlbumsByRoot([]);
@@ -76,11 +117,11 @@ const Stats = () => {
   };
 
   const handleOpenFolder = (e) => {
-    setRoot(e.target.id);
-  };
-
-  const handleSort = (e) => {
-    console.log(e.target.id);
+    const newRoot = e.target.id;
+    if (newRoot !== root) {
+      console.log(`Updating root from ${root} to ${newRoot}`);
+      setRoot(newRoot);
+    }
   };
 
   return (
@@ -95,27 +136,22 @@ const Stats = () => {
         <li className="stat" id="genres" onClick={handleStatReq}>
           <p>Genres</p>
         </li>
-        <li className="stat" id="directories" /* onClick={handleStatReq} */ onClick={toggleSubmenu}>
+        <li className="stat" id="directories" onClick={toggleSubmenu}>
           Directories
           {isSubmenuOpen && (
             <ul>
               {directories.map((item) => {
                 return (
-                  <li
-                    className="directories"
-                    key={item}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}
-                  >
+                  <li className="directories" key={item}>
                     <input
                       type="checkbox"
                       id={item}
                       onChange={(e) => handleCheckboxChange(e, item)}
                     />
-                    {item}
-                    <PiFolderOpenLight id={item} style={{}} onClick={handleOpenFolder} />
+                    <p>{item}</p>
+                    <span>
+                      <FaMeta key={item} id={item} onClick={handleOpenFolder} />
+                    </span>
                   </li>
                 );
               })}
@@ -136,25 +172,26 @@ const Stats = () => {
         </li>
       </ul>
 
-      <div className="stats--results">
+      <div className="stats--results" ref={resultsRef}>
         {statReq === 'totalmedia' && <TotalMedia />}
         {statReq === 'genres' && (
           <>
-            <Genres />
+            <Genres dimensions={dimensions} />
           </>
         )}
         {root && <TracksByRoot root={root} />}
-        {statReq === 'directories' && (
+        {statReq === 'directories' && albumsByRoot.length > 0 && (
           <>
-            <div className="stats--length">
-              {/* <p id="stats-albums-length">Number of albums loaded: {albumsByRoot.length}</p> */}
-            </div>
-            <AlbumsByRoot albums={albumsByRoot} />
+            <AlbumsByRoot
+              albums={albumsByRoot}
+              amountLoaded={albumsByRoot.length}
+              dimensions={dimensions}
+            />
           </>
         )}
         {statReq === 'topArtists' && (
           <>
-            <TopHundredArtists />
+            <TopHundredArtists dimensions={dimensions} />
           </>
         )}
       </div>

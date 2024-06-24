@@ -1,7 +1,7 @@
 // Mapping of incoming object keys to the keys used by the software
 const keyMappings = {
   artist: 'performers',
-  genre: 'genres' // Assuming 'genres' is the correct key in the target software
+  genres: 'genres' // Assuming 'genres' is the correct key in the target software
 };
 
 // Function to transform incoming data

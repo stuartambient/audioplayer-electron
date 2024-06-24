@@ -1,6 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
-import axios from 'axios';
 
 const fixedEncodeURIComponent = (str) => {
   return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {
@@ -54,9 +53,11 @@ contextBridge.exposeInMainWorld('api', {
   genresStat: () => ipcRenderer.invoke('genres-stat'),
   foldersStat: (dirs) => ipcRenderer.invoke('folders-stat', dirs),
   distinctDirectories: () => ipcRenderer.invoke('distinct-directories'),
-  getTracksByArtist: (artist) => ipcRenderer.invoke('get-tracks-by-artist', artist),
-  getTracksByGenre: (genre) => ipcRenderer.invoke('get-tracks-by-genre', genre),
-  getTracksByRoot: (root) => ipcRenderer.invoke('get-tracks-by-root', root),
+  getTracksByArtist: (artist, listType) =>
+    ipcRenderer.invoke('get-tracks-by-artist', artist, listType),
+  getTracksByGenre: (genre, listType) => ipcRenderer.invoke('get-tracks-by-genre', genre, listType),
+  getTracksByRoot: (root, listType) => ipcRenderer.invoke('get-tracks-by-root', root, listType),
+  getTracksByAlbum: (album, listType) => ipcRenderer.invoke('get-tracks-by-album', album, listType),
   /* getAlbumsByTopFolder: (folder) => ipcRenderer.invoke('get-albums-by-top-folder', folder), */
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
@@ -64,7 +65,14 @@ contextBridge.exposeInMainWorld('api', {
     return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
   },
   getAlbumsByRoot: (roots) => ipcRenderer.invoke('get-albums-by-root', roots),
-  toggleResizable: (isResizable) => ipcRenderer.send('toggle-resizable', isResizable)
+  toggleResizable: (isResizable) => ipcRenderer.send('toggle-resizable', isResizable),
+  checkForOpenTable: (name) => ipcRenderer.invoke('check-for-open-table', name),
+  clearTable: () => ipcRenderer.invoke('clear-table'),
+  onChildWindowClosed: (cb) => ipcRenderer.on('window-closed', (event, name) => cb(name)),
+  removeChildWindowClosedListener: (callback) => {
+    ipcRenderer.removeListener('window-closed', callback);
+  }
+
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>
     await fetch(`streaming://${path}`, { method: 'GET' }).then((res) => console.log(res.url)) */

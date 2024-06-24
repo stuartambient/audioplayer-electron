@@ -1,6 +1,7 @@
 import fs from 'fs';
-import { allTracks, refreshMetadata } from './sql.js';
-import { updateMeta } from './utility';
+import { allTracks, refreshMetadata, checkRecordsExist } from './sql.js';
+import { parseMeta } from './utility';
+import workerTrigger from './wokerTrigger.js';
 
 const run = async (cb) => {
   let status = { deleted: '', new: '', nochange: false };
@@ -9,22 +10,31 @@ const run = async (cb) => {
 
   for await (const r of result) {
     if (!r) return;
-    const stats = await fs.promises.stat(r.audiofile);
+    const stats = await fs.promises.stat(r.audiotrack);
     const lastModified = stats.mtimeMs;
-    console.log(lastModified);
     if (lastModified > r.modified) {
-      updatedTracks.push(r);
+      updatedTracks.push(r /* .audiotrack */);
     }
   }
   if (!updatedTracks.length) {
     status.nochange = true;
     return Promise.resolve(cb(status));
   }
-
-  const updatedMeta = await updateMeta(updatedTracks);
+  /* await parseMeta(updatedTracks).then((parsed) => triggerInsert(parsed)); */
+  const updatedMeta = await parseMeta(updatedTracks, 'mod');
   /* Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta)); */
-  Promise.resolve(await refreshMetadata(updatedMeta))
-    .then(() => (status.new = updatedMeta.map((f) => f.audiofile)))
+  Promise.resolve(await workerTrigger(updatedMeta, 'refreshMetadata'))
+    .then((message) => {
+      if (message) {
+        console.log('Update successful!');
+      } else {
+        console.log('Update failed with message: ', message);
+      }
+    })
+    .then(() => (status.new = updatedMeta.map((f) => f.audiotrack)))
+    .catch((error) => {
+      console.error('Error in processing:', error);
+    })
     .then(() => cb(status));
 };
 

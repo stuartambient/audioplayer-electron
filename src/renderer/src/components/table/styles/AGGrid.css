@@ -1,3 +1,25 @@
 .ag-theme-alpine-dark {
   --ag-column-hover-color: crimson;
+  /*   width: 100%;
+  height: 100%; */
+  grid-row: 3/4;
+  grid-column: 1 / 3;
 }
+
+.no-panel {
+  grid-row: 2/4;
+}
+
+.two-column {
+  grid-column: 2 / 3;
+}
+
+/* .loading-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  color: #000;
+}
+ */

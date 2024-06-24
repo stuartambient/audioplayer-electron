@@ -48,11 +48,11 @@ const checkAgainstEntries = (data) => {
 
     if (newEntries.length > 0) {
       insertAlbums(parseNewEntries(newEntries));
-      status.new = newEntries;
+      status.new = newEntries.length;
     }
     if (missingEntries.length > 0) {
       deleteAlbums(missingEntries);
-      status.deleted = missingEntries;
+      status.deleted = missingEntries.length;
     }
     if (!newEntries.length && !missingEntries.length) {
       status.nochange = true;

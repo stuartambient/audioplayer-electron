@@ -1,13 +1,17 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-const path = require('path');
+import path from 'node:path';
+import { EventEmitter } from 'node:events';
+import { mainWindow } from './index.js';
 
-// Store windows by name
 const windows = new Map();
+const windowEvents = new EventEmitter();
 
-function createOrUpdateChildWindow(name, config, data) {
+function createOrUpdateChildWindow(name, type, config, data) {
+  console.log(`Creating or updating window: ${name}`);
   let window = windows.get(name);
   if (window) {
+    console.log(`Window ${name} already exists. Sending data to it.`);
     return window.webContents.send('send-to-child', data);
   }
 
@@ -16,6 +20,8 @@ function createOrUpdateChildWindow(name, config, data) {
       width: config.width,
       height: config.height,
       show: config.show,
+      parent: windows.get(config.parent) || null,
+      modal: !!config.parent,
       resizable: config.resizable,
       webPreferences: {
         preload: path.join(__dirname, `../preload/${config.preload}.js`),
@@ -33,11 +39,12 @@ function createOrUpdateChildWindow(name, config, data) {
     is.dev ? window.loadURL(url) : window.loadFile(url);
 
     window.on('closed', () => {
+      console.log(`Window ${name} closed`);
       windows.delete(name);
+      mainWindow.webContents.send('window-closed', name);
     });
 
     windows.set(name, window);
-    /* console.log(windows); */
 
     window.once('ready-to-show', () => {
       window.show();
@@ -46,4 +53,18 @@ function createOrUpdateChildWindow(name, config, data) {
   }
 }
 
-export default createOrUpdateChildWindow;
+// Add a listener for the custom 'window-closed' event
+/* windowEvents.on('window-closed', (name) => {
+  console.log(`Event 'window-closed' received for window: ${name}`);
+  console.log('main-window: ', mainWindow);
+}); */
+
+function getWindow(win) {
+  return windows.get(win);
+}
+
+function getWindowNames() {
+  return Array.from(windows.keys());
+}
+
+export { createOrUpdateChildWindow, getWindowNames, getWindow };

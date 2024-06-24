@@ -62,13 +62,13 @@ const MediaMenu = ({
               />
             </li>
             <li className="sort-menu--option">
-              <label htmlFor="genre">genre</label>
+              <label htmlFor="genres">genres</label>
               <input
                 type="radio"
-                id="genre"
+                id="genres"
                 name="sortby"
-                value="genre"
-                checked={isFilesSortSelected('genre')}
+                value="genres"
+                checked={isFilesSortSelected('genres')}
                 onChange={handleSortClick}
               />
             </li>

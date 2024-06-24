@@ -1,0 +1,15 @@
+.spinner {
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  width: 100px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 8px solid lightblue;
+  border-right-color: orange;
+  animation: s2 1s infinite linear;
+}
+@keyframes s2 {
+  to {
+    transform: rotate(1turn);
+  }
+}

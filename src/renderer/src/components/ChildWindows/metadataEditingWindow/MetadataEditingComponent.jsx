@@ -1,30 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { HiOutlineCursorClick } from 'react-icons/hi';
+import { CiPlay1 } from 'react-icons/ci';
 import AGGrid from '../../table/AGGrid';
+import TableLoader from '../../table/TableLoader';
 import './style.css';
 
 const MetadataEditingApp = () => {
   const [listType, setListType] = useState([]);
+  const [reset, setReset] = useState(false);
   const [data, setData] = useState([]);
-  useEffect(() => {
-    let subscribed = true;
-    const getArgs = async () => {
-      await window.metadataEditingApi.onSendToChild((e) => {
-        setListType(e.listType);
-        setData(e.results);
-      });
-    };
-    if (subscribed) getArgs();
-    return () => (subscribed = false);
-  });
 
-  return (
-    <>
-      <AGGrid data={data} />
-    </>
-  );
+  useEffect(() => {
+    const handleClearTable = (e) => {
+      /* console.log(e); */
+      setReset(true);
+      setData([]); // Trigger grid to show loading state
+    };
+
+    window.metadataEditingApi.onClearTable(handleClearTable);
+
+    return () => {
+      window.metadataEditingApi.off('clear-table', handleClearTable);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleSendToChild = (e) => {
+      /* console.log('e: ', e); */
+      setListType(e.listType);
+      setData(e.results);
+      setReset(false);
+    };
+
+    window.metadataEditingApi.onSendToChild(handleSendToChild);
+
+    return () => {
+      window.metadataEditingApi.off('send-to-child', handleSendToChild);
+    };
+  }, []);
+
+  return <AGGrid reset={reset} data={data} />;
 };
 
 export default MetadataEditingApp;
