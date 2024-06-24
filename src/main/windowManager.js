@@ -1,41 +1,19 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+import { app, BrowserWindow } from 'electron';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-const path = require('path');
+import path from 'node:path';
+import { EventEmitter } from 'node:events';
+import { mainWindow } from './index.js';
 
 const windows = new Map();
-/* let splash;
-const createSplash = () => {
-
-  splash = new BrowserWindow({
-    width: 400,
-    height: 300,
-    frame: false,
-    alwaysOnTop: true,
-    show: false
-  });
-
-  const url =
-    is.dev && process.env['ELECTRON_RENDERER_URL']
-      ? `${process.env['ELECTRON_RENDERER_URL']}/splash.html`
-      : path.join(__dirname, `../renderer/splash.html`);
-
-  is.dev ? splash.loadURL(url) : splash.loadFile(url);
-}; */
+const windowEvents = new EventEmitter();
 
 function createOrUpdateChildWindow(name, type, config, data) {
+  console.log(`Creating or updating window: ${name}`);
   let window = windows.get(name);
-  /*   if (!window) {
-    createSplash();
-    splash.show();
-  } */
   if (window) {
+    console.log(`Window ${name} already exists. Sending data to it.`);
     return window.webContents.send('send-to-child', data);
   }
-
-  /*  if (!window) {
-    createSplash();
-    splash.show();
-  } */
 
   if (!window) {
     window = new BrowserWindow({
@@ -61,14 +39,12 @@ function createOrUpdateChildWindow(name, type, config, data) {
     is.dev ? window.loadURL(url) : window.loadFile(url);
 
     window.on('closed', () => {
+      console.log(`Window ${name} closed`);
       windows.delete(name);
+      mainWindow.webContents.send('window-closed', name);
     });
 
     windows.set(name, window);
-    /* console.log(windows); */
-    /* app.on('ready', () => {
-      createSplash();
-    }); */
 
     window.once('ready-to-show', () => {
       window.show();
@@ -76,6 +52,12 @@ function createOrUpdateChildWindow(name, type, config, data) {
     });
   }
 }
+
+// Add a listener for the custom 'window-closed' event
+/* windowEvents.on('window-closed', (name) => {
+  console.log(`Event 'window-closed' received for window: ${name}`);
+  console.log('main-window: ', mainWindow);
+}); */
 
 function getWindow(win) {
   return windows.get(win);

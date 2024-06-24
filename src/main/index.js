@@ -115,7 +115,7 @@ process.on('unhandledRejection', (err) => {
 const capitalizeDriveLetter = (str) => {
   return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
 };
-let mainWindow;
+export let mainWindow;
 
 function createWindow() {
   // Create the browser window.

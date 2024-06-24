@@ -67,7 +67,11 @@ contextBridge.exposeInMainWorld('api', {
   getAlbumsByRoot: (roots) => ipcRenderer.invoke('get-albums-by-root', roots),
   toggleResizable: (isResizable) => ipcRenderer.send('toggle-resizable', isResizable),
   checkForOpenTable: (name) => ipcRenderer.invoke('check-for-open-table', name),
-  clearTable: () => ipcRenderer.invoke('clear-table')
+  clearTable: () => ipcRenderer.invoke('clear-table'),
+  onChildWindowClosed: (cb) => ipcRenderer.on('window-closed', (event, name) => cb(name)),
+  removeChildWindowClosedListener: (callback) => {
+    ipcRenderer.removeListener('window-closed', callback);
+  }
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>

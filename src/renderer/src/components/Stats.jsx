@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { PiFolderOpenLight } from 'react-icons/pi';
+import { FaMeta } from 'react-icons/fa6';
 import {
   TotalMedia,
   TopHundredArtists,
@@ -12,7 +13,7 @@ import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/Stats.css';
 
 const Stats = () => {
-  const [statReq, setStatReq] = useState('');
+  const [statReq, setStatReq] = useState('totalmedia');
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [directories, setDirectories] = useState([]);
   const [reqDirectories, setReqDirectories] = useState([]);
@@ -21,6 +22,18 @@ const Stats = () => {
   const resultsRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   useDistinctDirectories(setDirectories);
+
+  useEffect(() => {
+    const handleWindowClosed = (name) => {
+      console.log(`Window with name ${name} has been closed.`);
+      setRoot('');
+    };
+
+    window.api.onChildWindowClosed(handleWindowClosed);
+    return () => {
+      window.api.removeChildWindowClosedListener(handleWindowClosed);
+    };
+  }, []);
 
   useEffect(() => {
     if (isSubmenuOpen && reqDirectories.length > 0) {
@@ -95,6 +108,7 @@ const Stats = () => {
   };
 
   const handleStatReq = async (e) => {
+    console.log(e.currentTarget.id);
     if (e.currentTarget.id !== 'directories' && isSubmenuOpen) {
       setIsSubmenuOpen(false);
       setAlbumsByRoot([]);
@@ -128,21 +142,16 @@ const Stats = () => {
             <ul>
               {directories.map((item) => {
                 return (
-                  <li
-                    className="directories"
-                    key={item}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}
-                  >
+                  <li className="directories" key={item}>
                     <input
                       type="checkbox"
                       id={item}
                       onChange={(e) => handleCheckboxChange(e, item)}
                     />
-                    {item}
-                    <PiFolderOpenLight key={item} id={item} style={{}} onClick={handleOpenFolder} />
+                    <p>{item}</p>
+                    <span>
+                      <FaMeta key={item} id={item} onClick={handleOpenFolder} />
+                    </span>
                   </li>
                 );
               })}
@@ -171,7 +180,6 @@ const Stats = () => {
           </>
         )}
         {root && <TracksByRoot root={root} />}
-        {root && <div>Viewing root: {root}</div>}
         {statReq === 'directories' && albumsByRoot.length > 0 && (
           <>
             <AlbumsByRoot

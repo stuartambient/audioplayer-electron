@@ -156,3 +156,31 @@
   color: white;
 }
  */
+.directories {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.2rem;
+  border-radius: 10px;
+}
+
+.directories > input {
+  margin-left: 0.2rem;
+  margin-right: 1rem;
+}
+
+.directories > span {
+  margin-left: 1rem;
+}
+
+.directories > span > svg {
+  fill: gray;
+  background-color: #525252;
+  border-radius: 50%;
+  padding: 0.2rem;
+}
+
+.directories > span > svg:hover {
+  fill: lightblue;
+  border: 1px solid lightblue;
+}
