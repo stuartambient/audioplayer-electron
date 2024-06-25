@@ -12,7 +12,7 @@ db.pragma('temp_store = memory'); */
 /* SELECT foldername, fullpath FROM albums where unaccent(foldername) LIKE '%Koner%' ORDER BY lower(unaccent(foldername)) */
 const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )`;
 
-const createTracksTable = `CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )`;
+/* const createTracksTable = `CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )`; */
 
 const createAudioTracks = `
 CREATE TABLE IF NOT EXISTS "audio-tracks" (
@@ -67,7 +67,7 @@ CREATE TABLE IF NOT EXISTS audio_track_errors (
 
 db.exec(createAudioTracks);
 db.exec(createAlbumsTable);
-db.exec(createTracksTable);
+/* db.exec(createTracksTable); */
 /* db.exec(createAudioTrackErrors); */
 
 const insertFiles = (files) => {

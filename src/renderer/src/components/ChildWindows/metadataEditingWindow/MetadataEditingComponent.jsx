@@ -41,6 +41,19 @@ const MetadataEditingApp = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleUpdateTagsStatus = (msg) => {
+      /* console.log('e: ', e); */
+      console.log('update-tags: ', msg);
+    };
+
+    window.metadataEditingApi.onUpdateTagsStatus(handleUpdateTagsStatus);
+
+    return () => {
+      window.metadataEditingApi.off('update-tags', handleUpdateTagsStatus);
+    };
+  }, []);
+
   return <AGGrid reset={reset} data={data} />;
 };
 

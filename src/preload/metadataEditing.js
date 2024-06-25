@@ -10,6 +10,7 @@ import { electronAPI } from '@electron-toolkit/preload';
 contextBridge.exposeInMainWorld('metadataEditingApi', {
   onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg)),
   updateTags: (arr) => ipcRenderer.invoke('update-tags', arr),
+  onUpdateTagsStatus: (cb) => ipcRenderer.on('update-tags', (event, msg) => cb(msg)),
   showChild: (args) => ipcRenderer.invoke('show-child', args),
   onClearTable: (cb) => ipcRenderer.on('clear-table', (event, arg) => cb(arg)),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)

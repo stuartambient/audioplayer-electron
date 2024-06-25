@@ -792,10 +792,18 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   year: (param) => Number(param)
 }; */
 
-ipcMain.handle('update-tags', async (_, arr) => {
+ipcMain.handle('update-tags', async (event, arr) => {
+  const senderWebContents = event.sender;
+  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
+  const targetWindow = BrowserWindow.fromId(senderWindow.id);
+
+  console.log(
+    `Request received from window ID: ${senderWindow.id}, Title: ${senderWindow.getTitle()}`
+  );
   try {
     const result = await updateTags(arr);
     console.log('result: ', result);
+    targetWindow.webContents.send('update-tags', 'success');
   } catch (error) {
     console.error('Error updating tags: ', error.message);
   }
