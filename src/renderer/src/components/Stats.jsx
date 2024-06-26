@@ -10,6 +10,7 @@ import {
 } from './StatsComponents';
 import { useDistinctDirectories } from '../hooks/useDb';
 import { openChildWindow } from './ChildWindows/openChildWindow';
+import StatsLoader from './StatsLoader';
 import '../style/Stats.css';
 
 const Stats = () => {
@@ -180,6 +181,7 @@ const Stats = () => {
           </>
         )}
         {root && <TracksByRoot root={root} />}
+        {/* {root && <StatsLoader />} */}
         {statReq === 'directories' && albumsByRoot.length > 0 && (
           <>
             <AlbumsByRoot
@@ -200,3 +202,10 @@ const Stats = () => {
 };
 
 export default Stats;
+
+/* 
+1- Loader only when window doesn't exits
+ 1a: send message from windowmanager if not
+2- Send message when window is ready to show
+ 2a - Receive message, close loader
+*/

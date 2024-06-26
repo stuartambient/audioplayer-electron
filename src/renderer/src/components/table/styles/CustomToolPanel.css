@@ -2,13 +2,13 @@
 .column-panel {
   grid-column: 1 / -1;
   grid-row: 2 / 3;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  padding: 2px;
+  /* display: flex; */
+  /* flex-wrap: wrap; */
+  /* align-items: center; */
+  /* gap: 10px; */
+  /*   padding: 2px;
   background-color: #d3d3d3;
-  border: 1px solid #d1d5db;
+  border: 1px solid #d1d5db; */
   /* border-radius: 8px; */
   position: sticky;
   top: 0; /* Adjust this value if you have a navbar or other elements at the top */
@@ -21,13 +21,15 @@
 
 /* Style adjustments for fieldset to better fit a horizontal layout */
 .column-panel fieldset {
-  border: 1px solid #e5e7eb; /* Light grey border */
+  width: 100%;
+  /* border: 1px solid #e5e7eb; */ /* Light grey border */
   border-radius: 8px; /* Rounded corners */
   padding: 10px;
   display: flex;
   flex-wrap: wrap; /* Allows internal elements to wrap */
-  align-items: center; /* Aligns items vertically */
+  align-items: flex-start; /* Aligns items vertically */
   gap: 10px; /* Space between checkboxes/buttons */
+  border: none;
 }
 
 /* Adjustments for internal divs might not be necessary with flex layout,
@@ -43,6 +45,34 @@
   margin-right: 4px; /* Space between checkbox and its label */
 }
 
+/* .panel-button {
+  background-color: #404040;
+  color: white;
+  border: none;
+} */
+
+/* CSS */
+.panel-button {
+  padding: 12px 26px;
+  color: #fff;
+  background-image: linear-gradient(180deg, #0781fd 0%, #0346ed 100%);
+  border-radius: 8px;
+  border: 0;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.07),
+    0 4px 8px rgba(0, 0, 0, 0.07), 0 8px 16px rgba(0, 0, 0, 0.07), 0 16px 32px rgba(0, 0, 0, 0.07),
+    0 32px 64px rgba(0, 0, 0, 0.07), inset 0 1px 0 0px rgba(255, 255, 255, 0.15);
+  transition: all 150ms ease-in-out;
+}
+.panel-button:hover {
+  filter: brightness(1.1);
+}
+
+.panel-button:active {
+  transform: scale(0.95);
+}
+
 /* General style for buttons */
 .column-panel button {
   padding: 6px 12px;
@@ -55,23 +85,23 @@
 
 /* Specific styles for buttons for differentiation */
 .column-panel .auto-size-all {
-  background-color: #34d399;
-  color: white;
+  /* background-color: #34d399; */
+  /* color: white; */
 }
 .column-panel .reset-window {
-  background-color: #60a5fa;
+  /* background-color: #60a5fa; */
   color: white;
 }
 .column-panel .deselect-all,
 .column-panel .save-all,
 .column-panel .cancel-all {
-  background-color: #f9a8d4;
+  /* background-color: #f9a8d4; */
   color: white;
 }
 
 .column-panel .undo-last,
 .column-panel .redo-last {
-  background-color: #f4a460;
+  /* background-color: #f4a460; */
   color: white;
 }
 

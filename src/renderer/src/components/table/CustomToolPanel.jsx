@@ -85,43 +85,38 @@ const CustomToolPanel = ({
             hiddenColumns={hiddenColumns}
           />
 
-          <div>
-            <button id="auto-size-all" className="auto-size-all" onClick={onClick}>
-              Auto Size All
-            </button>
-          </div>
-          <div>
-            <button id="reset-window" className="reset-window" onClick={onClick}>
-              Reset Window
-            </button>
-          </div>
-          <div>
-            <button id="deselect-all" className="deselect-all" onClick={onClick}>
-              Deselect All
-            </button>
-          </div>
-          <div>
-            <button id="save-all" className="save-all" onClick={onClick}>
-              Save all
-            </button>
-            <button id="cancel-all" className="cancel-all" onClick={onClick}>
-              Cancel all
-            </button>
-          </div>
-          <div>
-            <button id="undo-last" className="undo-last" onClick={onClick}>
-              Undo
-            </button>
-            <button id="redo-last" className="redo-last" onClick={onClick}>
-              Redo
-            </button>
-            <button id="reset" className="reset" onClick={onClick}>
-              reset
-            </button>
-            <button onClick={openModal} /* style={{ gridColumn: '1/-1' }} */>
-              Column Preferences
-            </button>
-          </div>
+          <button id="auto-size-all" className="panel-button" onClick={onClick}>
+            Auto Size All
+          </button>
+
+          <button id="reset-window" className="panel-button" onClick={onClick}>
+            Reset Window
+          </button>
+
+          <button id="deselect-all" className="panel-button" onClick={onClick}>
+            Deselect All
+          </button>
+
+          <button id="save-all" className="panel-button" onClick={onClick}>
+            Save all
+          </button>
+          <button id="cancel-all" className="panel-button" onClick={onClick}>
+            Cancel all
+          </button>
+
+          <button id="undo-last" className="panel-button" onClick={onClick}>
+            Undo
+          </button>
+          <button id="redo-last" className="panel-button" onClick={onClick}>
+            Redo
+          </button>
+          <button id="reset" className="panel-button" onClick={onClick}>
+            reset
+          </button>
+          <button className="panel-button" onClick={openModal} /* style={{ gridColumn: '1/-1' }} */>
+            Column Preferences
+          </button>
+          {/* </div> */}
         </fieldset>
         {/*      {nodesSelected.length > 0 && (
           <EditForm

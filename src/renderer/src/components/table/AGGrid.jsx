@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import { FaSave } from 'react-icons/fa';
 import { CiPlay1 } from 'react-icons/ci';
 import { ImCancelCircle } from 'react-icons/im';
-import CustomLoadingOverlay from './customLoadingOverlay.jsx';
+import CustomLoadingOverlay from './CustomLoadingOverlay';
 import CustomToolPanel from './CustomToolPanel';
 import EditForm from './EditForm';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';

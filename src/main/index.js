@@ -573,6 +573,8 @@ ipcMain.handle('get-tracks-by-genre', async (event, genre, listType) => {
 });
 
 ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
+  const isWindow = await getWindowNames();
+  /* if (!) */
   const rootTracks = await allTracksByRoot(root);
   try {
     await openWindowAndSendData(rootTracks, listType);
@@ -796,11 +798,14 @@ ipcMain.handle('update-tags', async (event, arr) => {
   const senderWebContents = event.sender;
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
+  const allWindows = await getWindowNames();
+  console.log('all windows: ', allWindows);
 
   console.log(
     `Request received from window ID: ${senderWindow.id}, Title: ${senderWindow.getTitle()}`
   );
   try {
+    targetWindow.webContents.send('update-tags', 'starting');
     const result = await updateTags(arr);
     console.log('result: ', result);
     targetWindow.webContents.send('update-tags', 'success');

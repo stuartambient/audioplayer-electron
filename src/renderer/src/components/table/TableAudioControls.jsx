@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAudio } from './AudioContext';
+import TagUpdateState from './TagUpdateStatus';
 import './styles/TableAudioControls.css';
 
 const TableAudioControls = () => {
@@ -10,20 +11,23 @@ const TableAudioControls = () => {
   };
 
   return (
-    <div className="centralControlContainer">
-      <button onClick={stopTrack} className="stopButton">
-        Stop
-      </button>
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        value={volume}
-        onChange={handleVolumeChange}
-        className="volumeSlider"
-      />
-    </div>
+    <>
+      <div className="centralControlContainer">
+        <button onClick={stopTrack} className="stopButton">
+          Stop
+        </button>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.01"
+          value={volume}
+          onChange={handleVolumeChange}
+          className="volumeSlider"
+        />
+      </div>
+      <TagUpdateState />
+    </>
   );
 };
 
