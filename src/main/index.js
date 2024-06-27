@@ -27,7 +27,7 @@ import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { writeFile, convertToUTC } from './utility';
+import { writeFile, convertToUTC, parseMeta } from './utility';
 import db from './connection.js';
 /* import Database from 'better-sqlite3'; */
 import createWorker from './databaseWorker?nodeWorker';
@@ -49,7 +49,8 @@ import {
   getAllTracks,
   deleteAlbum,
   allTracks,
-  refreshMetadata
+  refreshMetadata,
+  getUpdatedTracks
 } from './sql.js';
 
 import {
@@ -795,6 +796,34 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 }; */
 
 ipcMain.handle('update-tags', async (event, arr) => {
+  console.log('arr: ', arr);
+  const senderWebContents = event.sender;
+  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
+  const targetWindow = BrowserWindow.fromId(senderWindow.id);
+  console.log(
+    `Request received from window ID: ${senderWindow.id}, Title: ${senderWindow.getTitle()}`
+  );
+  try {
+    targetWindow.webContents.send('update-tags', 'starting');
+    await workerTrigger(arr, 'updateTags');
+
+    const updatedTracks = arr.map((updatedTrack) => updatedTrack.id);
+    const updatedMetadataTracks = await getUpdatedTracks(updatedTracks);
+    const updatedMeta = await parseMeta(updatedMetadataTracks, 'mod');
+    const updateMessage = await workerTrigger(updatedMeta, 'refreshMetadata');
+    if (updateMessage) {
+      console.log('sql update successful');
+    } else {
+      console.log('sql update failed with message: ', updateMessage);
+    }
+    targetWindow.webContents.send('update-tags', 'success');
+    mainWindow.webContents.send('updated-tags', 'updated-tags');
+  } catch (error) {
+    console.error('Error updating tags: ', error.message);
+  }
+});
+
+/* ipcMain.handle('update-tags', async (event, arr) => {
   const senderWebContents = event.sender;
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
@@ -812,33 +841,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
   } catch (error) {
     console.error('Error updating tags: ', error.message);
   }
-  /*   await workerTrigger(arr, 'updateTags')
-    .then((message) => {
-      if (message) {
-        console.log('Update tags successful');
-      } else {
-        console.error('Tag update failed with:', message);
-      }
-    })
-    .catch((error) => {
-      console.error('Error in processing:', error);
-    }); */
-  /*   const updateTags = () => {
-    arr.forEach((a) => {
-      console.log('a: ', a.id);
-      //try {
-      const myFile = File.createFromPath(a.id);
-      myFile.tag;
-      for (const [key, value] of Object.entries(a.updates)) {
-        console.log(tagKeys[key], 'key: ', key, 'value: ', value);
-
-        const t = tagKeys[key](value);
-        myFile.tag[key] = t;
-        myFile.save();
-      }
-    });
-  }; */
-});
+}); */
 
 ipcMain.on('show-context-menu', (event, id, type) => {
   const template = [

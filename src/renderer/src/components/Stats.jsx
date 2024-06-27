@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { PiFolderOpenLight } from 'react-icons/pi';
 import { FaMeta } from 'react-icons/fa6';
 import {
@@ -15,6 +16,7 @@ import '../style/Stats.css';
 
 const Stats = () => {
   const [statReq, setStatReq] = useState('totalmedia');
+  const [key, setKey] = useState('');
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [directories, setDirectories] = useState([]);
   const [reqDirectories, setReqDirectories] = useState([]);
@@ -23,6 +25,8 @@ const Stats = () => {
   const resultsRef = useRef(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   useDistinctDirectories(setDirectories);
+
+  const getKey = () => uuidv4();
 
   useEffect(() => {
     const handleWindowClosed = (name) => {
@@ -33,6 +37,21 @@ const Stats = () => {
     window.api.onChildWindowClosed(handleWindowClosed);
     return () => {
       window.api.removeChildWindowClosedListener(handleWindowClosed);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleRefresh = (msg) => {
+      console.log('refresh message: ', msg);
+      if (msg === 'updated-tags') {
+        setKey(getKey());
+      }
+    };
+
+    window.api.onUpdatedTags(handleRefresh);
+
+    return () => {
+      window.api.off('updated-tags', handleRefresh);
     };
   }, []);
 
@@ -115,6 +134,7 @@ const Stats = () => {
       setAlbumsByRoot([]);
     }
     setStatReq(e.currentTarget.id);
+    setKey(getKey());
   };
 
   const handleOpenFolder = (e) => {
@@ -177,7 +197,7 @@ const Stats = () => {
         {statReq === 'totalmedia' && <TotalMedia />}
         {statReq === 'genres' && (
           <>
-            <Genres dimensions={dimensions} />
+            <Genres dimensions={dimensions} key={key} />
           </>
         )}
         {root && <TracksByRoot root={root} />}

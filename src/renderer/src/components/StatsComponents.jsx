@@ -99,6 +99,10 @@ export const TopHundredArtists = ({ dimensions }) => {
   const { topHundredArtists } = useTopHundredArtistsStat();
   const [artist, setArtist] = useState('');
 
+  useEffect(() => {
+    if (artist !== '') setArtist('');
+  }, [artist, setArtist]);
+
   useArtist(artist);
   const getArtistTracks = async (e) => {
     setArtist(e.target.id);
@@ -134,11 +138,16 @@ const useGenre = (genre) => {
     };
   }, [genre]);
 };
-export const Genres = ({ dimensions }) => {
+export const Genres = ({ dimensions, key }) => {
   const [genres, setGenres] = useState([]);
   const [genre, setGenre] = useState('');
   useGenres(setGenres);
   useGenre(genre);
+
+  useEffect(() => {
+    if (genre !== '') setGenre('');
+  }, [genre, setGenre]);
+
   const getGenres = async (e) => {
     console.log(e.target.id);
     setGenre(e.target.id);
@@ -182,6 +191,11 @@ const useAlbum = (album) => {
 export const AlbumsByRoot = ({ albums, amountLoaded, dimensions }) => {
   const [album, setAlbum] = useState('');
   useAlbum(album);
+
+  useEffect(() => {
+    if (album !== '') setAlbum('');
+  }, [album, setAlbum]);
+
   const getAlbum = async (e) => {
     console.log(e.target.id);
     setAlbum(e.target.id);

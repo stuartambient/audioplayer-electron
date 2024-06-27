@@ -15,7 +15,6 @@ const port = parentPort;
 if (!port) throw new Error('IllegalState');
 
 port.on('message', (msg) => {
-  console.log('msg: ', msg);
   const func = functions[workerData.functionName];
   if (func) {
     const result = func(workerData.params);

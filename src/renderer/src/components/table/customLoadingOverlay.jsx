@@ -1,6 +1,5 @@
 import React from 'react';
 import './styles/CustomLoadingOverlay.css';
-import loader from '../../assets/loaders/rings.svg';
 
 export default (props) => {
   return (

@@ -450,6 +450,19 @@ const allTracksBySearchTerm = (offsetNum, text, sort) => {
   return stmt.all(...params);
 };
 
+const getUpdatedTracks = (tracks) => {
+  // Generate a string with placeholders based on the number of tracks
+  const placeholders = tracks.map(() => '?').join(', ');
+
+  // Prepare the SQL query with dynamic placeholders
+  const stmt = db.prepare(
+    `SELECT track_id, audiotrack FROM "audio-tracks" WHERE audiotrack IN (${placeholders})`
+  );
+
+  // Execute the query with the tracks array as arguments
+  return stmt.all(...tracks);
+};
+
 const getPlaylist = (playlist) => {
   console.log('getPlaylist');
   const plfile = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack = ?');
@@ -592,7 +605,8 @@ export {
   /*   getMissingCovers, */
   allTracks,
   refreshMetadata,
-  checkRecordsExist
+  checkRecordsExist,
+  getUpdatedTracks
 };
 
 /*

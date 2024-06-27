@@ -68,10 +68,12 @@ contextBridge.exposeInMainWorld('api', {
   toggleResizable: (isResizable) => ipcRenderer.send('toggle-resizable', isResizable),
   checkForOpenTable: (name) => ipcRenderer.invoke('check-for-open-table', name),
   clearTable: () => ipcRenderer.invoke('clear-table'),
+  onUpdatedTags: (cb) => ipcRenderer.on('updated-tags', (event, msg) => cb(msg)),
   onChildWindowClosed: (cb) => ipcRenderer.on('window-closed', (event, name) => cb(name)),
   removeChildWindowClosedListener: (callback) => {
     ipcRenderer.removeListener('window-closed', callback);
-  }
+  },
+  off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
   /* testRealStream: async (path) =>

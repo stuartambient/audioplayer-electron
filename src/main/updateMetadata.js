@@ -23,6 +23,7 @@ const run = async (cb) => {
   /* await parseMeta(updatedTracks).then((parsed) => triggerInsert(parsed)); */
   const updatedMeta = await parseMeta(updatedTracks, 'mod');
   /* Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta)); */
+  console.log('updatedMeta: ', updatedTracks);
   Promise.resolve(await workerTrigger(updatedMeta, 'refreshMetadata'))
     .then((message) => {
       if (message) {
