@@ -239,7 +239,6 @@ const getFiles = () => {
 
 const refreshMetadata = (tracks) => {
   console.log('refreshMetadata');
-  console.log('tracks: ', Array.isArray(tracks), tracks.length);
   const transaction = db.transaction(() => {
     const updateStmt = db.prepare(`
       UPDATE "audio-tracks" SET 
@@ -322,12 +321,10 @@ const refreshMetadata = (tracks) => {
         trackCount: track.trackCount,
         year: track.year
       });
-      console.log('update info: ', info);
     }
   });
   try {
     transaction();
-
     return 'Records updated successfully!';
   } catch (error) {
     console.error('Error updating records:', error);
@@ -451,6 +448,7 @@ const allTracksBySearchTerm = (offsetNum, text, sort) => {
 };
 
 const getUpdatedTracks = (tracks) => {
+  console.log(tracks);
   // Generate a string with placeholders based on the number of tracks
   const placeholders = tracks.map(() => '?').join(', ');
 

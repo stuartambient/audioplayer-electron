@@ -1,4 +1,3 @@
-// SIMPLE API TO COMMUNICATE WITH WORKERS
 import createWorker from './databaseWorker?nodeWorker';
 
 const workerTrigger = (data, id) => {

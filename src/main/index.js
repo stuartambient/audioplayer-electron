@@ -32,6 +32,8 @@ import db from './connection.js';
 /* import Database from 'better-sqlite3'; */
 import createWorker from './databaseWorker?nodeWorker';
 import workerTrigger from './wokerTrigger.js';
+/* import { createWorker as newWorker } from './newWorker?nodeWorker'; */
+import runWorker from './runWorker.js';
 import {
   allTracksByScroll,
   allTracksBySearchTerm,
@@ -796,7 +798,6 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
 }; */
 
 ipcMain.handle('update-tags', async (event, arr) => {
-  console.log('arr: ', arr);
   const senderWebContents = event.sender;
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
@@ -805,43 +806,24 @@ ipcMain.handle('update-tags', async (event, arr) => {
   );
   try {
     targetWindow.webContents.send('update-tags', 'starting');
-    await workerTrigger(arr, 'updateTags');
-
-    const updatedTracks = arr.map((updatedTrack) => updatedTrack.id);
-    const updatedMetadataTracks = await getUpdatedTracks(updatedTracks);
-    const updatedMeta = await parseMeta(updatedMetadataTracks, 'mod');
-    const updateMessage = await workerTrigger(updatedMeta, 'refreshMetadata');
-    if (updateMessage) {
-      console.log('sql update successful');
-    } else {
-      console.log('sql update failed with message: ', updateMessage);
-    }
-    targetWindow.webContents.send('update-tags', 'success');
-    mainWindow.webContents.send('updated-tags', 'updated-tags');
+    runWorker({ data: arr })
+      .then((result) => {
+        console.log('Worker completed successfully:', result);
+        console.log('Running subsequent code after worker completion.');
+        targetWindow.webContents.send('update-tags', 'success');
+        mainWindow.webContents.send('updated-tags', 'updated-tags');
+      })
+      .catch((error) => {
+        console.error('Worker encountered an error:', error);
+        // Handle the error accordingly
+        // For example:
+        // mainWindow.webContents.send('update-error', error.message);
+        console.log('Handling subsequent code after worker error.');
+      });
   } catch (error) {
-    console.error('Error updating tags: ', error.message);
+    console.error('Error on tag update: ', error.message);
   }
 });
-
-/* ipcMain.handle('update-tags', async (event, arr) => {
-  const senderWebContents = event.sender;
-  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
-  const targetWindow = BrowserWindow.fromId(senderWindow.id);
-  const allWindows = await getWindowNames();
-  console.log('all windows: ', allWindows);
-
-  console.log(
-    `Request received from window ID: ${senderWindow.id}, Title: ${senderWindow.getTitle()}`
-  );
-  try {
-    targetWindow.webContents.send('update-tags', 'starting');
-    const result = await updateTags(arr);
-    console.log('result: ', result);
-    targetWindow.webContents.send('update-tags', 'success');
-  } catch (error) {
-    console.error('Error updating tags: ', error.message);
-  }
-}); */
 
 ipcMain.on('show-context-menu', (event, id, type) => {
   const template = [

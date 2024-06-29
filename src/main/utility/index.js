@@ -209,7 +209,7 @@ const parseMeta = async (files, op) => {
   for (const file of files) {
     try {
       const filePath = op === 'new' ? file : file.audiotrack;
-      console.log('filePath: ', filePath);
+
       const myFile = await File.createFromPath(filePath);
       const fileStats = await fs.promises.stat(filePath);
       filesMetadata.push({
