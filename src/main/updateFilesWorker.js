@@ -1,3 +1,4 @@
+import { parentPort, workerData } from 'worker_threads';
 import fg from 'fast-glob';
 import { parseMeta } from './utility/index.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -7,9 +8,8 @@ import {
   audioExtensions,
   fileExtensions
 } from '../constant/constants.js';
-import { parentPort, workerData } from 'worker_threads';
-import createWorker from './databaseWorker?nodeWorker';
-import workerTrigger from './wokerTrigger.js';
+
+/* import workerTrigger from './workerTrigger.js'; */
 import { getFiles, insertFiles, deleteFiles } from './sql.js';
 
 const difference = (setA, setB) => {
@@ -23,7 +23,6 @@ const difference = (setA, setB) => {
 const compareDbRecords = async (files) => {
   const status = { new: '', deleted: '', nochange: false };
   const dbFiles = getFiles();
-  /* const dbAll = dbFiles.map((d) => d.audiofile); */
   const dbAll = dbFiles.map((d) => d.audiotrack);
 
   const allfiles = new Set(files);
@@ -31,11 +30,10 @@ const compareDbRecords = async (files) => {
 
   const newEntries = Array.from(difference(allfiles, dbentries));
   const missingEntries = Array.from(difference(dbentries, allfiles));
-  /*  console.log(files.length); */
 
   if (newEntries.length > 0) {
     await parseMeta(newEntries, 'new')
-      .then((parsed) => workerTrigger(parsed, 'insertFiles'))
+      .then((parsed) => insertFiles(parsed))
       .then((message) => {
         if (message) {
           status.new = newEntries.length; // Update status only if the insertion was successful
@@ -64,7 +62,6 @@ function escapeSpecialChars(path) {
 }
 
 const glob = async (patterns) => {
-  /* console.log(patterns); */
   const escapedPatterns = patterns.map(escapeSpecialChars);
   const entries = await fg(escapedPatterns, {
     caseSensitiveMatch: false,
@@ -77,6 +74,7 @@ const glob = async (patterns) => {
 };
 
 const runFiles = async (roots, cb) => {
+  console.log('roots: ', roots);
   const patterns = roots.map((root) => `${root}/**/*.${fileExtensions}`);
   await glob(patterns)
     .catch((e) => console.log('error reading: ', e.message))
@@ -84,10 +82,21 @@ const runFiles = async (roots, cb) => {
     .then((prepared) => cb(prepared));
 };
 
-const initFiles = async (req, res) => {
-  return new Promise((res, rej) => {
-    runFiles(roots, (result) => res(result));
+// Function to run the task
+const processFiles = async () => {
+  return new Promise((resolve, reject) => {
+    runFiles(roots, (result) => resolve(result));
   });
 };
 
-export default initFiles;
+// Listen for messages from the main thread
+parentPort.on('message', async (/* message */) => {
+  // if (message === 'start') {
+  try {
+    const result = await processFiles();
+    parentPort.postMessage({ result });
+  } catch (error) {
+    parentPort.postMessage({ error: error.message });
+  }
+  // }
+});

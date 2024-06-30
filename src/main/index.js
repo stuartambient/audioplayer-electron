@@ -25,6 +25,8 @@ import { parseFile } from 'music-metadata';
 
 import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
+import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
+import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC, parseMeta } from './utility';
@@ -343,10 +345,26 @@ ipcMain.handle('update-folders', async () => {
   return result;
 });
 
-ipcMain.handle('update-files', async () => {
-  const result = await initFiles();
-  /* processUpdateResult('file', result); */
-  return result;
+ipcMain.handle('update-files', async (event) => {
+  const senderWebContents = event.sender;
+  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
+  const targetWindow = BrowserWindow.fromId(senderWindow.id);
+
+  //try {
+  runWorker(createUpdateFilesWorker)
+    .then((result) => {
+      console.log('Worker completed successfully:', result);
+      console.log('Running subsequent code after worker completion.');
+      return mainWindow.webContents.send('file-update-complete', result);
+    })
+    .catch((error) => {
+      console.error('Worker encountered an error:', error);
+
+      console.log('Handling subsequent code after worker error.');
+    });
+  /* } catch (error) {
+    console.error('Error on tag update: ', error.message);
+  } */
 });
 
 ipcMain.handle('update-meta', async () => {
@@ -806,7 +824,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
   );
   try {
     targetWindow.webContents.send('update-tags', 'starting');
-    runWorker({ data: arr })
+    runWorker(createUpdateTagsWorker, { data: arr })
       .then((result) => {
         console.log('Worker completed successfully:', result);
         console.log('Running subsequent code after worker completion.');

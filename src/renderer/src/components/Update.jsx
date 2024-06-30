@@ -16,18 +16,36 @@ const Update = () => {
   const [folderUpdateReq, setFolderUpdateReq] = useState();
   const [fileUpdateReq, setFileUpdateReq] = useState();
   const [metaUpdateReq, setMetaUpdateReq] = useState();
-  const [showFileDetails, setShowFileDetails] = useState(false);
-  const [showFolderDetails, setShowFolderDetails] = useState(false);
+  const [showFileDetails, setShowFileDetails] = useState();
+  const [showFolderDetails, setShowFolderDetails] = useState();
+
+  useEffect(() => {
+    const handleFileUpdateComplete = (result) => {
+      setFileUpdateReq(false);
+
+      setFileUpdateResults(result.result);
+    };
+    window.api.onUpdateFiles(handleFileUpdateComplete);
+    return () => {
+      window.api.off('file-update-complete', handleFileUpdateComplete);
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log(fileUpdateResults);
+  }, [fileUpdateResults]);
 
   const handleUpdates = async (e) => {
     e.preventDefault();
+    console.log(e.currentTarget.id);
     /*   console.log(e.currentTarget.id); */
     switch (e.currentTarget.id) {
       case 'filesupdate':
         setFileUpdateReq(true);
         const filesUpdate = await window.api.updateFiles();
-        setFileUpdateResults(filesUpdate);
-        setFileUpdateReq(false);
+        /* console.log('filesUpdate: ', filesUpdate); */
+        /* setFileUpdateResults(filesUpdate); */
+        /* setFileUpdateReq(false); */
         break;
       case 'foldersupdate':
         setFolderUpdateReq(true);
@@ -48,10 +66,10 @@ const Update = () => {
   /* const foldersUpdate = await window.api.updateFolders(); */
 
   useEffect(() => {
-    const getFilesUpdateDetails = async () => {
+    /*  const getFilesUpdateDetails = async () => {
       const updateFilesFile = await window.api.fileUpdateDetails();
       setFileUpdateDetails(updateFilesFile);
-    };
+    }; */
     const getFoldersUpdateDetails = async () => {
       const updateFoldersFile = await window.api.folderUpdateDetails();
       setFolderUpdateDetails(updateFoldersFile);
@@ -122,8 +140,8 @@ const Update = () => {
       <div className="file-update-results">
         {fileUpdateResults && (
           <>
-            <p>New: {fileUpdateResults.new}</p>
-            <p>Deleted: {fileUpdateResults.deleted}</p>
+            <p>New: {fileUpdateResults.new === '' ? 0 : fileUpdateResults.new}</p>
+            <p>Deleted: {fileUpdateResults.deleted === '' ? 0 : fileUpdateResults.deleted}</p>
             {fileUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
           </>
         )}
@@ -131,8 +149,8 @@ const Update = () => {
       <div className="folder-update-results">
         {folderUpdateResults && (
           <>
-            <p>New: {folderUpdateResults.new}</p>
-            <p>Deleted: {folderUpdateResults.deleted}</p>
+            <p>New: {folderUpdateResults.new === '' ? 0 : folderUpdateResults.new}</p>
+            <p>Deleted: {folderUpdateResults.deleted === '' ? 0 : folderUpdateResults.deleted}</p>
             {folderUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
           </>
         )}

@@ -1,9 +1,9 @@
-import createWorker from './newWorker?nodeWorker';
+import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
+import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
 
-const runWorker = (msg) => {
+const runWorker = (createWorkerFn, msg) => {
   return new Promise((resolve, reject) => {
-    console.log('runworker msg: ');
-    const worker = createWorker(msg);
+    const worker = createWorkerFn(msg);
 
     // Handle messages from the worker
     worker.on('message', (result) => {
