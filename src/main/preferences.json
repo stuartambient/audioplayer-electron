@@ -1,0 +1,19 @@
+{
+  "hiddenColumns": [
+    "title",
+    "performers",
+    "albumArtists",
+    "album",
+    "genres",
+    "composers",
+    "discCount",
+    "track",
+    "remixedBy",
+    "like",
+    "error",
+    "replayGainAlbumGain",
+    "replayGainAlbumPeak",
+    "replayGainTrackGain",
+    "replayGainTrackPeak"
+  ]
+}

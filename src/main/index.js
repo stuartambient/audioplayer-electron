@@ -36,6 +36,7 @@ import createWorker from './databaseWorker?nodeWorker';
 import workerTrigger from './wokerTrigger.js';
 /* import { createWorker as newWorker } from './newWorker?nodeWorker'; */
 import runWorker from './runWorker.js';
+import { getPreferences, savePreferences } from './preferences.js';
 import {
   allTracksByScroll,
   allTracksBySearchTerm,
@@ -96,6 +97,7 @@ const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates
 const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`;
 const playlistsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\playlists`;
 const coversFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\covers`;
+const preferences = `${app.getPath('documents')}\\ElectronMusicplayer\\preferences`;
 if (!fs.existsSync(updatesFolder)) {
   fs.mkdirSync(updatesFolder);
 }
@@ -1002,4 +1004,14 @@ ipcMain.handle('open-album-folder', async (_, path) => {
   } */
   /*  spawn(explorer, [path], { detached: true }).unref(); */
   shell.openPath(properPath);
+});
+
+ipcMain.handle('get-preferences', async (event) => {
+  console.log('get-preferences');
+  return await getPreferences();
+});
+
+ipcMain.handle('save-preferences', async (event, preferences) => {
+  console.log('preferences: ', preferences);
+  await savePreferences(preferences);
 });
