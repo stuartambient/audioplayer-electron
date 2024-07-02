@@ -36,7 +36,7 @@ const compareDbRecords = async (files) => {
       .then((parsed) => insertFiles(parsed))
       .then((message) => {
         if (message) {
-          status.new = newEntries.length; // Update status only if the insertion was successful
+          status.new = newEntries; // Update status only if the insertion was successful
           console.log('Insertion successful!');
         } else {
           console.error('Insertion failed with message:', message);
@@ -49,7 +49,7 @@ const compareDbRecords = async (files) => {
 
   if (missingEntries.length > 0) {
     deleteFiles(missingEntries);
-    status.deleted = missingEntries.length;
+    status.deleted = missingEntries;
   }
   if (!newEntries.length && !missingEntries.length) {
     status.nochange = true;

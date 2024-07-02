@@ -13,13 +13,18 @@ export const getPreferences = async () => {
   } catch (err) {
     console.error('Error reading preferences:', err);
   }
-  return { hiddenColumns: [] }; // default preferences
+  return {}; // default preferences
 };
 
-export const savePreferences = async (preferences) => {
-  console.log('preferences: ', preferences);
+export const savePreferences = async (newPreferences) => {
   try {
-    await fs.writeFile(preferencesPath, JSON.stringify(preferences, null, 2));
+    let currentPreferences = {};
+    if (await fs.stat(preferencesPath)) {
+      const data = await fs.readFile(preferencesPath, 'utf-8');
+      currentPreferences = JSON.parse(data);
+    }
+    const updatedPreferences = { ...currentPreferences, ...newPreferences };
+    await fs.writeFile(preferencesPath, JSON.stringify(updatedPreferences, null, 2));
   } catch (err) {
     console.error('Error writing preferences:', err);
   }

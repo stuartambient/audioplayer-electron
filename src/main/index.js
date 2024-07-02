@@ -9,7 +9,8 @@ import {
   BrowserView,
   dialog,
   webContents,
-  protocol
+  protocol,
+  powerMonitor
 } from 'electron';
 import * as path from 'path';
 import fs from 'fs';
@@ -190,39 +191,13 @@ const reactDevToolsPath =
 let primaryDisplay;
 
 app.whenReady().then(async () => {
+  // Load React DevTools extension
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
-
-  /*  const scriptPath = path.join(__dirname, 'checkDataTypes.js'); */
-
-  /*   db.execFile('node', [scriptPath], (error, stdout, stderr) => {
-    if (error) {
-      console.error(`Error executing script: ${error}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`Script stderr: ${stderr}`);
-      return;
-    }
-    console.log(`Script output:\n${stdout}`);
-  }); */
-});
-/* 
-app.on('ready', async () => { */
-/*   primaryDisplay = screen.getPrimaryDisplay();
-  console.log('primary display: ', primaryDisplay);
-  console.log('all displays: ', screen.getAllDisplays()); */
-/*   await session.defaultSession.loadExtension(reactDevToolsPath);
-});
- */
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-app.whenReady().then(() => {
-  // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron');
+  // Register the custom 'streaming' protocol
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
     const uri = decodeURIComponent(request.url);
-    /* console.log('uri: ', uri); */
+
     const filePath = uri.replace('streaming://', '');
     const path = capitalizeDriveLetter(filePath);
 
@@ -258,40 +233,38 @@ app.whenReady().then(() => {
     }
   });
 
-  /* console.log('getAppPath() - ', app.getAppPath()); */
-
-  /*   console.log(
-    'HOME : ',
-    app.getPath('home'),
-    'APPDATE : ',
-    app.getPath('appData'),
-    'DESKTOP : ',
-    app.getPath('desktop'),
-    'DOCUMENTS : ',
-    app.getPath('documents'),
-    'LOGS: ',
-    app.getPath('logs')
-  ); */
-
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+  app.on('browser-window-created', (_, window) => {
+    optimizer.watchWindowShortcuts(window);
+  });
+  // Create the initial window
+  createWindow();
+  // On macOS it's common to re-create a window in the app when the
+  // dock icon is clicked and there are no other windows open.
+  app.on('activate', function () {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+  // Optional: Watch for window shortcuts if needed
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  createWindow();
+  powerMonitor.on('suspend', () => {
+    console.log('The system is going to sleep: ', new Date());
+    mainWindow.webContents.send('system-suspend', 'system-suspending');
+  });
 
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  powerMonitor.on('resume', () => {
+    console.log('The system has resumed: ', new Date());
+    mainWindow.webContents.send('system-resume', 'system-resuming');
+  });
+
+  // LINUX or MACoS
+  powerMonitor.on('shutdown', () => {
+    console.log('The system is shutting down: ', new Date());
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// Quit when all windows are closed, except on macOS
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
@@ -347,17 +320,30 @@ ipcMain.handle('update-folders', async () => {
   return result;
 });
 
+function getObjectWithLengths(obj) {
+  return {
+    new: Array.isArray(obj.new) ? obj.new.length : 0,
+    deleted: Array.isArray(obj.deleted) ? obj.deleted.length : 0,
+    nochange: obj.nochange
+  };
+}
+
 ipcMain.handle('update-files', async (event) => {
   const senderWebContents = event.sender;
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
+  let res;
 
   //try {
   runWorker(createUpdateFilesWorker)
     .then((result) => {
       console.log('Worker completed successfully:', result);
       console.log('Running subsequent code after worker completion.');
-      return mainWindow.webContents.send('file-update-complete', result);
+      return mainWindow.webContents.send(
+        'file-update-complete',
+
+        getObjectWithLengths(result.result)
+      );
     })
     .catch((error) => {
       console.error('Worker encountered an error:', error);
@@ -375,37 +361,6 @@ ipcMain.handle('update-meta', async () => {
   /* console.log('meta result: ', result); */
   return result;
 });
-
-/* ipcMain.handle('update-covers', async () => {
-  let result;
-  try {
-    result = await initCovers();
-  } catch (err) {
-    console.log(err.message, '--');
-  }
-
-  let updatedFolders = [];
-  for await (const r of result) {
-    let tmp = await fs.promises.readdir(r.path);
-
-    if (!tmp[0]) continue;
-    if (tmp[0].endsWith('.mp3') || tmp[0].endsWith('.flac') || tmp[0].endsWith('.ape')) {
-      try {
-        const f = await parseFile(`${r.path}/${tmp[0]}`);
-        if (f.common.picture) {
-          let tmppic = f.common.picture[0].data;
-          fs.promises.writeFile(`${r.path}/cover.jpg`, tmppic);
-          updatedFolders.push(r);
-        }
-      } catch (err) {
-        console.log('error message: ', `${err.message} --- ${r.path}/${tmp[0]}`);
-      }
-    }
-  }
-  return updatedFolders;
-});
- */
-/*  */
 
 ipcMain.handle('create-table', () => {
   const result = createTable();
@@ -787,36 +742,6 @@ ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   }
 });
 
-/* const tagKeys = {
-  albumArtists: (param) => param.split(', '),
-  album: (param) => param.trim(),
-  bpm: (param) => Number(param),
-  composers: (param) => param.split(', '),
-  conductor: (param) => param.trim(),
-  comment: (param) => param.trim(),
-  disc: (param) => Number(param),
-  discCount: (param) => Number(param),
-  description: (param) => param.trim(),
-  genres: (param) => param.split(', '),
-  isCompilation: (param) => (param === 1 ? 1 : 0),
-  like: (param) => (param === 1 ? 1 : 0),
-  isrc: (param) => param.trim(),
-  lyrics: (param) => param.trim(),
-  performers: (param) => param.split(', '),
-  performersRole: (param) => param.split(', '),
-  pictures: 'binary',
-  publisher: (param) => param.trim(),
-  remixedBy: (param) => param.trim(),
-  replayGainAlbumGain: (param) => Number(param),
-  replayGainAlbumPeak: (param) => Number(param),
-  replayGainTrackGain: (param) => Number(param),
-  replayGainTrackPeak: (param) => Number(param),
-  title: (param) => param.trim(),
-  track: (param) => Number(param),
-  trackCount: (param) => Number(param),
-  year: (param) => Number(param)
-}; */
-
 ipcMain.handle('update-tags', async (event, arr) => {
   const senderWebContents = event.sender;
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
@@ -1013,5 +938,5 @@ ipcMain.handle('get-preferences', async (event) => {
 
 ipcMain.handle('save-preferences', async (event, preferences) => {
   console.log('preferences: ', preferences);
-  await savePreferences(preferences);
+  return await savePreferences(preferences);
 });
