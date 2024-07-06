@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect, useReducer } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { PiFolderOpenLight } from 'react-icons/pi';
 import { FaMeta } from 'react-icons/fa6';
@@ -134,7 +134,6 @@ const Stats = () => {
       setAlbumsByRoot([]);
     }
     setStatReq(e.currentTarget.id);
-    setKey(getKey());
   };
 
   const handleOpenFolder = (e) => {

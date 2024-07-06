@@ -13,6 +13,8 @@ contextBridge.exposeInMainWorld('metadataEditingApi', {
   onUpdateTagsStatus: (cb) => ipcRenderer.on('update-tags', (event, msg) => cb(msg)),
   showChild: (args) => ipcRenderer.invoke('show-child', args),
   onClearTable: (cb) => ipcRenderer.on('clear-table', (event, arg) => cb(arg)),
+  getPreferences: () => ipcRenderer.invoke('get-preferences'),
+  savePreferences: (preferences) => ipcRenderer.invoke('save-preferences', preferences),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });
 

@@ -26,8 +26,10 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
 
   // Utility function to convert data types based on the field name
   function convertToCorrectType(key, value) {
+    const numTypes = ['year', 'disc', 'discCount', 'track', 'trackCount'];
     // Add more cases as necessary for other specific fields or types
-    if (key === 'year') {
+    /*   console.log('key: ', key, 'value: ', value); */
+    if (numTypes.includes(key)) {
       return Number(value);
     }
     return value; // Return as is if no specific conversion is needed
@@ -47,7 +49,7 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
             newValue,
             oldValue: node.data[key]
           };
-          console.log('changeObj: ', changeObj);
+          /*    console.log('changeObj: ', changeObj); */
           multiRowChanges.push(changeObj);
         }
       });

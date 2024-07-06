@@ -24,9 +24,9 @@ const runWorker = (createWorkerFn, msg) => {
     // Handle worker exit
     worker.on('exit', (code) => {
       if (code !== 0) {
-        console.error(`Worker stopped with exit code ${code}`);
-        console.error(error);
-        reject(error);
+        const errorMessage = `Worker stopped with exit code ${code}`;
+        console.error(errorMessage);
+        reject(new Error(errorMessage));
       }
     });
 

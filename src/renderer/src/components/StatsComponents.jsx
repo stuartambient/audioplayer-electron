@@ -138,7 +138,7 @@ const useGenre = (genre) => {
     };
   }, [genre]);
 };
-export const Genres = ({ dimensions, key }) => {
+export const Genres = ({ dimensions }) => {
   const [genres, setGenres] = useState([]);
   const [genre, setGenre] = useState('');
   useGenres(setGenres);

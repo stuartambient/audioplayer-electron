@@ -35,7 +35,7 @@ const CustomToolPanel = ({
     { name: 'error', label: 'error', defaultChecked: true },
     { name: 'albumArtists', label: 'albumArtists', defaultChecked: true },
     { name: 'audioBitrate', label: 'audioBitrate', defaultChecked: true },
-    { name: 'audioSamplerate', label: 'audioSamplerate', defaultChecked: true },
+    { name: 'audioSampleRate', label: 'audioSamplerate', defaultChecked: true },
     { name: 'codecs', label: 'codecs', defaultChecked: true },
     { name: 'bpm', label: 'bpm', defaultChecked: true },
     { name: 'composers', label: 'composers', defaultChecked: true },

@@ -4,7 +4,12 @@ import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import react from '@vitejs/plugin-react';
 export default defineConfig({
   main: {
-    plugins: [externalizeDepsPlugin()]
+    plugins: [externalizeDepsPlugin()],
+    build: {
+      rollupOptions: {
+        external: ['src/db/music.db'] // Exclude the database file
+      }
+    }
   },
   preload: {
     plugins: [externalizeDepsPlugin()],
@@ -15,7 +20,8 @@ export default defineConfig({
           coverSearch: resolve(__dirname, 'src/preload/coverSearch.js'),
           metadataEditing: resolve(__dirname, 'src/preload/metadataEditing.js'),
           tagForm: resolve(__dirname, 'src/preload/tagForm.js')
-        }
+        },
+        external: ['src/db/music.db'] // Exclude the database file
       }
     }
   },
@@ -34,7 +40,8 @@ export default defineConfig({
           metadataEditing: resolve(__dirname, 'src/renderer/metadataEditing.html'),
           tagForm: resolve(__dirname, 'src/renderer/tagForm.html'),
           splash: resolve(__dirname, 'src/renderer/splash.html')
-        }
+        },
+        external: ['src/db/music.db'] // Exclude the database file
       }
     },
     plugins: [react()]

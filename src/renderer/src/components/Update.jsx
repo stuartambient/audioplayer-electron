@@ -22,8 +22,8 @@ const Update = () => {
   useEffect(() => {
     const handleFileUpdateComplete = (result) => {
       setFileUpdateReq(false);
-
-      setFileUpdateResults(result.result);
+      console.log('result: ', result);
+      setFileUpdateResults(result);
     };
     window.api.onUpdateFiles(handleFileUpdateComplete);
     return () => {

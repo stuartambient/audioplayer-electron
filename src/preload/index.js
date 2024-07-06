@@ -80,6 +80,13 @@ contextBridge.exposeInMainWorld('api', {
   removeChildWindowClosedListener: (callback) => {
     ipcRenderer.removeListener('window-closed', callback);
   },
+  getState: () => ipcRenderer.invole('get-prefernces'),
+  saveState: (preferences) => {
+    console.log('prefs: ', preferences);
+    ipcRenderer.invoke('save-preferences', preferences);
+  },
+  onSystemSuspend: (cb) => ipcRenderer.on('system-suspend', (event, msg) => cb(msg)),
+  onSystemResume: (cb) => ipcRenderer.on('system-resume', (event, msg) => cb(msg)),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 
   /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */

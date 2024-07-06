@@ -14,6 +14,9 @@ import PlayButtonRenderer from './PlayButtonRenderer';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
+import 'ag-grid-community/styles/ag-theme-balham.css';
+import 'ag-grid-community/styles/ag-theme-material.css';
+
 import './styles/AGGrid.css';
 
 const AGGrid = ({ reset, data, playButton }) => {
@@ -25,6 +28,7 @@ const AGGrid = ({ reset, data, playButton }) => {
   const [isRedoAction, setIsRedoAction] = useState(false);
   const [columnApi, setColumnApi] = useState(null);
   const [hiddenColumns, setHiddenColumns] = useState([]);
+  const [prefsLoaded, setPrefsLoaded] = useState(false);
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
@@ -35,13 +39,43 @@ const AGGrid = ({ reset, data, playButton }) => {
   const isRowsSelected = useRef([]);
 
   useEffect(() => {
+    const loadPreferences = async () => {
+      const preferences = await window.metadataEditingApi.getPreferences();
+      /* console.log('preferences: ', preferences); */
+      setHiddenColumns(preferences.hiddenColumns || []);
+      setPrefsLoaded(true);
+    };
+    loadPreferences();
+  }, []);
+
+  useEffect(() => {
+    const updateColPrefs = async () => {
+      await window.metadataEditingApi.savePreferences({ hiddenColumns });
+    };
+    if (hiddenColumns.length > 0) {
+      updateColPrefs();
+    }
+  }, [hiddenColumns]);
+
+  // Ensure initial column visibility based on preferences
+  useEffect(() => {
+    if (prefsLoaded && gridRef.current) {
+      hiddenColumns.forEach((colId) => {
+        const column = gridRef.current.columnApi.getColumn(colId);
+        if (column) {
+          gridRef.current.columnApi.setColumnVisible(colId, false);
+        }
+      });
+    }
+  }, [prefsLoaded, hiddenColumns]);
+
+  useEffect(() => {
     if (reset) {
       setOriginalData(null);
     }
   }, [reset]);
 
   const resetAudio = () => {
-    console.log('reset audio');
     const event = new Event('resetAudio');
     window.dispatchEvent(event);
   };
@@ -79,10 +113,15 @@ const AGGrid = ({ reset, data, playButton }) => {
   let gridApi;
 
   const onGridReady = (params) => {
+    /*  console.log('grid ready'); */
     gridApi = params.api;
     const columnApi = params.columnApi;
+    /* console.log('column api: ', columnApi); */
     setColumnApi(columnApi);
-    updateHiddenColumns(columnApi);
+    /* updateHiddenColumns(columnApi); */
+
+    /* updateHiddenColumns(columnApi); */
+
     // Get all columns and filter out the hidden ones
     /* const hiddenColumns = columnApi.getAllColumns().filter((col) => !col.isVisible());
     console.log(
@@ -124,7 +163,9 @@ const AGGrid = ({ reset, data, playButton }) => {
     const col = e.target.name;
     const column = gridRef.current.columnApi.getColumn(col);
     if (column) {
-      gridRef.current.columnApi.setColumnVisible(column, !column.visible);
+      const isVisible = column.isVisible();
+      gridRef.current.columnApi.setColumnVisible(col, !isVisible);
+      updateHiddenColumns(col, !isVisible);
     }
   };
 
@@ -307,7 +348,7 @@ const AGGrid = ({ reset, data, playButton }) => {
           updates: row.changes
         }));
         /* console.log('save all: ', saveAll); */
-        console.log('save-all: ', saveAll);
+        /*  console.log('save-all: ', saveAll); */
         return updateTags(saveAll);
       /*  if (undos.length === 0) return;
 
@@ -359,8 +400,16 @@ const AGGrid = ({ reset, data, playButton }) => {
   }, []);
 
   const updateHiddenColumns = (api) => {
-    const hiddenCols = api.getColumns().filter((col) => !col.isVisible());
+    if (!columnApi.getColumns()) return;
+    const hiddenCols = columnApi.getColumns().filter((col) => !col.isVisible());
     setHiddenColumns(hiddenCols.map((col) => col.getColId()));
+    /*  hiddenColumns.forEach((colId) => {
+      console.log('colId: ', colId);
+      const column = params.columnApi.getColumn(colId);
+      if (column) {
+        params.columnApi.setColumnVisible(colId, false);
+      }
+    }); */
   };
 
   const onRowClicked = (event) => {
@@ -439,7 +488,6 @@ const AGGrid = ({ reset, data, playButton }) => {
           //enableRangeSelection={true}
           /* getRowNodeId={getRowNodeId} */
           autoSizeStrategy="fitCellContents"
-          headerHeight={25}
           rowMultiSelectWithClick={true}
           onCellValueChanged={handleCellValueChanged}
           onColumnVisible={onColumnVisible}
@@ -449,6 +497,11 @@ const AGGrid = ({ reset, data, playButton }) => {
           onRowClicked={onRowClicked}
           loadingOverlayComponent={loadingOverlayComponent}
           loadingOverlayComponentParams={loadingOverlayComponent}
+          maintainColumnOrder={true}
+          headerHeight={50}
+          accentedSort={true}
+          multiSortKey="ctrl"
+          suppressMaintainUnsortedOrder={true}
           /* loadingOverlayComponent={loadingOverlayComponent}
           loadingOverlayComponentParams={loadingOverlayComponentParams} */
           /*     frameworkComponents={{ booleanCellRenderer: BooleanCellRenderer }} */

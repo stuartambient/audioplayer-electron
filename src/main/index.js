@@ -10,9 +10,11 @@ import {
   dialog,
   webContents,
   protocol,
-  powerMonitor
+  powerMonitor,
+  powerSaveBlocker
 } from 'electron';
 import * as path from 'path';
+import process from 'node:process';
 import fs from 'fs';
 /* import { spawn } from 'child_process'; */
 import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowManager.js';
@@ -76,8 +78,11 @@ import initFiles from './updateFiles';
 import initCovers from './updateFolderCovers';
 import initUpdateMetadata from './updateMetadata';
 import updateTags from './updateTags';
+/* const devDb = import.meta.env.MAIN_VITE_DB_PATH_DEV;
+const prodDb = import.meta.env.MAIN_VITE_DB_PATH_PROD; */
 /* import checkDataTypes from './checkDataTypes.js'; */
 /* import { Genres } from '../renderer/src/components/StatsComponents.jsx'; */
+
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'streaming',
@@ -92,6 +97,12 @@ protocol.registerSchemesAsPrivileged([
 console.log(db); */
 
 /* const updatesFolder = `${process.cwd()}/src/updates`; */
+/* const devDb = import.meta.env.MAIN_VITE_DB_PATH_DEV;
+const prodDb = import.meta.env.MAIN_VITE_DB_PATH_PROD;*/
+/* const dbPath = is.dev
+  ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
+  : path.join(app.getPath('userData'), import.meta.env.MAIN_VITE_DB_PATH_PROD);
+console.log('dbPath: ', dbPath); */
 
 /* IN DOCUMENTS/ELECTRONMUSICPLAYER */
 const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`;
@@ -177,7 +188,7 @@ function createWindow() {
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(`${process.env['ELECTRON_RENDERER_URL']}/index.html`);
   } else {
-    mainWindow.loadFile(`path.join(__dirname, '../renderer/index.html`);
+    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   }
 }
 
@@ -189,10 +200,11 @@ const reactDevToolsPath =
 /* 'C:/Users/sambi/documents/Devtools2/5.0.2_0'; */
 
 let primaryDisplay;
+let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
-  await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
+  /* await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true }); */
   electronApp.setAppUserModelId('com.electron');
   // Register the custom 'streaming' protocol
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
@@ -248,7 +260,12 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window);
   });
 
+  /*   resumeSleep = powerSaveBlocker.start('prevent-app-suspension');
+  console.log(`Power save blocker started with id: ${resumeSleep}`); */
+
   powerMonitor.on('suspend', () => {
+    /* powerSaveBlocker.start('prevent-app-suspension'); */
+
     console.log('The system is going to sleep: ', new Date());
     mainWindow.webContents.send('system-suspend', 'system-suspending');
   });
@@ -262,6 +279,8 @@ app.whenReady().then(async () => {
   powerMonitor.on('shutdown', () => {
     console.log('The system is shutting down: ', new Date());
   });
+
+  mainWindow.webContents.openDevTools();
 });
 
 // Quit when all windows are closed, except on macOS
@@ -332,7 +351,6 @@ ipcMain.handle('update-files', async (event) => {
   const senderWebContents = event.sender;
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
-  let res;
 
   //try {
   runWorker(createUpdateFilesWorker)
@@ -937,6 +955,6 @@ ipcMain.handle('get-preferences', async (event) => {
 });
 
 ipcMain.handle('save-preferences', async (event, preferences) => {
-  console.log('preferences: ', preferences);
-  return await savePreferences(preferences);
+  console.log('preferences: ', preferences); /* .then(() => powerSaveBlocker.stop(resumeSleep)); */
+  /* await savePreferences(preferences); */
 });
