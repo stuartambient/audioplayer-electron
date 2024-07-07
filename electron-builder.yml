@@ -8,14 +8,14 @@ files:
   - '!electron.vite.config.{js,ts,mjs,cjs}'
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
 extraResources:
-  - from: ./src/db/stats.dll
-    to: ./stats.dll
-  - from: ./src/db/extensions
-    to: ./extensions
+  - from: './src/db/stats.dll'
+    to: './stats.dll'
+  - from: './src/db/extensions'
+    to: './extensions'
     filter:
       - '**/*.dll'
-  - from: ./src/main/your/preferences.json
-    to: ./preferences.json
+  - from: './src/main/preferences.json'
+    to: './preferences.json'
 asarUnpack:
   - '**/*.{node,dll}'
 afterSign: build/notarize.js

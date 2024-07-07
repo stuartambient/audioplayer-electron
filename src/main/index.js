@@ -24,8 +24,6 @@ import * as stream from 'stream';
 import { promisify } from 'util';
 import { Buffer } from 'buffer';
 import { Worker } from 'worker_threads';
-import { parseFile } from 'music-metadata';
-
 import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
@@ -204,8 +202,9 @@ let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
-  /* await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true }); */
+  await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
+  console.log('resources path: ', process.resourcesPath);
   // Register the custom 'streaming' protocol
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
     const uri = decodeURIComponent(request.url);
