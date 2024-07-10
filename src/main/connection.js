@@ -3,14 +3,15 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 
 const prod = import.meta.env.PROD;
-const dev = import.meta.env.MODE;
-
+const isDev = import.meta.env.MODE === 'development';
 /* console.log('isPackaged: ', app.isPackaged, '----', process.cwd()); */
 const resourcesPath = process.resourcesPath;
 
 const dbPath = prod
   ? path.join(resourcesPath, import.meta.env.MAIN_VITE_DB_PATH_PROD)
   : path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV);
+
+console.log('dbpath: ', typeof dbPath, typeof resourcesPath, dbPath);
 
 const db = new Database(dbPath /* , { verbose: console.log } */);
 db.pragma('journal_mode = WAL');
@@ -22,6 +23,8 @@ const extensionsPath = prod
   : path.join(process.cwd(), 'src/db/extensions');
 
 db.loadExtension(path.join(extensionsPath, 'unicode'));
+
+console.log('extensions path: ', typeof extensionsPath, extensionsPath);
 /* 
 db.loadExtension(`${process.cwd()}/src/db/extensions/unicode`); */
 

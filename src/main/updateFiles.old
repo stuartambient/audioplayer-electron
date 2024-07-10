@@ -9,7 +9,6 @@ import {
 } from '../constant/constants.js';
 import { parentPort, workerData } from 'worker_threads';
 import createWorker from './databaseWorker?nodeWorker';
-import workerTrigger from './wokerTrigger.js';
 import { getFiles, insertFiles, deleteFiles } from './sql.js';
 
 const difference = (setA, setB) => {

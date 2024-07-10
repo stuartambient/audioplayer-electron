@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
 import db from './connection';
+console.log('db: ', db);
 /* const db = new Database(`${process.cwd()}/src/db/music.db`, { verbose: console.log }); */
 /* const db = new Database(`${app.getPath('appData')}/musicplayer-electron/music.db`); */
 /* db.pragma('journal_mode = WAL');

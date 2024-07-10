@@ -1,4 +1,4 @@
-import { parentPort, workerData } from 'worker_threads';
+import { parentPort, workerData, isMainThread } from 'worker_threads';
 import fg from 'fast-glob';
 import { parseMeta } from './utility/index.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,7 +9,6 @@ import {
   fileExtensions
 } from '../constant/constants.js';
 
-/* import workerTrigger from './workerTrigger.js'; */
 import { getFiles, insertFiles, deleteFiles } from './sql.js';
 
 const difference = (setA, setB) => {
@@ -83,20 +82,20 @@ const runFiles = async (roots, cb) => {
 };
 
 // Function to run the task
-const processFiles = async () => {
+const processFiles = async (message) => {
   return new Promise((resolve, reject) => {
     runFiles(roots, (result) => resolve(result));
   });
 };
 
 // Listen for messages from the main thread
-parentPort.on('message', async (/* message */) => {
-  // if (message === 'start') {
+if (!parentPort) throw Error('IllegalState');
+parentPort.on('message', async (message) => {
   try {
-    const result = await processFiles();
+    const result = await processFiles(message);
+    console.log('message: ', message);
     parentPort.postMessage({ result });
   } catch (error) {
     parentPort.postMessage({ error: error.message });
   }
-  // }
 });

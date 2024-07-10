@@ -1,13 +1,19 @@
 import { resolve } from 'path';
 import { fileURLToPath } from 'url';
+import { builtinModules } from 'module';
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
 import react from '@vitejs/plugin-react';
+
 export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     build: {
       rollupOptions: {
-        external: ['src/db/music.db'] // Exclude the database file
+        external: ['src/db/music.db'], // Exclude the database file
+        input: {
+          index: resolve(__dirname, 'src/main/index.js'),
+          updateFilesWorker: resolve(__dirname, 'src/main/updateFilesWorker.js')
+        }
       }
     }
   },

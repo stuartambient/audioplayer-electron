@@ -1,11 +1,13 @@
+import { Worker } from 'worker_threads';
 import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
 import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
 
 const runWorker = (createWorkerFn, msg) => {
+  console.log('msg: ', createWorkerFn, '----', msg);
   return new Promise((resolve, reject) => {
-    const worker = createWorkerFn(msg);
+    /*   const worker = new Worker(createWorkerFn, { workerData: msg }); */
+    const worker = createWorkerFn({ workerData: msg });
 
-    // Handle messages from the worker
     worker.on('message', (result) => {
       console.log('Result from worker =====>:', result);
       if (result.error) {
@@ -15,7 +17,6 @@ const runWorker = (createWorkerFn, msg) => {
       }
     });
 
-    // Handle errors from the worker
     worker.on('error', (err) => {
       console.error('Worker error:', err);
       reject(err);
@@ -30,7 +31,6 @@ const runWorker = (createWorkerFn, msg) => {
       }
     });
 
-    // Start the worker
     worker.postMessage(msg);
   });
 };

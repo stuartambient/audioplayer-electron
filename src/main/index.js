@@ -15,7 +15,7 @@ import {
 } from 'electron';
 import * as path from 'path';
 import process from 'node:process';
-import fs from 'fs';
+import fs from 'node:fs';
 /* import { spawn } from 'child_process'; */
 import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowManager.js';
 import url, { pathToFileURL } from 'url';
@@ -28,13 +28,14 @@ import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
 import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
+import createWorker from './worker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC, parseMeta } from './utility';
 import db from './connection.js';
+
 /* import Database from 'better-sqlite3'; */
-import createWorker from './databaseWorker?nodeWorker';
-import workerTrigger from './wokerTrigger.js';
+/* import createWorker from './databaseWorker?nodeWorker'; */
 /* import { createWorker as newWorker } from './newWorker?nodeWorker'; */
 import runWorker from './runWorker.js';
 import { getPreferences, savePreferences } from './preferences.js';
@@ -72,9 +73,9 @@ import {
   albumsByTopFolder
 } from './stats';
 import initAlbums from './updateFolders';
-import initFiles from './updateFiles';
+/* import initFiles from './updateFiles'; */
 import initCovers from './updateFolderCovers';
-import initUpdateMetadata from './updateMetadata';
+/* import initUpdateMetadata from './updateMetadata'; */
 import updateTags from './updateTags';
 /* const devDb = import.meta.env.MAIN_VITE_DB_PATH_DEV;
 const prodDb = import.meta.env.MAIN_VITE_DB_PATH_PROD; */
@@ -150,7 +151,8 @@ function createWindow() {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
       webSecurity: false,
-      contextIsolation: true
+      contextIsolation: true,
+      nodeIntegration: true
     }
   });
 
@@ -202,9 +204,22 @@ let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
+  createWorker({ workerData: 'worker' })
+    .on('message', (message) => {
+      console.log('messgae from worker: ', message);
+    })
+    .on('error', (err) => {
+      console.error('Worker error:', err);
+    })
+    .on('exit', (code) => {
+      if (code !== 0) {
+        const errorMessage = `Worker stopped with exit code ${code}`;
+        console.error(errorMessage);
+      }
+    })
+    .postMessage('');
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
-  console.log('resources path: ', process.resourcesPath);
   // Register the custom 'streaming' protocol
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
     const uri = decodeURIComponent(request.url);
@@ -351,26 +366,38 @@ ipcMain.handle('update-files', async (event) => {
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
 
-  //try {
-  runWorker(createUpdateFilesWorker)
-    .then((result) => {
-      console.log('Worker completed successfully:', result);
-      console.log('Running subsequent code after worker completion.');
-      return mainWindow.webContents.send(
-        'file-update-complete',
+  try {
+    /* console.log('createUpdateFilesWorker', createUpdateFilesWorker()); */
 
-        getObjectWithLengths(result.result)
-      );
-    })
-    .catch((error) => {
-      console.error('Worker encountered an error:', error);
-
-      console.log('Handling subsequent code after worker error.');
+    await createUpdateFilesWorker({ workerData: 'updateFilesWorker' })
+      .on('message', (message) => {
+        console.log('message from worker: ', message);
+      })
+      .on('error', (err) => {
+        console.error('Worker error:', err);
+      })
+      .on('exit', (code) => {
+        if (code !== 0) {
+          const errorMessage = `Worker stopped with exit code ${code}`;
+          console.error(errorMessage);
+        }
+      })
+      .postMessage('');
+    /* const result = await runWorker(createUpdateFilesWorker, {
+      msg: 'run'
     });
-  /* } catch (error) {
+    console.log('Worker completed successfully:', result);
+    console.log('Running subsequent code after worker completion.');
+    mainWindow.webContents.send('file-update-complete', getObjectWithLengths(result.result)); */
+  } catch (error) {
+    console.error('Worker encountered an error:', error);
+
+    console.log('Handling subsequent code after worker error.');
+  }
+});
+/* } catch (error) {
     console.error('Error on tag update: ', error.message);
   } */
-});
 
 ipcMain.handle('update-meta', async () => {
   const result = await initUpdateMetadata();

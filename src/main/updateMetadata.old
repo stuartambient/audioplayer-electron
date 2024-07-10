@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { allTracks, refreshMetadata, checkRecordsExist } from './sql.js';
 import { parseMeta } from './utility';
-import workerTrigger from './wokerTrigger.js';
+/* import workerTrigger from './wokerTrigger.js'; */
 
 const run = async (cb) => {
   let status = { deleted: '', new: '', nochange: false };
