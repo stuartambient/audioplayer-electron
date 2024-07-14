@@ -47,27 +47,6 @@ function App() {
   }, [state]); */
 
   useEffect(() => {
-    const handleSystemSuspending = async (msg) => {
-      console.log('system suspending: ', msg);
-      await window.api.saveState(state);
-    };
-    window.api.onSystemSuspend(handleSystemSuspending);
-    return () => {
-      window.api.off('system-suspend', handleSystemSuspending);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleSystemResuming = (msg) => {
-      console.log('system resuming: ', msg);
-    };
-    window.api.onSystemResume(handleSystemResuming);
-    return () => {
-      window.api.off('system-resume', handleSystemResuming);
-    };
-  }, []);
-
-  useEffect(() => {
     const audio = state.audioRef.current;
 
     const handleLoadedMetadata = (e) => {

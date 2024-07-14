@@ -1,11 +1,10 @@
 import { app, BrowserWindow } from 'electron';
-import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+import { /* electronApp, optimizer,  */ is } from '@electron-toolkit/utils';
 import path from 'node:path';
-import { EventEmitter } from 'node:events';
+/* import { EventEmitter } from 'node:events'; */
 import { mainWindow } from './index.js';
 
 const windows = new Map();
-const windowEvents = new EventEmitter();
 
 function createOrUpdateChildWindow(name, type, config, data) {
   console.log(`Creating or updating window: ${name}`);
@@ -52,12 +51,6 @@ function createOrUpdateChildWindow(name, type, config, data) {
     });
   }
 }
-
-// Add a listener for the custom 'window-closed' event
-/* windowEvents.on('window-closed', (name) => {
-  console.log(`Event 'window-closed' received for window: ${name}`);
-  console.log('main-window: ', mainWindow);
-}); */
 
 function getWindow(win) {
   return windows.get(win);

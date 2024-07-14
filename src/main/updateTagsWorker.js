@@ -1,8 +1,120 @@
 import { parentPort, workerData } from 'worker_threads';
+import path from 'node:path';
+import process from 'node:process';
+import Database from 'better-sqlite3';
 import updateTags from './updateTags';
-import { getUpdatedTracks } from './sql';
 import { parseMeta } from './utility';
-import { refreshMetadata } from './sql';
+
+const mode = import.meta.env.MODE;
+const dbPath =
+  mode === 'development'
+    ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
+    : path.join(workerData, 'music.db');
+
+const db = new Database(dbPath);
+
+const getUpdatedTracks = (tracks) => {
+  const placeholders = tracks.map(() => '?').join(', ');
+  const stmt = db.prepare(
+    `SELECT track_id, audiotrack FROM "audio-tracks" WHERE audiotrack IN (${placeholders})`
+  );
+  return stmt.all(...tracks);
+};
+
+const refreshMetadata = (tracks) => {
+  console.log('refreshMetadata');
+  const transaction = db.transaction(() => {
+    const updateStmt = db.prepare(`
+      UPDATE "audio-tracks" SET 
+        root = @root,
+        modified = @modified,
+        like = @like,
+        error = @error,
+        albumArtists = @albumArtists,
+        album = @album,
+        audioBitrate = @audioBitrate,
+        audioSampleRate = @audioSampleRate,
+        bpm = @bpm,
+        codecs = @codecs,
+        composers = @composers,
+        conductor = @conductor,
+        copyright = @copyright,
+        comment = @comment,
+        disc = @disc,
+        discCount = @discCount,
+        description = @description,
+        duration = @duration,
+        genres = @genres,
+        isCompilation = @isCompilation,
+        isrc = @isrc,
+        lyrics = @lyrics,
+        performers = @performers,
+        performersRole = @performersRole,
+        pictures = @pictures,
+        publisher = @publisher,
+        remixedBy = @remixedBy,
+        replayGainAlbumGain = @replayGainAlbumGain,
+        replayGainAlbumPeak = @replayGainAlbumPeak,
+        replayGainTrackGain = @replayGainTrackGain,
+        replayGainTrackPeak = @replayGainTrackPeak,
+        title = @title,
+        track = @track,
+        trackCount = @trackCount,
+        year = @year
+      WHERE 
+        audiotrack = @audiotrack
+      `);
+
+    for (const track of tracks) {
+      const info = updateStmt.run({
+        track_id: track.track_id,
+        audiotrack: track.audiotrack,
+        root: track.root,
+        modified: track.modified,
+        like: track.like,
+        error: track.error,
+        albumArtists: track.albumArtists,
+        album: track.album,
+        audioBitrate: track.audioBitrate,
+        audioSampleRate: track.audioSampleRate,
+        bpm: track.bpm,
+        codecs: track.codecs,
+        composers: track.composers,
+        conductor: track.conductor,
+        copyright: track.copyright,
+        comment: track.comment,
+        disc: track.disc,
+        discCount: track.discCount,
+        description: track.description,
+        duration: track.duration,
+        genres: track.genres,
+        isCompilation: track.isCompilation,
+        isrc: track.isrc,
+        lyrics: track.lyrics,
+        performers: track.performers,
+        performersRole: track.performersRole,
+        pictures: track.pictures,
+        publisher: track.publisher,
+        remixedBy: track.remixedBy,
+        replayGainAlbumGain: track.replayGainAlbumGain,
+        replayGainAlbumPeak: track.replayGainAlbumPeak,
+        replayGainTrackGain: track.replayGainTrackGain,
+        replayGainTrackPeak: track.replayGainTrackPeak,
+        title: track.title,
+        track: track.track,
+        trackCount: track.trackCount,
+        year: track.year
+      });
+    }
+  });
+  try {
+    transaction();
+    return 'Records updated successfully!';
+  } catch (error) {
+    console.error('Error updating records:', error);
+    throw new Error(error);
+  }
+};
 
 // Define the sequential functions
 async function func1(data) {
@@ -75,12 +187,10 @@ async function runSequentially(originalData) {
 
 // Listen for messages from the main thread
 parentPort.on('message', async (message) => {
-  if (message) {
-    try {
-      const finalResult = await runSequentially(message.data);
-      parentPort.postMessage(finalResult);
-    } catch (error) {
-      parentPort.postMessage({ error: error.message });
-    }
+  try {
+    const finalResult = await runSequentially(message.data);
+    parentPort.postMessage(finalResult);
+  } catch (error) {
+    parentPort.postMessage({ error: error.message });
   }
 });

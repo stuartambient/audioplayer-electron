@@ -2,42 +2,37 @@ import {
   app,
   shell,
   session,
-  screen,
   BrowserWindow,
   ipcMain,
   Menu,
-  BrowserView,
+  /* BrowserView, */
   dialog,
-  webContents,
+  /* webContents, */
   protocol,
-  powerMonitor,
-  powerSaveBlocker
+  powerMonitor
+  /* powerSaveBlocker */
 } from 'electron';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import process from 'node:process';
 import fs from 'node:fs';
 /* import { spawn } from 'child_process'; */
 import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowManager.js';
 import url, { pathToFileURL } from 'url';
-import http from 'node:http';
+/* import http from 'node:http'; */
 import * as stream from 'stream';
-import { promisify } from 'util';
-import { Buffer } from 'buffer';
+/* import { promisify } from 'util'; */
+/* import { Buffer } from 'buffer'; */
 import { Worker } from 'worker_threads';
 import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
 import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
-import createWorker from './worker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { writeFile, convertToUTC, parseMeta } from './utility';
+import { writeFile, convertToUTC, parseMeta } from './utility/index.js';
 import db from './connection.js';
 
-/* import Database from 'better-sqlite3'; */
-/* import createWorker from './databaseWorker?nodeWorker'; */
-/* import { createWorker as newWorker } from './newWorker?nodeWorker'; */
-import runWorker from './runWorker.js';
 import { getPreferences, savePreferences } from './preferences.js';
 import {
   allTracksByScroll,
@@ -82,26 +77,16 @@ const prodDb = import.meta.env.MAIN_VITE_DB_PATH_PROD; */
 /* import checkDataTypes from './checkDataTypes.js'; */
 /* import { Genres } from '../renderer/src/components/StatsComponents.jsx'; */
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.disableHardwareAcceleration();
+
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'streaming',
     privileges: { stream: true, standard: true, bypassCSP: true, supportFetchAPI: true }
   }
 ]);
-/* protocol.registerStreamProtocol('streaming', async (request, callback) => {
-  console.log('streaming --> ', request.url);
-});
- */
-/* const db = new Database('music.db', { verbose: console.log });
-console.log(db); */
-
-/* const updatesFolder = `${process.cwd()}/src/updates`; */
-/* const devDb = import.meta.env.MAIN_VITE_DB_PATH_DEV;
-const prodDb = import.meta.env.MAIN_VITE_DB_PATH_PROD;*/
-/* const dbPath = is.dev
-  ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
-  : path.join(app.getPath('userData'), import.meta.env.MAIN_VITE_DB_PATH_PROD);
-console.log('dbPath: ', dbPath); */
 
 /* IN DOCUMENTS/ELECTRONMUSICPLAYER */
 const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`;
@@ -204,20 +189,6 @@ let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
-  createWorker({ workerData: 'worker' })
-    .on('message', (message) => {
-      console.log('messgae from worker: ', message);
-    })
-    .on('error', (err) => {
-      console.error('Worker error:', err);
-    })
-    .on('exit', (code) => {
-      if (code !== 0) {
-        const errorMessage = `Worker stopped with exit code ${code}`;
-        console.error(errorMessage);
-      }
-    })
-    .postMessage('');
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
   // Register the custom 'streaming' protocol
@@ -276,18 +247,6 @@ app.whenReady().then(async () => {
 
   /*   resumeSleep = powerSaveBlocker.start('prevent-app-suspension');
   console.log(`Power save blocker started with id: ${resumeSleep}`); */
-
-  powerMonitor.on('suspend', () => {
-    /* powerSaveBlocker.start('prevent-app-suspension'); */
-
-    console.log('The system is going to sleep: ', new Date());
-    mainWindow.webContents.send('system-suspend', 'system-suspending');
-  });
-
-  powerMonitor.on('resume', () => {
-    console.log('The system has resumed: ', new Date());
-    mainWindow.webContents.send('system-resume', 'system-resuming');
-  });
 
   // LINUX or MACoS
   powerMonitor.on('shutdown', () => {
@@ -368,10 +327,13 @@ ipcMain.handle('update-files', async (event) => {
 
   try {
     /* console.log('createUpdateFilesWorker', createUpdateFilesWorker()); */
-
-    await createUpdateFilesWorker({ workerData: 'updateFilesWorker' })
+    const workerPath = process.resourcesPath;
+    await createUpdateFilesWorker({
+      workerData: workerPath
+    })
       .on('message', (message) => {
         console.log('message from worker: ', message);
+        mainWindow.webContents.send('file-update-complete', getObjectWithLengths(message.result));
       })
       .on('error', (err) => {
         console.error('Worker error:', err);
@@ -387,8 +349,7 @@ ipcMain.handle('update-files', async (event) => {
       msg: 'run'
     });
     console.log('Worker completed successfully:', result);
-    console.log('Running subsequent code after worker completion.');
-    mainWindow.webContents.send('file-update-complete', getObjectWithLengths(result.result)); */
+    console.log('Running subsequent code after worker completion.');*/
   } catch (error) {
     console.error('Worker encountered an error:', error);
 
@@ -793,9 +754,28 @@ ipcMain.handle('update-tags', async (event, arr) => {
   console.log(
     `Request received from window ID: ${senderWindow.id}, Title: ${senderWindow.getTitle()}`
   );
+  targetWindow.webContents.send('update-tags', 'starting');
   try {
-    targetWindow.webContents.send('update-tags', 'starting');
-    runWorker(createUpdateTagsWorker, { data: arr })
+    const workerPath = process.resourcesPath;
+    await createUpdateTagsWorker({
+      workerData: workerPath
+    })
+      .on('message', (message) => {
+        console.log('message from worker: ', message);
+        targetWindow.webContents.send('update-tags', 'success');
+        mainWindow.webContents.send('updated-tags', 'updated-tags');
+      })
+      .on('error', (err) => {
+        console.error('Tags worker error: ', err);
+      })
+      .on('exit', (code) => {
+        if (code !== 0) {
+          const errorMessage = `Worker stopped with exit code ${code}`;
+          console.error(errorMessage);
+        }
+      })
+      .postMessage('');
+    /*     runWorker(createUpdateTagsWorker, { data: arr })
       .then((result) => {
         console.log('Worker completed successfully:', result);
         console.log('Running subsequent code after worker completion.');
@@ -804,11 +784,8 @@ ipcMain.handle('update-tags', async (event, arr) => {
       })
       .catch((error) => {
         console.error('Worker encountered an error:', error);
-        // Handle the error accordingly
-        // For example:
-        // mainWindow.webContents.send('update-error', error.message);
         console.log('Handling subsequent code after worker error.');
-      });
+      }); */
   } catch (error) {
     console.error('Error on tag update: ', error.message);
   }

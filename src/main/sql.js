@@ -1,19 +1,8 @@
 import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
 import db from './connection';
-console.log('db: ', db);
-/* const db = new Database(`${process.cwd()}/src/db/music.db`, { verbose: console.log }); */
-/* const db = new Database(`${app.getPath('appData')}/musicplayer-electron/music.db`); */
-/* db.pragma('journal_mode = WAL');
-db.pragma('synchronous = normal');
-db.pragma('page_size = 32768');
-db.pragma('mmap_size = 30000000000');
-db.pragma('temp_store = memory'); */
 
-/* SELECT foldername, fullpath FROM albums where unaccent(foldername) LIKE '%Koner%' ORDER BY lower(unaccent(foldername)) */
 const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )`;
-
-/* const createTracksTable = `CREATE TABLE IF NOT EXISTS tracks ( afid PRIMARY KEY, root, audiofile, modified, extension, year, title, artist, album, genre, lossless, bitrate, samplerate, like, createdon, modifiedon )`; */
 
 const createAudioTracks = `
 CREATE TABLE IF NOT EXISTS "audio-tracks" (
@@ -229,10 +218,6 @@ const getAlbum = (id) => {
 
 const getFiles = () => {
   console.log('getFiles');
-  /* const allFiles = db.prepare('SELECT audiofile FROM tracks');
-  const files = allFiles.all();
-  return files; */
-
   const allFiles = db.prepare('SELECT audiotrack FROM "audio-tracks"');
   const files = allFiles.all();
   return files;

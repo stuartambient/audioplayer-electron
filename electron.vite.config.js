@@ -8,12 +8,14 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     build: {
+      sourcemap: true,
       rollupOptions: {
-        external: ['src/db/music.db'], // Exclude the database file
-        input: {
-          index: resolve(__dirname, 'src/main/index.js'),
-          updateFilesWorker: resolve(__dirname, 'src/main/updateFilesWorker.js')
-        }
+        external: [
+          'src/db/music.db'
+          /*      'src/main/updateFilesWorker.js',
+          'src/main/connection.js',
+          'src/main/sql.js' */
+        ] // Exclude the database file
       }
     }
   },

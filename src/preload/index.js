@@ -85,33 +85,5 @@ contextBridge.exposeInMainWorld('api', {
     console.log('prefs: ', preferences);
     ipcRenderer.invoke('save-preferences', preferences);
   },
-  onSystemSuspend: (cb) => ipcRenderer.on('system-suspend', (event, msg) => cb(msg)),
-  onSystemResume: (cb) => ipcRenderer.on('system-resume', (event, msg) => cb(msg)),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
-
-  /* testRealStream: (path) => ipcRenderer.send('test-real-stream', path), */
-  /* testRealStream: async (path) =>
-    await fetch(`streaming://${path}`, { method: 'GET' }).then((res) => console.log(res.url)) */
-  /*   onStartStream: (stream) => ipcRenderer.on('start-stream', (args) => args) */
-
-  /* onAlbumCoverMenu: (cb) => ipcRenderer.once('add-album-to-playlist', (event, ...args) => cb(args)) */
 });
-
-/* ipcRenderer.on('track-to-playlist', (_event, arg) => {
-  console.log(arg);
-}); */
-
-// Use `contextBridge` APIs to expose Electron APIs to
-// renderer only if context isolation is enabled, otherwise
-// just add to the DOM global.
-/* if (process.contextIsolated) {
-  try {
-    contextBridge.exposeInMainWorld('electron', electronAPI);
-    contextBridge.exposeInMainWorld('api', api);
-  } catch (error) {
-    console.error(error);
-  }
-} else {
-  window.electron = electronAPI;
-  window.api = api;
-} */

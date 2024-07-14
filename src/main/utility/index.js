@@ -1,14 +1,29 @@
 import fs from 'node:fs';
 import { promisify } from 'node:util';
 import { finished } from 'node:stream';
+import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
+/* import Database from 'better-sqlite3'; */
 import { File } from 'node-taglib-sharp';
-import db from '../connection';
+/* import db from '../connection'; */
 import { roots } from '../../constant/constants';
 import processFile from '../processProblemTracks';
-
 const streamFinished = promisify(finished);
 
+/* const mode = import.meta.env.MODE; */
+/* let db; */
+/* let dbPath =
+  mode === 'development'
+    ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
+    : path.join(process.resourcesPaths, 'music.db'); */
+/* db = new Database(dbPath) */
+
+/* const db = new Database(
+  mode === 'development'
+    ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
+    : path.join(process.resourcesPaths, 'music.db')
+);
+ */
 const convertToUTC = (milliseconds) => {
   const date = new Date(milliseconds);
 
