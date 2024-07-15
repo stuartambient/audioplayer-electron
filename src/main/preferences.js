@@ -1,12 +1,11 @@
 import { promises as fs } from 'fs';
 import path from 'path';
-import { process } from 'electron';
 
 const __dirname = path.resolve();
 const preferencesPath =
   import.meta.env.MODE === 'development'
     ? path.join(__dirname, 'src', 'main', 'preferences.json')
-    : process.resourcesPath;
+    : path.join(process.resourcesPath, 'preferences.json');
 
 export const getPreferences = async () => {
   try {

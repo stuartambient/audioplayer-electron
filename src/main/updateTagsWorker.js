@@ -9,7 +9,7 @@ const mode = import.meta.env.MODE;
 const dbPath =
   mode === 'development'
     ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
-    : path.join(workerData, 'music.db');
+    : path.join(workerData.workerPath, 'music.db');
 
 const db = new Database(dbPath);
 
@@ -168,7 +168,7 @@ async function func5(input) {
     try {
       const updateMessage = refreshMetadata(input);
       console.log('refreshMetadata completed');
-      resolve(updateMessage);
+      resolve(updateMessage, updateMessage);
     } catch (error) {
       reject(error);
     }
@@ -188,7 +188,7 @@ async function runSequentially(originalData) {
 // Listen for messages from the main thread
 parentPort.on('message', async (message) => {
   try {
-    const finalResult = await runSequentially(message.data);
+    const finalResult = await runSequentially(workerData.data);
     parentPort.postMessage(finalResult);
   } catch (error) {
     parentPort.postMessage({ error: error.message });

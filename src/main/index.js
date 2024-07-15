@@ -189,6 +189,7 @@ let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
+
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
   // Register the custom 'streaming' protocol
@@ -758,7 +759,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
   try {
     const workerPath = process.resourcesPath;
     await createUpdateTagsWorker({
-      workerData: workerPath
+      workerData: { workerPath: workerPath, data: arr }
     })
       .on('message', (message) => {
         console.log('message from worker: ', message);

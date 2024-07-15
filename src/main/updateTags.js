@@ -48,6 +48,7 @@ const tagKeys = {
 }; */
 
 const updateTags = async (arr) => {
+  console.log('arr: ', arr);
   try {
     // Create an array of promises to wait for all updates to complete
     const promises = arr.map(async (a) => {
