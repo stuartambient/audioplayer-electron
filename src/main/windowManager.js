@@ -30,6 +30,7 @@ function createOrUpdateChildWindow(name, type, config, data) {
       }
     });
 
+    window.removeMenu();
     const url =
       is.dev && process.env['ELECTRON_RENDERER_URL']
         ? `${process.env['ELECTRON_RENDERER_URL']}/${config.preload}.html`

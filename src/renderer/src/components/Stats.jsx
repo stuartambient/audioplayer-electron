@@ -27,7 +27,6 @@ const Stats = () => {
   useDistinctDirectories(setDirectories);
 
   const getKey = () => uuidv4();
-
   useEffect(() => {
     const handleWindowClosed = (name) => {
       console.log(`Window with name ${name} has been closed.`);
