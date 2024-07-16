@@ -316,6 +316,7 @@ const AGGrid = ({ reset, data, playButton }) => {
   }, []);
 
   const updateTags = async (arr) => {
+    console.log('updateTags: ', arr);
     const writeTags = await window.metadataEditingApi.updateTags(arr);
   };
 
@@ -336,6 +337,7 @@ const AGGrid = ({ reset, data, playButton }) => {
           if (!acc[undo.rowId]) {
             acc[undo.rowId] = {
               id: undo.audiotrack,
+              track_id: undo.rowId,
               changes: {}
             };
           }
@@ -345,6 +347,7 @@ const AGGrid = ({ reset, data, playButton }) => {
         }, {});
         const saveAll = Object.values(updatesByRow).map((row) => ({
           id: row.id,
+          track_id: row.track_id,
           updates: row.changes
         }));
         /* console.log('save all: ', saveAll); */

@@ -30,44 +30,54 @@ const tagKeys = {
   year: (param) => Number(param)
 };
 
-/* const updateTags = (arr) => {
+/* const updateTags = async (arr) => {
   try {
-    arr.forEach((a) => {
-      const myFile = File.createFromPath(a.id);
-      for (const [key, value] of Object.entries(a.updates)) {
-        console.log('processing file....: ', a.id);
-        const t = tagKeys[key](value);
-        myFile.tag[key] = t;
-        myFile.save();
-      }
-    });
-    return 'Tag updates successful';
-  } catch (e) {
-    console.error(e.message);
-  }
-}; */
-
-const updateTags = async (arr) => {
-  console.log('arr: ', arr);
-  try {
-    // Create an array of promises to wait for all updates to complete
-    const promises = arr.map(async (a) => {
+      const promises = arr.map(async (a) => {
       const myFile = File.createFromPath(a.id);
       for (const [key, value] of Object.entries(a.updates)) {
         console.log('processing file....: ', a.id);
         const t = tagKeys[key](value);
         myFile.tag[key] = t;
       }
-      // Ensure save is awaited
       await myFile.save();
     });
 
-    // Wait for all promises to resolve
     await Promise.all(promises);
     return 'Tag updates successful';
   } catch (e) {
-    console.error(e.message);
+    console.error('error msg: ', e.message);
   }
+};
+
+export default updateTags; */
+
+const updateTags = (arr) => {
+  // Array to store errors
+  const errors = [];
+
+  // Process each file synchronously
+  arr.forEach((a) => {
+    try {
+      const myFile = File.createFromPath(a.id);
+      for (const [key, value] of Object.entries(a.updates)) {
+        console.log('processing file....: ', a.id);
+        const t = tagKeys[key](value);
+        myFile.tag[key] = t;
+      }
+      // Save the file (synchronously)
+      myFile.save();
+    } catch (e) {
+      // Log the error and continue with the next file
+      console.error(`Error processing file ${a.id}: ${e.message}`);
+      errors.push({ track_id: a.track_id, id: a.id, error: e.message });
+    }
+  });
+
+  // Return results
+  return {
+    message: 'Tag updates completed with some errors',
+    errors
+  };
 };
 
 export default updateTags;

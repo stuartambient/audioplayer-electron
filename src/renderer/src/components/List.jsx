@@ -114,7 +114,6 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
       console.log('lowercasedFilter: ', lowercasedFilter);
       const filtered = data.filter((item) => {
         const field = fields[stat];
-        console.log('field: ', field, item[field]);
         if (!item[field]) return;
         return item[field].toLowerCase().includes(lowercasedFilter);
       });

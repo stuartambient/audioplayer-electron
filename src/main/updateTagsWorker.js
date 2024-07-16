@@ -22,7 +22,6 @@ const getUpdatedTracks = (tracks) => {
 };
 
 const refreshMetadata = (tracks) => {
-  console.log('refreshMetadata');
   const transaction = db.transaction(() => {
     const updateStmt = db.prepare(`
       UPDATE "audio-tracks" SET 
@@ -121,41 +120,24 @@ async function func1(data) {
   // Simulate a task
   return new Promise((resolve, reject) => {
     try {
-      updateTags(data);
-      console.log('update tags completed');
-      resolve(data); // Assuming updateTags is synchronous. Adjust if it's asynchronous.
+      const updateTagsResult = updateTags(data);
+      /* console.log('tags result: ', updateTagsResult); */
+      const updatedArray = data.filter(
+        (obj) => !updateTagsResult.errors.find((e) => e.track_id === obj.track_id)
+      );
+      /* console.log('updatedArray = ', updatedArray); */
+      resolve(updatedArray); // Assuming updateTags is synchronous. Adjust if it's asynchronous.
     } catch (error) {
       reject(error);
     }
   });
 }
 
-async function func2(data) {
-  // Simulate a task
-  return new Promise((resolve) => {
-    const updatedTracks = data.map((updatedTrack) => updatedTrack.id);
-    console.log('array completed');
-    resolve(updatedTracks);
-  });
-}
-
-async function func3(input) {
-  return new Promise((resolve, reject) => {
-    try {
-      const updatedMetadataTracks = getUpdatedTracks(input);
-      console.log('getUpdatedTracks completed');
-      resolve(updatedMetadataTracks);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
-
-async function func4(input) {
+async function func2(input) {
+  console.log('parseMeta: ');
   return new Promise((resolve, reject) => {
     try {
       const updatedMeta = parseMeta(input, 'mod');
-      console.log('parseMeta completed');
       resolve(updatedMeta);
     } catch (error) {
       reject(error);
@@ -163,12 +145,11 @@ async function func4(input) {
   });
 }
 
-async function func5(input) {
+async function func3(input) {
   return new Promise((resolve, reject) => {
     try {
       const updateMessage = refreshMetadata(input);
-      console.log('refreshMetadata completed');
-      resolve(updateMessage, updateMessage);
+      resolve(updateMessage);
     } catch (error) {
       reject(error);
     }
@@ -178,11 +159,9 @@ async function func5(input) {
 // Run the functions sequentially
 async function runSequentially(originalData) {
   const result1 = await func1(originalData);
-  const result2 = await func2(originalData);
+  const result2 = await func2(result1);
   const result3 = await func3(result2);
-  const result4 = await func4(result3);
-  const result5 = await func5(result4);
-  return result5;
+  return result3;
 }
 
 // Listen for messages from the main thread

@@ -954,11 +954,9 @@ ipcMain.handle('open-album-folder', async (_, path) => {
 });
 
 ipcMain.handle('get-preferences', async (event) => {
-  console.log('get-preferences');
   return await getPreferences();
 });
 
 ipcMain.handle('save-preferences', async (event, preferences) => {
-  console.log('preferences: ', preferences); /* .then(() => powerSaveBlocker.stop(resumeSleep)); */
-  /* await savePreferences(preferences); */
+  await savePreferences(preferences);
 });

@@ -223,13 +223,12 @@ const parseMeta = async (files, op) => {
 
   for (const file of files) {
     try {
-      const filePath = op === 'new' ? file : file.audiotrack;
-
+      const filePath = op === 'new' ? file : file.id;
       const myFile = await File.createFromPath(filePath);
       const fileStats = await fs.promises.stat(filePath);
       filesMetadata.push({
         track_id: op === 'new' ? uuidv4() : file.track_id,
-        root: findRoot(op === 'new' ? file : file.audiotrack),
+        root: findRoot(op === 'new' ? file : file.id),
         audiotrack: filePath /* op === 'new' ? file : file.audiotrack, */,
         modified: fileStats.mtimeMs || null,
         like: 0,
@@ -268,11 +267,11 @@ const parseMeta = async (files, op) => {
       });
     } catch (error) {
       console.error(`Error processing file ${file}: ${error.message}`);
-      const fileStats = await fs.promises.stat(op === 'new' ? file : file.audiotrack);
+      const fileStats = await fs.promises.stat(op === 'new' ? file : file.id);
       filesMetadata.push({
         track_id: op === 'new' ? uuidv4() : file.track_id,
-        root: findRoot(op === 'new' ? file : file.audiotrack),
-        audiotrack: op === 'new' ? file : file.audiotrack,
+        root: findRoot(op === 'new' ? file : file.id),
+        audiotrack: op === 'new' ? file : file.id,
         modified: fileStats.mtimeMs || null,
         like: 0,
         error: error.toString(),
