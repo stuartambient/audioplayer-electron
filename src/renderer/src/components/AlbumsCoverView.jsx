@@ -159,7 +159,7 @@ const AlbumsCoverView = ({ resetKey }) => {
   // Main function to handle cover search
   const handleCoverSearch = async (search) => {
     /*  console.log('search: ', search); */
-    const { album, path } = search;
+    const { album, path, service } = search;
 
     let artist, title;
     if (album.includes('-')) {
@@ -168,6 +168,21 @@ const AlbumsCoverView = ({ resetKey }) => {
         .map((part) => part.replaceAll(/\W/g, ' ').replaceAll('and', ' '));
     } else {
       title = album;
+    }
+
+    if (service === 'covit') {
+      return window.api.searchMusicHoarders(artist, title);
+      /*   return openChildWindow('cover-search-alt', 'cover-search-alt', {
+        width: 800,
+        height: 600,
+        show: false,
+        resizable: true,
+        preload: 'coverSearchAlt',
+        sandbox: false,
+        webSecurity: false,
+        contextIsolation: true
+      }); */
+      /* return console.log(search); */
     }
 
     const discogsKey = import.meta.env.RENDERER_VITE_DISCOGS_CONSUMER_KEY;
@@ -236,6 +251,11 @@ const AlbumsCoverView = ({ resetKey }) => {
       handleAlbumToPlaylist(path);
     } else if (option[0] === 'open album folder') {
       await window.api.openAlbumFolder(path);
+    } else if (option[0] === 'cover search engine') {
+      /* console.log('cover - search - engine', option, 'path: ', path, 'album: ', album); */
+      const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
+      const refAlbum = album.replace(regex, '');
+      handleCoverSearch({ path: path, album: refAlbum, service: 'covit' });
     }
   };
 

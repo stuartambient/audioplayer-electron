@@ -30,6 +30,7 @@
     "eslint-config-react-app": "^7.0.1",
     "fast-glob": "^3.2.12",
     "node-taglib-sharp": "^5.2.3",
+    "oauth-electron": "^2.0.104",
     "react-icons": "^4.7.1",
     "react-virtuoso": "^4.7.10",
     "uuid": "^9.0.0"

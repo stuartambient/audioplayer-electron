@@ -3,6 +3,9 @@ import { useAudioPlayer } from '../AudioPlayerContext';
 import { v4 as uuidv4 } from 'uuid';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { AiFillDownSquare } from 'react-icons/ai';
+import { IoIosAlbums } from 'react-icons/io';
+import { FaTags } from 'react-icons/fa';
+import { PiPlaylistLight } from 'react-icons/pi';
 import Stats from './Stats';
 import Playlists from './Playlists';
 /* import AppState from '../hooks/AppState'; */
@@ -53,7 +56,8 @@ const Home = () => {
           id="albums-cover-view"
           onClick={handleHomePage}
         >
-          <span>Albums with Cover View</span>
+          <IoIosAlbums />
+          Albums
         </li>
         {/* <li className="covers-search"></li> */}
         {homepage === 'albums-cover-view' && (
@@ -93,7 +97,8 @@ const Home = () => {
           id="stats"
           onClick={handleHomePage}
         >
-          <span>Stats</span>
+          <FaTags />
+          Tag Editor
           {/* <Stats /> */}
         </li>
         <li
@@ -101,7 +106,8 @@ const Home = () => {
           id="playlists"
           onClick={handleHomePage}
         >
-          <span>Playlists</span>
+          <PiPlaylistLight />
+          Playlists
         </li>
         {/*         <li
           className={homepage === 'coversearch' ? 'home-cards--item active' : 'home-cards--item'}

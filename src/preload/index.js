@@ -77,6 +77,7 @@ contextBridge.exposeInMainWorld('api', {
       cb(result);
     });
   },
+  searchMusicHoarders: (artist, title) => ipcRenderer.invoke('search-musicHoarders', artist, title),
   removeChildWindowClosedListener: (callback) => {
     ipcRenderer.removeListener('window-closed', callback);
   },

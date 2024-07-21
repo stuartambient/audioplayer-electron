@@ -12,6 +12,7 @@ import {
 import { FaListUl } from 'react-icons/fa';
 import { BsMusicPlayer } from 'react-icons/bs';
 import { CgMiniPlayer } from 'react-icons/cg';
+import { VscChromeMaximize, VscChromeMinimize, VscChromeClose } from 'react-icons/vsc';
 
 import '../style/MainNav.css';
 
@@ -45,13 +46,13 @@ const MainNav = ({ onClick }) => {
           </ul>
           <ul className="main-nav--right">
             <li onClick={onClick} id="minimize">
-              <AiOutlineMinus />
+              <VscChromeMinimize />
             </li>
             <li onClick={onClick} id="maximize">
-              <AiOutlineFullscreen />
+              <VscChromeMaximize />
             </li>
             <li onClick={onClick} id="close">
-              <AiOutlineClose />
+              <VscChromeClose />
             </li>
           </ul>
         </>

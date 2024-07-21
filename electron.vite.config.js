@@ -9,6 +9,7 @@ export default defineConfig({
     plugins: [externalizeDepsPlugin()],
     build: {
       sourcemap: true,
+      publicDir: 'assets',
       rollupOptions: {
         external: [
           'src/db/music.db'

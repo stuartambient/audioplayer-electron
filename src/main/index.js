@@ -14,6 +14,7 @@ import {
 } from 'electron';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import { exec } from 'child_process';
 import process from 'node:process';
 import fs from 'node:fs';
 /* import { spawn } from 'child_process'; */
@@ -21,6 +22,7 @@ import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowMa
 import url, { pathToFileURL } from 'url';
 /* import http from 'node:http'; */
 import * as stream from 'stream';
+import covit from './assets/covit.exe?asset';
 /* import { promisify } from 'util'; */
 /* import { Buffer } from 'buffer'; */
 import { Worker } from 'worker_threads';
@@ -855,6 +857,13 @@ ipcMain.handle('show-album-cover-menu', (event) => {
       click: () => {
         return event.sender.send('album-menu', 'open album folder');
       }
+    },
+    { type: 'separator' },
+    {
+      label: 'cover search engine',
+      click: () => {
+        return event.sender.send('album-menu', 'cover search engine');
+      }
     }
   ];
   const menu = Menu.buildFromTemplate(template);
@@ -925,6 +934,67 @@ ipcMain.handle('download-file', async (event, ...args) => {
     console.error('Error during download or save:', err);
     return `Error: ${err.message}`;
   }
+});
+
+const createRemoteWindow = (artist, title) => {
+  const remotePort = 'browser';
+  const remoteAgent = 'MusicPlayer-Electron/1.0';
+  const remoteText = 'Integration active.';
+
+  const url = new URL('https://covers.musichoarders.xyz');
+  url.searchParams.set('remote.port', remotePort);
+  url.searchParams.set('remote.agent', remoteAgent);
+  url.searchParams.set('remote.text', remoteText);
+  url.searchParams.set('artist', artist);
+  url.searchParams.set('album', title);
+  url.searchParams.set('sources]', ['amazonmusic', 'applemusic']);
+
+  const remoteWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  remoteWindow.loadURL(url.toString());
+};
+
+function openCoverSearch(address) {
+  let win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  });
+
+  win.loadURL(address);
+}
+
+ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
+  console.log('musicHoarders: ', artist, title);
+  /* const executablePath = path.join(__dirname, 'covit.exe');
+  console.log('executable path: ', executablePath); */
+  /*   exec(
+    `${covit} --address "https://covers.musichoarders.xyz" --query-artist ${artist} --query-album ${title}`,
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error: ${error.message}`);
+        return;
+      }
+      if (stderr) {
+        console.error(`Stderr: ${stderr}`);
+        return;
+      }
+      console.log(`Stdout: ${stdout}`); */
+  /* openCoverSearch(`https://covers.musichoarders.xyz?theme=dark&album=${title}&artist=${artist}`); */
+  /*   }
+  ); */
+
+  createRemoteWindow(artist, title);
 });
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {

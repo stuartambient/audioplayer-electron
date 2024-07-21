@@ -4,13 +4,19 @@
   /*   border-top: 1px solid white;
   border-bottom: 1px solid var(--blue1); */
   display: grid;
-  grid-template-columns: 5% repeat(4, 1fr);
+  grid-template-columns: 5% 1fr 1.5fr 0.2fr;
   grid-template-rows: 2rem;
   align-items: center;
   background: #2d2d2d;
   -webkit-app-region: drag;
   -webkit-user-select: none;
 }
+/* 
+.drag-area {
+  grid-column: 3/4;
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+} */
 
 .endline {
   -webkit-app-region: no-drag;
@@ -110,7 +116,7 @@
 
 .main-nav--right {
   /* width: 100$; */
-  margin-left: 30%;
+  /* margin-left: 30%; */
   grid-column: 5 /6;
   min-width: 100%;
 }
