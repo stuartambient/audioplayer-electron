@@ -949,19 +949,30 @@ const createRemoteWindow = (artist, title) => {
   url.searchParams.set('album', title);
   url.searchParams.set('sources]', ['amazonmusic', 'applemusic']);
 
-  const remoteWindow = new BrowserWindow({
+  /*   const remoteWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
-    }
-  });
-
-  remoteWindow.loadURL(url.toString());
+      contextIsolation: true */
+  /* preload: path.join(__dirname, '../preload/index.js') */
+  /*    }
+  }); */
+  return url.toString();
+  /* remoteWindow.loadURL(url.toString()); */
 };
 
-function openCoverSearch(address) {
+/* createOrUpdateChildWindow('mh-covers', 'mh-cover-search', {
+  width: 800,
+  height: 600,
+  show: false,
+  resizable: true,
+  preload: 'coverSearchAlt',
+  sandbox: false,
+  webSecurity: false,
+  contextIsolation: true
+}); */
+
+/* function openCoverSearch(address) {
   let win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -972,7 +983,7 @@ function openCoverSearch(address) {
   });
 
   win.loadURL(address);
-}
+} */
 
 ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
   console.log('musicHoarders: ', artist, title);
@@ -994,7 +1005,28 @@ ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
   /*   }
   ); */
 
-  createRemoteWindow(artist, title);
+  const url = createRemoteWindow(artist, title);
+  console.log('url: ', url);
+
+  createOrUpdateChildWindow(
+    'mh-covers',
+    'mh-cover-search',
+    {
+      width: 1000,
+      height: 600,
+      show: false,
+      resizable: true,
+      preload: 'coverSearchAlt',
+      sandbox: false,
+      webSecurity: true,
+      contextIsolation: true
+    },
+    { artist, title }
+  );
+
+  console.log(getWindowNames());
+  const child = getWindow('mh-covers');
+  child.webContents.loadURL('http://www.google.com');
 });
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {

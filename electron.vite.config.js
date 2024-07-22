@@ -28,7 +28,8 @@ export default defineConfig({
           index: resolve(__dirname, 'src/preload/index.js'),
           coverSearch: resolve(__dirname, 'src/preload/coverSearch.js'),
           metadataEditing: resolve(__dirname, 'src/preload/metadataEditing.js'),
-          tagForm: resolve(__dirname, 'src/preload/tagForm.js')
+          tagForm: resolve(__dirname, 'src/preload/tagForm.js'),
+          coverSearchAlt: resolve(__dirname, 'src/preload/coverSearchAlt.js')
         },
         external: ['src/db/music.db'] // Exclude the database file
       }
