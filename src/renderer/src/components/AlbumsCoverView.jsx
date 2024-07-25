@@ -30,15 +30,6 @@ const AlbumsCoverView = ({ resetKey }) => {
     state.covers.length
   );
 
-  /*   useEffect(() => {
-    const cover = async () => {
-      await window.api.onRefreshHomeCover((e) => {
-        setCoverUpdate({ path: e[0], file: e[1] });
-      });
-    };
-    cover();
-  }, [state.covers]); */
-
   const compareStrings = (folderName, apiTitle) => {
     const apiTitleParts = apiTitle
       .replace('-', '')
@@ -171,17 +162,23 @@ const AlbumsCoverView = ({ resetKey }) => {
     }
 
     if (service === 'covit') {
-      return window.api.searchMusicHoarders(artist, title);
-      /*   return openChildWindow('cover-search-alt', 'cover-search-alt', {
-        width: 800,
-        height: 600,
-        show: false,
-        resizable: true,
-        preload: 'coverSearchAlt',
-        sandbox: false,
-        webSecurity: false,
-        contextIsolation: true
-      }); */
+      /* return window.api.searchMusicHoarders(artist, title); */
+
+      return openChildWindow(
+        'cover-search-alt',
+        'cover-search-alt',
+        {
+          width: 800,
+          height: 600,
+          show: false,
+          resizable: true,
+          preload: 'coverSearchAlt',
+          sandbox: false,
+          webSecurity: false,
+          contextIsolation: true
+        },
+        { artist, title }
+      );
       /* return console.log(search); */
     }
 

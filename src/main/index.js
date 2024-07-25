@@ -6,10 +6,12 @@ import {
   ipcMain,
   Menu,
   /* BrowserView, */
+  webContents,
   dialog,
   /* webContents, */
   protocol,
-  powerMonitor
+  powerMonitor,
+  MessageChannelMain
   /* powerSaveBlocker */
 } from 'electron';
 import * as path from 'path';
@@ -984,9 +986,8 @@ const createRemoteWindow = (artist, title) => {
 
   win.loadURL(address);
 } */
-
 ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
-  console.log('musicHoarders: ', artist, title);
+  /*  console.log('musicHoarders: ', artist, title); */
   /* const executablePath = path.join(__dirname, 'covit.exe');
   console.log('executable path: ', executablePath); */
   /*   exec(
@@ -1005,8 +1006,7 @@ ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
   /*   }
   ); */
 
-  const url = createRemoteWindow(artist, title);
-  console.log('url: ', url);
+  /*  const url = createRemoteWindow(artist, title); */
 
   createOrUpdateChildWindow(
     'mh-covers',
@@ -1020,13 +1020,68 @@ ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
       sandbox: false,
       webSecurity: true,
       contextIsolation: true
-    },
-    { artist, title }
+    }
+    /* { artist, title } */
   );
 
-  console.log(getWindowNames());
-  const child = getWindow('mh-covers');
-  child.webContents.loadURL('http://www.google.com');
+  /* console.log(getWindowNames()); */
+
+  const mhCovers = getWindow('mh-covers');
+  await mhCovers.loadURL(url);
+  mhCovers.webContents.openDevTools();
+  mhCovers.webContents.on('did-finish-load', () => {
+    mhCovers.webContents.send('external-window-loaded');
+  });
+
+  const script = `
+  document.addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default action
+    console.log('Element clicked:', event.target);
+  });
+`;
+
+  mhCovers.webContents.on('update-target-url', (_, url) => {
+    if (url === '') return;
+    console.log('url: ', url);
+  });
+
+  /*   mhCovers.webContents.on('context-menu', (_, params) => {
+    console.log('context-menu', params);
+  }); */
+
+  const { port1, port2 } = new MessageChannelMain();
+  mhCovers.webContents.postMessage('port', null, [port2]);
+  port1.postMessage({ type: 'close' });
+
+  /* mhCovers.webContents.postMessage({ type: 'close' }); */
+
+  mhCovers.webContents.on('console-message', (_, ...args) => {
+    console.log('console message: ', args);
+  });
+
+  mhCovers.webContents.on('preload-error', (_, preloadPath, error) => {
+    console.log('preload-error: ', preloadPath, error);
+  });
+
+  /*   const { port1, port2 } = new MessageChannelMain();
+  mhCovers.webContents.postMessage('port', { message: 'hello' }, [port1]); */
+
+  /*  console.log('Debugger: ', mhCovers.webContents.debugger); */
+
+  console.log('web contents: ', mhCovers.webContents);
+
+  mhCovers.webContents
+    .executeJavaScript(script)
+    .then((result) => {
+      console.log('Click listener script injected successfully');
+    })
+    .catch((error) => {
+      console.error('Failed to inject click listener script:', error);
+    });
+  /*   mhCovers.webContents.on('will-navigate', (event, url) => {
+    console.log('Navigation will occur to:', url);
+    event.preventDefault();
+  }); */
 });
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {
@@ -1061,4 +1116,11 @@ ipcMain.handle('get-preferences', async (event) => {
 
 ipcMain.handle('save-preferences', async (event, preferences) => {
   await savePreferences(preferences);
+});
+
+ipcMain.on('iframe-links', async () => {
+  const iframeWindow = getWindow('cover-search-alt');
+  iframeWindow.webContents.on('update-target-url', (_, url) => {
+    console.log('url: ', url);
+  });
 });

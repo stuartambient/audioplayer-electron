@@ -1,9 +1,10 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
 
-// Custom APIs for renderer
 const coverSearchAltApi = {
-  onSendToChild: (cb) => ipcRenderer.once('send-to-child', (event, args) => cb(args))
+  onSendToChild: (cb) => ipcRenderer.once('send-to-child', (event, args) => cb(args)),
+  iframeLinks: () => ipcRenderer.send('iframe-links'),
+  off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 };
 
 if (process.contextIsolated) {
@@ -17,7 +18,3 @@ if (process.contextIsolated) {
   window.electron = electronAPI;
   window.coverSearchAltApi = coverSearchAltApi;
 }
-
-/* releases.release[0].results
-releases.release[0].path
-releases.release[1].searched */

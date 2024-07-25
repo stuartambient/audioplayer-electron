@@ -7,6 +7,7 @@ import { mainWindow } from './index.js';
 const windows = new Map();
 
 function createOrUpdateChildWindow(name, type, config, data) {
+  console.log('data: ', data);
   console.log(`Creating or updating window: ${name}`);
   let window = windows.get(name);
   if (window) {
@@ -31,26 +32,27 @@ function createOrUpdateChildWindow(name, type, config, data) {
     });
 
     window.removeMenu();
+
     const url =
       is.dev && process.env['ELECTRON_RENDERER_URL']
         ? `${process.env['ELECTRON_RENDERER_URL']}/${config.preload}.html`
         : path.join(__dirname, `../renderer/${config.preload}.html`);
 
     is.dev ? window.loadURL(url) : window.loadFile(url);
-
-    window.on('closed', () => {
-      console.log(`Window ${name} closed`);
-      windows.delete(name);
-      mainWindow.webContents.send('window-closed', name);
-    });
-
-    windows.set(name, window);
-
-    window.once('ready-to-show', () => {
-      window.show();
-      window.webContents.send('send-to-child', data);
-    });
   }
+
+  window.on('closed', () => {
+    console.log(`Window ${name} closed`);
+    windows.delete(name);
+    mainWindow.webContents.send('window-closed', name);
+  });
+
+  windows.set(name, window);
+
+  window.once('ready-to-show', () => {
+    window.show();
+    window.webContents.send('send-to-child', data);
+  });
 }
 
 function getWindow(win) {
