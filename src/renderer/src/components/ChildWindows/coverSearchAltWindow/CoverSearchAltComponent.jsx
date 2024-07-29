@@ -3,13 +3,63 @@ import React, { useState, useEffect, useRef } from 'react';
 const CoverSearchAltApp = () => {
   const [artist, setArtist] = useState('');
   const [album, setAlbum] = useState('');
+  const [savePath, setSavePath] = useState('');
+  const [link, setLink] = useState('');
+  /* const [nonce, setNonce] = useState(''); */
   const iframeRef = useRef(null);
+
+  const generateNonce = () => {
+    return Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
+      byte.toString(16).padStart(2, '0')
+    ).join('');
+  };
+  const [nonce] = useState(generateNonce());
+  /* const nonce = generateNonce(); */
+  /* const nonce = generateNonce(); */
+  /*   useEffect(() => {
+    setNonce(generateNonce());
+  }); */
+  useEffect(() => {
+    const metaTag = document.createElement('meta');
+    metaTag.setAttribute('http-equiv', 'Content-Security-Policy');
+    metaTag.setAttribute(
+      'content',
+      `
+        default-src 'self';
+        frame-src 'self' https://covers.musichoarders.xyz;
+        script-src 'self' https://covers.musichoarders.xyz 'nonce-${nonce}';
+        style-src 'self' 'unsafe-inline';
+        connect-src 'self' https://covers.musichoarders.xyz;
+        child-src 'self' https://covers.musichoarders.xyz;
+        frame-ancestors 'self' https://covers.musichoarders.xyz;
+        img-src * data:;
+      `
+    );
+    document.head.appendChild(metaTag);
+
+    const scriptTag = document.querySelector('script[nonce="RUNTIME_NONCE"]');
+    if (scriptTag) {
+      scriptTag.setAttribute('nonce', nonce);
+    }
+
+    // Cleanup: Remove the meta tag when the component unmounts
+    return () => {
+      document.head.removeChild(metaTag);
+    };
+  }, [nonce]);
+
+  /*   csp.innerText.replace(/RUNTIME_NONCE/g, nonce); */
+  /*   csp[0].attributes.content.textContent.replace('RUNTIME_NONCE', nonce);
+  const meta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+  console.log('meta: ', meta); */
+  /*scriptTag.replace(/RUNTIME_NONCE/, nonce); */
 
   useEffect(() => {
     const handleSearchParams = (args) => {
       console.log('Received from puppet:', args.results);
       setArtist(args.results.artist);
       setAlbum(args.results.title);
+      setSavePath(args.results.path);
     };
 
     window.coverSearchAltApi.onSendToChild(handleSearchParams);
@@ -18,6 +68,78 @@ const CoverSearchAltApp = () => {
       window.coverSearchAltApi.off('send-to-child', handleSearchParams);
     };
   }); // Empty array to set up the listener once
+  useEffect(() => {
+    /* const nonce = 'random-nonce-value'; */ // You can generate a random nonce value dynamically
+
+    const messageHandler = (event) => {
+      // Verify the origin to ensure security
+      if (event.origin !== 'https://covers.musichoarders.xyz') {
+        /* console.error('Untrusted origin:', event.origin); */
+        return;
+      }
+
+      try {
+        // Ensure event data is in the expected format (an object stringified as JSON)
+        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+
+        // Validate the message structure
+        if (data && typeof data === 'object' && data.action === 'primary' && data.type === 'pick') {
+          console.log('Valid message data:', data);
+
+          // Open the big cover URL in a new window and set the CSP
+
+          const newWindow = window.open('', '_blank');
+          if (newWindow) {
+            newWindow.document.write(`
+             <html>
+              <head>
+                <title>Big Cover Image</title>
+                <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; script-src 'self' 'nonce-${nonce}'; style-src 'self'">
+              </head>
+            
+              <body>
+              <button id="download-image">Download Image</button>
+                <img src="${data.bigCoverUrl}" alt="Big Cover Image">
+                </div>
+                <script nonce="${nonce}">
+                  document.getElementById('download-image').addEventListener('click', function() {
+                    window.opener.postMessage({ action: 'fromChild', message: 'download' }, '*');
+                  });
+                </script>
+              </body>
+              </html>
+            `);
+            newWindow.document.close();
+          } else {
+            alert('Popup blocked! Please allow popups for this site.');
+          }
+        } else {
+          throw new Error('Invalid message structure');
+        }
+      } catch (error) {
+        console.error('Error handling message:', error);
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('message', messageHandler);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('message', messageHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleLink = (url) => {
+      console.log(url);
+    };
+    window.coverSearchAltApi.onIframeLink(handleLink);
+
+    return () => {
+      window.coverSearchAltApi.off('iframe-link', handleLink);
+    };
+  });
 
   useEffect(() => {
     const sendMessageToIframe = (message) => {
@@ -33,7 +155,7 @@ const CoverSearchAltApp = () => {
     const handleIframeLoad = () => {
       const textMessage = {
         type: 'text',
-        text: `Artist: ${artist}, Album: ${album}`
+        text: `Searching https://covers.musichoarders.xyz | Artist: ${artist}, Album: ${album}`
       };
       sendMessageToIframe(textMessage);
 
@@ -64,8 +186,18 @@ const CoverSearchAltApp = () => {
   }, [artist, album]);
 
   useEffect(() => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      const iframe = document.getElementById('myIframe');
+      iframe.addEventListener('click', () => {
+        console.log('iframe clicked');
+      });
+    }
+  });
+
+  /*   useEffect(() => {
     const receiveMessage = (event) => {
-      console.log('Received message from:', event.origin);
+      console.log('Received message from:', event);
+      console.log('event: ', event);
 
       if (event.origin !== 'https://covers.musichoarders.xyz') {
         console.log('Ignoring message from:', event.origin);
@@ -86,7 +218,7 @@ const CoverSearchAltApp = () => {
     return () => {
       window.removeEventListener('message', receiveMessage);
     };
-  }, []);
+  }, []); */
 
   if (!artist) {
     return null;
@@ -94,7 +226,7 @@ const CoverSearchAltApp = () => {
 
   const remotePort = 'browser';
   const remoteAgent = 'MusicPlayer-Electron/1.0';
-  const remoteText = 'Integration active.';
+  const remoteText = 'https://covers.musichoarders.xyz/';
 
   const url = new URL('https://covers.musichoarders.xyz');
   url.searchParams.set('remote.port', remotePort);
@@ -107,11 +239,7 @@ const CoverSearchAltApp = () => {
   const srcUrl = url.toString();
 
   return (
-    <div
-      className="iframeContainer"
-      sandbox
-      style={{ width: '100%', height: '100vh', overflow: 'hidden' }}
-    >
+    <div className="iframeContainer" style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>
       <iframe
         ref={iframeRef}
         id="myIframe"
@@ -119,7 +247,6 @@ const CoverSearchAltApp = () => {
         width="100%"
         height="100%"
         title="Cover Search"
-        allow-scripts
       ></iframe>
     </div>
   );

@@ -151,6 +151,7 @@ const AlbumsCoverView = ({ resetKey }) => {
   const handleCoverSearch = async (search) => {
     /*  console.log('search: ', search); */
     const { album, path, service } = search;
+    console.log('path: ', path);
 
     let artist, title;
     if (album.includes('-')) {
@@ -174,10 +175,10 @@ const AlbumsCoverView = ({ resetKey }) => {
           resizable: true,
           preload: 'coverSearchAlt',
           sandbox: false,
-          webSecurity: false,
+          webSecurity: true,
           contextIsolation: true
         },
-        { artist, title }
+        { artist, title, path }
       );
       /* return console.log(search); */
     }

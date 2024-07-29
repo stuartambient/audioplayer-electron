@@ -8,6 +8,7 @@ import {
   /* BrowserView, */
   webContents,
   dialog,
+  net,
   /* webContents, */
   protocol,
   powerMonitor,
@@ -92,6 +93,17 @@ protocol.registerSchemesAsPrivileged([
   }
 ]);
 
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'file',
+    privileges: {
+      standard: true,
+      secure: true,
+      supportFetchAPI: true
+    }
+  }
+]);
+
 /* IN DOCUMENTS/ELECTRONMUSICPLAYER */
 const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`;
 const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`;
@@ -139,15 +151,15 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
-      webSecurity: false,
+      webSecurity: true,
       contextIsolation: true,
       nodeIntegration: true
     }
   });
 
-  mainWindow.on('ready-to-show', () => {
+  /*   mainWindow.on('ready-to-show', () => {
     mainWindow.show();
-  });
+  }); */
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url);
@@ -196,6 +208,7 @@ app.whenReady().then(async () => {
 
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
+  console.log('dirname: ', __dirname);
   // Register the custom 'streaming' protocol
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
     const uri = decodeURIComponent(request.url);
@@ -235,6 +248,17 @@ app.whenReady().then(async () => {
     }
   });
 
+  protocol.registerFileProtocol('file', (request, cb) => {
+    const url = request.url.replace('file:///', '');
+    const decodedPath = decodeURIComponent(url);
+    /* const decodedUrl = encodeURI(url); */
+    try {
+      return cb(decodedPath);
+    } catch (error) {
+      console.error('ERROR: registerLocalResourceProtocol: Could not get file path:', error);
+    }
+  });
+
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window);
   });
@@ -257,7 +281,7 @@ app.whenReady().then(async () => {
   powerMonitor.on('shutdown', () => {
     console.log('The system is shutting down: ', new Date());
   });
-
+  mainWindow.show();
   mainWindow.webContents.openDevTools();
 });
 
@@ -1118,9 +1142,12 @@ ipcMain.handle('save-preferences', async (event, preferences) => {
   await savePreferences(preferences);
 });
 
-ipcMain.on('iframe-links', async () => {
+ipcMain.on('iframe-links', async (event) => {
   const iframeWindow = getWindow('cover-search-alt');
   iframeWindow.webContents.on('update-target-url', (_, url) => {
     console.log('url: ', url);
+    if (url !== '') {
+      event.sender.send('iframe-link', url);
+    }
   });
 });

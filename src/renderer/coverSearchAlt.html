@@ -4,14 +4,35 @@
     <meta charset="UTF-8" />
     <title>Cover Search Alt</title>
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
+    <!--     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; frame-src 'self' https://covers.musichoarders.xyz; script-src 'self'; style-src 'self' 'unsafe-inline'"
-    />
+      content="
+    default-src 'self'; 
+    frame-src 'self' https://covers.musichoarders.xyz; 
+    script-src 'self' https://covers.musichoarders.xyz 'nonce-RUNTIME_NONCE';
+    style-src 'self' 'unsafe-inline'; 
+    connect-src 'self' https://covers.musichoarders.xyz;
+    child-src 'self' https://covers.musichoarders.xyz;
+    frame-ancestors 'self' https://covers.musichoarders.xyz;
+    img-src * data:;
+  "
+    /> -->
   </head>
 
   <body>
     <div id="cover-search-alt"></div>
-    <script type="module" src="/src/coverSearchAlt.jsx"></script>
+    <script nonce="RUNTIME_NONCE" type="module" src="/src/coverSearchAlt.jsx"></script>
+    <!--  <script nonce="RUNTIME_NONCE">
+      document.querySelector('meta[http-equiv="Content-Security-Policy"]').setAttribute(
+        'content',
+        document
+          .querySelector('meta[http-equiv="Content-Security-Policy"]')
+          .getAttribute('content')
+          .replace(/RUNTIME_NONCE/g, window.nonce)
+      );
+      document
+        .querySelector('script[src="/src/coverSearchAlt.jsx"]')
+        .setAttribute('nonce', window.nonce);
+    </script> -->
   </body>
 </html>
