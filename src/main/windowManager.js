@@ -7,7 +7,7 @@ import { mainWindow } from './index.js';
 const windows = new Map();
 
 function createOrUpdateChildWindow(name, type, config, data) {
-  console.log('data: ', data);
+  console.log(name, type, config);
   console.log(`Creating or updating window: ${name}`);
   let window = windows.get(name);
   if (window) {
@@ -27,7 +27,8 @@ function createOrUpdateChildWindow(name, type, config, data) {
         preload: path.join(__dirname, `../preload/${config.preload}.js`),
         sandbox: config.sandbox,
         webSecurity: config.webSecurity,
-        contextIsolation: config.contextIsolation
+        contextIsolation: config.contextIsolation,
+        nodeIntegration: false
       }
     });
 

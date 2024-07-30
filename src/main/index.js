@@ -95,11 +95,12 @@ protocol.registerSchemesAsPrivileged([
 
 protocol.registerSchemesAsPrivileged([
   {
-    scheme: 'file',
+    scheme: 'cover',
     privileges: {
       standard: true,
       secure: true,
-      supportFetchAPI: true
+      supportFetchAPI: true,
+      corsEnabled: true
     }
   }
 ]);
@@ -150,7 +151,7 @@ function createWindow() {
       : {}),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
-      sandbox: false,
+      sandbox: true,
       webSecurity: true,
       contextIsolation: true,
       nodeIntegration: true
@@ -205,7 +206,10 @@ let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
-
+  console.log('__dirname: ', __dirname);
+  await session.defaultSession.clearCache(() => {
+    console.log('--------> Cache cleared!');
+  });
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
   console.log('dirname: ', __dirname);
@@ -248,15 +252,27 @@ app.whenReady().then(async () => {
     }
   });
 
-  protocol.registerFileProtocol('file', (request, cb) => {
-    const url = request.url.replace('file:///', '');
-    const decodedPath = decodeURIComponent(url);
-    /* const decodedUrl = encodeURI(url); */
-    try {
-      return cb(decodedPath);
-    } catch (error) {
-      console.error('ERROR: registerLocalResourceProtocol: Could not get file path:', error);
+  protocol.registerFileProtocol('cover', (request, callback) => {
+    let url = decodeURI(request.url.substr(8)); // Remove 'cover://' part and decode URI
+
+    // If the URL is for a Windows path (e.g., starts with a drive letter), add the colon back after the drive letter
+    if (/^[a-zA-Z]\//.test(url)) {
+      url = `${url[0]}:${url.slice(1)}`;
     }
+
+    const filePath = path.normalize(url);
+
+    /*   console.log('Request URL:', request.url);
+    console.log('Resolved File Path:', filePath); */
+
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+      if (err) {
+        console.error('File does not exist:', filePath);
+        callback({ error: -6 }); // -6 corresponds to FILE_NOT_FOUND
+      } else {
+        callback({ path: filePath });
+      }
+    });
   });
 
   app.on('browser-window-created', (_, window) => {
@@ -727,7 +743,9 @@ ipcMain.handle('get-covers', async (_, ...args) => {
         }
         const imgPath = `${l.fullpath}/${checkImg}`;
         const imgUrl = url.pathToFileURL(imgPath);
-        const imageobj = { img: imgUrl.href, list: 'covers' };
+        /* console.log(imgPath); */
+        //const imageobj = { img: imgUrl.href, list: 'covers' };
+        const imageobj = { img: imgPath, list: 'covers' };
 
         return { ...l, ...imageobj };
       } catch (err) {
@@ -1142,7 +1160,7 @@ ipcMain.handle('save-preferences', async (event, preferences) => {
   await savePreferences(preferences);
 });
 
-ipcMain.on('iframe-links', async (event) => {
+/* ipcMain.on('iframe-links', async (event) => {
   const iframeWindow = getWindow('cover-search-alt');
   iframeWindow.webContents.on('update-target-url', (_, url) => {
     console.log('url: ', url);
@@ -1150,4 +1168,4 @@ ipcMain.on('iframe-links', async (event) => {
       event.sender.send('iframe-link', url);
     }
   });
-});
+}); */

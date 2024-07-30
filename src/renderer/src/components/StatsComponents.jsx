@@ -39,8 +39,8 @@ const initTable = async (type, data = null) => {
     show: false,
     resizable: true,
     preload: 'metadataEditing',
-    sandbox: false,
-    webSecurity: false,
+    sandbox: true,
+    webSecurity: true,
     contextIsolation: true
   };
   openChildWindow(name, type, config, data);

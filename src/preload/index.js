@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { electronAPI } from '@electron-toolkit/preload';
+/* import { electronAPI } from '@electron-toolkit/preload'; */
 
 const fixedEncodeURIComponent = (str) => {
   return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {

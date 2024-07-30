@@ -5,6 +5,7 @@ const CoverSearchAltApp = () => {
   const [album, setAlbum] = useState('');
   const [savePath, setSavePath] = useState('');
   const [link, setLink] = useState('');
+  const [currentImage, setCurrentImage] = useState('');
   /* const [nonce, setNonce] = useState(''); */
   const iframeRef = useRef(null);
 
@@ -54,6 +55,8 @@ const CoverSearchAltApp = () => {
   console.log('meta: ', meta); */
   /*scriptTag.replace(/RUNTIME_NONCE/, nonce); */
 
+  useEffect(() => {});
+
   useEffect(() => {
     const handleSearchParams = (args) => {
       console.log('Received from puppet:', args.results);
@@ -73,6 +76,16 @@ const CoverSearchAltApp = () => {
 
     const messageHandler = (event) => {
       // Verify the origin to ensure security
+      console.log(
+        'download button: ',
+        event.origin,
+        '---',
+        event.data.action,
+        '-----',
+        event.data.message,
+        '---',
+        event.data.message
+      );
       if (event.origin !== 'https://covers.musichoarders.xyz') {
         /* console.error('Untrusted origin:', event.origin); */
         return;
@@ -85,6 +98,8 @@ const CoverSearchAltApp = () => {
         // Validate the message structure
         if (data && typeof data === 'object' && data.action === 'primary' && data.type === 'pick') {
           console.log('Valid message data:', data);
+
+          setCurrentImage(data.bigCoverUrl);
 
           // Open the big cover URL in a new window and set the CSP
 
@@ -130,7 +145,7 @@ const CoverSearchAltApp = () => {
     };
   }, []);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const handleLink = (url) => {
       console.log(url);
     };
@@ -139,7 +154,7 @@ const CoverSearchAltApp = () => {
     return () => {
       window.coverSearchAltApi.off('iframe-link', handleLink);
     };
-  });
+  }); */
 
   useEffect(() => {
     const sendMessageToIframe = (message) => {
@@ -175,7 +190,7 @@ const CoverSearchAltApp = () => {
 
     if (iframeRef.current) {
       iframeRef.current.addEventListener('load', handleIframeLoad);
-      window.coverSearchAltApi.iframeLinks();
+      /* window.coverSearchAltApi.iframeLinks(); */
     }
 
     return () => {

@@ -14,8 +14,8 @@ const Item = forwardRef((props, ref) => {
   };
 
   const loadFile = async (file, id) => {
-    console.log('file: ', file, 'id: ', id);
     try {
+      console.log('file: ', file);
       state.audioRef.current.src = await `streaming://${file}`;
       /* const buf = await state.audioRef.current.src.arrayBuffer(); */
     } catch (e) {

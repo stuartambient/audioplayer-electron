@@ -174,7 +174,7 @@ const AlbumsCoverView = ({ resetKey }) => {
           show: false,
           resizable: true,
           preload: 'coverSearchAlt',
-          sandbox: false,
+          sandbox: true,
           webSecurity: true,
           contextIsolation: true
         },
@@ -304,7 +304,7 @@ const AlbumsCoverView = ({ resetKey }) => {
           state.covers.map((cover, idx) => {
             return (
               <li key={uuidv4()} ref={state.covers.length === idx + 1 ? lastCoverElement : null}>
-                {cover.img && <img src={cover.img} alt="" />}
+                {cover.img && <img src={`cover://${cover.img}`} alt="" />}
                 {!cover.img && <img src={NoImage} alt="" />}
                 <div className="overlay">
                   <span id={cover.fullpath}>{cover.foldername}</span>
