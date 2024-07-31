@@ -34,6 +34,7 @@ const CoverSearchAltApp = () => {
         style-src 'self' 'unsafe-inline';
         connect-src 'self' https://covers.musichoarders.xyz;
         child-src 'self' https://covers.musichoarders.xyz;
+        frame-ancestors 'self' https://covers.musichoarders.xyz;
         img-src * data:;
       `
     );
@@ -76,7 +77,19 @@ const CoverSearchAltApp = () => {
     /* const nonce = 'random-nonce-value'; */ // You can generate a random nonce value dynamically
 
     const messageHandler = (event) => {
+      // Verify the origin to ensure security
+      console.log(
+        'download button: ',
+        event.origin,
+        '---',
+        event.data.action,
+        '-----',
+        event.data.message,
+        '---',
+        event.data.message
+      );
       if (event.origin !== 'https://covers.musichoarders.xyz') {
+        /* console.error('Untrusted origin:', event.origin); */
         return;
       }
 
@@ -88,7 +101,54 @@ const CoverSearchAltApp = () => {
         if (data && typeof data === 'object' && data.action === 'primary' && data.type === 'pick') {
           console.log('Valid message data:', data);
 
-          setImageUrl(data.bigCoverUrl);
+          /* setCurrentImage(data.bigCoverUrl); */
+
+          // Open the big cover URL in a new window and set the CSP
+
+          const newWindow = window.open('', 'fullimage');
+          if (newWindow) {
+            newWindow.document.write(`
+             <html>
+              <head>
+                <title>Big Cover Image</title>
+                <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; script-src 'self' 'nonce-${nonce}'; style-src 'self' 'unsafe-inline';">
+                <style>
+                body {
+                  background-color: black;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  height: 100%;
+                  width: 100%;
+                  } 
+                  button {
+                  width: 20%;
+                  height: 3rem;
+                  border-radius: 5px;
+                  background: darkblue;
+                  }
+                  img {
+                  width: 100%;
+                  height: 100%;
+                  }
+                </style>
+              </head>
+              <body>
+              <button id="download-image">Download Image</button>
+                <img src="${data.bigCoverUrl}" alt="Big Cover Image">
+                </div>
+                <script nonce="${nonce}">
+                  document.getElementById('download-image').addEventListener('click', function() {
+                    window.opener.postMessage({ action: 'fromChild', message: 'download' }, '*');
+                  });
+                </script>
+              </body>
+              </html>
+            `);
+            newWindow.document.close();
+          } else {
+            alert('Popup blocked! Please allow popups for this site.');
+          }
         } else {
           throw new Error('Invalid message structure');
         }
@@ -229,13 +289,7 @@ const CoverSearchAltApp = () => {
           title="Cover Search"
         ></iframe>
       </div>
-      <div className="image-preview" style={{ gridColumn: 2 / 3 }}>
-        {imageUrl ? (
-          <img src={imageUrl} alt="Selected" style={{ width: '100%', height: 'auto' }} />
-        ) : (
-          <p>No image selected</p>
-        )}
-      </div>
+      <div className="image-preview"></div>
     </>
   );
 };

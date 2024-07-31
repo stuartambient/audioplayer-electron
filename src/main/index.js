@@ -297,6 +297,7 @@ app.whenReady().then(async () => {
   powerMonitor.on('shutdown', () => {
     console.log('The system is shutting down: ', new Date());
   });
+
   mainWindow.show();
   mainWindow.webContents.openDevTools();
 });
