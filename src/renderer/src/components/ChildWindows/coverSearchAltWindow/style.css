@@ -2,8 +2,34 @@
   display: grid;
   grid-template-columns: 50% 50%;
   height: 100vh;
+  overflow: hidden;
 }
 
 .iframeContainer {
   grid-column: 1 / 2;
+}
+
+.download-image {
+  background-color: #f58f05; /* Primary color */
+  border: 2px solid #4caf50;
+  border-radius: 5px;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-image:hover {
+  background-color: #45a049;
+  border: 2px solid #45a049;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.integration {
+  color: white;
 }

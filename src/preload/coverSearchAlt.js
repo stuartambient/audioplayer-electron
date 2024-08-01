@@ -9,6 +9,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('coverSearchAltApi', {
   onSendToChild: (cb) => ipcRenderer.once('send-to-child', (event, args) => cb(args)),
+  downloadFile: (fileUrl, savepath) => ipcRenderer.invoke('download-file', fileUrl, savepath),
   /*  iframeLinks: () => ipcRenderer.send('iframe-links'),
   onIframeLink: (cb) => ipcRenderer.on('iframe-link', (event, url) => cb(url)), */
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)

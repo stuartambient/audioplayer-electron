@@ -6,7 +6,7 @@ const CoverSearchAltApp = () => {
   const [album, setAlbum] = useState('');
   const [savePath, setSavePath] = useState('');
   const [link, setLink] = useState('');
-  const [currentImage, setCurrentImage] = useState('');
+
   const [imageUrl, setImageUrl] = useState('');
   /* const [nonce, setNonce] = useState(''); */
   const iframeRef = useRef(null);
@@ -17,6 +17,15 @@ const CoverSearchAltApp = () => {
     ).join('');
   };
   const [nonce] = useState(generateNonce());
+
+  useEffect(() => {
+    if (iframeRef.current && iframeRef.current.contentDocument) {
+      /* iframeRef.current.contentDocument.addEventListener('click', (event) => {
+        console.log('event', event);
+      }); */
+      console.log(iframeRef.current.contentDocument);
+    }
+  });
   /* const nonce = generateNonce(); */
   /* const nonce = generateNonce(); */
   /*   useEffect(() => {
@@ -161,14 +170,17 @@ const CoverSearchAltApp = () => {
     };
   }, [artist, album]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (iframeRef.current && iframeRef.current.contentWindow) {
-      const iframe = document.getElementById('myIframe');
-      iframe.addEventListener('click', () => {
+      iframeRef.current.contentWindow.addEventListener('click', () => {
         console.log('iframe clicked');
       });
     }
-  });
+  }); */
+
+  const handleDownload = (e) => {
+    window.coverSearchAltApi.downloadFile(imageUrl, savePath);
+  };
 
   /*   useEffect(() => {
     const receiveMessage = (event) => {
@@ -229,11 +241,61 @@ const CoverSearchAltApp = () => {
           title="Cover Search"
         ></iframe>
       </div>
-      <div className="image-preview" style={{ gridColumn: 2 / 3 }}>
+      <div
+        className="image-preview"
+        style={{
+          gridColumn: 2 / 3,
+          backgroundColor: 'black',
+          display: 'grid',
+          gridTemplateRows: '3rem 1fr' /* width: '100%', height: '100%'  */,
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         {imageUrl ? (
-          <img src={imageUrl} alt="Selected" style={{ width: '100%', height: 'auto' }} />
+          <>
+            <div
+              style={{
+                gridRow: '1/2'
+              }}
+            >
+              <button className="download-image" onClick={handleDownload}>
+                Download Image
+              </button>
+            </div>
+            <div
+              style={{
+                /* width: '100%',
+              height: '100%', */
+                height: '100%',
+                width: '100%',
+                /* display: 'flex',
+                justifyContent: 'center', */
+                marginBotton: '.3rem',
+                alignItems: 'center',
+                backgroundImage: `url(${imageUrl})`,
+                /* backgroundPosition: 'center', */
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'contain',
+                gridRow: '2/3'
+                /*  margin: '5rem' */
+              }}
+            ></div>
+          </>
         ) : (
-          <p>No image selected</p>
+          <div
+            style={{
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              fontSize: '22px',
+              color: 'white'
+            }}
+          >
+            <p>No image selected</p>
+          </div>
         )}
       </div>
     </>
