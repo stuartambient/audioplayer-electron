@@ -875,6 +875,13 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       click: () => {
         return event.sender.send('context-menu-command', 'remove-from-playlist');
       }
+    },
+    {
+      label: 'Save image',
+      visible: type === 'cover',
+      click: () => {
+        return event.sender.send('context-menu-command', 'save image');
+      }
     }
   ];
   const menu = Menu.buildFromTemplate(template);
@@ -883,13 +890,13 @@ ipcMain.on('show-context-menu', (event, id, type) => {
 
 ipcMain.handle('show-album-cover-menu', (event) => {
   const template = [
-    {
+    /*  {
       label: 'search for cover',
       click: () => {
         return event.sender.send('album-menu', 'search for cover');
       }
     },
-    { type: 'separator' },
+    { type: 'separator' }, */
     {
       label: 'add album to playlist',
       click: () => {
@@ -905,9 +912,9 @@ ipcMain.handle('show-album-cover-menu', (event) => {
     },
     { type: 'separator' },
     {
-      label: 'cover search engine',
+      label: 'cover search',
       click: () => {
-        return event.sender.send('album-menu', 'cover search engine');
+        return event.sender.send('album-menu', 'cover search');
       }
     }
   ];
@@ -942,6 +949,7 @@ ipcMain.handle('show-child', (event, args) => {
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {
+  console.log('args: ', args);
   const [fileUrl, filePath] = args;
 
   const extension = path.extname(new URL(fileUrl).pathname);

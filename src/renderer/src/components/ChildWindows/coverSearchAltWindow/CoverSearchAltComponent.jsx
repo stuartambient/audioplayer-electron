@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './style.css';
 
 const CoverSearchAltApp = () => {
@@ -6,9 +6,9 @@ const CoverSearchAltApp = () => {
   const [album, setAlbum] = useState('');
   const [savePath, setSavePath] = useState('');
   const [link, setLink] = useState('');
-
   const [imageUrl, setImageUrl] = useState('');
-  /* const [nonce, setNonce] = useState(''); */
+  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
   const iframeRef = useRef(null);
 
   const generateNonce = () => {
@@ -18,19 +18,37 @@ const CoverSearchAltApp = () => {
   };
   const [nonce] = useState(generateNonce());
 
+  /* window.coverSearchAltApi.onContextMenuCommand((cmd) => {
+      if (cmd === 'save image') {
+        window.coverSearchAltApi.downloadFile(imageUrl, savePath);
+      }
+    }); */
+  const handleSaveImage = useCallback(
+    async (cmd) => {
+      console.log('cmd: ', cmd);
+
+      // Guard clause to prevent empty URL or repeated calls
+      if (cmd === 'save image' && imageUrl) {
+        if (!debounceTimeout) {
+          const timeout = setTimeout(async () => {
+            await window.coverSearchAltApi.downloadFile(imageUrl, savePath);
+            clearTimeout(timeout);
+            setDebounceTimeout(null);
+          }, 200); // Adjust the delay as needed
+          setDebounceTimeout(timeout);
+        }
+      }
+    },
+    [imageUrl, savePath, debounceTimeout]
+  );
+
   useEffect(() => {
-    if (iframeRef.current && iframeRef.current.contentDocument) {
-      /* iframeRef.current.contentDocument.addEventListener('click', (event) => {
-        console.log('event', event);
-      }); */
-      console.log(iframeRef.current.contentDocument);
-    }
-  });
-  /* const nonce = generateNonce(); */
-  /* const nonce = generateNonce(); */
-  /*   useEffect(() => {
-    setNonce(generateNonce());
-  }); */
+    window.coverSearchAltApi.onContextMenuCommand(handleSaveImage);
+    return () => {
+      window.coverSearchAltApi.off('context-menu-command', handleSaveImage);
+    };
+  }, [handleSaveImage]);
+
   useEffect(() => {
     const metaTag = document.createElement('meta');
     metaTag.setAttribute('http-equiv', 'Content-Security-Policy');
@@ -115,16 +133,19 @@ const CoverSearchAltApp = () => {
     };
   }, []);
 
-  /*   useEffect(() => {
-    const handleLink = (url) => {
-      console.log(url);
-    };
-    window.coverSearchAltApi.onIframeLink(handleLink);
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    setContextMenu({
+      visible: true,
+      x: event.clientX,
+      y: event.clientY
+    });
+    window.coverSearchAltApi.showContextMenu(0, 'cover');
+  };
 
-    return () => {
-      window.coverSearchAltApi.off('iframe-link', handleLink);
-    };
-  }); */
+  const handleClick = () => {
+    setContextMenu({ visible: false, x: 0, y: 0 });
+  };
 
   useEffect(() => {
     const sendMessageToIframe = (message) => {
@@ -222,7 +243,10 @@ const CoverSearchAltApp = () => {
   url.searchParams.set('remote.text', remoteText);
   url.searchParams.set('artist', artist);
   url.searchParams.set('album', album);
-  url.searchParams.set('sources', 'amazonmusic,applemusic');
+  url.searchParams.set(
+    'sources',
+    'amazonmusic,applemusic,bandcamp,discogs,gracenote,itunes,musicbrainz,qobuz,spotify,tidal'
+  );
 
   const srcUrl = url.toString();
 
@@ -247,7 +271,8 @@ const CoverSearchAltApp = () => {
           gridColumn: 2 / 3,
           backgroundColor: 'black',
           display: 'grid',
-          gridTemplateRows: '3rem 1fr' /* width: '100%', height: '100%'  */,
+          gridTemplateRows: '1fr',
+          gridTemplateColumns: '100%',
           alignItems: 'center',
           justifyContent: 'center'
         }}
@@ -256,32 +281,31 @@ const CoverSearchAltApp = () => {
           <>
             <div
               style={{
-                gridRow: '1/2'
-              }}
-            >
-              <button className="download-image" onClick={handleDownload}>
-                Download Image
-              </button>
-            </div>
-            <div
-              style={{
-                /* width: '100%',
-              height: '100%', */
                 height: '100%',
-                width: '100%',
-                /* display: 'flex',
-                justifyContent: 'center', */
-                marginBotton: '.3rem',
-                alignItems: 'center',
                 backgroundImage: `url(${imageUrl})`,
-                /* backgroundPosition: 'center', */
-                backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'contain',
-                gridRow: '2/3'
-                /*  margin: '5rem' */
+                backgroundPosition: 'center',
+                cursor: 'context-menu'
               }}
-            ></div>
+              onContextMenu={handleContextMenu}
+            >
+              {contextMenu.visible && (
+                <ul
+                  className="context-menu"
+                  style={{
+                    position: 'absolute',
+                    top: contextMenu.y,
+                    left: contextMenu.x,
+                    backgroundColor: 'white',
+                    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
+                    listStyleType: 'none',
+                    padding: '5px',
+                    margin: '0px'
+                  }}
+                ></ul>
+              )}
+            </div>
           </>
         ) : (
           <div

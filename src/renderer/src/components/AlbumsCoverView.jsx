@@ -169,7 +169,7 @@ const AlbumsCoverView = ({ resetKey }) => {
         'cover-search-alt',
         'cover-search-alt',
         {
-          width: 800,
+          width: 1400,
           height: 600,
           show: false,
           resizable: true,
@@ -238,6 +238,7 @@ const AlbumsCoverView = ({ resetKey }) => {
   };
 
   const handleContextMenuOption = async (option, path, album) => {
+    console.log('option: ', option);
     if (option[0] === 'search for cover') {
       const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
 
@@ -249,7 +250,7 @@ const AlbumsCoverView = ({ resetKey }) => {
       handleAlbumToPlaylist(path);
     } else if (option[0] === 'open album folder') {
       await window.api.openAlbumFolder(path);
-    } else if (option[0] === 'cover search engine') {
+    } else if (option[0] === 'cover search') {
       /* console.log('cover - search - engine', option, 'path: ', path, 'album: ', album); */
       const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
       const refAlbum = album.replace(regex, '');
