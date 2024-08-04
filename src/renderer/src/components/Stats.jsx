@@ -29,7 +29,6 @@ const Stats = () => {
   const getKey = () => uuidv4();
   useEffect(() => {
     const handleWindowClosed = (name) => {
-      console.log(`Window with name ${name} has been closed.`);
       setRoot('');
     };
 
@@ -41,7 +40,6 @@ const Stats = () => {
 
   useEffect(() => {
     const handleRefresh = (msg) => {
-      console.log('refresh message: ', msg);
       if (msg === 'updated-tags') {
         setKey(getKey());
       }
@@ -127,7 +125,6 @@ const Stats = () => {
   };
 
   const handleStatReq = async (e) => {
-    console.log(e.currentTarget.id);
     if (e.currentTarget.id !== 'directories' && isSubmenuOpen) {
       setIsSubmenuOpen(false);
       setAlbumsByRoot([]);

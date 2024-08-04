@@ -149,7 +149,6 @@ export const Genres = ({ dimensions }) => {
   }, [genre, setGenre]);
 
   const getGenres = async (e) => {
-    console.log(e.target.id);
     setGenre(e.target.id);
   };
 
@@ -198,7 +197,6 @@ export const AlbumsByRoot = ({ albums, amountLoaded, dimensions }) => {
   }, [album, setAlbum]);
 
   const getAlbum = async (e) => {
-    console.log(e.target.id);
     setAlbum(e.target.id);
   };
 

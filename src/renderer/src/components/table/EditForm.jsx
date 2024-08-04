@@ -10,16 +10,6 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
 
   const [formData, setFormData] = useState(initialState);
 
-  // Populate form data when selectedRowData changes
-  /*   useEffect(() => {
-    if (nodesSelected && nodesSelected.length > 0) {
-      Optionally pre-fill form with data from the first selected row as an example
-      const { year, title, artist, album, genre } = selectedRowData[0];
-      setFormData({ year, title, artist, album, genre }); 
-      console.log(nodesSelected);
-    }
-  }, [selectedRowData]); */
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };

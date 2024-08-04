@@ -126,7 +126,6 @@ if (!fs.existsSync(coversFolder)) {
 
 /* RANDOM ARRAY FOR TRACKS SHUFFLE */
 let shuffled = new Array();
-/* console.log('df: ', documentsFolder); */
 
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled promise rejection:', err);
@@ -206,13 +205,11 @@ let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
-  console.log('__dirname: ', __dirname);
   await session.defaultSession.clearCache(() => {
     console.log('--------> Cache cleared!');
   });
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
-  console.log('dirname: ', __dirname);
   // Register the custom 'streaming' protocol
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
     const uri = decodeURIComponent(request.url);
@@ -261,9 +258,6 @@ app.whenReady().then(async () => {
     }
 
     const filePath = path.normalize(url);
-
-    /*   console.log('Request URL:', request.url);
-    console.log('Resolved File Path:', filePath); */
 
     fs.access(filePath, fs.constants.F_OK, (err) => {
       if (err) {
@@ -338,7 +332,6 @@ const processUpdateResult = (type, result) => {
       writeFile(`${res}\n`, `${updatesFolder}\\${filename}`);
     });
   } else if (result.nochange === true) {
-    /* console.log('result: ', result); */
     writeFile(`\nDate: ${Date()} No changes`, `${updatesFolder}\\${filename}`);
   }
 };
@@ -354,7 +347,6 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
 ipcMain.handle('update-folders', async () => {
   const result = await initAlbums();
   /* processUpdateResult('folder', result); */
-  console.log('result: ', result);
   return result;
 });
 
@@ -391,11 +383,6 @@ ipcMain.handle('update-files', async (event) => {
         }
       })
       .postMessage('');
-    /* const result = await runWorker(createUpdateFilesWorker, {
-      msg: 'run'
-    });
-    console.log('Worker completed successfully:', result);
-    console.log('Running subsequent code after worker completion.');*/
   } catch (error) {
     console.error('Worker encountered an error:', error);
 
@@ -490,7 +477,7 @@ ipcMain.handle('folder-update-details', async (event, ...args) => {
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  console.log('screen-mode-change: ', args[0]);
+  /* console.log('screen-mode-change: ', args[0]); */
   if (args[0] === 'mini') {
     await mainWindow.setMinimumSize(290, 350);
     await mainWindow.setSize(290, 350, false);
@@ -550,20 +537,17 @@ ipcMain.handle('top-hundred-artists-stat', async () => {
 });
 
 async function openWindowAndSendData(queryResults, listType) {
-  console.log('listType: ', listType, queryResults);
   const targetWindow = await getWindow('table-data');
 
   if (targetWindow) {
     if (targetWindow.webContents.isLoading()) {
       targetWindow.webContents.once('did-finish-load', () => {
-        console.log('Window loaded. Sending data');
         targetWindow.webContents.send('send-to-child', {
           listType,
           results: queryResults
         });
       });
     } else {
-      console.log('Window already loaded. Sending data');
       targetWindow.webContents.send('send-to-child', {
         listType,
         results: queryResults
@@ -629,7 +613,6 @@ ipcMain.handle('get-tracks-by-album', async (event, listType, album) => {
 });
 
 ipcMain.handle('check-for-open-table', async (event, name) => {
-  console.log('check for open table');
   const names = await getWindowNames();
   if (names.includes(name)) {
     return true;
@@ -638,7 +621,6 @@ ipcMain.handle('check-for-open-table', async (event, name) => {
 });
 
 ipcMain.handle('clear-table', async (event) => {
-  console.log('clear table');
   const targetWindow = await getWindow('table-data');
   targetWindow.webContents.send('clear-table', 'clear');
 });

@@ -5,13 +5,6 @@ const CoverSearch = () => {
   /*  const [missingCovers, setMissingCovers] = useState([]); */
   const [searchItem, setSearchItem] = useState('');
 
-  /*   const handleCoversUpdate = async (e) => {
-    if (e.target.id === 'updatecovers') {
-      const covers = await window.api.updateCovers();
-      console.log('update covers: ', covers);
-    }
-  }; */
-
   const handleItem = async (e) => {
     setSearchItem(e.target.id);
   };

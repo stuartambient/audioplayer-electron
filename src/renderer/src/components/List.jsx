@@ -138,7 +138,7 @@ const List = ({
     return () => {
       window.api.off('album-tracks-loaded', albumTracksLoaded);
     };
-  });
+  }, []);
 
   const handleMultiAlbums = (e) => {
     const loadMultiAlbums = async () => {
@@ -149,7 +149,7 @@ const List = ({
       const result = await window.api.getTracksByAlbum('album-tracks', multiAlbums);
     };
     if (multiAlbums.length > 1) {
-      setTimeout(() => loadMultiAlbums());
+      loadMultiAlbums();
     }
   };
 

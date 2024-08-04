@@ -25,8 +25,6 @@ const CoverSearchAltApp = () => {
     }); */
   const handleSaveImage = useCallback(
     async (cmd) => {
-      console.log('cmd: ', cmd);
-
       // Guard clause to prevent empty URL or repeated calls
       if (cmd === 'save image' && imageUrl) {
         if (!debounceTimeout) {
@@ -77,17 +75,8 @@ const CoverSearchAltApp = () => {
     };
   }, [nonce]);
 
-  /*   csp.innerText.replace(/RUNTIME_NONCE/g, nonce); */
-  /*   csp[0].attributes.content.textContent.replace('RUNTIME_NONCE', nonce);
-  const meta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
-  console.log('meta: ', meta); */
-  /*scriptTag.replace(/RUNTIME_NONCE/, nonce); */
-
-  useEffect(() => {});
-
   useEffect(() => {
     const handleSearchParams = (args) => {
-      console.log('Received from puppet:', args.results);
       setArtist(args.results.artist);
       setAlbum(args.results.title);
       setSavePath(args.results.path);

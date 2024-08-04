@@ -8,7 +8,6 @@ import { roots, playlistExtensions, fileExtensions } from '../constant/constants
 /* import db from './connection.js'; */
 import { parseMeta } from './utility/index.js';
 /* import { getFiles, insertFiles, deleteFiles } from './sql.js'; */
-console.log('workerData: ', workerData);
 const mode = import.meta.env.MODE;
 const dbPath =
   mode === 'development'

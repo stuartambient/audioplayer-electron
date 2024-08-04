@@ -132,7 +132,6 @@ const useAlbumTracks = (pattern) => {
     const loadAlbumTracks = async () => {
       const albumTracksRequest = await window.api.getAlbumTracks(pattern);
       if (albumTracksRequest && subscribed) {
-        console.log('albums tracks request: ', albumTracksRequest);
         setAlbumTracks(albumTracksRequest);
       } else {
         return;
@@ -208,28 +207,6 @@ const useGenres = (setGenres) => {
   /* return genres; */
 };
 
-/* const useTracksByRoot = (root, setTracks) => {
-  const start = Date.now();
-  console.log(`Fetch start: ${start}`);
-  useEffect(() => {
-    let isSubscribed = true;
-    const tracksByRoot = async () => {
-      console.log('calling IPC');
-      const results = await window.api.getTracksByRoot(root);
-      if (results && isSubscribed) {
-        const end = Date.now();
-        console.log(`Fetch end: ${end}`);
-        console.log(`Fetch duration: ${end - start}ms`);
-        setTracks(results);
-      }
-    };
-    if (root) {
-      tracksByRoot();
-    }
-    return () => (isSubscribed = false);
-  }, [root, setTracks]); // Include onTracksFetched in the dependencies array
-}; */
-
 const useAllAlbumsCovers = (
   coversPageNumber,
   coversSearchTerm,
@@ -237,18 +214,12 @@ const useAllAlbumsCovers = (
   resetKey,
   coverslength
 ) => {
-  /* console.log('coversPageNumber: ', coversPageNumber, 'covers.length: ', coverslength); */
-  /* console.log(' at top pagenumber , coverslength', coversPageNumber, coverslength); */
-
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
 
   useEffect(() => {
     let isSubscribed = true;
-    /* console.log('pagenumber , coverslength', coversPageNumber, coverslength); */
-    /* if (coversPageNumber === 0 && coverslength === 50) isSubscribed = false; */
-    /* if (coversPageNumber * 50 === coverslength) isSubscribed = false; */
     const loadCovers = async () => {
       setCoversLoading(true);
       setCoversError(false);
@@ -345,8 +316,6 @@ const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
 };
 
 const useGetPlaylists = (setMyPlaylists) => {
-  console.log('called');
-
   useEffect(() => {
     let subscribed = true;
     const getmyplaylists = async () => {

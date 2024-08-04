@@ -24,7 +24,6 @@ const compareDbRecords = async (files) => {
 
   const newEntries = Array.from(difference(allfiles, dbentries));
   const missingEntries = Array.from(difference(dbentries, allfiles));
-  /*  console.log(files.length); */
 
   if (newEntries.length > 0) {
     await parseMeta(newEntries)

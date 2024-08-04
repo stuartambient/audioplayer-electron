@@ -1,5 +1,4 @@
 export const openChildWindow = (name, type, config, data) => {
-  console.log('tag from ???? name: ', name);
   const apipreload = name === 'tag-form' ? window.metadataEditingApi : window.api;
   /* window.api.showChild({ */
   apipreload.showChild({

@@ -158,7 +158,6 @@ VALUES      (@track_id,
 }; */
 
 const deleteFiles = (files) => {
-  console.log('deleteFiles');
   const deleteFile = db.prepare('DELETE FROM "audio-tracks" WHERE audiotrack = ?');
 
   const deleteMany = db.transaction((files) => {
@@ -169,7 +168,6 @@ const deleteFiles = (files) => {
 };
 
 const insertAlbums = (data) => {
-  console.log('insertAlbums');
   const insert = db.prepare(
     'INSERT INTO albums(id, rootlocation, foldername, fullpath) VALUES (@id, @root, @name, @fullpath)'
   );
@@ -182,7 +180,6 @@ const insertAlbums = (data) => {
 };
 
 const deleteAlbums = async (data) => {
-  console.log('deleteAlbums');
   const deleteA = db.prepare('DELETE FROM albums WHERE fullpath = ?');
   const deleteMany = db.transaction((data) => {
     for (const d of data) deleteA.run(d);
@@ -191,20 +188,17 @@ const deleteAlbums = async (data) => {
 };
 
 const deleteAlbum = async (data) => {
-  console.log('deleteAlbum');
   const deleteSingleAlbum = db.prepare('DELETE FROM albums WHERE fullpath = ?');
   deleteSingleAlbum.run();
 };
 
 const getAlbums = () => {
-  console.log('getAlbums');
   const getAllAlbums = db.prepare('SELECT fullpath FROM albums');
   const albums = getAllAlbums.all();
   return albums;
 };
 
 const getAlbum = (id) => {
-  console.log('getAlbum');
   const getAnAlbum = db.prepare('SELECT fullpath FROM albums WHERE id = ?');
   const album = getAnAlbum.get(id);
   const files = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ?');
@@ -217,14 +211,12 @@ const getAlbum = (id) => {
 };
 
 const getFiles = () => {
-  console.log('getFiles');
   const allFiles = db.prepare('SELECT audiotrack FROM "audio-tracks"');
   const files = allFiles.all();
   return files;
 };
 
 const refreshMetadata = (tracks) => {
-  console.log('refreshMetadata');
   const transaction = db.transaction(() => {
     const updateStmt = db.prepare(`
       UPDATE "audio-tracks" SET 
@@ -319,7 +311,6 @@ const refreshMetadata = (tracks) => {
 };
 
 const checkRecordsExist = (tracks) => {
-  console.log('checkRecordsExist');
   for (const track of tracks) {
     const record = db
       .prepare(
@@ -337,20 +328,17 @@ const checkRecordsExist = (tracks) => {
 };
 
 const allTracks = () => {
-  console.log('allTracks');
   const alltracks = db.prepare('SELECT track_id, audiotrack, modified FROM "audio-tracks"');
   const tracks = alltracks.all();
   return tracks;
 };
 
 const getAllPkeys = () => {
-  console.log('getAllPkeys');
   const alltracks = db.prepare('SELECT track_id FROM "audio-tracks"');
 
   return alltracks.all();
 };
 const getAllTracks = (rows) => {
-  console.log('getAllTracks');
   const tracks = db.prepare('SELECT * FROM "audio-tracks" WHERE track_id = ?');
 
   const shuffledTracks = [];
@@ -554,7 +542,6 @@ const filesByAlbum = (albumPath) => {
 };
 
 const likeTrack = (fileId) => {
-  console.log('likeTrack');
   let status;
   const isLiked = db.prepare('SELECT like FROM "audio-tracks" WHERE track_id = ?');
   const currentLike = isLiked.get(fileId);
@@ -565,7 +552,6 @@ const likeTrack = (fileId) => {
 };
 
 const isLiked = (id) => {
-  console.log('isLiked');
   const isLiked = db.prepare('SELECT like FROM "audio-tracks" WHERE track_id = ?');
   const currentLike = isLiked.get(id);
   return isLiked.like;
