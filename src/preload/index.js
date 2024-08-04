@@ -57,7 +57,8 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('get-tracks-by-artist', artist, listType),
   getTracksByGenre: (genre, listType) => ipcRenderer.invoke('get-tracks-by-genre', genre, listType),
   getTracksByRoot: (root, listType) => ipcRenderer.invoke('get-tracks-by-root', root, listType),
-  getTracksByAlbum: (album, listType) => ipcRenderer.invoke('get-tracks-by-album', album, listType),
+  getTracksByAlbum: (listType, album) => ipcRenderer.invoke('get-tracks-by-album', listType, album),
+  onTracksByAlbum: (cb) => ipcRenderer.on('album-tracks-loaded', (event, arg) => cb(arg)),
   /* getAlbumsByTopFolder: (folder) => ipcRenderer.invoke('get-albums-by-top-folder', folder), */
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {

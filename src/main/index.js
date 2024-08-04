@@ -550,6 +550,7 @@ ipcMain.handle('top-hundred-artists-stat', async () => {
 });
 
 async function openWindowAndSendData(queryResults, listType) {
+  console.log('listType: ', listType, queryResults);
   const targetWindow = await getWindow('table-data');
 
   if (targetWindow) {
@@ -612,12 +613,13 @@ ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
   }
 });
 
-ipcMain.handle('get-tracks-by-album', async (event, album, listType) => {
+ipcMain.handle('get-tracks-by-album', async (event, listType, album) => {
+  console.log(listType, album);
   try {
     const albumTracks = await filesByAlbum(album);
-    console.log(albumTracks);
     if (albumTracks) {
       await openWindowAndSendData(albumTracks, listType);
+      return event.sender.send('album-tracks-loaded', 'success');
     } else {
       return 'empty folder . no tracks';
     }

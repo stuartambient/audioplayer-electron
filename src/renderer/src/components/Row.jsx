@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { GiExpandedRays } from 'react-icons/gi';
 import '../style/Row.css';
 
@@ -18,7 +19,7 @@ const HeaderRow = ({ onSort }) => {
   );
 };
 
-const Row = ({ index, style, data, onClick, stat }) => {
+const Row = ({ index, style, data, onClick, onChange, isChecked, stat }) => {
   /* console.log('data: ', data);
     const rowData = data[index];  */
 
@@ -85,7 +86,7 @@ const Row = ({ index, style, data, onClick, stat }) => {
       {stat === 'stat-albums' && (
         <>
           <label className="list-checkbox">
-            <input type="checkbox" id={data.fullpath} />
+            <input type="checkbox" id={data.fullpath} checked={isChecked} onChange={onChange} />
           </label>
           <span
             key={data.id}

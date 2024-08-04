@@ -179,7 +179,7 @@ const useAlbum = (album) => {
       if (!tableStat) {
         initTable('album-tracks');
       }
-      const results = await window.api.getTracksByAlbum(album, 'album-tracks');
+      const results = await window.api.getTracksByAlbum('album-tracks', album);
     };
     if (isSubscribed && album) getTable();
     return () => {
@@ -190,6 +190,7 @@ const useAlbum = (album) => {
 
 export const AlbumsByRoot = ({ albums, amountLoaded, dimensions }) => {
   const [album, setAlbum] = useState('');
+
   useAlbum(album);
 
   useEffect(() => {
@@ -217,6 +218,8 @@ export const AlbumsByRoot = ({ albums, amountLoaded, dimensions }) => {
         stat="stat-albums"
         amountLoaded={amountLoaded}
         dimensions={dimensions}
+        tableStatus={tableStatus}
+        initTable={initTable}
       />
     </>
   );

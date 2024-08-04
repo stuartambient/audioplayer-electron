@@ -536,14 +536,20 @@ const requestedFile = (trackId) => {
 };
 
 const filesByAlbum = (albumPath) => {
-  console.log('filesByAlbum');
-  /*   const album = db.prepare('SELECT fullpath FROM albums WHERE fullpath = ?');
-  const getAlbum = album.get(albumPath); */
-  /* const stmt = db.prepare("SELECT audioFile FROM files WHERE "); */
-  /* const albumpath = getAlbum.fullpath; */
-  const files = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ?');
+  /*  const files = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ?');
   const albumFiles = files.all(`${albumPath}%`);
+  return albumFiles; */
+  const pathsArray = Array.isArray(albumPath) ? albumPath : [albumPath];
 
+  if (pathsArray.length === 0) {
+    return [];
+  }
+
+  const queryParts = pathsArray.map(() => 'audiotrack LIKE ?').join(' OR ');
+  const query = `SELECT * FROM "audio-tracks" WHERE ${queryParts}`;
+  const params = pathsArray.map((path) => `${path}%`);
+
+  const albumFiles = db.prepare(query).all(...params);
   return albumFiles;
 };
 

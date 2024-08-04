@@ -1,6 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { Virtuoso, TableVirtuoso } from 'react-virtuoso';
 import Row from './Row';
+import { MdDeselect } from 'react-icons/md';
 import '../style/List.css';
 
 const Header = ({
@@ -9,12 +10,13 @@ const Header = ({
   dimensions,
   filterValue,
   setFilterValue,
-  stat
+  onClick,
+  stat,
+  handleMultiAlbumDeselect
 }) => {
   if (!dimensions || !dimensions.width) {
     return null;
   }
-
   const inputRef = useRef(null);
   const childRef = useRef(null);
   const type = stat.split('-')[1];
@@ -66,10 +68,21 @@ const Header = ({
           <h3>
             {listType} loaded: {amountLoaded}
           </h3>
+          {stat === 'stat-albums' && (
+            <>
+              <span className="list-header-button" onClick={onClick}>
+                Load selected
+              </span>
+              <span onClick={handleMultiAlbumDeselect}>
+                <MdDeselect />
+              </span>
+            </>
+          )}
           <input
             value={filterValue}
             onChange={handleFilter}
             ref={inputRef}
+            placeholder="search"
             style={{
               width: '100%',
               maxWidth: '200px',
@@ -89,9 +102,56 @@ const Header = ({
   );
 };
 
-const List = ({ height, data, width, className, onClick, stat, amountLoaded, dimensions }) => {
+const List = ({
+  height,
+  data,
+  width,
+  className,
+  onClick,
+  stat,
+  amountLoaded,
+  dimensions,
+  tableStatus,
+  initTable
+}) => {
   const [filterValue, setFilterValue] = useState('');
   const [filteredData, setFilteredData] = useState(data);
+
+  const [multiAlbums, setMultiAlbums] = useState([]);
+
+  const handleMultiAlbumSelect = (e) => {
+    const albumId = e.target.id;
+    setMultiAlbums((prevAlbums) =>
+      prevAlbums.includes(albumId)
+        ? prevAlbums.filter((album) => album !== albumId)
+        : [...prevAlbums, albumId]
+    );
+  };
+
+  const handleMultiAlbumDeselect = (e) => setMultiAlbums([]);
+  useEffect(() => {
+    const albumTracksLoaded = (arg) => {
+      console.log('album-tracks-loaded', arg);
+    };
+
+    window.api.onTracksByAlbum(albumTracksLoaded);
+    return () => {
+      window.api.off('album-tracks-loaded', albumTracksLoaded);
+    };
+  });
+
+  const handleMultiAlbums = (e) => {
+    const loadMultiAlbums = async () => {
+      const tableStat = await tableStatus();
+      if (!tableStat) {
+        initTable('album-tracks');
+      }
+      const result = await window.api.getTracksByAlbum('album-tracks', multiAlbums);
+    };
+    if (multiAlbums.length > 1) {
+      setTimeout(() => loadMultiAlbums());
+    }
+  };
 
   /*  console.log('data: ', data); */
 
@@ -151,6 +211,8 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
             dimensions={dimensions}
             filterValue={filterValue}
             setFilterValue={setFilterValue}
+            onClick={handleMultiAlbums}
+            handleMultiAlbumDeselect={handleMultiAlbumDeselect}
             stat={stat}
           />
         )
@@ -160,6 +222,9 @@ const List = ({ height, data, width, className, onClick, stat, amountLoaded, dim
           index={index}
           data={item} // Pass the item directly
           onClick={onClick}
+          onChange={handleMultiAlbumSelect}
+          /* isChecked={!!filteredData[item.id]} */
+          isChecked={multiAlbums.includes(item.fullpath)}
           stat={stat}
         />
       )}

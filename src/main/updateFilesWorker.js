@@ -179,7 +179,8 @@ const glob = async (patterns) => {
   const escapedPatterns = patterns.map(escapeSpecialChars);
   const entries = await fg(escapedPatterns, {
     caseSensitiveMatch: false,
-    suppressErrors: true
+    suppressErrors: true,
+    dot: true
   })
     .then((e) => e)
     .catch((e) => console.error('fg error: ', e.message));
