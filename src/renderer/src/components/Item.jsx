@@ -21,7 +21,7 @@ const Item = forwardRef((props, ref) => {
     } catch (e) {
       console.log(e);
     }
-    const picture = await window.api.getCover(id);
+    const picture = await window.api.getCover(file);
     if (picture === 0) {
       dispatch({
         type: 'set-cover',

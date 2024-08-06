@@ -449,12 +449,20 @@ ipcMain.on('test-real-stream', async (event, ...args) => {
 });
 
 ipcMain.handle('get-cover', async (event, arg) => {
-  const track = await requestedFile(arg);
-  const myFile = await File.createFromPath(track.audiotrack);
+  /* const track = await requestedFile(arg); */
+  const myFile = await File.createFromPath(arg);
+  /* console.log('get-cover file: ', arg); */
 
   /*   const pic = await myPic.data;
   if (!pic) return 0; */
   if (!myFile.tag.pictures?.[0]?.data) return 0;
+  /*   console.log(myFile.tag.pictures); */
+  console.log('file: ', arg);
+  const lastSlash = arg.lastIndexOf('/');
+  const fileDir = arg.slice(0, lastSlash);
+  console.log('dir: ', fileDir);
+
+  /* console.log('pic from path: ', Picture.fromPath(arg)); */
   return myFile.tag.pictures[0].data._bytes;
   /*   const track = await requestedFile(arg);
   const meta = await parseFile(track.audiotrack);
@@ -824,6 +832,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
 });
 
 ipcMain.on('show-context-menu', (event, id, type) => {
+  console.log('id: ', id, 'type: ', type);
   const template = [
     {
       label: 'Add Track to Playlist',
@@ -865,6 +874,21 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       visible: type === 'cover',
       click: () => {
         return event.sender.send('context-menu-command', 'save image');
+      }
+    },
+    {
+      label: `Search pictures for ${id}`,
+      visible: type === 'picture',
+      click: () => {
+        return event.sender.send('context-menu-command', `search pictures for ${id}`);
+      }
+    },
+    { type: 'separator' },
+    {
+      label: 'Save Picture',
+      visible: type === 'picture',
+      click: () => {
+        return event.sender.send('context-menu-command', 'save picture');
       }
     }
   ];

@@ -10,6 +10,7 @@ import CustomLoadingOverlay from './CustomLoadingOverlay';
 import CustomToolPanel from './CustomToolPanel';
 import EditForm from './EditForm';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
+/* import CustomContextMenu from './ContextMenu'; */
 import PlayButtonRenderer from './PlayButtonRenderer';
 
 import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
@@ -421,6 +422,15 @@ const AGGrid = ({ reset, data, playButton }) => {
     }
   };
 
+  const handleCellContextMenu = (params) => {
+    params.event.preventDefault(); // Prevent default context menu
+    /* showContextMenu(params.data, params.event.clientX, params.event.clientY); */
+    const album = params.data.album;
+    const artist = params.data.albumArtists || params.data.performers;
+
+    window.metadataEditingApi.showContextMenu(`${artist} - ${album}`, 'picture');
+  };
+
   /*   const loadingOverlayComponent = useMemo(() => {
     return CustomLoadingOverlay;
   }, []); */
@@ -505,6 +515,7 @@ const AGGrid = ({ reset, data, playButton }) => {
           accentedSort={true}
           multiSortKey="ctrl"
           suppressMaintainUnsortedOrder={true}
+          onCellContextMenu={handleCellContextMenu}
           /* loadingOverlayComponent={loadingOverlayComponent}
           loadingOverlayComponentParams={loadingOverlayComponentParams} */
           /*     frameworkComponents={{ booleanCellRenderer: BooleanCellRenderer }} */
