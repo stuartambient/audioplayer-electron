@@ -20,6 +20,7 @@ import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import process from 'node:process';
 import fs from 'node:fs';
+import fg from 'fast-glob';
 /* import { spawn } from 'child_process'; */
 import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowManager.js';
 import url, { pathToFileURL } from 'url';
@@ -37,6 +38,7 @@ import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC, parseMeta } from './utility/index.js';
 import db from './connection.js';
+import { roots } from '../constant/constants.js';
 
 import { getPreferences, savePreferences } from './preferences.js';
 import {
@@ -452,15 +454,39 @@ ipcMain.handle('get-cover', async (event, arg) => {
   /* const track = await requestedFile(arg); */
   const myFile = await File.createFromPath(arg);
   /* console.log('get-cover file: ', arg); */
+  function escapeSpecialChars(path) {
+    return path.replace(/[\[\]\(\)]/g, '\\$&');
+  }
+  let top;
+  const parentDirectory = arg.lastIndexOf('/');
 
-  /*   const pic = await myPic.data;
-  if (!pic) return 0; */
+  const parentPath = arg.slice(0, parentDirectory);
+  const parsedPath = path.parse(parentPath);
+  console.log('parsed path: ', parsedPath);
+  if (roots.includes(parsedPath.dir)) {
+    top = `${parsedPath.dir}/${parsedPath.base}`;
+  } else {
+    top = `${parsedPath.dir}`;
+  }
+
+  console.log('top: ', top);
+  let cover;
+  try {
+    const escapeTopPath = escapeSpecialChars(top);
+    //
+    const images = await fg(`${escapeTopPath}/**/{cover, folder}.{jpg, jpeg, png, webp}`);
+    const filterForFolderCover = images.filter((img) => img.includes(parsedPath.base));
+    console.log('filterForFolderCover: ', filterForFolderCover);
+    if (filterForFolderCover.length > 0) {
+      console.log(filterForFolderCover);
+    } else {
+      console.log(images[0]);
+    }
+  } catch (e) {
+    console.log(e.message);
+  }
+
   if (!myFile.tag.pictures?.[0]?.data) return 0;
-  /*   console.log(myFile.tag.pictures); */
-  console.log('file: ', arg);
-  const lastSlash = arg.lastIndexOf('/');
-  const fileDir = arg.slice(0, lastSlash);
-  console.log('dir: ', fileDir);
 
   /* console.log('pic from path: ', Picture.fromPath(arg)); */
   return myFile.tag.pictures[0].data._bytes;
