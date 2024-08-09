@@ -474,7 +474,7 @@ ipcMain.handle('get-cover', async (event, arg) => {
   try {
     const escapeTopPath = escapeSpecialChars(top);
     //
-    const images = await fg(`${escapeTopPath}/**/{cover, folder}.{jpg, jpeg, png, webp}`);
+    const images = await fg(`${escapeTopPath}/**/*.{jpg, jpeg, png, webp}`);
     const filterForFolderCover = images.filter((img) => img.includes(parsedPath.base));
     console.log('filterForFolderCover: ', filterForFolderCover);
     if (filterForFolderCover.length > 0) {

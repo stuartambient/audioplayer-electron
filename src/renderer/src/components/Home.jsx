@@ -32,6 +32,11 @@ const Home = () => {
     } */
   };
 
+  const handleCoversSort = (e) => {
+    e.preventDefault();
+    console.log('handleCoversSort: ', e.currentTarget.id);
+  };
+
   const handleCoversSearchTerm = (e) => {
     e.preventDefault();
     if (!coverSearchRef.current.value) {
@@ -86,8 +91,13 @@ const Home = () => {
             <li>
               {' '}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <AiFillDownSquare style={{ transform: 'rotate(180deg)' }} />
-                <AiFillDownSquare />
+                <span id="date-desc" onClick={handleCoversSort}>
+                  <AiFillDownSquare style={{ transform: 'rotate(180deg)' }} />
+                </span>
+
+                <span id="data-asc" onClick={handleCoversSort}>
+                  <AiFillDownSquare />
+                </span>
               </div>
             </li>
           </>

@@ -414,6 +414,7 @@ export const AudioPlayerProvider = ({ children }) => {
     covers: [],
     coversPageNumber: 0,
     coversSearchTerm: '',
+    coversDateSort: '',
     playlistTracks: [],
     shuffledTracks: [],
     playlistInOrder: [],

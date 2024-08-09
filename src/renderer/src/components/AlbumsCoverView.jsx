@@ -10,7 +10,7 @@ import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
-import AppState from '../hooks/AppState';
+/* import AppState from '../hooks/AppState'; */
 import { openChildWindow } from './ChildWindows/openChildWindow';
 
 const AlbumsCoverView = ({ resetKey }) => {
