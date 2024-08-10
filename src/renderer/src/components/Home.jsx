@@ -35,6 +35,21 @@ const Home = () => {
   const handleCoversSort = (e) => {
     e.preventDefault();
     console.log('handleCoversSort: ', e.currentTarget.id);
+    if (e.currentTarget.id === 'desc') {
+      dispatch({
+        type: 'covers-date-sort',
+        coversDateSort: 'DESC',
+        covers: [],
+        coversPageNumber: 0
+      });
+    } else if (e.currentTarget.id === 'asc') {
+      dispatch({
+        type: 'covers-date-sort',
+        coversDateSort: 'ASC',
+        covers: [],
+        coversPageNumber: 0
+      });
+    } else return;
   };
 
   const handleCoversSearchTerm = (e) => {
@@ -91,11 +106,11 @@ const Home = () => {
             <li>
               {' '}
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span id="date-desc" onClick={handleCoversSort}>
+                <span id="desc" onClick={handleCoversSort}>
                   <AiFillDownSquare style={{ transform: 'rotate(180deg)' }} />
                 </span>
 
-                <span id="data-asc" onClick={handleCoversSort}>
+                <span id="asc" onClick={handleCoversSort}>
                   <AiFillDownSquare />
                 </span>
               </div>

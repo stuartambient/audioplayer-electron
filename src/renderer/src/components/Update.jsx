@@ -32,6 +32,18 @@ const Update = () => {
   }, []);
 
   useEffect(() => {
+    const handleFolderUpdateComplete = (result) => {
+      setFolderUpdateReq(false);
+      console.log('result: ', result);
+      setFolderUpdateResults(result);
+    };
+    window.api.onUpdateFolders(handleFolderUpdateComplete);
+    return () => {
+      window.api.off('folder-update-complete', handleFolderUpdateComplete);
+    };
+  }, []);
+
+  useEffect(() => {
     console.log(fileUpdateResults);
   }, [fileUpdateResults]);
 

@@ -210,6 +210,7 @@ const useGenres = (setGenres) => {
 const useAllAlbumsCovers = (
   coversPageNumber,
   coversSearchTerm,
+  coversDateSort,
   dispatch,
   resetKey,
   coverslength
@@ -223,7 +224,11 @@ const useAllAlbumsCovers = (
     const loadCovers = async () => {
       setCoversLoading(true);
       setCoversError(false);
-      let coversRequest = await window.api.getCovers(coversPageNumber, coversSearchTerm);
+      let coversRequest = await window.api.getCovers(
+        coversPageNumber,
+        coversSearchTerm,
+        coversDateSort
+      );
       if (coversRequest && isSubscribed) {
         /* setCovers([...covers, ...coversRequest]); */
         dispatch({

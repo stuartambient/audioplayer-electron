@@ -32,7 +32,7 @@ const CoverSearchAltApp = () => {
             await window.coverSearchAltApi.downloadFile(imageUrl, savePath);
             clearTimeout(timeout);
             setDebounceTimeout(null);
-          }, 200); // Adjust the delay as needed
+          }, 300); // Adjust the delay as needed
           setDebounceTimeout(timeout);
         }
       }

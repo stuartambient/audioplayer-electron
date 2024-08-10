@@ -2,7 +2,7 @@ import Database from 'better-sqlite3';
 import { roots } from '../constant/constants.js';
 import db from './connection';
 
-const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified )`;
+const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified, img )`;
 
 const createAudioTracks = `
 CREATE TABLE IF NOT EXISTS "audio-tracks" (
@@ -169,7 +169,7 @@ const deleteFiles = (files) => {
 
 const insertAlbums = (data) => {
   const insert = db.prepare(
-    'INSERT INTO albums(id, rootlocation, foldername, fullpath) VALUES (@id, @root, @name, @fullpath)'
+    'INSERT INTO albums(id, rootlocation, foldername, fullpath, img) VALUES (@id, @root, @name, @fullpath, @img)'
   );
 
   const insertMany = db.transaction((albums) => {
@@ -497,11 +497,12 @@ const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
   }
 };
 
-const allCoversByScroll = (offsetNum, term = null) => {
-  console.log('allCoversByScroll');
+const allCoversByScroll = (offsetNum, sort, term = null) => {
+  console.log('allCoversByScroll', 'sort: ', sort);
+  const order = sort === 'ASC' ? 'ASC' : 'DESC';
   if (term === '') {
     const stmt = db.prepare(
-      `SELECT id, foldername, fullpath FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET ${
+      `SELECT id, foldername, fullpath FROM albums ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
         offsetNum * 50
       }`
     );
@@ -509,7 +510,7 @@ const allCoversByScroll = (offsetNum, term = null) => {
   } else {
     const searchTerm = `%${term}%`;
     const stmt = db.prepare(
-      `SELECT foldername, fullpath FROM albums WHERE fullpath LIKE ? ORDER BY datecreated ASC LIMIT 50 OFFSET ${
+      `SELECT foldername, fullpath FROM albums WHERE fullpath LIKE ? ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
         offsetNum * 50
       }`
     );

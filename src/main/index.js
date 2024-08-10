@@ -34,6 +34,7 @@ import { Picture, File } from 'node-taglib-sharp';
 import transformTags from './transformTags.js';
 import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
 import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
+import createUpdateFoldersWorker from './updateFoldersWorker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC, parseMeta } from './utility/index.js';
@@ -346,10 +347,37 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
   }
 });
 
-ipcMain.handle('update-folders', async () => {
+/* ipcMain.handle('update-folders', async () => {
   const result = await initAlbums();
-  /* processUpdateResult('folder', result); */
   return result;
+}); */
+
+ipcMain.handle('update-folders', async (event) => {
+  try {
+    /* console.log('createUpdateFilesWorker', createUpdateFilesWorker()); */
+    const workerPath = process.resourcesPath;
+    await createUpdateFoldersWorker({
+      workerData: workerPath
+    })
+      .on('message', (message) => {
+        console.log('message from worker: ', message);
+        mainWindow.webContents.send('folder-update-complete', message.result);
+      })
+      .on('error', (err) => {
+        console.error('Worker error:', err);
+      })
+      .on('exit', (code) => {
+        if (code !== 0) {
+          const errorMessage = `Worker stopped with exit code ${code}`;
+          console.error(errorMessage);
+        }
+      })
+      .postMessage('');
+  } catch (error) {
+    console.error('Worker encountered an error:', error);
+
+    console.log('Handling subsequent code after worker error.');
+  }
 });
 
 function getObjectWithLengths(obj) {
@@ -751,7 +779,8 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 });
 
 ipcMain.handle('get-covers', async (_, ...args) => {
-  const albums = await allCoversByScroll(args[0], args[1]);
+  console.log('args: ', args);
+  const albums = await allCoversByScroll(args[0], args[2], args[1]);
   const albumsWithImages = Promise.all(
     albums.map(async (l) => {
       try {

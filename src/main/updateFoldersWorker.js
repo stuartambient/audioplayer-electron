@@ -1,3 +1,4 @@
+import { parentPort, workerData, isMainThread } from 'worker_threads';
 import { promises as fsPromises } from 'node:fs';
 import { v4 as uuidv4 } from 'uuid';
 import fg from 'fast-glob';
@@ -25,9 +26,18 @@ const parseNewEntries = (newEntries) => {
       fullpath = entry;
     }
     const cover = fg.sync(`${fullpath}/**/{cover, folder}.{jpg, jpeg, png, webp}`);
-    console.log('cover: ', cover);
+    const newAlbum = {
+      id,
+      root,
+      name,
+      fullpath
+    };
 
-    newAlbums.push({ id, root, name, fullpath /* , datecreated, datemodified */ });
+    if (cover && cover.length > 0) {
+      newAlbum.cover = cover[0]; // Assuming you only want the first match
+    }
+
+    newAlbums.push(newAlbum);
   }
   return newAlbums;
 };
@@ -90,4 +100,14 @@ const initAlbums = async () => {
   });
 };
 
-export default initAlbums;
+if (!parentPort) throw Error('IllegalState');
+parentPort.on('message', async (message) => {
+  console.log('message: ', message);
+  try {
+    const result = await initAlbums();
+    /* const result = addTwoNums(2, 3); */
+    parentPort.postMessage({ result });
+  } catch (error) {
+    parentPort.postMessage({ error: error.message });
+  }
+});

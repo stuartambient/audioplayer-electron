@@ -35,8 +35,8 @@ contextBridge.exposeInMainWorld('api', {
   savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks),
   getPlaylists: () => ipcRenderer.invoke('get-playlists'),
   homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id),
-  getCovers: (coversPageNum, coversSearchTerm) =>
-    ipcRenderer.invoke('get-covers', coversPageNum, coversSearchTerm),
+  getCovers: (coversPageNum, coversSearchTerm, coversDateSort) =>
+    ipcRenderer.invoke('get-covers', coversPageNum, coversSearchTerm, coversDateSort),
   setShuffledTracksArray: () => ipcRenderer.invoke('set-shuffled-tracks-array'),
   getShuffledTracks: (start, end) => ipcRenderer.invoke('get-shuffled-tracks', start, end),
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
@@ -74,6 +74,13 @@ contextBridge.exposeInMainWorld('api', {
   onUpdateFiles: (cb) => {
     console.log('Preload: Setting up listener for file-update-complete...');
     ipcRenderer.on('file-update-complete', (event, result) => {
+      console.log('Preload: Received file-update-complete event', event, result);
+      cb(result);
+    });
+  },
+  onUpdateFolders: (cb) => {
+    console.log('Preload: Setting up listener for folder-update-complete...');
+    ipcRenderer.on('folder-update-complete', (event, result) => {
       console.log('Preload: Received file-update-complete event', event, result);
       cb(result);
     });

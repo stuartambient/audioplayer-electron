@@ -42,12 +42,12 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    case 'current-time': {
+    /*     case 'current-time': {
       return {
         ...state,
         currentTime: action.currentTime
       };
-    }
+    } */
     case 'set-next-track': {
       return {
         ...state,
@@ -116,12 +116,12 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    case 'slice-prev-tracks': {
+    /*     case 'slice-prev-tracks': {
       return {
         ...state,
         tracks: action.tracks
       };
-    }
+    } */
 
     case 'current-playlist': {
       return {
@@ -191,12 +191,12 @@ const audioPlayerReducer = (state, action) => {
         minimalmode: action.minimalmode
       };
     }
-    case 'library-reload': {
+    /*     case 'library-reload': {
       return {
         ...state,
         libraryReload: action.libraryReload
       };
-    }
+    } */
     /*   case 'set-maximize': {
       return {
         ...state,
@@ -222,19 +222,12 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    case 'update-cover': {
-      /*  return state.covers.map((cover) => {
-        if (cover.fullpath === action.id) {
-          return { ...cover, img: action.img };
-        } else {
-          return cover;
-        }
-      }); */
+    /*     case 'update-cover': {
       return {
         ...state,
         covers: action.covers
       };
-    }
+    } */
 
     case 'track-to-playlist': {
       return {
@@ -264,13 +257,13 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    case 'reset-albums-covers': {
+    /*   case 'reset-albums-covers': {
       return {
         ...state,
         covers: action.covers,
         coversPageNumber: action.coversPageNumber
       };
-    }
+    } */
 
     case 'set-list-type': {
       return {
@@ -312,19 +305,28 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    case 'shuffled-tracks': {
+    /*     case 'shuffled-tracks': {
       return {
         ...state,
         shuffledTracks: action.shuffledTracks
       };
-    }
+    } */
     case 'seeking': {
       return { ...state, seeking: action.seeking };
     }
-    case 'albums-in-playlist': {
+    /*  case 'albums-in-playlist': {
       return {
         ...state,
         albumsInPlaylist: action.albumsInPlaylist
+      };
+    } */
+
+    case 'covers-date-sort': {
+      return {
+        ...state,
+        coversDateSort: action.coversDateSort,
+        covers: action.covers,
+        coversPageNumber: action.coversPageNumber
       };
     }
 
@@ -345,17 +347,17 @@ const audioPlayerReducer = (state, action) => {
     case 'reset-flash-div':
       return { ...state, flashDiv: null };
 
-    case 'loaded-albums':
+    /*    case 'loaded-albums':
       return {
         ...state,
         loadedAlbums: action.loadedAlbums
-      };
+      }; */
 
-    case 'remove-from-loaded-albums':
+    /*     case 'remove-from-loaded-albums':
       return {
         ...state,
         loadedAlbums: action.removeAlbum
-      };
+      }; */
 
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -414,7 +416,7 @@ export const AudioPlayerProvider = ({ children }) => {
     covers: [],
     coversPageNumber: 0,
     coversSearchTerm: '',
-    coversDateSort: '',
+    coversDateSort: 'DESC',
     playlistTracks: [],
     shuffledTracks: [],
     playlistInOrder: [],
