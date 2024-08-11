@@ -98,4 +98,6 @@ textarea {
 
 .container-update {
   grid-template-rows: 2rem 1fr;
+  grid-template-columns: 100vw;
+  grid-auto-rows: 0px;
 }

@@ -21,23 +21,28 @@ const run = async (cb) => {
     return Promise.resolve(cb(status));
   }
   /* await parseMeta(updatedTracks).then((parsed) => triggerInsert(parsed)); */
-  const updatedMeta = await parseMeta(updatedTracks, 'mod');
-  /* Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta)); */
-  console.log('updatedMeta: ', updatedTracks);
-  Promise.resolve(await workerTrigger(updatedMeta, 'refreshMetadata'))
-    .then((message) => {
+  const moddedArray = updatedTracks.map((obj) => {
+    const { audiotrack, ...rest } = obj;
+    return { id: audiotrack, ...rest };
+  });
+  const updatedMeta = await parseMeta(moddedArray, 'mod');
+  /*  Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta)); */
+  console.log('updatedMeta: ', updatedMeta);
+};
+/* Promise.resolve(await refreshMetadata(updatedMeta)) */
+/*     .then((message) => {
       if (message) {
         console.log('Update successful!');
       } else {
         console.log('Update failed with message: ', message);
       }
-    })
-    .then(() => (status.new = updatedMeta.map((f) => f.audiotrack)))
+    }) */
+/*     .then(() => (status.new = updatedMeta.map((f) => f.audiotrack)))
     .catch((error) => {
       console.error('Error in processing:', error);
     })
     .then(() => cb(status));
-};
+}; */
 
 const initUpdateMetadata = async () => {
   return new Promise((res, rej) => {

@@ -73,6 +73,7 @@ const updateTags = (arr) => {
     }
   });
 
+  console.log('errors: ', errors);
   // Return results
   return {
     message: 'Tag updates completed with some errors',

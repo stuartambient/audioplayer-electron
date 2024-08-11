@@ -35,6 +35,7 @@ import transformTags from './transformTags.js';
 import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
 import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
 import createUpdateFoldersWorker from './updateFoldersWorker?nodeWorker';
+import createUpdateCoversWorker from './updateCoversWorker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC, parseMeta } from './utility/index.js';
@@ -50,6 +51,7 @@ import {
   allCoversByScroll,
   filesByAlbum,
   requestedFile,
+  getAlbums,
   likeTrack,
   isLiked,
   getAlbum,
@@ -78,7 +80,7 @@ import {
 import initAlbums from './updateFolders';
 /* import initFiles from './updateFiles'; */
 import initCovers from './updateFolderCovers';
-/* import initUpdateMetadata from './updateMetadata'; */
+import initUpdateMetadata from './updateMetadata';
 import updateTags from './updateTags';
 /* const devDb = import.meta.env.MAIN_VITE_DB_PATH_DEV;
 const prodDb = import.meta.env.MAIN_VITE_DB_PATH_PROD; */
@@ -424,10 +426,47 @@ ipcMain.handle('update-files', async (event) => {
   } */
 
 ipcMain.handle('update-meta', async () => {
-  const result = await initUpdateMetadata();
+  try {
+    const result = await initUpdateMetadata();
+    console.log(result);
+  } catch (e) {
+    console.log('meta error: ', e.message);
+  }
   /* processUpdateResult('meta', result); */
   /* console.log('meta result: ', result); */
   return result;
+});
+
+function escapeSpecialChars(path) {
+  return path.replace(/[\[\]\(\)]/g, '\\$&');
+}
+ipcMain.handle('update-covers', async (event) => {
+  console.log('update-covers');
+  try {
+    /* console.log('createUpdateFilesWorker', createUpdateFilesWorker()); */
+    const workerPath = process.resourcesPath;
+    await createUpdateCoversWorker({
+      workerData: workerPath
+    })
+      .on('message', (message) => {
+        console.log('message from worker: ', message);
+        mainWindow.webContents.send('cover-update-complete', message.result);
+      })
+      .on('error', (err) => {
+        console.error('Worker error:', err);
+      })
+      .on('exit', (code) => {
+        if (code !== 0) {
+          const errorMessage = `Worker stopped with exit code ${code}`;
+          console.error(errorMessage);
+        }
+      })
+      .postMessage('');
+  } catch (error) {
+    console.error('Worker encountered an error:', error);
+
+    console.log('Handling subsequent code after worker error.');
+  }
 });
 
 ipcMain.handle('create-table', () => {
@@ -781,7 +820,7 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 ipcMain.handle('get-covers', async (_, ...args) => {
   console.log('args: ', args);
   const albums = await allCoversByScroll(args[0], args[2], args[1]);
-  const albumsWithImages = Promise.all(
+  /*   const albumsWithImages = Promise.all(
     albums.map(async (l) => {
       try {
         let tmp = await fs.promises.readdir(l.fullpath);
@@ -791,8 +830,6 @@ ipcMain.handle('get-covers', async (_, ...args) => {
         }
         const imgPath = `${l.fullpath}/${checkImg}`;
         const imgUrl = url.pathToFileURL(imgPath);
-        /* console.log(imgPath); */
-        //const imageobj = { img: imgUrl.href, list: 'covers' };
         const imageobj = { img: imgPath, list: 'covers' };
 
         return { ...l, ...imageobj };
@@ -809,7 +846,8 @@ ipcMain.handle('get-covers', async (_, ...args) => {
       }
     })
   );
-  return albumsWithImages.then((res) => res.filter((entry) => entry !== null));
+  return albumsWithImages.then((res) => res.filter((entry) => entry !== null)); */
+  return albums;
 });
 
 const shuffle = (array) => {

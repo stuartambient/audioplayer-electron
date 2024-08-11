@@ -34,7 +34,7 @@ const parseNewEntries = (newEntries) => {
     };
 
     if (cover && cover.length > 0) {
-      newAlbum.cover = cover[0]; // Assuming you only want the first match
+      newAlbum.img = cover[0]; // Assuming you only want the first match
     }
 
     newAlbums.push(newAlbum);

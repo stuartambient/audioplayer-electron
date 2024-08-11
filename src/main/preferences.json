@@ -1,13 +1,10 @@
 {
   "hiddenColumns": [
     "performersRole",
-    "albumArtists",
     "year",
-    "composers",
     "conductor",
     "comment",
     "description",
-    "disc",
     "discCount",
     "track",
     "trackCount",

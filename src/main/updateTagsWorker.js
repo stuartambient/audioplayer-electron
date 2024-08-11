@@ -134,7 +134,7 @@ async function func1(data) {
 }
 
 async function func2(input) {
-  console.log('parseMeta: ');
+  /* console.log('parseMeta: '); */
   return new Promise((resolve, reject) => {
     try {
       const updatedMeta = parseMeta(input, 'mod');
@@ -146,6 +146,7 @@ async function func2(input) {
 }
 
 async function func3(input) {
+  console.log('input: ', input);
   return new Promise((resolve, reject) => {
     try {
       const updateMessage = refreshMetadata(input);
@@ -158,6 +159,7 @@ async function func3(input) {
 
 // Run the functions sequentially
 async function runSequentially(originalData) {
+  console.log('original data: ', originalData);
   const result1 = await func1(originalData);
   const result2 = await func2(result1);
   const result3 = await func3(result2);

@@ -5,7 +5,7 @@
   grid-column: 1 / 3;
   display: grid;
   grid-template-columns: repeat(3, 33.3%);
-  grid-template-rows: 3rem 6rem auto;
+  grid-template-rows: 3rem 1fr 3rem 1fr;
   /*   grid-auto-rows: 50px; */
   row-gap: 10px;
   color: white;
@@ -33,16 +33,15 @@
   grid-row: 1 / 2;
 }
 
-.update-container .configure {
-  grid-column: 1 / -1;
+.update-container .update-covers {
+  grid-column: 1 / 2;
   grid-row: 3 / 4;
-  display: flex;
 }
 
 .update-files,
 .update-folders,
 .update-meta,
-.configure {
+.update-covers {
   border: 1px solid var(--blue1);
   width: 90%;
   height: 1.8rem;
@@ -53,7 +52,8 @@
 
 .update-files:hover,
 .update-meta:hover,
-.update-folders:hover {
+.update-folders:hover,
+.update-covers:hover {
   cursor: pointer;
 }
 

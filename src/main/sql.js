@@ -502,7 +502,7 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
   const order = sort === 'ASC' ? 'ASC' : 'DESC';
   if (term === '') {
     const stmt = db.prepare(
-      `SELECT id, foldername, fullpath FROM albums ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
+      `SELECT id, foldername, fullpath, img FROM albums ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
         offsetNum * 50
       }`
     );
@@ -510,7 +510,7 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
   } else {
     const searchTerm = `%${term}%`;
     const stmt = db.prepare(
-      `SELECT foldername, fullpath FROM albums WHERE fullpath LIKE ? ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
+      `SELECT foldername, fullpath, img FROM albums WHERE fullpath LIKE ? ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
         offsetNum * 50
       }`
     );
@@ -558,6 +558,27 @@ const isLiked = (id) => {
   return isLiked.like;
 };
 
+const updateCoversInDatabase = (coversArray) => {
+  const updateStmt = db.prepare(`
+    UPDATE albums
+    SET img = @img
+    WHERE fullpath = @fullpath
+  `);
+  try {
+    const transaction = db.transaction((coversArray) => {
+      coversArray.forEach((cover) => {
+        updateStmt.run(cover);
+      });
+    });
+    transaction(coversArray);
+    return 'success';
+  } catch (e) {
+    return e.message;
+  }
+
+  transaction(coversArray);
+};
+
 export {
   insertFiles,
   insertAlbums,
@@ -579,7 +600,7 @@ export {
   getPlaylist,
   allCoversByScroll,
   getAllTracks,
-  /*   getMissingCovers, */
+  updateCoversInDatabase,
   allTracks,
   refreshMetadata,
   checkRecordsExist,

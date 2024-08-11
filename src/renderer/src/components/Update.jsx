@@ -4,6 +4,7 @@ import Loader from './Loader';
 import { AiOutlineFolderOpen, AiOutlineFileAdd, AiOutlineDeploymentUnit } from 'react-icons/ai';
 import { GrConfigure } from 'react-icons/gr';
 import { SiMetabase } from 'react-icons/si';
+import { FaImages } from 'react-icons/fa6';
 import TextEditor from './TextEditor';
 import '../style/Update.css';
 
@@ -11,11 +12,13 @@ const Update = () => {
   const [fileUpdateResults, setFileUpdateResults] = useState();
   const [folderUpdateResults, setFolderUpdateResults] = useState();
   const [metaUpdateResults, setMetaUpdateResults] = useState();
+  const [coverUpdateResults, setCoverUpdateResults] = useState();
   const [folderUpdateDetails, setFolderUpdateDetails] = useState();
   const [fileUpdateDetails, setFileUpdateDetails] = useState();
   const [folderUpdateReq, setFolderUpdateReq] = useState();
   const [fileUpdateReq, setFileUpdateReq] = useState();
   const [metaUpdateReq, setMetaUpdateReq] = useState();
+  const [coverUpdateReq, setCoverUpdateReq] = useState();
   const [showFileDetails, setShowFileDetails] = useState();
   const [showFolderDetails, setShowFolderDetails] = useState();
 
@@ -70,6 +73,12 @@ const Update = () => {
         const modifiedMeta = await window.api.updateMeta();
         setMetaUpdateResults(modifiedMeta);
         setMetaUpdateReq(false);
+      case 'coversupdate':
+        setCoverUpdateReq(true);
+        const updatedCovers = await window.api.updateCovers();
+        setCoverUpdateResults(updatedCovers);
+        setCoverUpdateReq(false);
+
       default:
         return;
     }
@@ -121,9 +130,8 @@ const Update = () => {
         <div className="update-folders" id="foldersupdate" onClick={handleUpdates}>
           <AiOutlineFolderOpen /> Update Folders
         </div>
-        <div className="configure" id="configure" /* onClick={handleUpdates} */>
-          <AiOutlineDeploymentUnit />
-          Configure
+        <div className="update-covers" id="coversupdate" onClick={handleUpdates}>
+          <FaImages /> Update Covers
         </div>
       </>
       {fileUpdateReq ? (

@@ -219,6 +219,7 @@ const checkDataType = (entry) => {
 }; */
 
 const parseMeta = async (files, op) => {
+  console.log('parseMeta: ', files, op);
   const filesMetadata = [];
 
   for (const file of files) {

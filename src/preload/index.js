@@ -10,6 +10,7 @@ const fixedEncodeURIComponent = (str) => {
 contextBridge.exposeInMainWorld('api', {
   updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
+  updateCovers: () => ipcRenderer.invoke('update-covers'),
   /*   updateCovers: () => ipcRenderer.invoke('update-covers'), */
   /*  missingCovers: () => ipcRenderer.invoke('missing-covers'), */
   createTable: () => ipcRenderer.invoke('create-table'),
