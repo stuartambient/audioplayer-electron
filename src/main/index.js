@@ -49,6 +49,7 @@ import {
   allAlbumsByScroll,
   allAlbumsBySearchTerm,
   allCoversByScroll,
+  allMissingCoversByScroll,
   filesByAlbum,
   requestedFile,
   getAlbums,
@@ -819,7 +820,13 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 
 ipcMain.handle('get-covers', async (_, ...args) => {
   console.log('args: ', args);
+  /*  let albums; */
+  //if (args[3] === 'missing-covers') {
+  // albums = allMissingCoversByScroll(args[0], args[2], args[1]);
+  // } else {
   const albums = await allCoversByScroll(args[0], args[2], args[1]);
+  //}
+
   /*   const albumsWithImages = Promise.all(
     albums.map(async (l) => {
       try {

@@ -1,27 +1,104 @@
 import { parentPort, workerData, isMainThread } from 'worker_threads';
 import path from 'node:path';
+import fs from 'node:fs/promises';
 
 import fg from 'fast-glob';
-import { getAlbums, updateCoversInDatabase } from './sql.js';
+import { getAlbums, getAlbumsNullImg, updateCoversInDatabase } from './sql.js';
+
+function normalizePath(p) {
+  return p.replace(/\\/g, '/');
+}
+
+function escapeSpecialChars(path) {
+  return path.replace(/[\[\]\(\)]/g, '\\$&');
+}
+
+const options = {
+  caseSensitiveMatch: false,
+  suppressErrors: true,
+  dot: true
+};
+
+function checkFile(file) {
+  if (
+    file.endsWith('.jpg') ||
+    file.endsWith('.jpeg') ||
+    file.endsWith('.png') ||
+    file.endsWith('.webp')
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function searchCover(folder) {
+  const files = ['.jpg', '.jpeg', '.png', '.webp'];
+  /*  const escapedPath = fg.escapePath(path.normalize(folder));
+  console.log('path: ', escapedPath); */
+  const escapedPath = escapeSpecialChars(folder);
+  /* console.log(escapedPath); */
+  //const cover = fg.sync(`${escapedPath}/**/*.{jpg, jpeg, png, webp}`, options);
+  /* const cover = fg.sync(`${escapedPath}/*.{jpeg,jpg}`, options); */
+  const cover = fg.sync(`${escapedPath}/*`, options);
+  /*   console.log('cover: ', cover); */
+  if (cover.length > 0) {
+    const filtered = cover.filter((cvr) => checkFile(cvr));
+    if (!filtered[0]) return;
+    return filtered[0];
+  }
+  return;
+}
 
 const updateCoversLink = async () => {
   console.log('updateCoversLink');
   const foundCovers = [];
-  const allAlbumsRootFolder = await getAlbums();
-  allAlbumsRootFolder.forEach((albumRoot) => {
-    /* const normalizedPath = path.posix.normalize(albumRoot.fullpath.replace(/\\/g, '/')); */
-    const escapedFullpath = albumRoot.fullpath.replace(/[\[\]\(\)']/g, '\\$&');
-    const cover = fg.sync(`${escapedFullpath}/**/*.{jpg, jpeg, png, webp}`, {
-      caseSensitiveMatch: false,
-      suppressErrors: true,
-      dot: true
-    });
-    if (cover && cover.length > 0) {
-      foundCovers.push({ fullpath: albumRoot.fullpath, img: cover[0] });
+  const allAlbumsRootFolder = await getAlbumsNullImg();
+  console.log('length: ', allAlbumsRootFolder.length);
+
+  const covers = await Promise.all(
+    allAlbumsRootFolder.map(async (folder) => ({
+      fullpath: folder.fullpath,
+      img: await searchCover(folder.fullpath)
+    }))
+  );
+
+  const coversFiltered = covers.filter((cvr) => cvr.img !== undefined);
+
+  const processedCovers = updateCoversInDatabase(coversFiltered);
+  return processedCovers;
+  /*   covers.forEach((cover) => console.log(cover)); */
+
+  /*   for (const albumRoot of allAlbumsRootFolder) {
+    console.log('Original path:', albumRoot.fullpath);
+
+    const escapedPattern = escapeSpecialChars(albumRoot.fullpath); // Make sure this function preserves forward slashes
+    console.log('Escaped pattern:', escapedPattern);
+
+    const pattern = `${escapedPattern}/*.{jpg,jpeg,png,webp}`;
+    console.log('Final glob pattern:', pattern);
+
+    const options = {
+      dot: true,
+      onlyFiles: true
+    };
+
+    try {
+      const covers = await fg(pattern, options);
+      if (covers && covers.length > 0) {
+        console.log('Found covers:', covers);
+        foundCovers.push(...covers);
+      } else {
+        console.log('No covers found for:', albumRoot.fullpath);
+      }
+    } catch (e) {
+      console.error('Error during fg execution:', e.message);
+      console.log('Pattern causing the error:', pattern);
     }
-  });
-  const processedCovers = updateCoversInDatabase(foundCovers);
-  return processedCovers; // Return the processed result
+  } */
+
+  /* console.log('All found covers:', foundCovers); */
+  /*  const processedCovers = updateCoversInDatabase(foundCovers);
+  return processedCovers; */
 };
 
 const initCovers = async () => {

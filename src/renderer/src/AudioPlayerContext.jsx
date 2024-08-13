@@ -330,6 +330,15 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
+    case 'covers-missing-request': {
+      return {
+        ...state,
+        covers: action.cover,
+        coversPageNumber: action.coversPageNumber,
+        coversMissingReq: action.coversMissingReq
+      };
+    }
+
     case 'covers-search-term': {
       return {
         ...state,
@@ -417,6 +426,7 @@ export const AudioPlayerProvider = ({ children }) => {
     coversPageNumber: 0,
     coversSearchTerm: '',
     coversDateSort: 'DESC',
+    coversMissingReq: 'not-requested',
     playlistTracks: [],
     shuffledTracks: [],
     playlistInOrder: [],

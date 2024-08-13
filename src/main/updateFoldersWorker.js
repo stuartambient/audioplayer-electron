@@ -6,6 +6,10 @@ import { roots } from '../constant/constants.js';
 import { insertAlbums, deleteAlbums, getAlbums } from './sql.js';
 const [...newroots] = roots;
 
+function escapeSpecialChars(path) {
+  return path.replace(/[\[\]\(\)\{\}]/g, '\\$&');
+}
+
 const parseNewEntries = (newEntries) => {
   const newAlbums = [];
 
@@ -25,7 +29,11 @@ const parseNewEntries = (newEntries) => {
 
       fullpath = entry;
     }
-    const cover = fg.sync(`${fullpath}/**/{cover, folder}.{jpg, jpeg, png, webp}`);
+    const pattern = escapeSpecialChars(fullpath);
+    const cover = fg.sync(`${pattern}/**/{cover,folder}.{jpg,jpeg,png,webp}`, {
+      caseSensitiveMatch: false
+    });
+    console.log('cover: ', cover);
     const newAlbum = {
       id,
       root,

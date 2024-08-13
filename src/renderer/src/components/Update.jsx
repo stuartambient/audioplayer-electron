@@ -47,6 +47,18 @@ const Update = () => {
   }, []);
 
   useEffect(() => {
+    const handleCoversUpdateComplete = (result) => {
+      setCoverUpdateReq(false);
+      console.log('result: ', result);
+      setCoverUpdateResults(result);
+    };
+    window.api.onUpdateCovers(handleCoversUpdateComplete);
+    return () => {
+      window.api.off('cover-update-complete', handleCoversUpdateComplete);
+    };
+  }, []);
+
+  useEffect(() => {
     console.log(fileUpdateResults);
   }, [fileUpdateResults]);
 
@@ -77,7 +89,6 @@ const Update = () => {
         setCoverUpdateReq(true);
         const updatedCovers = await window.api.updateCovers();
         setCoverUpdateResults(updatedCovers);
-        setCoverUpdateReq(false);
 
       default:
         return;
@@ -152,6 +163,15 @@ const Update = () => {
           Folder update details
         </div>
       )}
+      {coverUpdateReq ? (
+        <div className="cover-update-results">
+          <Loader />
+        </div>
+      ) : (
+        <div className="cover-update-details" onClick={handleDetailsRequest} id="cover">
+          <span>Cover update details</span>
+        </div>
+      )}
       {metaUpdateReq && (
         <div className="meta-update-results">
           <Loader />
@@ -183,6 +203,9 @@ const Update = () => {
             {metaUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
           </>
         )}
+      </div>
+      <div className="cover-update-results">
+        {coverUpdateResults && <p>Cover Update Results: {coverUpdateResults}</p>}
       </div>
       {/* <div className="file-update-details" onClick={handleDetailsRequest} id="file">
         File update details

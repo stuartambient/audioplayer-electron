@@ -67,6 +67,11 @@
   grid-row: 2 / 3;
 }
 
+.cover-update-results {
+  grid-column: 1 / 2;
+  grid-row: 4 / 5;
+}
+
 .folder-update-details {
   grid-column: 3 / 4;
   grid-row: 2/3;
@@ -76,6 +81,12 @@
 .file-update-details {
   grid-column: 1 / 2;
   grid-row: 2/3;
+  align-self: end;
+}
+
+.cover-update-details {
+  grid-column: 1 / 2;
+  grid-row: 4/5;
   align-self: end;
 }
 

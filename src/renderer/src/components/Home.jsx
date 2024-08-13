@@ -6,6 +6,7 @@ import { AiFillDownSquare } from 'react-icons/ai';
 import { IoIosAlbums } from 'react-icons/io';
 import { FaTags } from 'react-icons/fa';
 import { PiPlaylistLight } from 'react-icons/pi';
+import { GrDocumentMissing } from 'react-icons/gr';
 import Stats from './Stats';
 import Playlists from './Playlists';
 /* import AppState from '../hooks/AppState'; */
@@ -50,6 +51,17 @@ const Home = () => {
         coversPageNumber: 0
       });
     } else return;
+  };
+
+  const handleMissingCoversRequest = (e) => {
+    e.preventDefault();
+    console.log(e.currentTarget.id);
+    dispatch({
+      type: 'covers-missing-request',
+      covers: [],
+      coversPageNumber: 0,
+      coversMissingReq: 'missing-covers'
+    });
   };
 
   const handleCoversSearchTerm = (e) => {
@@ -113,6 +125,12 @@ const Home = () => {
                 <span id="asc" onClick={handleCoversSort}>
                   <AiFillDownSquare />
                 </span>
+              </div>
+            </li>
+            <li>
+              {' '}
+              <div id="missing-covers" onClick={handleMissingCoversRequest}>
+                <GrDocumentMissing />
               </div>
             </li>
           </>

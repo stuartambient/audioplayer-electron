@@ -26,6 +26,7 @@ const AlbumsCoverView = ({ resetKey }) => {
     state.coversPageNumber,
     state.coversSearchTerm,
     state.coversDateSort,
+    state.coversMissingReq,
     dispatch,
     resetKey,
     state.covers.length

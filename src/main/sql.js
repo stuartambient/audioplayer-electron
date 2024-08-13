@@ -198,6 +198,12 @@ const getAlbums = () => {
   return albums;
 };
 
+const getAlbumsNullImg = () => {
+  const getAllAlbums = db.prepare('SELECT fullpath, img FROM albums WHERE img IS NULL');
+  const albums = getAllAlbums.all();
+  return albums;
+};
+
 const getAlbum = (id) => {
   const getAnAlbum = db.prepare('SELECT fullpath FROM albums WHERE id = ?');
   const album = getAnAlbum.get(id);
@@ -498,6 +504,7 @@ const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
 };
 
 const allCoversByScroll = (offsetNum, sort, term = null) => {
+  console.log(offsetNum, '-----');
   console.log('allCoversByScroll', 'sort: ', sort);
   const order = sort === 'ASC' ? 'ASC' : 'DESC';
   if (term === '') {
@@ -516,6 +523,16 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
     );
     return stmt.all(searchTerm);
   }
+};
+
+const allMissingCoversByScroll = (offsetNum, sort, term = null) => {
+  const order = sort === 'ASC' ? 'ASC' : 'DESC';
+  const stmt = db.prepare(
+    `SELECT id, foldername, fullpath, img FROM albums WHERE img IS NULL ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
+      offsetNum * 50
+    }`
+  );
+  return stmt.all();
 };
 
 const requestedFile = (trackId) => {
@@ -559,6 +576,7 @@ const isLiked = (id) => {
 };
 
 const updateCoversInDatabase = (coversArray) => {
+  /* coversArray.forEach((cover) => console.log(cover)); */
   const updateStmt = db.prepare(`
     UPDATE albums
     SET img = @img
@@ -567,11 +585,12 @@ const updateCoversInDatabase = (coversArray) => {
   try {
     const transaction = db.transaction((coversArray) => {
       coversArray.forEach((cover) => {
+        if (!cover.img) return;
         updateStmt.run(cover);
       });
     });
     transaction(coversArray);
-    return 'success';
+    return `success with ${coversArray.length} covers`;
   } catch (e) {
     return e.message;
   }
@@ -599,12 +618,14 @@ export {
   isLiked,
   getPlaylist,
   allCoversByScroll,
+  allMissingCoversByScroll,
   getAllTracks,
   updateCoversInDatabase,
   allTracks,
   refreshMetadata,
   checkRecordsExist,
-  getUpdatedTracks
+  getUpdatedTracks,
+  getAlbumsNullImg
 };
 
 /*

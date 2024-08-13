@@ -211,10 +211,18 @@ const useAllAlbumsCovers = (
   coversPageNumber,
   coversSearchTerm,
   coversDateSort,
+  coversMissingReq,
   dispatch,
   resetKey,
   coverslength
 ) => {
+  console.log(
+    'Use All Albums Covers: ',
+    coversPageNumber,
+    coversSearchTerm,
+    coversDateSort,
+    coversMissingReq
+  );
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
@@ -222,14 +230,18 @@ const useAllAlbumsCovers = (
   useEffect(() => {
     let isSubscribed = true;
     const loadCovers = async () => {
+      console.log('loadCovers: ');
       setCoversLoading(true);
       setCoversError(false);
       let coversRequest = await window.api.getCovers(
         coversPageNumber,
         coversSearchTerm,
-        coversDateSort
+        coversDateSort,
+        coversMissingReq
       );
       if (coversRequest && isSubscribed) {
+        console.log('isSubscrbed: ', isSubscribed);
+        console.log('coversRequest: ', coversRequest);
         /* setCovers([...covers, ...coversRequest]); */
         dispatch({
           type: 'set-covers',
@@ -240,27 +252,27 @@ const useAllAlbumsCovers = (
         } else {
           setHasMoreCovers(true);
         }
-        /* setHasMoreCovers(coversRequest.length > 0); */
+
         setCoversLoading(false);
       }
     };
 
-    /* if (!coversPageNumber) return; */
-    /* console.log('-----> ', coversPageNumber, coverslength); */
     if (
       (isSubscribed && coversPageNumber === 0 && coverslength === 0) ||
       (isSubscribed && coversPageNumber * 50 === coverslength)
     ) {
       loadCovers();
-    } /* else if (isSubscribed && (coversPageNumber + 1) * 50 === coverslength) {
-      dispatch({
-        type: 'set-covers-pagenumber',
-        coversPageNumber: coversPageNumber + 1
-      });
-      loadCovers();
-    } */
+    }
     return () => (isSubscribed = false);
-  }, [coversPageNumber, coversSearchTerm, resetKey, coverslength]);
+  }, [
+    coversPageNumber,
+    coversSearchTerm,
+    coversDateSort,
+    coversMissingReq,
+
+    resetKey,
+    coverslength
+  ]);
 
   return { coversLoading, hasMoreCovers, coversError };
 };
