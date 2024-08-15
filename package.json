@@ -33,6 +33,7 @@
     "oauth-electron": "^2.0.104",
     "react-icons": "^4.7.1",
     "react-virtuoso": "^4.7.10",
+    "remove-accents": "^0.5.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

@@ -1,7 +1,6 @@
 import { parentPort, workerData, isMainThread } from 'worker_threads';
 import path from 'node:path';
 import fs from 'node:fs/promises';
-
 import fg from 'fast-glob';
 import { getAlbums, getAlbumsNullImg, updateCoversInDatabase } from './sql.js';
 
@@ -10,7 +9,7 @@ function normalizePath(p) {
 }
 
 function escapeSpecialChars(path) {
-  return path.replace(/[\[\]\(\)]/g, '\\$&');
+  return path.replace(/[\[\]\(\)\{\}]/g, '\\$&');
 }
 
 const options = {
@@ -20,18 +19,20 @@ const options = {
 };
 
 function checkFile(file) {
-  if (
-    file.endsWith('.jpg') ||
-    file.endsWith('.jpeg') ||
-    file.endsWith('.png') ||
-    file.endsWith('.webp')
-  ) {
+  const lc = file.toLowerCase();
+  if (lc.endsWith('.jpg') || lc.endsWith('.jpeg') || lc.endsWith('.png') || lc.endsWith('.webp')) {
     return true;
   }
   return false;
 }
 
-function searchCover(folder) {
+async function searchCover(folder) {
+  /*   if (folder.startsWith('D:/music/Ghédalia')) {
+    const w = await fs.readdir(folder);
+    console.log('fs: ', w);
+    const z = fg.sync(`${folder}/*`);
+    console.log('z: ', z);
+  } */
   const files = ['.jpg', '.jpeg', '.png', '.webp'];
   /*  const escapedPath = fg.escapePath(path.normalize(folder));
   console.log('path: ', escapedPath); */

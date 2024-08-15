@@ -5,11 +5,12 @@ const CoverSearchAltApp = () => {
   const [artist, setArtist] = useState('');
   const [album, setAlbum] = useState('');
   const [savePath, setSavePath] = useState('');
-  const [link, setLink] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 });
-  const [debounceTimeout, setDebounceTimeout] = useState(null);
   const iframeRef = useRef(null);
+  const [message, setMessage] = useState(false);
+
+  const isListenerAttached = useRef(false);
 
   const generateNonce = () => {
     return Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
@@ -18,26 +19,41 @@ const CoverSearchAltApp = () => {
   };
   const [nonce] = useState(generateNonce());
 
-  /* window.coverSearchAltApi.onContextMenuCommand((cmd) => {
-      if (cmd === 'save image') {
-        window.coverSearchAltApi.downloadFile(imageUrl, savePath);
-      }
-    }); */
+  useEffect(() => {
+    const handleDownloadCompleted = (val) => {
+      /* console.log(e); */
+      console.log('val: ', val[0] === imageUrl, val, '----', imageUrl);
+      setImageUrl('');
+    };
+
+    window.coverSearchAltApi.onDownloadFile(handleDownloadCompleted);
+
+    return () => {
+      window.coverSearchAltApi.off('download-completed', handleDownloadCompleted);
+    };
+  }, [imageUrl]);
+
+  const listeners = [];
+
+  function trackEventListener(element, eventName, handler, options) {
+    element.addEventListener(eventName, handler, options);
+    listeners.push({ element, eventName, handler, options });
+    console.log(`Added listener for ${eventName}`, { element, handler, options });
+  }
+
+  function logAllListeners() {
+    console.log('Currently active event listeners:', listeners);
+  }
+
   const handleSaveImage = useCallback(
-    async (cmd) => {
+    (cmd) => {
+      console.log('cmd: ', cmd);
       // Guard clause to prevent empty URL or repeated calls
       if (cmd === 'save image' && imageUrl) {
-        if (!debounceTimeout) {
-          const timeout = setTimeout(async () => {
-            await window.coverSearchAltApi.downloadFile(imageUrl, savePath);
-            clearTimeout(timeout);
-            setDebounceTimeout(null);
-          }, 300); // Adjust the delay as needed
-          setDebounceTimeout(timeout);
-        }
+        window.coverSearchAltApi.downloadFile(imageUrl, savePath);
       }
     },
-    [imageUrl, savePath, debounceTimeout]
+    [imageUrl, savePath]
   );
 
   useEffect(() => {
@@ -77,6 +93,7 @@ const CoverSearchAltApp = () => {
 
   useEffect(() => {
     const handleSearchParams = (args) => {
+      if (!args.results.artist) return;
       setArtist(args.results.artist);
       setAlbum(args.results.title);
       setSavePath(args.results.path);
@@ -96,6 +113,9 @@ const CoverSearchAltApp = () => {
         return;
       }
 
+      trackEventListener(window, 'message', messageHandler);
+      console.log('listeners: ', listeners);
+
       try {
         // Ensure event data is in the expected format (an object stringified as JSON)
         const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
@@ -103,7 +123,6 @@ const CoverSearchAltApp = () => {
         // Validate the message structure
         if (data && typeof data === 'object' && data.action === 'primary' && data.type === 'pick') {
           console.log('Valid message data:', data);
-
           setImageUrl(data.bigCoverUrl);
         } else {
           throw new Error('Invalid message structure');
@@ -132,10 +151,6 @@ const CoverSearchAltApp = () => {
     window.coverSearchAltApi.showContextMenu(0, 'cover');
   };
 
-  const handleClick = () => {
-    setContextMenu({ visible: false, x: 0, y: 0 });
-  };
-
   useEffect(() => {
     const sendMessageToIframe = (message) => {
       if (iframeRef.current && iframeRef.current.contentWindow) {
@@ -154,18 +169,11 @@ const CoverSearchAltApp = () => {
       };
       sendMessageToIframe(textMessage);
 
-      const errorMessage = {
+      /*   const errorMessage = {
         type: 'error',
         text: null
       };
-      sendMessageToIframe(errorMessage);
-
-      // You can also send error or close messages as needed
-      // const errorMessage = { type: 'error', text: 'Some error occurred' };
-      // sendMessageToIframe(errorMessage);
-
-      // const closeMessage = { type: 'close' };
-      // sendMessageToIframe(closeMessage);
+      sendMessageToIframe(errorMessage); */
     };
 
     if (iframeRef.current) {
@@ -179,48 +187,6 @@ const CoverSearchAltApp = () => {
       }
     };
   }, [artist, album]);
-
-  /*   useEffect(() => {
-    if (iframeRef.current && iframeRef.current.contentWindow) {
-      iframeRef.current.contentWindow.addEventListener('click', () => {
-        console.log('iframe clicked');
-      });
-    }
-  }); */
-
-  const handleDownload = (e) => {
-    window.coverSearchAltApi.downloadFile(imageUrl, savePath);
-  };
-
-  /*   useEffect(() => {
-    const receiveMessage = (event) => {
-      console.log('Received message from:', event);
-      console.log('event: ', event);
-
-      if (event.origin !== 'https://covers.musichoarders.xyz') {
-        console.log('Ignoring message from:', event.origin);
-        return;
-      }
-
-      console.log('Message received from iframe:', event.data);
-
-      // Handle messages from the iframe
-      if (event.data.type === 'response') {
-        // Process response message
-        console.log('Processing response:', event.data);
-      }
-    };
-
-    window.addEventListener('message', receiveMessage);
-
-    return () => {
-      window.removeEventListener('message', receiveMessage);
-    };
-  }, []); */
-
-  if (!artist) {
-    return null;
-  }
 
   const remotePort = 'browser';
   const remoteAgent = 'MusicPlayer-Electron/1.0';

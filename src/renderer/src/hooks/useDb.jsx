@@ -216,13 +216,6 @@ const useAllAlbumsCovers = (
   resetKey,
   coverslength
 ) => {
-  console.log(
-    'Use All Albums Covers: ',
-    coversPageNumber,
-    coversSearchTerm,
-    coversDateSort,
-    coversMissingReq
-  );
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
@@ -230,7 +223,6 @@ const useAllAlbumsCovers = (
   useEffect(() => {
     let isSubscribed = true;
     const loadCovers = async () => {
-      console.log('loadCovers: ');
       setCoversLoading(true);
       setCoversError(false);
       let coversRequest = await window.api.getCovers(
@@ -240,19 +232,17 @@ const useAllAlbumsCovers = (
         coversMissingReq
       );
       if (coversRequest && isSubscribed) {
-        console.log('isSubscrbed: ', isSubscribed);
-        console.log('coversRequest: ', coversRequest);
-        /* setCovers([...covers, ...coversRequest]); */
         dispatch({
           type: 'set-covers',
           covers: coversRequest
         });
         if (coversRequest.length < 50) {
           setHasMoreCovers(false);
+          return (isSubscribed = false);
         } else {
           setHasMoreCovers(true);
         }
-
+        /* setHasMoreCovers(coversRequest.length > 0); */
         setCoversLoading(false);
       }
     };

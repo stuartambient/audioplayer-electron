@@ -170,3 +170,12 @@
   width: 100%;
   height: 100%;
 } */
+
+.cover-icons:hover {
+  cursor: pointer;
+}
+
+.sort-icon {
+  background-color: green;
+  fill: red;
+}

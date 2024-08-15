@@ -44,6 +44,8 @@ const AlbumsCoverView = ({ resetKey }) => {
       title = album;
     }
 
+    if (!artist) return;
+
     if (service === 'covit') {
       return openChildWindow(
         'cover-search-alt',

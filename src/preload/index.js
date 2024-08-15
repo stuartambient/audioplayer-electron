@@ -36,17 +36,15 @@ contextBridge.exposeInMainWorld('api', {
   savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks),
   getPlaylists: () => ipcRenderer.invoke('get-playlists'),
   homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id),
-  getCovers: (coversPageNum, coversSearchTerm, coversDateSort, coversMissingReq) => {
-    console.log('missing req: ', coversMissingReq);
+  getCovers: (coversPageNum, coversSearchTerm, coversDateSort, coversMissingReq) =>
+    /* console.log('missing req: ', coversMissingReq); */
     ipcRenderer.invoke(
       'get-covers',
       coversPageNum,
       coversSearchTerm,
       coversDateSort,
       coversMissingReq
-    );
-  },
-
+    ),
   setShuffledTracksArray: () => ipcRenderer.invoke('set-shuffled-tracks-array'),
   getShuffledTracks: (start, end) => ipcRenderer.invoke('get-shuffled-tracks', start, end),
   showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),

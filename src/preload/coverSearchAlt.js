@@ -10,6 +10,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 contextBridge.exposeInMainWorld('coverSearchAltApi', {
   onSendToChild: (cb) => ipcRenderer.once('send-to-child', (event, args) => cb(args)),
   downloadFile: (fileUrl, savepath) => ipcRenderer.invoke('download-file', fileUrl, savepath),
+  onDownloadFile: (cb) => ipcRenderer.on('download-completed', (event, ...args) => cb(args)),
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
     ipcRenderer.once('context-menu-command', (event, command) => callback(command));

@@ -330,10 +330,20 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
+    case 'covers-refresh': {
+      return {
+        ...state,
+        coversMissingReq: action.coversMissingReq,
+        covers: action.covers,
+        coversPageNumber: action.coversPageNumber,
+        coversSearchTerm: action.coversSearchTerm
+      };
+    }
+
     case 'covers-missing-request': {
       return {
         ...state,
-        covers: action.cover,
+        covers: action.covers,
         coversPageNumber: action.coversPageNumber,
         coversMissingReq: action.coversMissingReq
       };

@@ -173,7 +173,12 @@ const insertAlbums = (data) => {
   );
 
   const insertMany = db.transaction((albums) => {
-    for (const a of albums) insert.run(a);
+    for (const a of albums) {
+      if (!a.img) {
+        a.img = null; // or you could use an empty string ''
+      }
+      insert.run(a);
+    }
   });
 
   insertMany(data);
@@ -504,8 +509,6 @@ const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
 };
 
 const allCoversByScroll = (offsetNum, sort, term = null) => {
-  console.log(offsetNum, '-----');
-  console.log('allCoversByScroll', 'sort: ', sort);
   const order = sort === 'ASC' ? 'ASC' : 'DESC';
   if (term === '') {
     const stmt = db.prepare(

@@ -820,11 +820,13 @@ ipcMain.handle('homepage-playlists', async (_m, ...args) => {
 
 ipcMain.handle('get-covers', async (_, ...args) => {
   console.log('args: ', args);
-  /*  let albums; */
-  //if (args[3] === 'missing-covers') {
-  // albums = allMissingCoversByScroll(args[0], args[2], args[1]);
-  // } else {
-  const albums = await allCoversByScroll(args[0], args[2], args[1]);
+  let albums;
+
+  if (args[3] === 'missing-covers') {
+    albums = await allMissingCoversByScroll(args[0], args[2], args[1]);
+  } else {
+    albums = await allCoversByScroll(args[0], args[2], args[1]);
+  }
   //}
 
   /*   const albumsWithImages = Promise.all(
@@ -854,6 +856,7 @@ ipcMain.handle('get-covers', async (_, ...args) => {
     })
   );
   return albumsWithImages.then((res) => res.filter((entry) => entry !== null)); */
+  //console.log('albums: ', albums);
   return albums;
 });
 
@@ -1086,7 +1089,7 @@ ipcMain.handle('download-file', async (event, ...args) => {
     if (response.status === 200) {
       await fs.promises.writeFile(savePath.filePath, response.data);
       console.log('Download complete:', savePath.filePath);
-      return 'Download complete';
+      return event.sender.send('download-completed', `${fileUrl}`);
     } else {
       console.log('Failed to download:', response.status);
       return `Download failed with status: ${response.status}`;

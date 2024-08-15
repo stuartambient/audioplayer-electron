@@ -7,6 +7,7 @@ import { IoIosAlbums } from 'react-icons/io';
 import { FaTags } from 'react-icons/fa';
 import { PiPlaylistLight } from 'react-icons/pi';
 import { GrDocumentMissing } from 'react-icons/gr';
+import { IoIosRefresh } from 'react-icons/io';
 import Stats from './Stats';
 import Playlists from './Playlists';
 /* import AppState from '../hooks/AppState'; */
@@ -19,6 +20,7 @@ const Home = () => {
   const { state, dispatch } = useAudioPlayer();
   const [homepage, setHomePage] = useState('albums-cover-view');
   const [resetKey, setResetKey] = useState('');
+  const [coversSortOrder, setCoversSortOrder] = useState('DESC');
   /*   const { state, dispatch } = AppState(); */
   const getKey = () => uuidv4();
 
@@ -37,6 +39,7 @@ const Home = () => {
     e.preventDefault();
     console.log('handleCoversSort: ', e.currentTarget.id);
     if (e.currentTarget.id === 'desc') {
+      setCoversSortOrder('DESC');
       dispatch({
         type: 'covers-date-sort',
         coversDateSort: 'DESC',
@@ -44,6 +47,7 @@ const Home = () => {
         coversPageNumber: 0
       });
     } else if (e.currentTarget.id === 'asc') {
+      setCoversSortOrder('ASC');
       dispatch({
         type: 'covers-date-sort',
         coversDateSort: 'ASC',
@@ -55,25 +59,38 @@ const Home = () => {
 
   const handleMissingCoversRequest = (e) => {
     e.preventDefault();
-    console.log(e.currentTarget.id);
+
     dispatch({
       type: 'covers-missing-request',
+      coversMissingReq: 'missing-covers',
       covers: [],
-      coversPageNumber: 0,
-      coversMissingReq: 'missing-covers'
+      coversPageNumber: 0
     });
   };
 
   const handleCoversSearchTerm = (e) => {
     e.preventDefault();
-    if (!coverSearchRef.current.value) {
+    /*     if (!coverSearchRef.current.value) {
       setResetKey(getKey());
-    }
+    } */
     dispatch({
       type: 'covers-search-term',
       coversSearchTerm: coverSearchRef.current.value,
       covers: [],
       coversPageNumber: 0
+    });
+  };
+
+  const handleCoversRefresh = (e) => {
+    console.log(e.currentTarget.id);
+    setCoversSortOrder('DESC');
+    coverSearchRef.current.value = '';
+    dispatch({
+      type: 'covers-refresh',
+      coversMissingReq: 'not-requested',
+      covers: [],
+      coversPageNumber: 0,
+      coversSearchTerm: ''
     });
   };
 
@@ -117,20 +134,28 @@ const Home = () => {
             </li>
             <li>
               {' '}
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span id="desc" onClick={handleCoversSort}>
-                  <AiFillDownSquare style={{ transform: 'rotate(180deg)' }} />
+              <div className="cover-icons" style={{ display: 'flex', flexDirection: 'column' }}>
+                <span className="svg-container" id="desc" onClick={handleCoversSort}>
+                  <AiFillDownSquare
+                    className={coversSortOrder === 'DESC' ? 'sort-icon' : null}
+                    style={{ transform: 'rotate(180deg)' }}
+                  />
                 </span>
 
-                <span id="asc" onClick={handleCoversSort}>
-                  <AiFillDownSquare />
+                <span className="svg-container" id="asc" onClick={handleCoversSort}>
+                  <AiFillDownSquare className={coversSortOrder === 'ASC' ? 'sort-icon' : null} />
                 </span>
               </div>
             </li>
             <li>
               {' '}
-              <div id="missing-covers" onClick={handleMissingCoversRequest}>
+              <div className="cover-icons" id="missing-covers" onClick={handleMissingCoversRequest}>
                 <GrDocumentMissing />
+              </div>
+            </li>
+            <li>
+              <div className="cover-icons" id="refresh-covers" onClick={handleCoversRefresh}>
+                <IoIosRefresh />
               </div>
             </li>
           </>
