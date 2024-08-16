@@ -7,5 +7,7 @@
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "eslint.nodePath": "",
+  "eslint.quiet": false
 }

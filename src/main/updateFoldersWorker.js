@@ -30,7 +30,7 @@ const parseNewEntries = (newEntries) => {
       fullpath = entry;
     }
     const pattern = escapeSpecialChars(fullpath);
-    const cover = fg.sync(`${pattern}/**/{cover,folder}.{jpg,jpeg,png,webp}`, {
+    const cover = fg.sync(`${pattern}/**/*.{jpg,jpeg,png,webp}`, {
       caseSensitiveMatch: false
     });
     console.log('cover: ', cover);
