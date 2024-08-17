@@ -28,9 +28,9 @@ const MainNav = ({ onClick }) => {
             </li>
           </ul>
           <ul className="main-nav--center">
-            <li onClick={onClick} id="home" className={state.home ? 'highlight' : ''}>
+            {/*  <li onClick={onClick} id="home" className={state.home ? 'highlight' : ''}>
               <span>Home</span>
-            </li>
+            </li> */}
             <li onClick={onClick} id="update" className={state.update ? 'highlight' : ''}>
               <span>Update</span>
             </li>
@@ -42,6 +42,15 @@ const MainNav = ({ onClick }) => {
             </li>
             <li onClick={onClick} id="mini-mode" className="endline">
               <span>Miniplayer</span>
+            </li>
+            <li onClick={onClick} id="albums" className={state.home ? 'highlight' : ''}>
+              <span>Albums</span>
+            </li>
+            <li onClick={onClick} id="tag-editor" className="endline">
+              <span>Tags</span>
+            </li>
+            <li onClick={onClick} id="playlists" className="endline">
+              <span>Playlists</span>
             </li>
           </ul>
           <ul className="main-nav--right">

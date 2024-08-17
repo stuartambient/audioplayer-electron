@@ -12,6 +12,7 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 /* import AppState from '../hooks/AppState'; */
 import { openChildWindow } from './ChildWindows/openChildWindow';
+import '../style/AlbumsCoverView.css';
 
 const AlbumsCoverView = ({ resetKey }) => {
   const { state, dispatch } = useAudioPlayer();

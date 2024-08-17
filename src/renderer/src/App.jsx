@@ -208,6 +208,7 @@ function App() {
   }, [state.playlistTracks[0]]); */
 
   const handleMainNav = async (e) => {
+    console.log('handleMainNav: ', e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'close':
         /* window.api.appClose(); */
@@ -230,6 +231,19 @@ function App() {
           type: 'mini-mode-info',
           minimalmodeInfo: !state.minimalmodeInfo
         });
+        break;
+      case 'albums':
+        dispatch({
+          type: 'set-page',
+          home: true,
+          update: false,
+          player: false,
+          library: false
+        });
+        break;
+      case 'tag-editor':
+        break;
+      case 'playlists':
         break;
       case 'home':
         dispatch({

@@ -161,14 +161,13 @@ const Home = () => {
             </li>
           </>
         )}
-        <li
+        {/*         <li
           className={homepage === 'stats' ? 'home-cards--item active' : 'home-cards--item'}
           id="stats"
           onClick={handleHomePage}
         >
           <FaTags />
           Tag Editor
-          {/* <Stats /> */}
         </li>
         <li
           className={homepage === 'playlists' ? 'home-cards--item active' : 'home-cards--item'}
@@ -177,13 +176,6 @@ const Home = () => {
         >
           <PiPlaylistLight />
           Playlists
-        </li>
-        {/*         <li
-          className={homepage === 'coversearch' ? 'home-cards--item active' : 'home-cards--item'}
-          id="coversearch"
-          onClick={handleHomePage}
-        >
-          <span>Cover search</span>
         </li> */}
       </ul>
 
