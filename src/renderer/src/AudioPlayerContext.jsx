@@ -336,7 +336,8 @@ const audioPlayerReducer = (state, action) => {
         coversMissingReq: action.coversMissingReq,
         covers: action.covers,
         coversPageNumber: action.coversPageNumber,
-        coversSearchTerm: action.coversSearchTerm
+        coversSearchTerm: action.coversSearchTerm,
+        coversDateSort: action.coversDateSort
       };
     }
 

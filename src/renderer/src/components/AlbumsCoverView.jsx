@@ -122,7 +122,7 @@ const AlbumsCoverView = ({ resetKey }) => {
         },
         {
           root: document.querySelector('.albums-coverview'),
-          threshold: 1.0
+          threshold: 1
         }
       );
       if (node) coversObserver.current.observe(node);

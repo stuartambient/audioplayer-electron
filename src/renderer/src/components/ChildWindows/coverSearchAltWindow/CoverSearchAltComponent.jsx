@@ -20,11 +20,12 @@ const CoverSearchAltApp = () => {
     ).join('');
   };
   const [nonce] = useState(generateNonce());
-  /* 
+
   useEffect(() => {
     const handleDownloadCompleted = (val) => {
-      console.log('val: ', val[0] === imageUrl, val, '----', imageUrl);
-      setImageUrl('');
+      if (val[0] === 'download successful') {
+        setDownload(false);
+      }
     };
 
     window.coverSearchAltApi.onDownloadFile(handleDownloadCompleted);
@@ -32,24 +33,13 @@ const CoverSearchAltApp = () => {
     return () => {
       window.coverSearchAltApi.off('download-completed', handleDownloadCompleted);
     };
-  }, [imageUrl]); */
-
-  /*   const handleSaveImage = useCallback(
-    (cmd) => {
-      console.log('cmd: ', cmd);
-
-      if (cmd === 'save image' && imageUrl) {
-        window.coverSearchAltApi.downloadFile(imageUrl, savePath);
-      }
-    },
-    [imageUrl, savePath]
-  ); */
+  }, []);
 
   useEffect(() => {
     if (download && imageUrl) {
       window.coverSearchAltApi.downloadFile(imageUrl, savePath);
     }
-    return setDownload(false);
+    /* return setDownload(false); */
   }, [download, imageUrl, savePath]);
 
   useEffect(() => {
@@ -137,11 +127,7 @@ const CoverSearchAltApp = () => {
 
   const handleContextMenu = (event) => {
     event.preventDefault();
-    /*   setContextMenu({
-      visible: true,
-      x: event.clientX,
-      y: event.clientY
-    }); */
+
     window.coverSearchAltApi.showContextMenu(0, 'cover');
   };
 

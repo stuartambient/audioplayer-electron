@@ -9,8 +9,8 @@ import {
   useAlbums,
   useAlbumTracks,
   usePlaylist,
-  usePlaylistDialog,
-  useAllAlbumsCovers
+  usePlaylistDialog
+  /* useAllAlbumsCovers */
   /*   useRandomTracks */
 } from '../hooks/useDb';
 import '../style/InfiniteList.css';

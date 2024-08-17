@@ -90,7 +90,8 @@ const Home = () => {
       coversMissingReq: 'not-requested',
       covers: [],
       coversPageNumber: 0,
-      coversSearchTerm: ''
+      coversSearchTerm: '',
+      coversDateSort: 'DESC'
     });
   };
 

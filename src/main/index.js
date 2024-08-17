@@ -1089,7 +1089,7 @@ ipcMain.handle('download-file', async (event, ...args) => {
     if (response.status === 200) {
       await fs.promises.writeFile(savePath.filePath, response.data);
       console.log('Download complete:', savePath.filePath);
-      return event.sender.send('download-completed', `${fileUrl}`);
+      return event.sender.send('download-completed', 'download successful');
     } else {
       console.log('Failed to download:', response.status);
       return `Download failed with status: ${response.status}`;
