@@ -49,9 +49,9 @@ const MainNav = ({ onClick }) => {
             <li onClick={onClick} id="tag-editor" className="endline">
               <span>Tags</span>
             </li>
-            <li onClick={onClick} id="playlists" className="endline">
+            {/*  <li onClick={onClick} id="playlists" className="endline">
               <span>Playlists</span>
-            </li>
+            </li> */}
           </ul>
           <ul className="main-nav--right">
             <li onClick={onClick} id="minimize">

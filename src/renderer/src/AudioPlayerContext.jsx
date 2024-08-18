@@ -81,7 +81,8 @@ const audioPlayerReducer = (state, action) => {
         home: action.home,
         update: action.update,
         player: action.player,
-        library: action.library
+        library: action.library,
+        tagEditor: action.tagEditor
       };
     }
 
@@ -407,6 +408,7 @@ export const AudioPlayerProvider = ({ children }) => {
     update: false,
     player: false,
     library: false,
+    tagEditor: false,
 
     minimalmode: false,
     minimalmodeInfo: false,

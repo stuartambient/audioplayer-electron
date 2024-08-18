@@ -11,13 +11,26 @@
 .albums-coverview--albums {
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 100px));
-  grid-auto-rows: 100px;
+
   grid-gap: 10px;
   grid-auto-flow: dense;
   overflow-y: scroll;
   overflow-x: hidden;
   justify-content: center;
+}
+
+.grid-small {
+  grid-template-columns: repeat(auto-fill, minmax(100px, 100px));
+  grid-auto-rows: 100px;
+}
+.grid-medium {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 150px));
+  grid-auto-rows: 150px;
+}
+
+.grid-large {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 200px));
+  grid-auto-rows: 200px;
 }
 
 .albums-coverview--albums li .overlay {
@@ -46,11 +59,31 @@
   cursor: pointer;
 }
 
-.albums-coverview--albums li img {
+/* .albums-coverview--albums li img {
   object-fit: cover;
   height: 100px;
   width: 100px;
   object-position: center;
+} */
+
+.cover-image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.image-small {
+  height: 100px;
+  width: 100px;
+}
+
+.image-medium {
+  height: 150px;
+  width: 150px;
+}
+
+.image-large {
+  height: 200px;
+  width: 200px;
 }
 
 .albums-coverview--view-more {

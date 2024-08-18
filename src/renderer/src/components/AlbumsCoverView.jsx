@@ -1,5 +1,6 @@
 /* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
 import { useState, useRef, useCallback, useEffect } from 'react';
+import classNames from 'classnames';
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,7 +15,7 @@ import ViewMore from '../assets/view-more-alt.jpg';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/AlbumsCoverView.css';
 
-const AlbumsCoverView = ({ resetKey }) => {
+const AlbumsCoverView = ({ resetKey, coverSize }) => {
   const { state, dispatch } = useAudioPlayer();
   /*  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' }); */
   const [viewMore, setViewMore] = useState(false);
@@ -148,15 +149,29 @@ const AlbumsCoverView = ({ resetKey }) => {
     await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
   };
 
+  const albumsGridName = classNames('albums-coverview--albums', {
+    'grid-small': coverSize === 1,
+    'grid-medium': coverSize === 2,
+    'grid-large': coverSize === 3
+  });
+
+  const coverImageSize = classNames('cover-image', {
+    'image-small': coverSize === 1,
+    'image-medium': coverSize === 2,
+    'image-large': coverSize === 3
+  });
+
   return (
     <section className="albums-coverview">
-      <ul className="albums-coverview--albums">
+      <ul className={albumsGridName}>
         {state.covers.length > 0 &&
           state.covers.map((cover, idx) => {
             return (
               <li key={uuidv4()} ref={state.covers.length === idx + 1 ? lastCoverElement : null}>
-                {cover.img && <img src={`cover://${cover.img}`} alt="" />}
-                {!cover.img && <img src={NoImage} alt="" />}
+                {cover.img && (
+                  <img className={coverImageSize} src={`cover://${cover.img}`} alt="" />
+                )}
+                {!cover.img && <img className={coverImageSize} src={NoImage} alt="" />}
                 <div className="overlay">
                   <span id={cover.fullpath}>{cover.foldername}</span>
 

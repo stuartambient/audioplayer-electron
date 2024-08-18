@@ -21,6 +21,7 @@ const Home = () => {
   const [homepage, setHomePage] = useState('albums-cover-view');
   const [resetKey, setResetKey] = useState('');
   const [coversSortOrder, setCoversSortOrder] = useState('DESC');
+  const [coverSize, setCoverSize] = useState(1);
   /*   const { state, dispatch } = AppState(); */
   const getKey = () => uuidv4();
 
@@ -33,6 +34,11 @@ const Home = () => {
         coversPageNumber: undefined
       });
     } */
+  };
+
+  const handleCoverSize = (e) => {
+    /* console.log('range: ', e.target.value); */
+    setCoverSize(Number(e.target.value));
   };
 
   const handleCoversSort = (e) => {
@@ -99,16 +105,13 @@ const Home = () => {
   return (
     <>
       <ul className="home-cards" style={{ color: 'white' }}>
-        <li
+        {/*  <li
           className={
             homepage === 'albums-cover-view' ? 'home-cards--item active' : 'home-cards--item'
           }
           id="albums-cover-view"
           onClick={handleHomePage}
-        >
-          <IoIosAlbums />
-          Albums
-        </li>
+        ></li> */}
         {/* <li className="covers-search"></li> */}
         {homepage === 'albums-cover-view' && (
           <>
@@ -132,6 +135,24 @@ const Home = () => {
                   <GiMagnifyingGlass />
                 </button>
               </form>
+            </li>
+            <li>
+              <input
+                type="range"
+                id="cover-size"
+                name="cover-size"
+                min="1"
+                max="3"
+                steps="3"
+                list="ticks"
+                value={coverSize}
+                onChange={handleCoverSize}
+              />
+              <datalist id="ticks">
+                <option value="1"></option>
+                <option value="2"></option>
+                <option value="3"></option>
+              </datalist>
             </li>
             <li>
               {' '}
@@ -180,7 +201,7 @@ const Home = () => {
       </ul>
 
       {homepage === 'albums-cover-view' && (
-        <AlbumsCoverView resetKey={resetKey} homepage={homepage} />
+        <AlbumsCoverView resetKey={resetKey} homepage={homepage} coverSize={coverSize} />
       )}
       {homepage === 'stats' && <Stats />}
       {homepage === 'playlists' && <Playlists />}

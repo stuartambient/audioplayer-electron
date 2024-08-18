@@ -21,6 +21,7 @@ import Update from './Components/Update';
 import MainNav from './Components/MainNav';
 import Controls from './Components/Controls';
 import Extras from './Components/Extras';
+import Stats from './Components/Stats';
 
 import './App.css';
 /* import './style/normalize.css'; */
@@ -238,10 +239,9 @@ function App() {
           home: true,
           update: false,
           player: false,
-          library: false
+          library: false,
+          tagEditor: false
         });
-        break;
-      case 'tag-editor':
         break;
       case 'playlists':
         break;
@@ -260,7 +260,8 @@ function App() {
           home: false,
           update: true,
           player: false,
-          library: false
+          library: false,
+          tagEditor: false
         });
         break;
       case 'player':
@@ -268,16 +269,28 @@ function App() {
           type: 'set-page',
           home: false,
           update: false,
-          player: true
+          player: true,
+          tagEditor: false
         });
         break;
+      case 'tag-editor':
+        dispatch({
+          type: 'set-page',
+          home: false,
+          update: false,
+          player: false,
+          tagEditor: true
+        });
+        break;
+
       case 'playerplaylist':
         dispatch({
           type: 'set-page',
           home: false,
           update: false,
           player: true,
-          library: true
+          library: true,
+          tagEditor: false
         });
         break;
       case 'mini-mode':
@@ -359,6 +372,7 @@ function App() {
           )}
         </Player>
       ) : null}
+      {state.tagEditor && <Stats />}
       {state.minimalmode && <Controls handlePlayerControls={handlePlayerControls} />}
 
       {state.player || state.miniModePlaylist || state.home || state.update ? (
