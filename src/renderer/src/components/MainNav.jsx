@@ -46,7 +46,7 @@ const MainNav = ({ onClick }) => {
             <li onClick={onClick} id="albums" className={state.home ? 'highlight' : ''}>
               <span>Albums</span>
             </li>
-            <li onClick={onClick} id="tag-editor" className="endline">
+            <li onClick={onClick} id="tag-editor" className={state.tagEditor ? 'highlight' : ''}>
               <span>Tags</span>
             </li>
             {/*  <li onClick={onClick} id="playlists" className="endline">

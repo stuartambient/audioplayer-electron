@@ -337,6 +337,9 @@ function App() {
     if (state.update) {
       return 'container container-update';
     }
+    if (state.tagEditor) {
+      return 'container container-home';
+    }
     if (state.miniModePlaylist) {
       return 'container container-mini-expanded';
     }
@@ -357,7 +360,7 @@ function App() {
 
   return (
     <div className={containerClassNames()}>
-      {state.home || state.update || state.library || state.minimalmode ? (
+      {state.home || state.update || state.library || state.minimalmode || state.tagEditor ? (
         <MainNav onClick={handleMainNav} />
       ) : null}
       {state.home && !state.minimalmode && <Home />}

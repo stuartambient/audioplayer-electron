@@ -3,17 +3,10 @@ import { useAudioPlayer } from '../AudioPlayerContext';
 import { v4 as uuidv4 } from 'uuid';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import { AiFillDownSquare } from 'react-icons/ai';
-import { IoIosAlbums } from 'react-icons/io';
-import { FaTags } from 'react-icons/fa';
-import { PiPlaylistLight } from 'react-icons/pi';
 import { GrDocumentMissing } from 'react-icons/gr';
 import { IoIosRefresh } from 'react-icons/io';
-import Stats from './Stats';
-import Playlists from './Playlists';
-/* import AppState from '../hooks/AppState'; */
 import '../style/Home.css';
 import AlbumsCoverView from './AlbumsCoverView';
-import Player from './Player';
 /* import CoverSearch from './CoverSearch'; */
 
 const Home = () => {
@@ -22,22 +15,9 @@ const Home = () => {
   const [resetKey, setResetKey] = useState('');
   const [coversSortOrder, setCoversSortOrder] = useState('DESC');
   const [coverSize, setCoverSize] = useState(1);
-  /*   const { state, dispatch } = AppState(); */
   const getKey = () => uuidv4();
 
-  const handleHomePage = (e) => {
-    setHomePage(e.currentTarget.id);
-    /* if (e.currentTarget.id === 'recent-additions') {
-      dispatch({
-        type: 'reset-albums-covers',
-        covers: [],
-        coversPageNumber: undefined
-      });
-    } */
-  };
-
   const handleCoverSize = (e) => {
-    /* console.log('range: ', e.target.value); */
     setCoverSize(Number(e.target.value));
   };
 
@@ -76,9 +56,6 @@ const Home = () => {
 
   const handleCoversSearchTerm = (e) => {
     e.preventDefault();
-    /*     if (!coverSearchRef.current.value) {
-      setResetKey(getKey());
-    } */
     dispatch({
       type: 'covers-search-term',
       coversSearchTerm: coverSearchRef.current.value,
@@ -104,15 +81,7 @@ const Home = () => {
   const coverSearchRef = useRef();
   return (
     <>
-      <ul className="home-cards" style={{ color: 'white' }}>
-        {/*  <li
-          className={
-            homepage === 'albums-cover-view' ? 'home-cards--item active' : 'home-cards--item'
-          }
-          id="albums-cover-view"
-          onClick={handleHomePage}
-        ></li> */}
-        {/* <li className="covers-search"></li> */}
+      <ul className="album-cover-tools" style={{ color: 'white' }}>
         {homepage === 'albums-cover-view' && (
           <>
             <li className="covers-search-form">
@@ -182,30 +151,9 @@ const Home = () => {
             </li>
           </>
         )}
-        {/*         <li
-          className={homepage === 'stats' ? 'home-cards--item active' : 'home-cards--item'}
-          id="stats"
-          onClick={handleHomePage}
-        >
-          <FaTags />
-          Tag Editor
-        </li>
-        <li
-          className={homepage === 'playlists' ? 'home-cards--item active' : 'home-cards--item'}
-          id="playlists"
-          onClick={handleHomePage}
-        >
-          <PiPlaylistLight />
-          Playlists
-        </li> */}
       </ul>
 
-      {homepage === 'albums-cover-view' && (
-        <AlbumsCoverView resetKey={resetKey} homepage={homepage} coverSize={coverSize} />
-      )}
-      {homepage === 'stats' && <Stats />}
-      {homepage === 'playlists' && <Playlists />}
-      {/* {homepage === 'coversearch' && <CoverSearch />} */}
+      <AlbumsCoverView resetKey={resetKey} coverSize={coverSize} />
     </>
   );
 };
