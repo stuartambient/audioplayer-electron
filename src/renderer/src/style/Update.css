@@ -38,22 +38,36 @@
   grid-row: 3 / 4;
 }
 
+.update-container .update-roots {
+  grid-column: 2 / 3;
+  grid-row: 3 / 4;
+}
+
+.roots-form {
+  height: 90%;
+  grid-column: 2 / 3;
+  grid-row: 4 / 5;
+}
+
 .update-files,
 .update-folders,
 .update-meta,
-.update-covers {
+.update-covers,
+.update-roots {
   border: 1px solid var(--blue1);
   width: 90%;
   height: 1.8rem;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .update-files:hover,
 .update-meta:hover,
 .update-folders:hover,
-.update-covers:hover {
+.update-covers:hover,
+.update-roots:hover {
   cursor: pointer;
 }
 

@@ -100,7 +100,7 @@ contextBridge.exposeInMainWorld('api', {
       cb(result);
     });
   },
-  searchMusicHoarders: (artist, title) => ipcRenderer.invoke('search-musicHoarders', artist, title),
+  /* searchMusicHoarders: (artist, title) => ipcRenderer.invoke('search-musicHoarders', artist, title), */
   removeChildWindowClosedListener: (callback) => {
     ipcRenderer.removeListener('window-closed', callback);
   },
@@ -109,5 +109,6 @@ contextBridge.exposeInMainWorld('api', {
     console.log('prefs: ', preferences);
     ipcRenderer.invoke('save-preferences', preferences);
   },
+  getRoots: () => ipcRenderer.invoke('get-roots'),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });

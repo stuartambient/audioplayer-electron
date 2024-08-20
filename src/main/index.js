@@ -63,7 +63,8 @@ import {
   deleteAlbum,
   allTracks,
   refreshMetadata,
-  getUpdatedTracks
+  getUpdatedTracks,
+  getRoots
 } from './sql.js';
 
 import {
@@ -355,6 +356,12 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
   return result;
 }); */
 
+ipcMain.handle('get-roots', async (event) => {
+  const rootFolders = await getRoots();
+  console.log('rootFolders: ', rootFolders);
+  return rootFolders;
+});
+
 ipcMain.handle('update-folders', async (event) => {
   try {
     /* console.log('createUpdateFilesWorker', createUpdateFilesWorker()); */
@@ -524,7 +531,7 @@ ipcMain.handle('get-cover', async (event, arg) => {
   const myFile = await File.createFromPath(arg);
 
   function escapeSpecialChars(path) {
-    return path.replace(/[\[\]\(\)]/g, '\\$&');
+    return path.replace(/[\[\]\(\)\{\}]/g, '\\$&');
   }
   // let top;
   // const parentDirectory = arg.lastIndexOf('/');
@@ -558,22 +565,26 @@ ipcMain.handle('get-cover', async (event, arg) => {
     suppressErrors: true,
     dot: true
   };
-  const escapedCharacters = escapeSpecialChars(trackDirectory);
-  const cover = await fg(`${escapedCharacters}/*.{jpg, png, webp, jpeg}`, options);
-  console.log('cover: ', cover[0]);
 
   if (myFile.tag.pictures?.[0]?.data) {
     return myFile.tag.pictures[0].data._bytes;
-  } else if (!myFile.tag.pictures?.[0]?.data && cover.length > 0) {
-    console.log('cover called: ', cover[0]);
-    try {
-      const buffer = await fs.promises.readFile(cover[0]); // Read the file as a buffer using promises
-      return buffer; // Return the buffer
-    } catch (error) {
-      console.error('Error reading file:', error);
-      throw error; // Handle error appropriately
+  } else if (!myFile.tag.pictures?.[0]?.data) {
+    const escapedCharacters = escapeSpecialChars(trackDirectory);
+    const cover = await fg(`${escapedCharacters}/*.{jpg, png, webp, jpeg}`, options);
+    console.log('** directory: ', trackDirectory);
+    console.log('** cover array: ', cover);
+    if (!cover.length > 0) {
+      return 0;
+    } else {
+      try {
+        const buffer = await fs.promises.readFile(cover[0]); // Read the file as a buffer using promises
+        return buffer; // Return the buffer
+      } catch (error) {
+        console.error('Error reading file:', error);
+        return 0;
+      }
     }
-  } else return 0;
+  }
 
   /* console.log('pic from path: ', Picture.fromPath(arg)); */
   /* return; */
@@ -1119,7 +1130,7 @@ ipcMain.handle('download-file', async (event, ...args) => {
   }
 });
 
-const createRemoteWindow = (artist, title) => {
+/* const createRemoteWindow = (artist, title) => {
   const remotePort = 'browser';
   const remoteAgent = 'MusicPlayer-Electron/1.0';
   const remoteText = 'Integration active.';
@@ -1131,18 +1142,8 @@ const createRemoteWindow = (artist, title) => {
   url.searchParams.set('artist', artist);
   url.searchParams.set('album', title);
   url.searchParams.set('sources]', ['amazonmusic', 'applemusic']);
-
-  /*   const remoteWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      contextIsolation: true */
-  /* preload: path.join(__dirname, '../preload/index.js') */
-  /*    }
-  }); */
   return url.toString();
-  /* remoteWindow.loadURL(url.toString()); */
-};
+}; */
 
 /* createOrUpdateChildWindow('mh-covers', 'mh-cover-search', {
   width: 800,
@@ -1167,45 +1168,17 @@ const createRemoteWindow = (artist, title) => {
 
   win.loadURL(address);
 } */
-ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
-  /*  console.log('musicHoarders: ', artist, title); */
-  /* const executablePath = path.join(__dirname, 'covit.exe');
-  console.log('executable path: ', executablePath); */
-  /*   exec(
-    `${covit} --address "https://covers.musichoarders.xyz" --query-artist ${artist} --query-album ${title}`,
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error: ${error.message}`);
-        return;
-      }
-      if (stderr) {
-        console.error(`Stderr: ${stderr}`);
-        return;
-      }
-      console.log(`Stdout: ${stdout}`); */
-  /* openCoverSearch(`https://covers.musichoarders.xyz?theme=dark&album=${title}&artist=${artist}`); */
-  /*   }
-  ); */
-
-  /*  const url = createRemoteWindow(artist, title); */
-
-  createOrUpdateChildWindow(
-    'mh-covers',
-    'mh-cover-search',
-    {
-      width: 1000,
-      height: 600,
-      show: false,
-      resizable: true,
-      preload: 'coverSearchAlt',
-      sandbox: false,
-      webSecurity: true,
-      contextIsolation: true
-    }
-    /* { artist, title } */
-  );
-
-  /* console.log(getWindowNames()); */
+/* ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
+  createOrUpdateChildWindow('mh-covers', 'mh-cover-search', {
+    width: 1000,
+    height: 600,
+    show: false,
+    resizable: true,
+    preload: 'coverSearchAlt',
+    sandbox: false,
+    webSecurity: true,
+    contextIsolation: true
+  });
 
   const mhCovers = getWindow('mh-covers');
   await mhCovers.loadURL(url);
@@ -1226,15 +1199,9 @@ ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
     console.log('url: ', url);
   });
 
-  /*   mhCovers.webContents.on('context-menu', (_, params) => {
-    console.log('context-menu', params);
-  }); */
-
   const { port1, port2 } = new MessageChannelMain();
   mhCovers.webContents.postMessage('port', null, [port2]);
   port1.postMessage({ type: 'close' });
-
-  /* mhCovers.webContents.postMessage({ type: 'close' }); */
 
   mhCovers.webContents.on('console-message', (_, ...args) => {
     console.log('console message: ', args);
@@ -1243,11 +1210,6 @@ ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
   mhCovers.webContents.on('preload-error', (_, preloadPath, error) => {
     console.log('preload-error: ', preloadPath, error);
   });
-
-  /*   const { port1, port2 } = new MessageChannelMain();
-  mhCovers.webContents.postMessage('port', { message: 'hello' }, [port1]); */
-
-  /*  console.log('Debugger: ', mhCovers.webContents.debugger); */
 
   console.log('web contents: ', mhCovers.webContents);
 
@@ -1259,11 +1221,7 @@ ipcMain.handle('search-musicHoarders', async (event, artist, title) => {
     .catch((error) => {
       console.error('Failed to inject click listener script:', error);
     });
-  /*   mhCovers.webContents.on('will-navigate', (event, url) => {
-    console.log('Navigation will occur to:', url);
-    event.preventDefault();
-  }); */
-});
+}); */
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {
   const [file, filepath] = args;

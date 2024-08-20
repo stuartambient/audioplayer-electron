@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 
 import Loader from './Loader';
+import RootsForm from './RootsForm';
 import { AiOutlineFolderOpen, AiOutlineFileAdd, AiOutlineDeploymentUnit } from 'react-icons/ai';
 import { GrConfigure } from 'react-icons/gr';
 import { SiMetabase } from 'react-icons/si';
 import { FaImages } from 'react-icons/fa6';
+import { GiTreeRoots } from 'react-icons/gi';
 import TextEditor from './TextEditor';
 import '../style/Update.css';
 
@@ -19,6 +21,8 @@ const Update = () => {
   const [fileUpdateReq, setFileUpdateReq] = useState();
   const [metaUpdateReq, setMetaUpdateReq] = useState();
   const [coverUpdateReq, setCoverUpdateReq] = useState();
+  const [rootsUpdateReq, setRootsUpdateReq] = useState(false);
+  const [rootDirs, setRootDirs] = useState([]);
   const [showFileDetails, setShowFileDetails] = useState();
   const [showFolderDetails, setShowFolderDetails] = useState();
 
@@ -33,6 +37,17 @@ const Update = () => {
       window.api.off('file-update-complete', handleFileUpdateComplete);
     };
   }, []);
+
+  useEffect(() => {
+    const reqRoots = async () => {
+      const rootFolders = await window.api.getRoots();
+      //console.log('rootFolders: ', rootFolders);
+      setRootDirs(rootFolders);
+    };
+    if (rootsUpdateReq) {
+      reqRoots();
+    }
+  }, [rootsUpdateReq]);
 
   useEffect(() => {
     const handleFolderUpdateComplete = (result) => {
@@ -85,10 +100,15 @@ const Update = () => {
         const modifiedMeta = await window.api.updateMeta();
         setMetaUpdateResults(modifiedMeta);
         setMetaUpdateReq(false);
+        break;
       case 'coversupdate':
         setCoverUpdateReq(true);
         const updatedCovers = await window.api.updateCovers();
         setCoverUpdateResults(updatedCovers);
+        break;
+      case 'rootsupdate':
+        setRootsUpdateReq((prevState) => !prevState);
+        break;
 
       default:
         return;
@@ -144,6 +164,14 @@ const Update = () => {
         <div className="update-covers" id="coversupdate" onClick={handleUpdates}>
           <FaImages /> Update Covers
         </div>
+        <div className="update-roots" id="rootsupdate" onClick={handleUpdates}>
+          <GiTreeRoots /> Add root folders
+        </div>
+        {rootsUpdateReq && rootDirs && (
+          <div className="roots-form" id="roots-form">
+            <RootsForm rootDirs={rootDirs} />
+          </div>
+        )}
       </>
       {fileUpdateReq ? (
         <div className="file-update-results">

@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS "audio-tracks" (
     year
 );`;
 
+const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT)`;
+
 /* const createAudioTrackErrors = `
 CREATE TABLE IF NOT EXISTS audio_track_errors (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,6 +59,7 @@ CREATE TABLE IF NOT EXISTS audio_track_errors (
 
 db.exec(createAudioTracks);
 db.exec(createAlbumsTable);
+db.exec(createRootsTable);
 /* db.exec(createTracksTable); */
 /* db.exec(createAudioTrackErrors); */
 
@@ -601,6 +604,12 @@ const updateCoversInDatabase = (coversArray) => {
   transaction(coversArray);
 };
 
+const getRoots = () => {
+  const roots = db.prepare('SELECT id, root FROM roots');
+
+  return roots.all();
+};
+
 export {
   insertFiles,
   insertAlbums,
@@ -628,7 +637,8 @@ export {
   refreshMetadata,
   checkRecordsExist,
   getUpdatedTracks,
-  getAlbumsNullImg
+  getAlbumsNullImg,
+  getRoots
 };
 
 /*

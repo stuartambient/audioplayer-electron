@@ -9,6 +9,7 @@ import '../style/FlashEffect.css';
 const Item = forwardRef((props, ref) => {
   const { state, dispatch } = useAudioPlayer();
   const handlePicture = (buffer) => {
+    console.log('buffer: ', buffer);
     const bufferToString = Buffer.from(buffer).toString('base64');
     return `data:${buffer.format};base64,${bufferToString}`;
   };
