@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 
 import Loader from './Loader';
 import RootsForm from './RootsForm';
+import DragDropFolderInput from './DragDropFolderInput';
+import FolderSelector from './FolderSelector';
+import NativeDragDropFolderInput from './NativeDragDropFolderInput';
 import { AiOutlineFolderOpen, AiOutlineFileAdd, AiOutlineDeploymentUnit } from 'react-icons/ai';
 import { GrConfigure } from 'react-icons/gr';
 import { SiMetabase } from 'react-icons/si';
@@ -169,7 +172,10 @@ const Update = () => {
         </div>
         {rootsUpdateReq && rootDirs && (
           <div className="roots-form" id="roots-form">
-            <RootsForm rootDirs={rootDirs} />
+            {/* <RootsForm rootDirs={rootDirs} /> */}
+            {/* <DragDropFolderInput /> */}
+            {/* <FolderSelector /> */}
+            <NativeDragDropFolderInput />
           </div>
         )}
       </>

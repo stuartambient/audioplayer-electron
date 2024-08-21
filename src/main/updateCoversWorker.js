@@ -2,7 +2,7 @@ import { parentPort, workerData, isMainThread } from 'worker_threads';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import fg from 'fast-glob';
-import { getAlbums, getAlbumsNullImg, updateCoversInDatabase } from './sql.js';
+import { getAlbums, getAlbumsNullImg, updateCoversInDatabase } from './workerSql.js';
 
 function normalizePath(p) {
   return p.replace(/\\/g, '/');

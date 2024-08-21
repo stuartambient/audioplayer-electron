@@ -159,8 +159,8 @@ function createWindow() {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: true,
       webSecurity: true,
-      contextIsolation: true,
-      nodeIntegration: true
+      contextIsolation: true
+      /* nodeIntegration: true */
     }
   });
 
@@ -360,6 +360,23 @@ ipcMain.handle('get-roots', async (event) => {
   const rootFolders = await getRoots();
   console.log('rootFolders: ', rootFolders);
   return rootFolders;
+});
+
+ipcMain.handle('get-folder-path', (event, folderName) => {
+  console.log('folderName: ', folderName);
+  return path.resolve(folderName);
+});
+
+ipcMain.handle('select-folder', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory']
+  });
+
+  if (!result.canceled && result.filePaths.length > 0) {
+    return result.filePaths[0]; // Return the selected folder's path
+  } else {
+    return null; // User canceled the dialog
+  }
 });
 
 ipcMain.handle('update-folders', async (event) => {

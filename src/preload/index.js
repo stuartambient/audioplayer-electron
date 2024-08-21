@@ -110,5 +110,8 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('save-preferences', preferences);
   },
   getRoots: () => ipcRenderer.invoke('get-roots'),
+  getFolderPath: (folderName) => ipcRenderer.invoke('get-folder-path', folderName),
+  selectFolder: () => ipcRenderer.invoke('select-folder'),
+  // startDrag: (folderName) => ipcRenderer.send('ondragstart', path.join(process.cwd(), fileName)),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });
