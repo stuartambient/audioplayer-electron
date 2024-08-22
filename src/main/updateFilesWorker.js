@@ -7,16 +7,16 @@ import { v4 as uuidv4 } from 'uuid';
 import { roots, playlistExtensions, fileExtensions } from '../constant/constants.js';
 /* import db from './connection.js'; */
 import { parseMeta } from './utility/index.js';
-/* import { getFiles, insertFiles, deleteFiles } from './sql.js'; */
-const mode = import.meta.env.MODE;
+import { getFiles, insertFiles, deleteFiles } from './workerSql.js';
+/* const mode = import.meta.env.MODE;
 const dbPath =
   mode === 'development'
     ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
     : path.join(workerData, 'music.db');
 
 const db = new Database(dbPath);
-
-const getFiles = () => {
+ */
+/* const getFiles = () => {
   console.log('getFiles');
   const allFiles = db.prepare('SELECT audiotrack FROM "audio-tracks"');
   const files = allFiles.all();
@@ -123,7 +123,7 @@ const deleteFiles = (files) => {
   });
 
   const info = deleteMany(files);
-};
+}; */
 
 const difference = (setA, setB) => {
   const _difference = new Set(setA);

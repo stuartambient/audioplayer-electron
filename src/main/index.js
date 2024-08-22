@@ -64,7 +64,8 @@ import {
   allTracks,
   refreshMetadata,
   getUpdatedTracks,
-  getRoots
+  getRoots,
+  updateRoots
 } from './sql.js';
 
 import {
@@ -358,8 +359,16 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
 
 ipcMain.handle('get-roots', async (event) => {
   const rootFolders = await getRoots();
-  console.log('rootFolders: ', rootFolders);
-  return rootFolders;
+  return rootFolders.map((r) => r.root);
+});
+
+ipcMain.handle('update-roots', async (event, roots) => {
+  try {
+    const update = await updateRoots(roots);
+    return update;
+  } catch (error) {
+    console.error(error.message);
+  }
 });
 
 ipcMain.handle('get-folder-path', (event, folderName) => {

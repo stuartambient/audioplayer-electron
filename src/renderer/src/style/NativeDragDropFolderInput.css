@@ -1,0 +1,61 @@
+/* .root-folders {
+  display: flex;
+  justify-content: center;
+} */
+
+.folder-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.folder-list--item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  /* justify-content: space-evenly; */
+  line-height: 2;
+}
+
+.roots-update {
+  margin-top: 1.5rem;
+  width: 90%;
+  align-self: center;
+}
+/* 
+.folder-list--item span {
+  background-color: var(--blue2);
+}
+ */
+.folder-list--item button {
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 0.2rem;
+  border-radius: 3px;
+}
+
+/* CSS */
+/* CSS */
+.roots-update {
+  touch-action: manipulation;
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 16px;
+  background-color: #5371f4;
+  background-size: 60px;
+  background-position: -2px;
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.4), inset 0 -2px 1px rgba(0, 0, 0, 0.1),
+    0 1px 2px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-weight: 500;
+  color: #fff;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.2);
+  transition-property: transform;
+  transition-duration: 0.2s;
+}
+
+.roots-update:active {
+  transform: scale(0.96);
+}

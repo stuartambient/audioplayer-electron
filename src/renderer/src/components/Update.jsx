@@ -171,12 +171,7 @@ const Update = () => {
           <GiTreeRoots /> Add root folders
         </div>
         {rootsUpdateReq && rootDirs && (
-          <div className="roots-form" id="roots-form">
-            {/* <RootsForm rootDirs={rootDirs} /> */}
-            {/* <DragDropFolderInput /> */}
-            {/* <FolderSelector /> */}
-            <NativeDragDropFolderInput />
-          </div>
+          <NativeDragDropFolderInput rootDirs={rootDirs} setRootDirs={setRootDirs} />
         )}
       </>
       {fileUpdateReq ? (

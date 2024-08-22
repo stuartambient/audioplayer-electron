@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS "audio-tracks" (
     year
 );`;
 
-const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT)`;
+const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT UNIQUE)`;
 
 /* const createAudioTrackErrors = `
 CREATE TABLE IF NOT EXISTS audio_track_errors (
@@ -605,9 +605,39 @@ const updateCoversInDatabase = (coversArray) => {
 };
 
 const getRoots = () => {
-  const roots = db.prepare('SELECT id, root FROM roots');
+  const roots = db.prepare('SELECT root FROM roots');
 
   return roots.all();
+};
+
+const updateRoots = (roots) => {
+  const result = [];
+  if (roots.length === 0) {
+    // If the array is empty, delete all entries in the table
+    const deleteAllQuery = `DELETE FROM roots`;
+    const empty = db.prepare(deleteAllQuery).run();
+    result.push(empty);
+    return result;
+  }
+  const placeholders = roots.map(() => '?').join(',');
+
+  // Delete entries in the database that are not in the array
+  const deleteQuery = `
+    DELETE FROM roots
+    WHERE root NOT IN (${placeholders})
+  `;
+  const info = db.prepare(deleteQuery).run(...roots);
+  result.push(info);
+
+  // Insert new values and ignore duplicates
+  const insertQuery = `
+    INSERT OR IGNORE INTO roots (root)
+    VALUES ${roots.map(() => '(?)').join(',')}
+  `;
+  const info2 = db.prepare(insertQuery).run(...roots);
+  result.push(info2);
+
+  return result;
 };
 
 export {
@@ -638,7 +668,8 @@ export {
   checkRecordsExist,
   getUpdatedTracks,
   getAlbumsNullImg,
-  getRoots
+  getRoots,
+  updateRoots
 };
 
 /*

@@ -1,11 +1,12 @@
 import { contextBridge, ipcRenderer } from 'electron';
 /* import { electronAPI } from '@electron-toolkit/preload'; */
 
-const fixedEncodeURIComponent = (str) => {
+/* const fixedEncodeURIComponent = (str) => {
+  console.log('str: ', str);
   return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {
     return '%' + c.charCodeAt(0).toString(16);
   });
-};
+}; */
 // Custom APIs for renderer
 contextBridge.exposeInMainWorld('api', {
   updateFiles: () => ipcRenderer.invoke('update-files'),
@@ -110,6 +111,7 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.invoke('save-preferences', preferences);
   },
   getRoots: () => ipcRenderer.invoke('get-roots'),
+  updateRoots: (roots) => ipcRenderer.invoke('update-roots', roots),
   getFolderPath: (folderName) => ipcRenderer.invoke('get-folder-path', folderName),
   selectFolder: () => ipcRenderer.invoke('select-folder'),
   // startDrag: (folderName) => ipcRenderer.send('ondragstart', path.join(process.cwd(), fileName)),
