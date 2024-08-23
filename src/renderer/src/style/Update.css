@@ -45,10 +45,19 @@
 
 .roots-form {
   height: 90%;
+  width: 90%;
   grid-column: 1 / 2;
   grid-row: 2 / 5;
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.roots-form::-webkit-scrollbar {
+  display: none;
+  /*  background: aquamarine;
+  width: 10px; */
 }
 
 .update-files,

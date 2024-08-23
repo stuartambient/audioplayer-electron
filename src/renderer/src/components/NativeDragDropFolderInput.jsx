@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
+import { CiLock, CiUnlock } from 'react-icons/ci';
+
 import '../style/NativeDragDropFolderInput.css';
 
 function NativeDragDropFolderInput({ rootDirs, setRootDirs }) {
   const [folders, setFolders] = useState([]);
+  const [rootChanges, setRootChanges] = useState([]);
 
   const handleRootsUpdate = (e) => {
     /*   console.log(rootDirs);
@@ -12,7 +15,9 @@ function NativeDragDropFolderInput({ rootDirs, setRootDirs }) {
 
     const sendRoots = async (roots) => {
       const sentRoots = await window.api.updateRoots(roots);
-      console.log('sentRoots:', sentRoots);
+      if (sentRoots) {
+        setRootChanges(sentRoots);
+      }
     };
 
     if (e.target.id === 'roots-update' || e.currentTarget.id === 'roots-update') {
@@ -20,6 +25,12 @@ function NativeDragDropFolderInput({ rootDirs, setRootDirs }) {
     }
     /*  const allRoots = [...rootDirs, ...folders];
     console.log('allRoots: ', allRoots); */
+  };
+
+  const handleOpenFolder = (e) => {
+    /* window.api.openAlbumFolder(e.target.id); */
+    const folder = e.currentTarget.id;
+    window.api.openAlbumFolder(folder);
   };
 
   const handleDrop = (event) => {
@@ -72,7 +83,7 @@ function NativeDragDropFolderInput({ rootDirs, setRootDirs }) {
       <ul className="folder-list">
         {folders.map((folder, index) => (
           <li key={index} className="folder-list--item">
-            <span>
+            <span onClick={handleOpenFolder} className="item-name" id={folder}>
               <u>{folder}</u>
             </span>
             <button className="remove-button" onClick={() => removeFolder(index)}>
@@ -82,9 +93,16 @@ function NativeDragDropFolderInput({ rootDirs, setRootDirs }) {
         ))}
       </ul>
       <ul className="folder-list">
+        {rootDirs.length > 0 ? (
+          <li className="folder-list--item title">Current folders:</li>
+        ) : (
+          <li className="folder-list--item title">No roots folders saved</li>
+        )}
         {rootDirs.map((dir, index) => (
           <li key={index} className="folder-list--item">
-            <u>{dir}</u>
+            <span onClick={handleOpenFolder} className="item-name" id={dir}>
+              <u>{dir}</u>
+            </span>
             <button className="remove-button" onClick={() => removeFormerFolder(dir)}>
               Remove
             </button>
@@ -94,6 +112,20 @@ function NativeDragDropFolderInput({ rootDirs, setRootDirs }) {
       <button className="roots-update" id="roots-update" type="text" onClick={handleRootsUpdate}>
         <span className="text">Update</span>
       </button>
+      {rootChanges.length > 0 && (
+        <ul className="folder-list results-panel">
+          {rootChanges &&
+            rootChanges.map((item, i) => (
+              <li key={i}>
+                {Object.entries(item).map(([key, val]) => (
+                  <div key={key}>
+                    {key}: {typeof val === 'object' ? JSON.stringify(val) : String(val)}
+                  </div>
+                ))}
+              </li>
+            ))}
+        </ul>
+      )}
     </div>
   );
 }

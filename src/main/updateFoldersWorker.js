@@ -4,52 +4,41 @@ import { promises as fsPromises } from 'node:fs';
 import { v4 as uuidv4 } from 'uuid';
 import fg from 'fast-glob';
 /* import Database from 'better-sqlite3'; */
+import searchCover from './utility/searchCover.js';
 import { roots } from '../constant/constants.js';
-import { insertAlbums, deleteAlbums, getAlbums } from './workerSql.js';
+import { /* roots, */ insertAlbums, deleteAlbums, getAlbums } from './workerSql.js';
+console.log(roots);
 const [...newroots] = roots;
-/* 
-const mode = import.meta.env.MODE;
-const dbPath =
-  mode === 'development'
-    ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
-    : path.join(workerData, 'music.db');
 
-const db = new Database(dbPath);
-
-const insertAlbums = (data) => {
-  const insert = db.prepare(
-    'INSERT INTO albums(id, rootlocation, foldername, fullpath, img) VALUES (@id, @root, @name, @fullpath, @img)'
-  );
-
-  const insertMany = db.transaction((albums) => {
-    for (const a of albums) {
-      if (!a.img) {
-        a.img = null; // or you could use an empty string ''
-      }
-      insert.run(a);
-    }
-  });
-
-  insertMany(data);
-};
-
-const deleteAlbums = async (data) => {
-  const deleteA = db.prepare('DELETE FROM albums WHERE fullpath = ?');
-  const deleteMany = db.transaction((data) => {
-    for (const d of data) deleteA.run(d);
-  });
-  deleteMany(data);
-};
-
-const getAlbums = () => {
-  const getAllAlbums = db.prepare('SELECT fullpath FROM albums');
-  const albums = getAllAlbums.all();
-  return albums;
-}; */
-
-function escapeSpecialChars(path) {
+/* function escapeSpecialChars(path) {
   return path.replace(/[\[\]\(\)\{\}]/g, '\\$&');
 }
+
+const options = {
+  caseSensitiveMatch: false,
+  suppressErrors: true,
+  dot: true
+};
+
+function checkFile(file) {
+  const lc = file.toLowerCase();
+  if (lc.endsWith('.jpg') || lc.endsWith('.jpeg') || lc.endsWith('.png') || lc.endsWith('.webp')) {
+    return true;
+  }
+  return false;
+} */
+
+/* function searchCover(folder) {
+  const files = ['.jpg', '.jpeg', '.png', '.webp'];
+  const escapedPath = escapeSpecialChars(folder);
+  const cover = fg.sync(`${escapedPath}/*`, options);
+  if (cover.length > 0) {
+    const filtered = cover.filter((cvr) => checkFile(cvr));
+    if (!filtered[0]) return;
+    return filtered[0];
+  }
+  return;
+} */
 
 const parseNewEntries = (newEntries) => {
   const newAlbums = [];
@@ -65,15 +54,12 @@ const parseNewEntries = (newEntries) => {
         root = r;
         name = newStr;
       }
-      /*       datecreated = Date();
-      datemodified = Date(); */
 
       fullpath = entry;
     }
-    const pattern = escapeSpecialChars(fullpath);
-    const cover = fg.sync(`${pattern}/**/*.{jpg,jpeg,png,webp}`, {
-      caseSensitiveMatch: false
-    });
+
+    const cover = searchCover(fullpath);
+
     console.log('cover: ', cover);
     const newAlbum = {
       id,
@@ -82,8 +68,8 @@ const parseNewEntries = (newEntries) => {
       fullpath
     };
 
-    if (cover && cover.length > 0) {
-      newAlbum.img = cover[0]; // Assuming you only want the first match
+    if (cover) {
+      newAlbum.img = cover; // Assuming you only want the first match
     }
 
     newAlbums.push(newAlbum);

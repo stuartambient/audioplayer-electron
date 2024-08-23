@@ -10,6 +10,15 @@ const dbPath =
 
 const db = new Database(dbPath);
 
+const getRoots = () => {
+  const roots = db.prepare('SELECT root FROM roots');
+
+  const transformed = roots.all().map((row) => row.root);
+  console.log('transformed: ', transformed);
+};
+
+getRoots();
+
 export const insertAlbums = (data) => {
   const insert = db.prepare(
     'INSERT INTO albums(id, rootlocation, foldername, fullpath, img) VALUES (@id, @root, @name, @fullpath, @img)'

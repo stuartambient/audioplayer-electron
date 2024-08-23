@@ -59,3 +59,23 @@
 .roots-update:active {
   transform: scale(0.96);
 }
+
+.item-name:hover {
+  cursor: pointer;
+}
+
+.results-panel {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid white;
+}
+
+.title {
+  display: flex;
+  justify-content: center;
+  margin: 0.2rem 0;
+}

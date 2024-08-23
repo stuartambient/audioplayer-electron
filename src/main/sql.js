@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import { roots } from '../constant/constants.js';
+/* import { roots } from '../constant/constants.js'; */
 import db from './connection';
 
 const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified, img )`;
@@ -616,7 +616,7 @@ const updateRoots = (roots) => {
     // If the array is empty, delete all entries in the table
     const deleteAllQuery = `DELETE FROM roots`;
     const empty = db.prepare(deleteAllQuery).run();
-    result.push(empty);
+    result.push({ Deleted: empty.changes });
     return result;
   }
   const placeholders = roots.map(() => '?').join(',');
@@ -627,7 +627,7 @@ const updateRoots = (roots) => {
     WHERE root NOT IN (${placeholders})
   `;
   const info = db.prepare(deleteQuery).run(...roots);
-  result.push(info);
+  result.push({ Deleted: info.changes });
 
   // Insert new values and ignore duplicates
   const insertQuery = `
@@ -635,7 +635,7 @@ const updateRoots = (roots) => {
     VALUES ${roots.map(() => '(?)').join(',')}
   `;
   const info2 = db.prepare(insertQuery).run(...roots);
-  result.push(info2);
+  result.push({ Inserted: info2.changes });
 
   return result;
 };
