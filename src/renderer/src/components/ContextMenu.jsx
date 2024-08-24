@@ -95,7 +95,7 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
       style={{ display: 'flex', alignItems: 'center' }}
       ref={divRef}
     >
-      <BsThreeDots />;
+      <BsThreeDots />
     </div>
   );
 };

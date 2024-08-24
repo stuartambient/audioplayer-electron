@@ -1,8 +1,15 @@
 import Database from 'better-sqlite3';
-/* import { roots } from '../constant/constants.js'; */
 import db from './connection';
 
-const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( id PRIMARY KEY, rootlocation, foldername,fullpath, datecreated, datemodified, img )`;
+const createAlbumsTable = `CREATE TABLE IF NOT EXISTS albums ( 
+    id PRIMARY KEY, 
+    rootlocation, 
+    foldername, 
+    fullpath, 
+    datecreated TEXT DEFAULT CURRENT_TIMESTAMP, 
+    img, 
+    birthtime, 
+    modified )`;
 
 const createAudioTracks = `
 CREATE TABLE IF NOT EXISTS "audio-tracks" (
@@ -43,7 +50,8 @@ CREATE TABLE IF NOT EXISTS "audio-tracks" (
     title,
     track,
     trackCount,
-    year
+    year,
+    birthtime
 );`;
 
 const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT UNIQUE)`;
@@ -388,7 +396,7 @@ const allTracksByScroll = (offsetNum, sort) => {
   let query;
   switch (sort) {
     case 'createdon':
-      query = `SELECT * FROM "audio-tracks" ORDER BY created_datetime DESC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY birthtime DESC LIMIT 50 OFFSET $offset`;
       break;
     case 'artist':
       query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(performers)) ASC LIMIT 50 OFFSET $offset`;
@@ -413,7 +421,7 @@ const allTracksBySearchTerm = (offsetNum, text, sort) => {
   let params;
   switch (sort) {
     case 'createdon':
-      query = `SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ? ORDER BY created_datetime DESC LIMIT 50 OFFSET ?`;
+      query = `SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ? ORDER BY birthtime DESC LIMIT 50 OFFSET ?`;
       params = [term, offsetNum * 50];
       break;
     case 'artist':
@@ -515,7 +523,7 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
   const order = sort === 'ASC' ? 'ASC' : 'DESC';
   if (term === '') {
     const stmt = db.prepare(
-      `SELECT id, foldername, fullpath, img FROM albums ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
+      `SELECT id, foldername, fullpath, img FROM albums ORDER BY birthtime ${order} LIMIT 50 OFFSET ${
         offsetNum * 50
       }`
     );
@@ -523,7 +531,7 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
   } else {
     const searchTerm = `%${term}%`;
     const stmt = db.prepare(
-      `SELECT foldername, fullpath, img FROM albums WHERE fullpath LIKE ? ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
+      `SELECT foldername, fullpath, img FROM albums WHERE fullpath LIKE ? ORDER BY birthtime ${order} LIMIT 50 OFFSET ${
         offsetNum * 50
       }`
     );
@@ -534,7 +542,7 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
 const allMissingCoversByScroll = (offsetNum, sort, term = null) => {
   const order = sort === 'ASC' ? 'ASC' : 'DESC';
   const stmt = db.prepare(
-    `SELECT id, foldername, fullpath, img FROM albums WHERE img IS NULL ORDER BY datecreated ${order} LIMIT 50 OFFSET ${
+    `SELECT id, foldername, fullpath, img FROM albums WHERE img IS NULL ORDER BY birthtime ${order} LIMIT 50 OFFSET ${
       offsetNum * 50
     }`
   );

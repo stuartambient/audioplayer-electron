@@ -12,9 +12,8 @@ contextBridge.exposeInMainWorld('api', {
   updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
   updateCovers: () => ipcRenderer.invoke('update-covers'),
-  /*   updateCovers: () => ipcRenderer.invoke('update-covers'), */
-  /*  missingCovers: () => ipcRenderer.invoke('missing-covers'), */
-  createTable: () => ipcRenderer.invoke('create-table'),
+
+  /* createTable: () => ipcRenderer.invoke('create-table'), */
   getTracks: (page, term, sort) => ipcRenderer.invoke('get-tracks', page, term, sort),
   getAlbums: (page, term, sort) => ipcRenderer.invoke('get-albums', page, term, sort),
   getAlbum: (id) => ipcRenderer.invoke('get-album', id),

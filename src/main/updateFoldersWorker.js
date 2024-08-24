@@ -1,66 +1,42 @@
 import { parentPort, workerData, isMainThread } from 'worker_threads';
 import { promises as fsPromises } from 'node:fs';
-/* import path from 'node:path'; */
+import { stat } from 'node:fs';
+import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 import fg from 'fast-glob';
 /* import Database from 'better-sqlite3'; */
 import searchCover from './utility/searchCover.js';
-import { roots } from '../constant/constants.js';
-import { /* roots, */ insertAlbums, deleteAlbums, getAlbums } from './workerSql.js';
-console.log(roots);
-const [...newroots] = roots;
+/* import { roots } from '../constant/constants.js'; */
+import { newestRoots, insertAlbums, deleteAlbums, getAlbums } from './workerSql.js';
+/* console.log(roots, '------', newestRoots);
+const [...newroots] = roots; */
 
-/* function escapeSpecialChars(path) {
-  return path.replace(/[\[\]\(\)\{\}]/g, '\\$&');
+function getStats(folder) {
+  return fsPromises.stat(folder).catch((error) => {
+    console.error(error);
+    return null;
+  });
 }
-
-const options = {
-  caseSensitiveMatch: false,
-  suppressErrors: true,
-  dot: true
-};
-
-function checkFile(file) {
-  const lc = file.toLowerCase();
-  if (lc.endsWith('.jpg') || lc.endsWith('.jpeg') || lc.endsWith('.png') || lc.endsWith('.webp')) {
-    return true;
-  }
-  return false;
-} */
-
-/* function searchCover(folder) {
-  const files = ['.jpg', '.jpeg', '.png', '.webp'];
-  const escapedPath = escapeSpecialChars(folder);
-  const cover = fg.sync(`${escapedPath}/*`, options);
-  if (cover.length > 0) {
-    const filtered = cover.filter((cvr) => checkFile(cvr));
-    if (!filtered[0]) return;
-    return filtered[0];
-  }
-  return;
-} */
 
 const parseNewEntries = (newEntries) => {
   const newAlbums = [];
 
   for (const entry of newEntries) {
-    console.log('entry: ', entry);
     const id = uuidv4();
-    let name, root, fullpath /* , datecreated, datemodified */;
-
-    for (const r of newroots) {
+    let name, root, fullpath;
+    fullpath = entry;
+    //birthtime = getStats(entry);
+    for (const r of newestRoots) {
       if (entry.startsWith(r)) {
         const newStr = entry.replace(`${r}/`, '');
         root = r;
         name = newStr;
       }
-
-      fullpath = entry;
     }
 
-    const cover = searchCover(fullpath);
-
-    console.log('cover: ', cover);
+    /*console.log(birthtime, '====', modified); */
+    const cover = searchCover(entry);
+    /* console.log('name: ' name) */
     const newAlbum = {
       id,
       root,
@@ -69,13 +45,32 @@ const parseNewEntries = (newEntries) => {
     };
 
     if (cover) {
-      newAlbum.img = cover; // Assuming you only want the first match
+      newAlbum.img = cover;
     }
 
     newAlbums.push(newAlbum);
   }
-  return newAlbums;
+  /*  return newAlbums; */
+  return addTimesToAlbums(newAlbums);
 };
+
+async function addTimesToAlbums(albums) {
+  const albumsWithTimes = await Promise.all(
+    albums.map(async (album) => {
+      const stats = await getStats(album.fullpath);
+      if (stats) {
+        album.birthtime = stats.birthtime.toISOString();
+        album.modified = stats.mtime.toISOString();
+      } else {
+        album.birthtime = null;
+        album.modified = null;
+      }
+      return album;
+    })
+  );
+
+  return albumsWithTimes;
+}
 
 const difference = (setA, setB) => {
   const _difference = new Set(setA);
@@ -86,11 +81,11 @@ const difference = (setA, setB) => {
 };
 
 const checkAgainstEntries = (data) => {
+  /* console.log('data: ', data); */
   return new Promise((resolve, reject) => {
     let status = { deleted: '', new: '', nochange: false };
     const dbAlbums = getAlbums();
     const dbAlbumsFullpath = dbAlbums.map((album) => album.fullpath);
-
     const allAlbums = new Set(data);
     const dbEntries = new Set(dbAlbumsFullpath);
 
@@ -98,7 +93,18 @@ const checkAgainstEntries = (data) => {
     const missingEntries = Array.from(difference(dbEntries, allAlbums));
 
     if (newEntries.length > 0) {
-      insertAlbums(parseNewEntries(newEntries));
+      //const parsed = parseNewEntries(newEntries);
+      //insertAlbums(parseNewEntries(newEntries));
+      //const dated = addTimesToAlbums(parsed);
+      //console.log(dated);
+      //status.new = newEntries.length;
+      parseNewEntries(newEntries)
+        .then((newAlbums) => {
+          insertAlbums(newAlbums);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
       status.new = newEntries.length;
     }
     if (missingEntries.length > 0) {
@@ -120,7 +126,8 @@ const topDirs = async (root) => {
 const run = async (cb) => {
   let dirs = [];
 
-  for (const root of roots) {
+  for (const root of newestRoots) {
+    /* console.log('root: ', root); */
     const tmp = await topDirs(root);
     dirs = [...dirs, ...tmp];
   }

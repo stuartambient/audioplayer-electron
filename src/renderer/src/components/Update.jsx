@@ -95,8 +95,8 @@ const Update = () => {
       case 'foldersupdate':
         setFolderUpdateReq(true);
         const foldersUpdate = await window.api.updateFolders();
-        setFolderUpdateResults(foldersUpdate);
-        setFolderUpdateReq(false);
+        //setFolderUpdateResults(foldersUpdate);
+        //setFolderUpdateReq(false);
         break;
       case 'metafiles':
         setMetaUpdateReq(true);

@@ -80,7 +80,6 @@ import {
   allTracksByRoot,
   albumsByTopFolder
 } from './stats';
-import initAlbums from './updateFolders';
 /* import initFiles from './updateFiles'; */
 import initCovers from './updateFolderCovers';
 import initUpdateMetadata from './updateMetadata';
@@ -503,10 +502,10 @@ ipcMain.handle('update-covers', async (event) => {
   }
 });
 
-ipcMain.handle('create-table', () => {
+/* ipcMain.handle('create-table', () => {
   const result = createTable();
   return true;
-});
+}); */
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
   /* console.log('get-tracks'); */
@@ -690,7 +689,6 @@ ipcMain.handle('total-tracks-stat', async () => {
 
 ipcMain.handle('top-hundred-artists-stat', async () => {
   const topHundred = await topHundredArtists();
-  /* console.log('topHundred: ', topHundred.length); */
   return topHundred.slice(1);
 });
 

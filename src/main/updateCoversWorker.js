@@ -54,7 +54,6 @@ const updateCoversLink = async () => {
   console.log('updateCoversLink');
   const foundCovers = [];
   const allAlbumsRootFolder = await getAlbumsNullImg();
-  console.log('length: ', allAlbumsRootFolder.length);
 
   const covers = await Promise.all(
     allAlbumsRootFolder.map(async (folder) => ({

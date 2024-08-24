@@ -27,7 +27,6 @@ function searchCover(folder) {
     if (!filtered[0]) return;
     return filtered[0];
   }
-  return;
 }
 
 export default searchCover;

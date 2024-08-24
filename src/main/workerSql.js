@@ -10,18 +10,19 @@ const dbPath =
 
 const db = new Database(dbPath);
 
+export let newestRoots;
+
 const getRoots = () => {
   const roots = db.prepare('SELECT root FROM roots');
 
-  const transformed = roots.all().map((row) => row.root);
-  console.log('transformed: ', transformed);
+  newestRoots = roots.all().map((row) => row.root);
 };
 
 getRoots();
 
 export const insertAlbums = (data) => {
   const insert = db.prepare(
-    'INSERT INTO albums(id, rootlocation, foldername, fullpath, img) VALUES (@id, @root, @name, @fullpath, @img)'
+    'INSERT INTO albums(id, rootlocation, foldername, fullpath, img, birthtime, modified) VALUES (@id, @root, @name, @fullpath, @img, @birthtime, @modified)'
   );
 
   const insertMany = db.transaction((albums) => {
@@ -87,6 +88,7 @@ export const getFiles = () => {
 };
 
 export const insertFiles = (files) => {
+  console.log('insertFiles: ', files);
   const insert = db.prepare(`
     INSERT INTO "audio-tracks"
               (track_id,
@@ -125,7 +127,8 @@ export const insertFiles = (files) => {
                title,
                track,
                trackCount,
-               year)
+               year,
+               birthtime)
   VALUES      (@track_id,
                @root,
                @audiotrack,
@@ -162,7 +165,8 @@ export const insertFiles = (files) => {
                @title,
                @track,
                @trackCount,
-               @year) `);
+               @year,
+               @birthtime) `);
 
   try {
     const insertMany = db.transaction((files) => {
@@ -170,6 +174,7 @@ export const insertFiles = (files) => {
     });
 
     const info = insertMany(files);
+    console.log('info: ', info);
     return { success: true, message: 'Files inserted successfully' };
   } catch (error) {
     console.error('Error inserting files:', error);
