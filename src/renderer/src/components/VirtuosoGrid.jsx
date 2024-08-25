@@ -136,8 +136,8 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
             >
               {children}
             </ul>
-          ))
-          //Item: 'div' // Wrapper for each item
+          )),
+          Item: 'div' // Wrapper for each item
         }}
       />
     </section>
