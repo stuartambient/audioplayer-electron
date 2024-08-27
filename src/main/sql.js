@@ -523,8 +523,8 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
   const order = sort === 'ASC' ? 'ASC' : 'DESC';
   if (term === '') {
     const stmt = db.prepare(
-      `SELECT id, foldername, fullpath, img FROM albums ORDER BY birthtime ${order} LIMIT 50 OFFSET ${
-        offsetNum * 50
+      `SELECT id, foldername, fullpath, img FROM albums ORDER BY birthtime ${order} LIMIT 100 OFFSET ${
+        offsetNum * 100
       }`
     );
     return stmt.all();

@@ -11,8 +11,7 @@ import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
-import { VirtuosoGrid } from 'react-virtuoso';
-import { Virtuoso } from 'react-virtuoso';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/AlbumsCoverView.css';
 
@@ -28,6 +27,10 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
 
   const coversObserver = useRef();
 
+  const parentRef = useRef(null);
+
+  const [isDataReady, setIsDataReady] = useState(false);
+
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     state.coversPageNumber,
     state.coversSearchTerm,
@@ -39,9 +42,40 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
   );
 
   useEffect(() => {
-    // Assuming each grid item has a specific class, e.g., 'grid-item'
+    // Simulate data fetching or check if data is already available
+    if (state.covers && state.covers.length > 0) {
+      console.log(state.covers);
+      /*  setIsDataReady(true); */
+    }
+  }, [state.covers]);
+
+  const loadMoreCovers = () => {
+    if (coversLoading || !hasMoreCovers) return;
+    dispatch({
+      type: 'set-covers-pagenumber',
+      coversPageNumber: state.coversPageNumber + 1
+    });
+  };
+
+  const rowVirtualizer = useVirtualizer({
+    count: isDataReady ? Math.ceil(state.covers.length / 4) : 0, // Number of rows, assuming 4 columns
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 200, // Approximate height of each row (assuming 200px per item)
+    overscan: 5 // Fetch additional items ahead of time
+  });
+
+  useEffect(() => {
+    if (rowVirtualizer.virtualItems.length > 0) {
+      const lastItem = rowVirtualizer.virtualItems[rowVirtualizer.virtualItems.length - 1];
+      if (lastItem.index >= Math.ceil(state.covers.length / 4) - 1) {
+        console.log('End reached, loading more items...');
+        loadMoreCovers();
+      }
+    }
+  }, [rowVirtualizer.virtualItems, state.covers.length, loadMoreCovers]);
+
+  /*   useEffect(() => {
     const items = document.querySelectorAll('.virtuoso-grid-item');
-    /* setRenderedItemsCount(items.length); */
     console.log(items.length);
     setRenderedItems(items.length);
   });
@@ -52,8 +86,12 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
         type: 'set-covers-pagenumber',
         coversPageNumber: state.coversPageNumber + 1
       });
-    }
-  }, [renderedItems]);
+    } */
+  /*   }, [renderedItems]); */
+
+  if (!isDataReady) {
+    return <div>Loading...</div>; // or a spinner/placeholder
+  }
 
   const handleCoverSearch = async (search) => {
     const { album, path, service } = search;
@@ -197,13 +235,13 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     </div>
   )); */
 
-  const loadMoreCovers = () => {
+  /*   const loadMoreCovers = () => {
     if (coversLoading || !hasMoreCovers) return;
     dispatch({
       type: 'set-covers-pagenumber',
       coversPageNumber: state.coversPageNumber + 1
     });
-  };
+  }; */
 
   /*   useEffect(() => {
     if (visibleRange > 0) {
@@ -212,63 +250,70 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
   }, [visibleRange]); */
 
   return (
-    <section className="albums-coverview">
-      {state.covers.length > 0 && (
-        <VirtuosoGrid
-          style={{ height: '100%', width: '100%' }}
-          key={uuidv4()}
-          initialItemCount={100}
-          totalCount={200}
-          /* data={state.covers} */
-          overscan={50}
-          components={{ List: Container }}
-          isScrolling={(e) => {
-            console.log('Scrolling:', e);
-            setIsScrolling(e);
-          }}
-          atBottomStateChange={(val) => console.log(val)}
-          /*           endReached={() => {
-            console.log('End reached, loading more items...');
-            loadMoreCovers(); // Trigger load more function
-          }} */
-          /* rangeChanged={setVisibleRange} */
-          itemClassName="virtuoso-grid-item"
-          itemContent={(index) => (
-            <li
-              key={uuidv4()} /* ref={state.covers.length === index + 1 ? lastCoverElement : null} */
+    <section
+      className="albums-coverview"
+      ref={parentRef}
+      style={{ height: '100%', width: '100%', overflowY: 'auto' }}
+    >
+      <div
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          position: 'relative',
+          width: '100%'
+        }}
+      >
+        {rowVirtualizer.virtualItems.map((virtualRow) => {
+          const startIndex = virtualRow.index * 4;
+          const endIndex = startIndex + 4;
+          const rowItems = state.covers.slice(startIndex, endIndex);
+
+          return (
+            <div
+              key={uuidv4()}
+              style={{
+                position: 'absolute',
+                top: `${virtualRow.start}px`,
+                left: 0,
+                display: 'flex',
+                width: '100%'
+              }}
             >
-              {state.covers[index].img ? (
-                <img className={coverImageSize} src={`cover://${state.covers[index].img}`} alt="" />
-              ) : (
-                <img className={coverImageSize} src={NoImage} alt="" />
-              )}
-              <div className="overlay">
-                <span id={state.covers[index].fullpath}>{state.covers[index].foldername}</span>
-                <div
-                  className="item-menu"
-                  id={state.covers[index].fullpath}
-                  fullpath={state.covers[index].fullpath}
-                  album={state.covers[index].foldername}
+              {rowItems.map((cover, index) => (
+                <li
+                  key={uuidv4()}
+                  className="virtuoso-grid-item"
+                  style={{ flex: '1 0 25%', padding: '10px' }} // Adjust for 4 columns
                 >
-                  <BsThreeDots
-                    onClick={handleContextMenu}
-                    id={state.covers[index].fullpath}
-                    fullpath={state.covers[index].fullpath}
-                    album={state.covers[index].foldername}
-                  />
-                </div>
-                <span
-                  id="coverplay"
-                  fullpath={state.covers[index].fullpath}
-                  onClick={handlePlayReq}
-                >
-                  <GiPlayButton />
-                </span>
-              </div>
-            </li>
-          )}
-        />
-      )}
+                  {cover.img ? (
+                    <img className="coverImageSize" src={`cover://${cover.img}`} alt="" />
+                  ) : (
+                    <img className="coverImageSize" src={NoImage} alt="" />
+                  )}
+                  <div className="overlay">
+                    <span id={cover.fullpath}>{cover.foldername}</span>
+                    <div
+                      className="item-menu"
+                      id={cover.fullpath}
+                      fullpath={cover.fullpath}
+                      album={cover.foldername}
+                    >
+                      <BsThreeDots
+                        onClick={handleContextMenu}
+                        id={cover.fullpath}
+                        fullpath={cover.fullpath}
+                        album={cover.foldername}
+                      />
+                    </div>
+                    <span id="coverplay" fullpath={cover.fullpath} onClick={handlePlayReq}>
+                      <GiPlayButton />
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 };
