@@ -8,8 +8,7 @@
   display: none;
 }
 
-.albums-coverview--albums,
-.virtuoso-grid-list {
+.albums-coverview--albums {
   height: 100%;
   display: grid;
 
