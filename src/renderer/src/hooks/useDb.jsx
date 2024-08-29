@@ -216,7 +216,7 @@ const useAllAlbumsCovers = (
   resetKey,
   coverslength
 ) => {
-  console.log('coverslength: ', coverslength);
+  /* console.log(coversPageNumber); */
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
@@ -233,7 +233,7 @@ const useAllAlbumsCovers = (
         coversMissingReq
       );
       if (coversRequest && isSubscribed) {
-        console.log('coversRequest: ', coversRequest);
+        //console.log('coversRequest: ', coversRequest);
         dispatch({
           type: 'set-covers',
           covers: coversRequest

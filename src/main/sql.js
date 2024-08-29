@@ -542,8 +542,8 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
 const allMissingCoversByScroll = (offsetNum, sort, term = null) => {
   const order = sort === 'ASC' ? 'ASC' : 'DESC';
   const stmt = db.prepare(
-    `SELECT id, foldername, fullpath, img FROM albums WHERE img IS NULL ORDER BY birthtime ${order} LIMIT 50 OFFSET ${
-      offsetNum * 50
+    `SELECT id, foldername, fullpath, img FROM albums WHERE img IS NULL ORDER BY birthtime ${order} LIMIT 100 OFFSET ${
+      offsetNum * 100
     }`
   );
   return stmt.all();

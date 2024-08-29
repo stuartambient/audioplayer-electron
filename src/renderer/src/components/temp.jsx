@@ -1,7 +1,10 @@
+/* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
 import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
 import classNames from 'classnames';
 import { useAudioPlayer } from '../AudioPlayerContext';
+import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 import { useAllAlbumsCovers } from '../hooks/useDb';
 import { AlbumArt } from '../utility/AlbumArt';
 import { BsThreeDots } from 'react-icons/bs';
@@ -9,12 +12,14 @@ import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/AlbumsCoverView.css';
 
 const AlbumsCoverView = ({ resetKey, coverSize }) => {
   const { state, dispatch } = useAudioPlayer();
   const [viewMore, setViewMore] = useState(false);
   const [coverPath, setCoverPath] = useState('');
+  const [estSize, setEstSize] = useState(100);
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     state.coversPageNumber,
@@ -28,6 +33,16 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
 
   const parentRef = useRef(null);
 
+  useEffect(() => {
+    if (coverSize === 1) {
+      setEstSize(100);
+    } else if (coverSize === 2) {
+      setEstSize(150);
+    } else if (coverSize === 3) {
+      setEstSize(200);
+    }
+  }, [coverSize, estSize]);
+
   const loadMoreCovers = () => {
     dispatch({
       type: 'set-covers-pagenumber',
@@ -35,15 +50,29 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     });
   };
 
+  useEffect(() => {
+    console.log('parentRef: ', parentRef.current);
+  }, [parentRef.current]);
+
+  useEffect(() => {
+    console.log('hasMoreCovers: ', hasMoreCovers);
+    console.log('state covers: ', state.covers.length);
+  }, [hasMoreCovers]);
+
+  // Initialize the virtualizer with a fallback when data is not ready
   const rowVirtualizer = useVirtualizer({
-    count: hasMoreCovers ? state.covers.length + 1 : state.covers.length,
+    //count: hasMoreCovers ? state.covers.length + 1 : state.covers.length,
+    count: 100,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 200,
-    overscan: 5
+    overscan: 5,
+    debug: true
   });
 
   useEffect(() => {
     const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+    console.log('lastItem: ', lastItem);
+    console.log('items:', rowVirtualizer.getVirtualItems());
     if (!lastItem) {
       return;
     }
@@ -71,17 +100,18 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     'image-large': coverSize === 3
   });
 
+  //return (
+
   return (
     <section
       className="albums-coverview"
-      ref={parentRef}
       style={{ height: '100%', width: '100%', overflowY: 'auto' }}
     >
-      <ul className={albumsGridName}>
+      <ul className={albumsGridName} ref={parentRef}>
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
           const startIndex = virtualRow.index * 1;
-          const endIndex = startIndex + 1;
-          const rowItems = state.covers.slice(startIndex, endIndex);
+          const endIndex = startIndex + 99;
+          const rowItems = endIndex - startIndex;
 
           return (
             <>

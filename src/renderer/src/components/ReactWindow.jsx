@@ -13,18 +13,14 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import { VirtuosoGrid } from 'react-virtuoso';
 import { Virtuoso } from 'react-virtuoso';
+import { FixedSizeGrid as Grid } from 'react-window';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/AlbumsCoverView.css';
 
 const AlbumsCoverView = ({ resetKey, coverSize }) => {
   const { state, dispatch } = useAudioPlayer();
-  /*  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' }); */
   const [viewMore, setViewMore] = useState(false);
-  /* const [coverSearch, setCoverSearch] = useState(); */
   const [coverPath, setCoverPath] = useState('');
-
-  const [renderedItems, setRenderedItems] = useState(0);
-  const [isScrolling, setIsScrolling] = useState(false);
 
   const coversObserver = useRef();
 
@@ -37,23 +33,6 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     resetKey,
     state.covers.length
   );
-
-  useEffect(() => {
-    // Assuming each grid item has a specific class, e.g., 'grid-item'
-    const items = document.querySelectorAll('.virtuoso-grid-item');
-    /* setRenderedItemsCount(items.length); */
-    console.log(items.length);
-    setRenderedItems(items.length);
-  });
-
-  useEffect(() => {
-    if (renderedItems) {
-      dispatch({
-        type: 'set-covers-pagenumber',
-        coversPageNumber: state.coversPageNumber + 1
-      });
-    }
-  }, [renderedItems]);
 
   const handleCoverSearch = async (search) => {
     const { album, path, service } = search;
@@ -183,20 +162,6 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     'image-large': coverSize === 3
   });
 
-  const Container = forwardRef(({ children, ...props }, ref) => (
-    <ul className={albumsGridName}>{children}</ul>
-  ));
-
-  /*   const Item = forwardRef(({ children, index, ...props }, ref) => (
-    <div
-      className="virtuoso-grid-item"
-      ref={state.covers.length === index + 1 ? lastCoverElement : ref}
-      {...props}
-    >
-      {children}
-    </div>
-  )); */
-
   const loadMoreCovers = () => {
     console.log('loadMoreCovers called');
     if (coversLoading || !hasMoreCovers) return;
@@ -206,69 +171,56 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     });
   };
 
-  /*   useEffect(() => {
-    if (visibleRange > 0) {
-      loadMoreCovers();
-    }
-  }, [visibleRange]); */
+  const Cell = ({ columnIndex, rowIndex, style }) => {
+    const index = rowIndex * 100 + columnIndex; // Example calculation; adjust as needed
+    const cover = state.covers[index];
+
+    console.log('Cell Style:', style);
+    console.log('Row:', rowIndex, 'Column:', columnIndex, 'Index:', index);
+
+    return (
+      <li key={index} ref={state.covers.length === index + 1 ? lastCoverElement : null}>
+        {cover?.img ? (
+          <img className={coverImageSize} src={`cover://${cover.img}`} alt="" />
+        ) : (
+          <img className={coverImageSize} src={NoImage} alt="" />
+        )}
+        <div className="overlay">
+          <span id={cover.fullpath}>{cover.foldername}</span>
+          <div
+            className="item-menu"
+            id={cover.fullpath}
+            fullpath={cover.fullpath}
+            album={cover.foldername}
+          >
+            <BsThreeDots
+              onClick={handleContextMenu}
+              id={cover.fullpath}
+              fullpath={cover.fullpath}
+              album={cover.foldername}
+            />
+          </div>
+          <span id="coverplay" fullpath={cover.fullpath} onClick={handlePlayReq}>
+            <GiPlayButton />
+          </span>
+        </div>
+      </li>
+    );
+  };
 
   return (
     <section className="albums-coverview">
-      {state.covers.length > 0 && (
-        <VirtuosoGrid
-          style={{ height: '100%', width: '100%' }}
-          key={uuidv4()}
-          data={state.covers}
-          //initialItemCount={100}
-          totalCount={500}
-          /* data={state.covers} */
-          overscan={100}
-          components={{ List: Container }}
-          isScrolling={(e) => {
-            console.log('Scrolling:', e);
-            setIsScrolling(e);
-          }}
-          atBottomStateChange={(val) => console.log(val)}
-          endReached={() => {
-            console.log('End reached, loading more items...');
-            loadMoreCovers(); // Trigger load more function
-          }}
-          /* rangeChanged={setVisibleRange} */
-          itemClassName="virtuoso-grid-item"
-          itemContent={(index) => (
-            <li key={uuidv4()} ref={state.covers.length === index + 1 ? lastCoverElement : null}>
-              {state.covers[index].img ? (
-                <img className={coverImageSize} src={`cover://${state.covers[index].img}`} alt="" />
-              ) : (
-                <img className={coverImageSize} src={NoImage} alt="" />
-              )}
-              <div className="overlay">
-                <span id={state.covers[index].fullpath}>{state.covers[index].foldername}</span>
-                <div
-                  className="item-menu"
-                  id={state.covers[index].fullpath}
-                  fullpath={state.covers[index].fullpath}
-                  album={state.covers[index].foldername}
-                >
-                  <BsThreeDots
-                    onClick={handleContextMenu}
-                    id={state.covers[index].fullpath}
-                    fullpath={state.covers[index].fullpath}
-                    album={state.covers[index].foldername}
-                  />
-                </div>
-                <span
-                  id="coverplay"
-                  fullpath={state.covers[index].fullpath}
-                  onClick={handlePlayReq}
-                >
-                  <GiPlayButton />
-                </span>
-              </div>
-            </li>
-          )}
-        />
-      )}
+      <Grid
+        columnCount={7}
+        columnWidth={100}
+        height={600}
+        rowHeight={100}
+        width={800}
+        cellRenderer={Cell}
+      >
+        {Cell}
+      </Grid>
+      <ul /* className={albumsGridName} */></ul>
     </section>
   );
 };

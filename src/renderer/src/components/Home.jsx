@@ -8,6 +8,8 @@ import { IoIosRefresh } from 'react-icons/io';
 import '../style/Home.css';
 /* import AlbumsCoverView from './AlbumsCoverView'; */
 import AlbumsCoverView from './TanstackVirtual';
+/* import AlbumsCoverView from './VirtuosoGrid'; */
+/* import AlbumsCoverView from './ReactWindow'; */
 /* import CoverSearch from './CoverSearch'; */
 
 const Home = () => {
