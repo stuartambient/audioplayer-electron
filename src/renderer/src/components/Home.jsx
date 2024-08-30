@@ -7,7 +7,8 @@ import { GrDocumentMissing } from 'react-icons/gr';
 import { IoIosRefresh } from 'react-icons/io';
 import '../style/Home.css';
 /* import AlbumsCoverView from './AlbumsCoverView'; */
-import AlbumsCoverView from './TanstackVirtual';
+/* import AlbumsCoverView from './TanstackVirtual'; */
+import AlbumsCoverView from './TanstackVirtualExample';
 /* import AlbumsCoverView from './VirtuosoGrid'; */
 /* import AlbumsCoverView from './ReactWindow'; */
 /* import CoverSearch from './CoverSearch'; */

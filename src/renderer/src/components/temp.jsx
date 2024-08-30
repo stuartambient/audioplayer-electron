@@ -1,155 +1,116 @@
-/* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
-import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
-import classNames from 'classnames';
-import { useAudioPlayer } from '../AudioPlayerContext';
-import { Buffer } from 'buffer';
-import { v4 as uuidv4 } from 'uuid';
-import axios from 'axios';
-import { useAllAlbumsCovers } from '../hooks/useDb';
-import { AlbumArt } from '../utility/AlbumArt';
-import { BsThreeDots } from 'react-icons/bs';
-import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
-import NoImage from '../assets/noimage.jpg';
-import ViewMore from '../assets/view-more-alt.jpg';
+import React from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { openChildWindow } from './ChildWindows/openChildWindow';
-import '../style/AlbumsCoverView.css';
 
-const AlbumsCoverView = ({ resetKey, coverSize }) => {
-  const { state, dispatch } = useAudioPlayer();
-  const [viewMore, setViewMore] = useState(false);
-  const [coverPath, setCoverPath] = useState('');
-  const [estSize, setEstSize] = useState(100);
+import './index.css';
 
-  const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
-    state.coversPageNumber,
-    state.coversSearchTerm,
-    state.coversDateSort,
-    state.coversMissingReq,
-    dispatch,
-    resetKey,
-    state.covers.length
+const rows = new Array(10000).fill(true).map(() => 25 + Math.round(Math.random() * 100));
+
+const columns = new Array(10000).fill(true).map(() => 75 + Math.round(Math.random() * 100));
+
+function App() {
+  return (
+    <div>
+      <GridVirtualizerVariable rows={rows} columns={columns} />
+    </div>
   );
+}
 
-  const parentRef = useRef(null);
+function GridVirtualizerVariable({ rows, columns }) {
+  const parentRef = React.useRef(null);
 
-  useEffect(() => {
-    if (coverSize === 1) {
-      setEstSize(100);
-    } else if (coverSize === 2) {
-      setEstSize(150);
-    } else if (coverSize === 3) {
-      setEstSize(200);
-    }
-  }, [coverSize, estSize]);
-
-  const loadMoreCovers = () => {
-    dispatch({
-      type: 'set-covers-pagenumber',
-      coversPageNumber: state.coversPageNumber + 1
-    });
-  };
-
-  useEffect(() => {
-    console.log('parentRef: ', parentRef.current);
-  }, [parentRef.current]);
-
-  useEffect(() => {
-    console.log('hasMoreCovers: ', hasMoreCovers);
-    console.log('state covers: ', state.covers.length);
-  }, [hasMoreCovers]);
-
-  // Initialize the virtualizer with a fallback when data is not ready
   const rowVirtualizer = useVirtualizer({
-    //count: hasMoreCovers ? state.covers.length + 1 : state.covers.length,
-    count: 100,
+    count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 200,
-    overscan: 5,
-    debug: true
+    estimateSize: (i) => rows[i],
+    overscan: 5
   });
 
-  useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-    console.log('lastItem: ', lastItem);
-    console.log('items:', rowVirtualizer.getVirtualItems());
-    if (!lastItem) {
-      return;
-    }
-
-    if (lastItem.index >= state.covers.length - 1 && hasMoreCovers && !coversLoading) {
-      loadMoreCovers();
-    }
-  }, [
-    hasMoreCovers,
-    loadMoreCovers,
-    state.covers.length,
-    coversLoading,
-    rowVirtualizer.getVirtualItems()
-  ]);
-
-  const albumsGridName = classNames('albums-coverview--albums', {
-    'grid-small': coverSize === 1,
-    'grid-medium': coverSize === 2,
-    'grid-large': coverSize === 3
+  const columnVirtualizer = useVirtualizer({
+    horizontal: true,
+    count: columns.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: (i) => columns[i],
+    overscan: 5
   });
-
-  const coverImageSize = classNames('cover-image', {
-    'image-small': coverSize === 1,
-    'image-medium': coverSize === 2,
-    'image-large': coverSize === 3
-  });
-
-  //return (
 
   return (
-    <section
-      className="albums-coverview"
-      style={{ height: '100%', width: '100%', overflowY: 'auto' }}
-    >
-      <ul className={albumsGridName} ref={parentRef}>
-        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          const startIndex = virtualRow.index * 1;
-          const endIndex = startIndex + 99;
-          const rowItems = endIndex - startIndex;
-
-          return (
-            <>
-              {rowItems.length > 0 &&
-                rowItems.map((cover, index) => (
-                  <li key={uuidv4()}>
-                    {cover.img ? (
-                      <img className={coverImageSize} src={`cover://${cover.img}`} alt="" />
-                    ) : (
-                      <img className={coverImageSize} src={NoImage} alt="" />
-                    )}
-                    <div className="overlay">
-                      <span id={cover.fullpath}>{cover.foldername}</span>
-                      <div
-                        className="item-menu"
-                        id={cover.fullpath}
-                        fullpath={cover.fullpath}
-                        album={cover.foldername}
-                      >
-                        <BsThreeDots
-                          onClick={handleContextMenu}
-                          id={cover.fullpath}
-                          fullpath={cover.fullpath}
-                          album={cover.foldername}
-                        />
-                      </div>
-                      <span id="coverplay" fullpath={cover.fullpath} onClick={handlePlayReq}>
-                        <GiPlayButton />
-                      </span>
-                    </div>
-                  </li>
-                ))}
-            </>
-          );
-        })}
-      </ul>
-    </section>
+    <>
+      <div
+        ref={parentRef}
+        className="List"
+        style={{
+          height: `400px`,
+          width: `500px`,
+          overflow: 'auto'
+        }}
+      >
+        <div
+          style={{
+            height: `${rowVirtualizer.getTotalSize()}px`,
+            width: `${columnVirtualizer.getTotalSize()}px`,
+            position: 'relative'
+          }}
+        >
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+            <React.Fragment key={virtualRow.index}>
+              {columnVirtualizer.getVirtualItems().map((virtualColumn) => (
+                <div
+                  key={virtualColumn.index}
+                  className={
+                    virtualColumn.index % 2
+                      ? virtualRow.index % 2 === 0
+                        ? 'ListItemOdd'
+                        : 'ListItemEven'
+                      : virtualRow.index % 2
+                      ? 'ListItemOdd'
+                      : 'ListItemEven'
+                  }
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: `${columns[virtualColumn.index]}px`,
+                    height: `${rows[virtualRow.index]}px`,
+                    transform: `translateX(${virtualColumn.start}px) translateY(${virtualRow.start}px)`
+                  }}
+                >
+                  Cell {virtualRow.index}, {virtualColumn.index}
+                </div>
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+    </>
   );
-};
+}
 
-export default AlbumsCoverView;
+/* html {
+  font-family: sans-serif;
+  font-size: 14px;
+}
+
+body {
+  padding: 1rem;
+}
+
+.List {
+  border: 1px solid #e6e4dc;
+  max-width: 100%;
+}
+
+.ListItemEven,
+.ListItemOdd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ListItemEven {
+  background-color: #e6e4dc;
+}
+
+button {
+  border: 1px solid gray;
+}
+ */

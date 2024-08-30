@@ -1,4 +1,3 @@
-/* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
 import { useState, useRef, useCallback, useEffect, forwardRef } from 'react';
 import classNames from 'classnames';
 import { useAudioPlayer } from '../AudioPlayerContext';
@@ -13,7 +12,7 @@ import NoImage from '../assets/noimage.jpg';
 import ViewMore from '../assets/view-more-alt.jpg';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { openChildWindow } from './ChildWindows/openChildWindow';
-import '../style/AlbumsCoverView.css';
+import '../style/AlbumsCoverViewXtra.css';
 
 const AlbumsCoverView = ({ resetKey, coverSize }) => {
   /* console.log('resetKey: ', resetKey); */
@@ -34,11 +33,7 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
 
   const parentRef = useRef(null);
   const coversObserver = useRef();
-
-  useEffect(() => {
-    console.log('parentRef: ', parentRef.current);
-  }, [parentRef]);
-
+  const columns = 7;
   useEffect(() => {
     if (coverSize === 1) {
       setEstSize(100);
@@ -56,71 +51,27 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     });
   };
 
-  /*   useEffect(() => {
-    console.log('parentRef: ', parentRef.current);
-  }, [parentRef.current]);
-
-  useEffect(() => {
-    console.log('hasMoreCovers: ', hasMoreCovers);
-    console.log('state covers: ', state.covers.length);
-  }, [hasMoreCovers]); */
-
-  // Initialize the virtualizer with a fallback when data is not ready
   const rowVirtualizer = useVirtualizer({
-    //count: hasMoreCovers ? state.covers.length + 1 : state.covers.length,
     count: state.covers.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 5,
-    overscan: 200
-    //overscan: state.covers.length
-    /* debug: true */
+    estimateSize: () => estSize,
+    overscan: 50
   });
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log('Number of items rendered:', rowVirtualizer.getVirtualItems().length);
-  }, [rowVirtualizer.getVirtualItems()]);
+  }, [rowVirtualizer.getVirtualItems()]); */
 
-  /*   useEffect(() => {
-    console.log('Current covers state: ', state.covers);
-    console.log('Virtualized items: ', rowVirtualizer.getVirtualItems());
-    console.log('Total items in state: ', state.covers.length);
-  }, [state.covers, rowVirtualizer.getVirtualItems()]); */
-
-  /*   useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-
-    if (!lastItem) {
-      return;
-    }
-
-    if (lastItem.index >= state.covers.length - 1 && hasMoreCovers && !coversLoading) {
-      console.log('bingo');
-      loadMoreCovers();
-    }
-  }, [
-    hasMoreCovers,
-    loadMoreCovers,
-    state.covers.length,
-    coversLoading,
-    rowVirtualizer.getVirtualItems()
-  ]); */
-  /* 
   useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-
-    const shouldLoadMore =
-      lastItem && lastItem.index >= state.covers.length - 1 && hasMoreCovers && !coversLoading;
-
-    if (shouldLoadMore) {
-      console.log('bingo');
-    }
-  }, [
-    hasMoreCovers,
-    loadMoreCovers,
-    state.covers.length,
-    coversLoading,
-    rowVirtualizer.getVirtualItems().length // Only track the length, not the array itself
-  ]); */
+    console.log(
+      'Rendered items:',
+      rowVirtualizer.getVirtualItems().map((item) => ({
+        index: item.index,
+        top: item.start,
+        size: estSize
+      }))
+    );
+  }, [rowVirtualizer.getVirtualItems()]);
 
   const handleCoverSearch = async (search) => {
     const { album, path, service } = search;
@@ -254,47 +205,70 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
 
   return (
     <section
+      ref={parentRef}
       className="albums-coverview"
       style={{ height: '100%', width: '100%', overflowY: 'auto' }}
     >
-      {state.covers.length > 0 && (
-        <ul className={albumsGridName} ref={parentRef}>
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const cover = state.covers[virtualRow.index]; // Access the specific cover based on virtualRow index
-            return (
-              <li
-                key={uuidv4()}
-                ref={state.covers.length === virtualRow.index + 1 ? lastCoverElement : null}
-              >
-                {cover.img ? (
-                  <img className={coverImageSize} src={`cover://${cover.img}`} alt="" />
-                ) : (
-                  <img className={coverImageSize} src={NoImage} alt="" />
-                )}
-                <div className="overlay">
-                  <span id={cover.fullpath}>{cover.foldername}</span>
-                  <div
-                    className="item-menu"
-                    id={cover.fullpath}
-                    fullpath={cover.fullpath}
-                    album={cover.foldername}
-                  >
-                    <BsThreeDots
-                      onClick={handleContextMenu}
-                      id={cover.fullpath}
-                      fullpath={cover.fullpath}
-                      album={cover.foldername}
-                    />
-                  </div>
-                  <span id="coverplay" fullpath={cover.fullpath} onClick={handlePlayReq}>
-                    <GiPlayButton />
-                  </span>
+      <div
+        /* className={albumsGridName} */
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          /* width: '100%', */
+          position: 'relative'
+        }}
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          const rowIndex = Math.floor(virtualRow.index / columns);
+          const columnIndex = virtualRow.index % columns;
+          return (
+            <div
+              key={virtualRow.index}
+              style={{
+                position: 'absolute',
+                top: `${rowIndex * estSize + 20}px`,
+                left: `${columnIndex * estSize + 20}px`,
+                width: `${estSize}px`,
+                height: `${estSize}px`
+              }}
+            >
+              {state.covers[virtualRow.index].img ? (
+                <img
+                  className={coverImageSize}
+                  src={`cover://${state.covers[virtualRow.index].img}`}
+                  alt=""
+                />
+              ) : (
+                <img className={coverImageSize} src={NoImage} alt="" />
+              )}
+              <div className="overlay">
+                <span id={state.covers[virtualRow.index].fullpath}>
+                  {state.covers[virtualRow.index].foldername}
+                </span>
+                <div
+                  className="item-menu"
+                  id={state.covers[virtualRow.index].fullpath}
+                  fullpath={state.covers[virtualRow.index].fullpath}
+                  album={state.covers[virtualRow.index].foldername}
+                >
+                  <BsThreeDots
+                    onClick={handleContextMenu}
+                    id={state.covers[virtualRow.index].fullpath}
+                    fullpath={state.covers[virtualRow.index].fullpath}
+                    album={state.covers[virtualRow.index].foldername}
+                  />
                 </div>
-              </li>
-            );
-          })}
-        </ul>
-      )}
+                <span
+                  id="coverplay"
+                  fullpath={state.covers[virtualRow.index].fullpath}
+                  onClick={handlePlayReq}
+                >
+                  <GiPlayButton />
+                </span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 };
