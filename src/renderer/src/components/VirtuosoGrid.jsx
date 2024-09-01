@@ -218,11 +218,10 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
         <VirtuosoGrid
           style={{ height: '100%', width: '100%' }}
           key={uuidv4()}
-          data={state.covers}
-          //initialItemCount={100}
-          totalCount={500}
+          initialItemCount={100}
+          /* totalCount={200} */
           /* data={state.covers} */
-          overscan={100}
+          overscan={50}
           components={{ List: Container }}
           isScrolling={(e) => {
             console.log('Scrolling:', e);
