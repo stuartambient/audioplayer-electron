@@ -4,6 +4,25 @@
   overflow-x: hidden;
 }
 
+.albums-hidden {
+  display: none;
+  position: relative;
+  z-index: -2;
+}
+.albums-coverview::-webkit-scrollbar {
+  background: var(--blue2);
+  width: 10px;
+  margin-left: 1rem;
+}
+
+.albums-coverview::-webkit-scrollbar-thumb {
+  background: orange;
+}
+
+.albums-coverview::-webkit-scrollbar--track {
+  background: red;
+}
+
 .albums-coverview--albums::-webkit-scrollbar {
   display: none;
 }

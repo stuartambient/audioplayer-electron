@@ -233,7 +233,7 @@ const useAllAlbumsCovers = (
         coversMissingReq
       );
       if (coversRequest && isSubscribed) {
-        console.log('coversRequest: ', coversRequest);
+        console.log('covers-request: ', coversRequest[coversRequest.length - 1]);
         dispatch({
           type: 'set-covers',
           covers: coversRequest

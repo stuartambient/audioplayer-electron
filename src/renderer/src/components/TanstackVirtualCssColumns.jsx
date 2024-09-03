@@ -9,19 +9,16 @@ import { AlbumArt } from '../utility/AlbumArt';
 import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
-import ViewMore from '../assets/view-more-alt.jpg';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/VirtualGrid.css';
 
 const AlbumsCoverView = ({ resetKey, coverSize }) => {
-  /* console.log('resetKey: ', resetKey); */
   const { state, dispatch } = useAudioPlayer();
-  const [viewMore, setViewMore] = useState(false);
   const [coverPath, setCoverPath] = useState('');
-  const [estSize, setEstSize] = useState(100);
-  const [containerWidth, setContainerWidth] = useState(0);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [isScrolling, setIsScrolling] = useState(false); // State to control scrolling
+  const [enabled, setEnabled] = useState(false);
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     state.coversPageNumber,
@@ -36,63 +33,27 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
   const parentRef = useRef(null);
   const coversObserver = useRef();
 
-  const loadMoreCovers = () => {
-    console.log('hmc: ', hasMoreCovers, 'cl: ', coversLoading);
-    if (hasMoreCovers && !coversLoading) {
-      console.log('Loading more covers...');
-      dispatch({
-        type: 'set-covers-pagenumber',
-        coversPageNumber: state.coversPageNumber + 1
-      });
-    } else {
-      console.log('Cannot load more covers:', { hasMoreCovers, coversLoading });
+  /*   useEffect(() => {
+    if (!enabled) {
+      setEnabled(true);
     }
-  };
+  }, []); */
 
-  useEffect(() => {
-    console.log('has more covers: ', hasMoreCovers);
-    console.log('covers loading: ', coversLoading);
-  }, [hasMoreCovers, coversLoading]);
-
-  /*   useEffect(() => {
-    console.log('coverRef: ', coverRef.current);
-    console.log(Number(coverRef.current) === Number(state.covers.length));
-    if (Number(coverRef.current) === Number(state.covers.length)) {
-      loadMoreCovers();
-    }
-  }, [coverRef.current]); */
-
-  /*   useEffect(() => {
-    console.log('hmc: ', hasMoreCovers, 'cl: ', coversLoading);
-  }, [hasMoreCovers, coversLoading]); */
-  /*   const coversObserver = useRef(); */
-  /*  const columns = 6; */
-
-  /*   useEffect(() => {
-    setEstSize(coverSize === 1 ? 100 : coverSize === 2 ? 150 : 200);
-  }, [coverSize]); */
   const getEstimatedSize = useCallback(() => {
     return coverSize === 1 ? 100 : coverSize === 2 ? 150 : 200;
   }, [coverSize]);
 
-  const gap = 10; // Gap between items (both rows and columns)
+  const gap = 10;
 
   const calculateLayout = useCallback(() => {
     const estimatedSize = getEstimatedSize();
     //const columns = Math.floor((containerSize.width + gap) / (estimatedSize + gap));
     const columns = Math.max(1, Math.floor((containerSize.width + gap) / (estimatedSize + gap)));
     const rows = Math.ceil(state.covers.length / columns);
-    console.log('rows: ', rows);
     return { columns, rows, estimatedSize };
   }, [containerSize.width, getEstimatedSize, state.covers.length]);
 
   const { columns, rows, estimatedSize } = useMemo(() => calculateLayout(), [calculateLayout]);
-
-  /* const calculateColumns = useMemo(() => {
-    if (containerWidth === 0) return 1;
-    const gap = 10; // Adjust this value to match your grid gap
-    return Math.floor((containerWidth + gap) / (estSize + gap));
-  }, [containerWidth, estSize]); */
 
   useEffect(() => {
     const handleResize = () => {
@@ -113,9 +74,11 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     count: rows,
     getScrollElement: () => parentRef.current,
     estimateSize: () => estimatedSize + gap,
-    /* overscan: 2, */
-    isScrolling: (event) => console.log(event),
+    /*  overscan: 5, */
+    //isScrolling: (event) => console.log(event),
     horizontal: false
+    /* enabled,
+    debug: true */
   });
 
   useEffect(() => {
@@ -125,94 +88,55 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
   }, [state.covers.length, rowVirtualizer]);
 
   useEffect(() => {
-    console.log('number of rows: ', Math.ceil(state.covers.length / columns));
-    console.log('number of items: ', rowVirtualizer.getVirtualItems());
-  }, [rows, rowVirtualizer.getVirtualItems()]);
-
-  /*   useEffect(() => {
-    const lastRowIndex = rows - 1;
-    const isLastRowVisible = rowVirtualizer
-      .getVirtualItems()
-      .some(
-        (virtualRow) =>
-          virtualRow.index === lastRowIndex && virtualRow.start < rowVirtualizer.getTotalSize()
-      );
-
-    if (isLastRowVisible) {
-      console.log('Last row is visible');
+    // Restore scroll position when the component mounts
+    const savedScrollPosition = localStorage.getItem('scrollPosition');
+    if (savedScrollPosition) {
+      parentRef.current.scrollTop = parseInt(savedScrollPosition, 10);
     }
-  }, [rows, rowVirtualizer]); */
+
+    // Save scroll position when the tab visibility changes
+    const handleVisibilityChange = () => {
+      console.log('visibility: ', document.visibilityState);
+      if (document.visibilityState === 'hidden') {
+        localStorage.setItem('scrollPosition', parentRef.current.scrollTop);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      // Clear scroll position from local storage when component unmounts
+      localStorage.removeItem('scrollPosition');
+    };
+  }, []);
 
   useEffect(() => {
-    const lastItemIndex = state.covers.length - 1;
-    const isLastItemVisible = rowVirtualizer
-      .getVirtualItems()
-      .some(
-        (virtualRow) =>
-          virtualRow.index === lastItemIndex && virtualRow.start < rowVirtualizer.getTotalSize()
-      );
+    console.log('rows: ', rows);
+  }, [rows]);
 
-    if (isLastItemVisible) {
-      console.log('Last item is visible');
+  // Function to start continuous scrolling
+  const startScrolling = useCallback(() => {
+    setIsScrolling(true); // Set the scrolling state to true
+  }, []);
+
+  const stopScrolling = useCallback(() => {
+    setIsScrolling(false); // Set the scrolling state to false
+  }, []);
+
+  useEffect(() => {
+    let scrollInterval; // Variable to hold the scroll interval
+
+    if (isScrolling && parentRef.current) {
+      // Check if scrolling is enabled and the container is available
+      scrollInterval = setInterval(() => {
+        if (parentRef.current) {
+          parentRef.current.scrollBy(0, 1); // Scroll the container down by 1 pixel
+        }
+      }, 1); // Adjust the interval time to control scroll speed (20ms)
     }
-  }, [state.covers, rowVirtualizer]);
 
-  /*  const rowCount = Math.ceil(state.covers.length / calculateColumns); */
-
-  /* useEffect(() => {
-    const virtualItems = rowVirtualizer.getVirtualItems();
-    const lastItem = virtualItems[virtualItems.length - 1];
-    console.log('lastItem: ', lastItem, virtualItems);
-
-    if (!lastItem) {
-      console.log('No virtual items rendered yet');
-      return;
-    }
-
-    const isNearEnd = lastItem.index >= rows - 5; // Load more when 5 rows from the end
-    console.log('Scroll position:', { lastItemIndex: lastItem.index, totalRows: rows, isNearEnd });
-
-    if (isNearEnd && hasMoreCovers && !coversLoading) {
-      console.log('Near the end, triggering loadMoreCovers');
-      loadMoreCovers();
-    }
-  }, [rowVirtualizer.getVirtualItems(), hasMoreCovers, coversLoading, rows, loadMoreCovers]); */
-
-  /*   useEffect(() => {
-    console.log('Number of items rendered:', rowVirtualizer.getVirtualItems().length);
-  }, [rowVirtualizer.getVirtualItems()]); */
-
-  /*   useEffect(() => {
-    console.log(
-      'Rendered items:',
-      rowVirtualizer.getVirtualItems().map((item) => ({
-        index: item.index,
-        top: item.start,
-        size: estSize
-      }))
-    );
-  }, [rowVirtualizer.getVirtualItems()]); */
-
-  /*   useEffect(() => {
-    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-    console.log('lastItem: ', lastItem, '----', rows);
-    if (!lastItem) return;
-    if (lastItem.index < rows && hasMoreCovers && !coversLoading) {
-      loadMoreCovers();
-    }
-  }, [rowVirtualizer.getVirtualItems(), hasMoreCovers, coversLoading, rows, loadMoreCovers]); */
-
-  /*   useEffect(() => {
-    console.log(
-      'Rendered items:',
-      rowVirtualizer.getVirtualItems().map((item) => {
-        console.log('item: ', item);
-      })
-    );
-  }, [rowVirtualizer.getVirtualItems()]); */
-
-  /*   const totalRows = Math.ceil(state.covers.length / columns);
-  const containerHeight = totalRows * (estSize + 10); */
+    return () => clearInterval(scrollInterval); // Clean up interval when component unmounts or scrolling stops
+  }, [isScrolling]); // Re-run the effect when the `isScrolling` state changes
 
   const handleCoverSearch = async (search) => {
     const { album, path, service } = search;
@@ -298,9 +222,6 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
   };
 
-  /*   const totalRows = Math.ceil(state.covers.length / columns);
-  const containerHeight = totalRows * (estSize + 10); */
-
   const lastCoverElement = useCallback(
     (node) => {
       if (coversLoading) return;
@@ -308,7 +229,6 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
       coversObserver.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMoreCovers) {
-            console.log('isIntersecting');
             dispatch({
               type: 'set-covers-pagenumber',
               coversPageNumber: state.coversPageNumber + 1
@@ -317,7 +237,7 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
         },
         {
           root: document.querySelector('.albums-coverview'),
-          threshold: 1
+          threshold: 0.5
         }
       );
       if (node) coversObserver.current.observe(node);
@@ -325,14 +245,14 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     [coversLoading, hasMoreCovers]
   );
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (!coversObserver.current && state.covers.length > 0) {
       dispatch({
         type: 'set-covers-pagenumber',
         coversPageNumber: state.coversPageNumber + 1
       });
     }
-  }, [coversObserver]);
+  }, [coversObserver]); */
 
   const albumsGridName = classNames('albums-coverview--albums', {
     'grid-small': coverSize === 1,
@@ -361,6 +281,7 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
       }}
     >
       <div
+        /* ref={index >= rows - 5 ? lastCoverElement : null} */
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
           width: '100%',
@@ -371,6 +292,7 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
           <div
             key={virtualRow.index}
             data-index={virtualRow.index}
+            ref={virtualRow.index >= rows - 5 ? lastCoverElement : null}
             //ref={rowVirtualizer.measureElement}
 
             style={{
@@ -397,7 +319,6 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
 
                 return (
                   <div
-                    ref={itemIndex === rows - 1 ? lastCoverElement : null}
                     className="imagediv"
                     key={itemIndex}
                     style={{
