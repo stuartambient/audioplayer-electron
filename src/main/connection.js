@@ -10,6 +10,7 @@ const dbPath = prod
   : path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV);
 
 const db = new Database(dbPath /* , { verbose: console.log } */);
+
 db.pragma('journal_mode = WAL');
 db.pragma('synchronous = normal');
 db.pragma('temp_store = memory');

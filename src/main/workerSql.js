@@ -2,13 +2,36 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 import { parentPort, workerData, isMainThread } from 'worker_threads';
 
-const mode = import.meta.env.MODE;
+/* const mode = import.meta.env.MODE;
 const dbPath =
   mode === 'development'
     ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
     : path.join(workerData, 'music.db');
 
-const db = new Database(dbPath);
+const db = new Database(dbPath); */
+
+const prod = import.meta.env.PROD;
+const isDev = import.meta.env.MODE === 'development';
+const resourcesPath = process.resourcesPath;
+
+const dbPath = prod
+  ? path.join(resourcesPath, 'music.db' /* import.meta.env.MAIN_VITE_DB_PATH_PROD */)
+  : path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV);
+
+const db = new Database(dbPath /* , { verbose: console.log } */);
+
+db.pragma('journal_mode = WAL');
+db.pragma('synchronous = normal');
+db.pragma('temp_store = memory');
+
+const extensionsPath = prod
+  ? path.join(resourcesPath, 'extensions')
+  : path.join(process.cwd(), 'src/db/extensions');
+
+db.loadExtension(path.join(extensionsPath, 'unicode'));
+
+const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT UNIQUE)`;
+db.exec(createRootsTable);
 
 export let newestRoots;
 
