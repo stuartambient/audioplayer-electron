@@ -11,9 +11,26 @@
   scrollbar-width: thin;
 }
 
-.results::-webkit-scrollbar {
+/* .results::-webkit-scrollbar {
   display: none;
+} */
+
+.results::-webkit-scrollbar {
+  background: var(--blue2);
+  width: 10px;
+  margin-left: 1rem;
 }
+.results::-webkit-scrollbar-thumb {
+  background: orange;
+}
+
+.results::-webkit-scrollbar--track {
+  background: red;
+}
+
+/* .albums-coverview--albums::-webkit-scrollbar {
+  display: none;
+} */
 
 .results-minimal {
   grid-column: 1 / 2;

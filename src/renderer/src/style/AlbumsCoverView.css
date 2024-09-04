@@ -4,49 +4,26 @@
   overflow-x: hidden;
 }
 
-.albums-coverview--albums::-webkit-scrollbar {
+.albums-hidden {
   display: none;
+  position: relative;
+  z-index: -2;
+}
+.albums-coverview::-webkit-scrollbar {
+  background: var(--blue2);
+  width: 10px;
+  margin-left: 1rem;
 }
 
-.albums-coverview--albums {
-  /*height: 100%*/
-  display: grid;
-  grid-gap: 10px;
-  grid-auto-flow: dense;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  justify-content: center;
-  align-items: center;
+.albums-coverview::-webkit-scrollbar-thumb {
+  background: orange;
 }
 
-/* .albums-coverview > div:first-child {
-  height: auto !important; 
-  position: relative !important;
-}
- */
-
-/* .albums-coverview--album .grid-small > div:first-child,
-.albums-coverview--album .grid-medium > div:first-child,
-.albums-coverview--album .grid-large > div:first-child {
-  height: auto !important;
-  position: relative !important;
-} */
-
-.grid-small {
-  grid-template-columns: repeat(auto-fit, minmax(100px, 100px));
-  /*   grid-auto-rows: 100px; */
-}
-.grid-medium {
-  grid-template-columns: repeat(auto-fill, minmax(150px, 150px));
-  /* grid-auto-rows: 150px; */
+.albums-coverview::-webkit-scrollbar--track {
+  background: red;
 }
 
-.grid-large {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 200px));
-  /* grid-auto-rows: 200px; */
-}
-
-.albums-coverview li .overlay {
+.overlay {
   grid-column: span 1;
   grid-row: span 1;
   background: rgba(57, 5, 2, 0.8);
@@ -62,22 +39,15 @@
   font-size: 0.8rem;
 }
 
-.albums-coverview li .overlay span {
+.overlay span {
   text-align: center;
   margin: 0 0.1rem;
 }
 
-.albums-coverview li:hover .overlay {
+.imagediv:hover .overlay {
   transform: scale(1) translateY(-100%);
   cursor: pointer;
 }
-
-/* .albums-coverview--albums li img {
-  object-fit: cover;
-  height: 100px;
-  width: 100px;
-  object-position: center;
-} */
 
 .cover-image {
   object-fit: cover;
@@ -97,18 +67,4 @@
 .image-large {
   height: 200px;
   width: 200px;
-}
-
-.albums-coverview--view-more {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: white;
-  font-size: 1.2rem;
-  justify-content: center;
-  min-height: 100px;
-}
-
-.albums-coverview--view-more:hover {
-  cursor: pointer;
 }

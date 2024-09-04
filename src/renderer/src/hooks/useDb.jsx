@@ -216,52 +216,58 @@ const useAllAlbumsCovers = (
   resetKey,
   coverslength
 ) => {
-  /* console.log(coversPageNumber); */
   const [coversLoading, setCoversLoading] = useState(true);
   const [coversError, setCoversError] = useState(false);
   const [hasMoreCovers, setHasMoreCovers] = useState(false);
 
   useEffect(() => {
     let isSubscribed = true;
+
     const loadCovers = async () => {
-      setCoversLoading(true);
-      setCoversError(false);
-      let coversRequest = await window.api.getCovers(
-        coversPageNumber,
-        coversSearchTerm,
-        coversDateSort,
-        coversMissingReq
-      );
-      if (coversRequest && isSubscribed) {
-        console.log('covers-request: ', coversRequest[coversRequest.length - 1]);
-        dispatch({
-          type: 'set-covers',
-          covers: coversRequest
-        });
-        if (coversRequest.length < 100) {
-          setHasMoreCovers(false);
-          return (isSubscribed = false);
-        } else {
-          setHasMoreCovers(true);
+      try {
+        setCoversLoading(true);
+        setCoversError(false);
+
+        const coversRequest = await window.api.getCovers(
+          coversPageNumber,
+          coversSearchTerm,
+          coversDateSort,
+          coversMissingReq
+        );
+
+        if (coversRequest && isSubscribed) {
+          setTimeout(() => {
+            dispatch({
+              type: 'set-covers',
+              covers: coversRequest
+            });
+
+            setHasMoreCovers(coversRequest.length >= 100);
+            setCoversLoading(false);
+          }, 250); // Adjust the delay time (500ms) as needed
         }
-        /* setHasMoreCovers(coversRequest.length > 0); */
-        setCoversLoading(false);
+      } catch (error) {
+        if (isSubscribed) {
+          setCoversError(true);
+          setCoversLoading(false);
+        }
       }
     };
 
-    if (
-      (isSubscribed && coversPageNumber === 0 && coverslength === 0) ||
-      (isSubscribed && coversPageNumber * 100 === coverslength)
-    ) {
+    // Condition to decide when to load covers
+    if ((coversPageNumber === 0 && coverslength === 0) || coversPageNumber * 100 === coverslength) {
       loadCovers();
     }
-    return () => (isSubscribed = false);
+
+    return () => {
+      isSubscribed = false;
+    };
   }, [
     coversPageNumber,
     coversSearchTerm,
     coversDateSort,
     coversMissingReq,
-
+    dispatch,
     resetKey,
     coverslength
   ]);

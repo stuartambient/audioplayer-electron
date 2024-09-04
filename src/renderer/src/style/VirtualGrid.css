@@ -23,48 +23,6 @@
   background: red;
 }
 
-.albums-coverview--albums::-webkit-scrollbar {
-  display: none;
-}
-
-.albums-coverview--albums {
-  /*height: 100%*/
-  display: grid;
-  grid-gap: 10px;
-  grid-auto-flow: dense;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  justify-content: center;
-  align-items: center;
-}
-
-/* .albums-coverview > div:first-child {
-  height: auto !important; 
-  position: relative !important;
-}
- */
-
-/* .albums-coverview--album .grid-small > div:first-child,
-.albums-coverview--album .grid-medium > div:first-child,
-.albums-coverview--album .grid-large > div:first-child {
-  height: auto !important;
-  position: relative !important;
-} */
-
-.grid-small {
-  grid-template-columns: repeat(auto-fit, minmax(100px, 100px));
-  /*   grid-auto-rows: 100px; */
-}
-.grid-medium {
-  grid-template-columns: repeat(auto-fill, minmax(150px, 150px));
-  /* grid-auto-rows: 150px; */
-}
-
-.grid-large {
-  grid-template-columns: repeat(auto-fill, minmax(200px, 200px));
-  /* grid-auto-rows: 200px; */
-}
-
 .overlay {
   grid-column: span 1;
   grid-row: span 1;
@@ -91,13 +49,6 @@
   cursor: pointer;
 }
 
-/* .albums-coverview--albums li img {
-  object-fit: cover;
-  height: 100px;
-  width: 100px;
-  object-position: center;
-} */
-
 .cover-image {
   object-fit: cover;
   object-position: center;
@@ -116,18 +67,4 @@
 .image-large {
   height: 200px;
   width: 200px;
-}
-
-.albums-coverview--view-more {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: white;
-  font-size: 1.2rem;
-  justify-content: center;
-  min-height: 100px;
-}
-
-.albums-coverview--view-more:hover {
-  cursor: pointer;
 }

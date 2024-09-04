@@ -1,5 +1,4 @@
-/* SELECT foldername FROM albums ORDER BY datecreated DESC LIMIT 10 */
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useCallback, useEffect, forwardRef, useMemo } from 'react';
 import classNames from 'classnames';
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { Buffer } from 'buffer';
@@ -10,19 +9,15 @@ import { AlbumArt } from '../utility/AlbumArt';
 import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import NoImage from '../assets/noimage.jpg';
-import ViewMore from '../assets/view-more-alt.jpg';
-/* import AppState from '../hooks/AppState'; */
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { openChildWindow } from './ChildWindows/openChildWindow';
 import '../style/AlbumsCoverView.css';
 
-const AlbumsCoverView = ({ resetKey, coverSize }) => {
+const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
   const { state, dispatch } = useAudioPlayer();
-  /*  const [coverUpdate, setCoverUpdate] = useState({ path: '', file: '' }); */
-  const [viewMore, setViewMore] = useState(false);
-  /* const [coverSearch, setCoverSearch] = useState(); */
   const [coverPath, setCoverPath] = useState('');
-
-  const coversObserver = useRef();
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [isScrolling, setIsScrolling] = useState(false); // State to control scrolling
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
     state.coversPageNumber,
@@ -33,6 +28,80 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     resetKey,
     state.covers.length
   );
+
+  const parentRef = useRef(null);
+  const coversObserver = useRef();
+
+  const getEstimatedSize = useCallback(() => {
+    return coverSize === 1 ? 100 : coverSize === 2 ? 150 : 200;
+  }, [coverSize]);
+
+  const gap = 10;
+
+  const calculateLayout = useCallback(() => {
+    const estimatedSize = getEstimatedSize();
+    const columns = Math.max(1, Math.floor((containerSize.width + gap) / (estimatedSize + gap)));
+    const rows = Math.ceil(state.covers.length / columns);
+    return { columns, rows, estimatedSize };
+  }, [containerSize.width, getEstimatedSize, state.covers.length]);
+
+  const { columns, rows, estimatedSize } = useMemo(() => calculateLayout(), [calculateLayout]);
+
+  useEffect(() => {
+    console.log(columns, rows, estimatedSize);
+  }, [columns, rows, estimatedSize]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (parentRef.current) {
+        setContainerSize({
+          width: parentRef.current.offsetWidth,
+          height: parentRef.current.offsetHeight
+        });
+      }
+    };
+
+    handleResize(); // Initial calculation
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const rowVirtualizer = useVirtualizer({
+    count: rows,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => estimatedSize + gap,
+    horizontal: false
+  });
+
+  useEffect(() => {
+    if (state.covers.length) {
+      rowVirtualizer.measure();
+    }
+  }, [state.covers.length, rowVirtualizer]);
+
+  // Function to start continuous scrolling
+  const startScrolling = useCallback(() => {
+    setIsScrolling(true); // Set the scrolling state to true
+  }, []);
+
+  const stopScrolling = useCallback(() => {
+    setIsScrolling(false); // Set the scrolling state to false
+  }, []);
+
+  useEffect(() => {
+    let scrollInterval; // Variable to hold the scroll interval
+
+    if (isScrolling && parentRef.current) {
+      // Check if scrolling is enabled and the container is available
+      scrollInterval = setInterval(() => {
+        if (parentRef.current) {
+          parentRef.current.scrollBy(0, 1); // Scroll the container down by 1 pixel
+        }
+      }, 1); // Adjust the interval time to control scroll speed (20ms)
+    }
+
+    return () => clearInterval(scrollInterval); // Clean up interval when component unmounts or scrolling stops
+  }, [isScrolling]); // Re-run the effect when the `isScrolling` state changes
 
   const handleCoverSearch = async (search) => {
     const { album, path, service } = search;
@@ -78,6 +147,7 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
   };
 
   const handlePlayReq = async (e) => {
+    e.preventDefault();
     const albumPath = e.currentTarget.getAttribute('fullpath');
     const albumTracks = await window.api.getAlbumTracks(albumPath);
     if (albumTracks) {
@@ -109,6 +179,14 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     }
   };
 
+  const handleContextMenu = async (e) => {
+    e.preventDefault();
+    const pathToAlbum = e.currentTarget.getAttribute('fullpath');
+    const album = e.currentTarget.getAttribute('album');
+    await window.api.showAlbumCoverMenu();
+    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
+  };
+
   const lastCoverElement = useCallback(
     (node) => {
       if (coversLoading) return;
@@ -124,7 +202,7 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
         },
         {
           root: document.querySelector('.albums-coverview'),
-          threshold: 1
+          threshold: 0.5
         }
       );
       if (node) coversObserver.current.observe(node);
@@ -141,20 +219,6 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
     }
   }, [coversObserver]);
 
-  const handleContextMenu = async (e) => {
-    e.preventDefault();
-    const pathToAlbum = e.currentTarget.getAttribute('fullpath');
-    const album = e.currentTarget.getAttribute('album');
-    await window.api.showAlbumCoverMenu();
-    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
-  };
-
-  const albumsGridName = classNames('albums-coverview--albums', {
-    'grid-small': coverSize === 1,
-    'grid-medium': coverSize === 2,
-    'grid-large': coverSize === 3
-  });
-
   const coverImageSize = classNames('cover-image', {
     'image-small': coverSize === 1,
     'image-medium': coverSize === 2,
@@ -162,62 +226,123 @@ const AlbumsCoverView = ({ resetKey, coverSize }) => {
   });
 
   return (
-    <section className="albums-coverview">
-      <ul className={albumsGridName}>
-        {state.covers.length > 0 &&
-          state.covers.map((cover, idx) => {
-            return (
-              <li key={uuidv4()} ref={state.covers.length === idx + 1 ? lastCoverElement : null}>
-                {cover.img && (
-                  <img className={coverImageSize} src={`cover://${cover.img}`} alt="" />
-                )}
-                {!cover.img && <img className={coverImageSize} src={NoImage} alt="" />}
-                <div className="overlay">
-                  <span id={cover.fullpath}>{cover.foldername}</span>
+    <div
+      ref={parentRef}
+      className={className}
+      style={{
+        height: '100%',
+        width: '100%',
+        overflow: 'auto'
+      }}
+    >
+      <div
+        /* ref={index >= rows - 5 ? lastCoverElement : null} */
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+          width: '100%',
+          position: 'relative'
+        }}
+      >
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+          <div
+            key={virtualRow.index}
+            data-index={virtualRow.index}
+            ref={virtualRow.index === rows - 1 ? lastCoverElement : null}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: `${virtualRow.size}px`,
+              transform: `translateY(${virtualRow.start}px)`
+            }}
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${columns}, ${estimatedSize}px)`,
+                gap: `${gap}px`,
+                justifyContent: 'center'
+              }}
+            >
+              {Array.from({ length: columns }).map((_, columnIndex) => {
+                const itemIndex = virtualRow.index * columns + columnIndex;
+                const item = state.covers[itemIndex];
+                if (!item) return;
 
+                return (
                   <div
-                    className="item-menu"
-                    id={cover.fullpath}
-                    fullpath={cover.fullpath}
-                    album={cover.foldername}
+                    className="imagediv"
+                    key={itemIndex}
+                    style={{
+                      width: `${estimatedSize}px`,
+                      height: `${estimatedSize}px`,
+                      position: 'relative'
+                    }}
                   >
-                    <BsThreeDots
-                      onClick={handleContextMenu}
-                      id={cover.fullpath}
-                      fullpath={cover.fullpath}
-                      album={cover.foldername}
-                    />
+                    {item.img ? (
+                      <img className={coverImageSize} src={`cover://${item.img}`} alt="" />
+                    ) : (
+                      <img className={coverImageSize} src={NoImage} alt="" />
+                    )}
+                    <div className="overlay">
+                      <span id={item.fullpath}>{item.foldername}</span>
+                      <div
+                        className="item-menu"
+                        id={item.fullpath}
+                        fullpath={item.fullpath}
+                        album={item.foldername}
+                      >
+                        <BsThreeDots
+                          onClick={handleContextMenu}
+                          id={item.fullpath}
+                          fullpath={item.fullpath}
+                          album={item.foldername}
+                        />
+                      </div>
+                      <span id="coverplay" fullpath={item.fullpath} onClick={handlePlayReq}>
+                        <GiPlayButton />
+                      </span>
+                    </div>
                   </div>
-                  <span id="coverplay" fullpath={cover.fullpath} onClick={handlePlayReq}>
-                    <GiPlayButton />
-                  </span>
+                );
+              })}
+              {coversLoading && hasMoreCovers && (
+                <div
+                  style={{
+                    width: `${estimatedSize}px`,
+                    height: `${estimatedSize}px`,
+                    zIndex: '100',
+                    backgroundColor: 'var(--blue2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  Loading
                 </div>
-              </li>
-            );
-          })}
-      </ul>
-    </section>
+              )}
+              {coversError && (
+                <div
+                  style={{
+                    width: `${estimatedSize}px`,
+                    height: `${estimatedSize}px`,
+                    zIndex: '100',
+                    backgroundColor: 'red',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  Errors loading covers
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
 export default AlbumsCoverView;
-
-/* 
-This is a React component that renders an album cover view. I can offer some feedback and suggestions to improve this code:
-
-    It's a good practice to format the code to make it more readable, so consider using an auto-formatter to indent the code consistently.
-    In the second useEffect hook, it's good to add the dependency coverUpdate to prevent unnecessary executions of the code when the state doesn't change.
-    The compareStrs function could use some refactoring to make it more readable and maintainable. For example, you could break down the code into smaller, reusable functions or variables with descriptive names.
-    Consider adding comments to explain what each function does and why it exists.
-    There's a typo in the EFECT comment. It should be EFFECT.
-
-    In the third useEffect hook, the updateCovers array is created but not used. You need to assign it back to the covers state.
-In the handleCoverSearch function, it's better to use let and const instead of var to declare variables to improve readability and avoid unexpected behaviors.
-In the same function, you could use string interpolation to concatenate strings instead of using the + operator.
-In the handleCoverSearch function, there's a hardcoded timeout of one second to call the window.api.showChild function. Instead, you could use setTimeout to make it more flexible, allowing you to pass the timeout value as an argument.
-Finally, it's better to split large functions into smaller ones with a single responsibility to improve the code's maintainability and readability.
-
-
-
-
-*/

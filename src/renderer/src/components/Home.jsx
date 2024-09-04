@@ -6,14 +6,7 @@ import { AiFillDownSquare } from 'react-icons/ai';
 import { GrDocumentMissing } from 'react-icons/gr';
 import { IoIosRefresh } from 'react-icons/io';
 import '../style/Home.css';
-/* import AlbumsCoverView from './AlbumsCoverView'; */
-/* import AlbumsCoverView from './TanstackVirtual'; */
-//import AlbumsCoverView from './TanstackVirtualExample';
-import AlbumsCoverView from './TanstackVirtualCssColumns';
-/* import AlbumsCoverView from './VrtualGrid'; */
-/* import AlbumsCoverView from './VirtuosoGrid';*/
-/* import AlbumsCoverView from './ReactWindow'; */
-/* import CoverSearch from './CoverSearch'; */
+import AlbumsCoverView from './AlbumsCoverView';
 
 const Home = () => {
   const { state, dispatch } = useAudioPlayer();
@@ -87,7 +80,10 @@ const Home = () => {
   const coverSearchRef = useRef();
   return (
     <>
-      <ul className="album-cover-tools" style={{ color: 'white' }}>
+      <ul
+        className={!state.home ? 'album-cover-tools albums-hidden' : 'album-cover-tools'}
+        style={{ color: 'white' }}
+      >
         {homepage === 'albums-cover-view' && (
           <>
             <li className="covers-search-form">
@@ -158,8 +154,11 @@ const Home = () => {
           </>
         )}
       </ul>
-
-      <AlbumsCoverView resetKey={resetKey} coverSize={coverSize} />
+      <AlbumsCoverView
+        resetKey={resetKey}
+        coverSize={coverSize}
+        className={!state.home ? 'albums-coverview albums-hidden' : 'albums-coverview'}
+      />
     </>
   );
 };

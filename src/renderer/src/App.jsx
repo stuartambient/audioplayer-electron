@@ -363,7 +363,8 @@ function App() {
       {state.home || state.update || state.library || state.minimalmode || state.tagEditor ? (
         <MainNav onClick={handleMainNav} />
       ) : null}
-      {state.home && !state.minimalmode && <Home />}
+      {/* {state.home && !state.minimalmode && <Home />} */}
+      <Home />
       {state.update && <Update />}
       {state.player || state.home ? (
         <Player onClick={handlePlayerControls}>
