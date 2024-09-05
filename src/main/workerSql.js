@@ -18,17 +18,19 @@ const dbPath = prod
   ? path.join(resourcesPath, 'music.db' /* import.meta.env.MAIN_VITE_DB_PATH_PROD */)
   : path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV);
 
+console.log('prod: ', prod, 'isDev: ', isDev, 'dbPath: ', dbPath, 'resourcesPath: ', resourcesPath);
+
 const db = new Database(dbPath /* , { verbose: console.log } */);
 
 db.pragma('journal_mode = WAL');
 db.pragma('synchronous = normal');
 db.pragma('temp_store = memory');
 
-const extensionsPath = prod
+/* const extensionsPath = prod
   ? path.join(resourcesPath, 'extensions')
   : path.join(process.cwd(), 'src/db/extensions');
 
-db.loadExtension(path.join(extensionsPath, 'unicode'));
+db.loadExtension(path.join(extensionsPath, 'unicode')); */
 
 const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT UNIQUE)`;
 db.exec(createRootsTable);

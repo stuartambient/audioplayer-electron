@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect, forwardRef, memo, useMemo } f
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { v4 as uuidv4 } from 'uuid';
+import { Virtuoso } from 'react-virtuoso';
 import MediaMenu from './MediaMenu';
 import Item from './Item';
 import {
@@ -332,34 +333,6 @@ const InfiniteList = memo(() => {
     [state.active, scrollRef]
   );
 
-  const byFiles = state.tracks.map((item, index) => {
-    if (!item) return null;
-
-    return (
-      <Item
-        type="file"
-        key={getKey()}
-        divId={`${item.track_id}--item-div`}
-        className={
-          `${state.active}--item-div` === `${item.track_id}--item-div` ? 'item active' : 'item'
-        }
-        ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
-        href={item.track_id}
-        id={item.track_id}
-        like={item.like}
-        audiofile={item.audiotrack}
-        val={index}
-        artist={item.performers ? item.performers : 'not available'}
-        title={item.title ? item.title : item.audiotrack}
-        album={item.album ? item.album : 'not available'}
-        genre={item.genres ? item.genres : 'not available'}
-        codecs={item.codecs ? item.codecs : 'not available'}
-        bitrate={item.audioBitrate ? item.audioBitrate : 'not available'}
-        samplerate={item.audioSampleRate ? item.audioSampleRate : 'not available'}
-      />
-    );
-  });
-
   const byAlbums = state.albums.map((item, index) => {
     return (
       <Item
@@ -441,7 +414,42 @@ const InfiniteList = memo(() => {
         ) : null}
         {state.listType === 'files' && (
           <>
-            <div className="files">{byFiles}</div>
+            <div className="files">
+              <Virtuoso
+                data={state.tracks}
+                totalCount={49}
+                itemContent={(index, item) => {
+                  if (!item) return null; // Handle empty items
+
+                  return (
+                    <Item
+                      type="file"
+                      key={getKey()}
+                      divId={`${item.track_id}--item-div`}
+                      className={
+                        `${state.active}--item-div` === `${item.track_id}--item-div`
+                          ? 'item active'
+                          : 'item'
+                      }
+                      ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
+                      href={item.track_id}
+                      id={item.track_id}
+                      like={item.like}
+                      audiofile={item.audiotrack}
+                      val={index}
+                      artist={item.performers ? item.performers : 'not available'}
+                      title={item.title ? item.title : item.audiotrack}
+                      album={item.album ? item.album : 'not available'}
+                      genre={item.genres ? item.genres : 'not available'}
+                      codecs={item.codecs ? item.codecs : 'not available'}
+                      bitrate={item.audioBitrate ? item.audioBitrate : 'not available'}
+                      samplerate={item.audioSampleRate ? item.audioSampleRate : 'not available'}
+                    />
+                  );
+                }}
+                style={{ height: '500px' }} // Set a height for the Virtuoso container
+              />
+            </div>
             <div className="albums" style={{ display: 'none' }}>
               {byAlbums}
             </div>
@@ -452,12 +460,41 @@ const InfiniteList = memo(() => {
         )}
         {state.listType === 'albums' && (
           <>
-            <div className="albums">{byAlbums}</div>
+            <div className="albums">
+              <Virtuoso
+                data={state.albums}
+                totalCount={49}
+                itemContent={(index, item) => {
+                  return (
+                    <Item
+                      type="folder"
+                      key={getKey()}
+                      id={item.id}
+                      className="item"
+                      ref={state.albums.length === index + 1 ? lastAlbumElement : scrollToView}
+                      href="http://"
+                      val={index}
+                      foldername={item.foldername}
+                      term={item.fullpath}
+                      fullpath={item.fullpath}
+                      handleAlbumTracksRequest={handleAlbumTracksRequest}
+                      /* showContextMenu={handleContextMenu} */
+                      showMore={showMore}
+                      albumPattern={albumPattern}
+                      albumTracksLength={albumTracks.length}
+                      albumsTracks={albumsTracks}
+                    />
+                  );
+                }}
+                style={{ height: '500px' }}
+              />
+            </div>
+
             <div className="files" style={{ display: 'none' }}>
-              {byFiles}
+              {/* {byFiles} */}
             </div>
             <div className="playlist" style={{ display: 'none' }}>
-              {byPlaylist}
+              {/*  {byPlaylist} */}
             </div>
           </>
         )}

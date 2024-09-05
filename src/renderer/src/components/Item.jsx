@@ -7,6 +7,7 @@ import { BsThreeDots } from 'react-icons/bs';
 import '../style/FlashEffect.css';
 
 const Item = forwardRef((props, ref) => {
+  console.log('props: ', props);
   const { state, dispatch } = useAudioPlayer();
   const handlePicture = (buffer) => {
     console.log('buffer: ', buffer);
