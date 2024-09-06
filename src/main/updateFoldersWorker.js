@@ -4,12 +4,59 @@ import { stat } from 'node:fs';
 import path from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 import fg from 'fast-glob';
-/* import Database from 'better-sqlite3'; */
+import Database from 'better-sqlite3';
 import searchCover from './utility/searchCover.js';
-/* import { roots } from '../constant/constants.js'; */
-import { newestRoots, insertAlbums, deleteAlbums, getAlbums } from './workerSql.js';
-/* console.log(roots, '------', newestRoots);
-const [...newroots] = roots; */
+
+const mode = import.meta.env.MODE;
+const dbPath =
+  mode === 'development'
+    ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
+    : path.join(workerData, 'music.db');
+
+const db = new Database(dbPath);
+const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT UNIQUE)`;
+db.exec(createRootsTable);
+
+let newestRoots;
+
+const getRoots = () => {
+  const roots = db.prepare('SELECT root FROM roots');
+
+  newestRoots = roots.all().map((row) => row.root);
+};
+
+getRoots();
+
+export const insertAlbums = (data) => {
+  const insert = db.prepare(
+    'INSERT INTO albums(id, rootlocation, foldername, fullpath, img, birthtime, modified) VALUES (@id, @root, @name, @fullpath, @img, @birthtime, @modified)'
+  );
+
+  const insertMany = db.transaction((albums) => {
+    for (const a of albums) {
+      if (!a.img) {
+        a.img = null; // or you could use an empty string ''
+      }
+      insert.run(a);
+    }
+  });
+
+  insertMany(data);
+};
+
+export const deleteAlbums = async (data) => {
+  const deleteA = db.prepare('DELETE FROM albums WHERE fullpath = ?');
+  const deleteMany = db.transaction((data) => {
+    for (const d of data) deleteA.run(d);
+  });
+  deleteMany(data);
+};
+
+export const getAlbums = () => {
+  const getAllAlbums = db.prepare('SELECT fullpath FROM albums');
+  const albums = getAllAlbums.all();
+  return albums;
+};
 
 function getStats(folder) {
   return fsPromises.stat(folder).catch((error) => {

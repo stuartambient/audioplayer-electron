@@ -2,10 +2,28 @@ import fs from 'node:fs';
 import { promisify } from 'node:util';
 import { finished } from 'node:stream';
 import path from 'node:path';
+import { parentPort, workerData } from 'worker_threads';
 import { v4 as uuidv4 } from 'uuid';
 import { File } from 'node-taglib-sharp';
-import { newestRoots } from '../workerSql';
+import Database from 'better-sqlite3';
 import processFile from '../processProblemTracks';
+
+/* const mode = import.meta.env.MODE;
+const dbPath =
+  mode === 'development'
+    ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
+    : path.join(process.resourcesPath, 'music.db');
+
+const db = new Database(dbPath);
+let newestRoots;
+const getRoots = () => {
+  const roots = db.prepare('SELECT root FROM roots');
+
+  newestRoots = roots.all().map((row) => row.root);
+};
+
+getRoots(); */
+
 const streamFinished = promisify(finished);
 
 const convertToUTC = (milliseconds) => {

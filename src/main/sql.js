@@ -65,9 +65,11 @@ CREATE TABLE IF NOT EXISTS audio_track_errors (
 );
 `; */
 
-db.exec(createAudioTracks);
-db.exec(createAlbumsTable);
-db.exec(createRootsTable);
+const initializeDatabase = () => {
+  db.exec(createAudioTracks);
+  db.exec(createAlbumsTable);
+  db.exec(createRootsTable);
+};
 /* db.exec(createTracksTable); */
 /* db.exec(createAudioTrackErrors); */
 
@@ -615,7 +617,7 @@ const updateCoversInDatabase = (coversArray) => {
 const getRoots = () => {
   const roots = db.prepare('SELECT root FROM roots');
 
-  return roots.all();
+  return roots.all().map((row) => row.root);
 };
 
 const updateRoots = (roots) => {
@@ -677,7 +679,8 @@ export {
   getUpdatedTracks,
   getAlbumsNullImg,
   getRoots,
-  updateRoots
+  updateRoots,
+  initializeDatabase
 };
 
 /*

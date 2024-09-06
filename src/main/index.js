@@ -65,7 +65,8 @@ import {
   refreshMetadata,
   getUpdatedTracks,
   getRoots,
-  updateRoots
+  updateRoots,
+  initializeDatabase
 } from './sql.js';
 
 import {
@@ -212,6 +213,10 @@ let resumeSleep;
 
 app.whenReady().then(async () => {
   // Load React DevTools extension
+
+  const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT UNIQUE)`;
+  db.exec(createRootsTable);
+
   await session.defaultSession.clearCache(() => {
     console.log('--------> Cache cleared!');
   });
@@ -298,7 +303,7 @@ app.whenReady().then(async () => {
   powerMonitor.on('shutdown', () => {
     console.log('The system is shutting down: ', new Date());
   });
-
+  initializeDatabase();
   mainWindow.show();
   mainWindow.webContents.openDevTools();
 });
