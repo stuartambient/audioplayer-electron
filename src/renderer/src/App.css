@@ -94,6 +94,8 @@ textarea {
 
 .container-player {
   background: none;
+  grid-template-rows: 32px 50px 1fr;
+  grid-auto-rows: 0px;
 }
 
 .container-update {

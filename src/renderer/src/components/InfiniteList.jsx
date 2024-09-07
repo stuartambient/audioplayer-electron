@@ -295,6 +295,14 @@ const InfiniteList = memo(() => {
     [tracksLoading, hasMoreTracks]
   );
 
+  const loadMoreTracks = () => {
+    console.log('loadMoreTracks');
+    dispatch({
+      type: 'tracks-pagenumber',
+      tracksPageNumber: state.tracksPageNumber + 1
+    });
+  };
+
   const lastAlbumElement = useCallback(
     (node) => {
       if (albumsLoading) return;
@@ -324,7 +332,7 @@ const InfiniteList = memo(() => {
       if (!node) return;
       if (state.active && node && node.getAttribute('id') === `${state.active}--item-div`) {
         scrollRef.current = node;
-        scrollRef.current.scrollIntoView();
+        /* scrollRef.current.scrollIntoView(); */
       }
       /*       if (active) {
         console.log(activeRef);
@@ -333,7 +341,7 @@ const InfiniteList = memo(() => {
     [state.active, scrollRef]
   );
 
-  const byAlbums = state.albums.map((item, index) => {
+  /*   const byAlbums = state.albums.map((item, index) => {
     return (
       <Item
         type="folder"
@@ -347,15 +355,14 @@ const InfiniteList = memo(() => {
         term={item.fullpath}
         fullpath={item.fullpath}
         handleAlbumTracksRequest={handleAlbumTracksRequest}
-        /* showContextMenu={handleContextMenu} */
         showMore={showMore}
         albumPattern={albumPattern}
         albumTracksLength={albumTracks.length}
         albumsTracks={albumsTracks}
       ></Item>
     );
-  });
-  let pl;
+  }); */
+  /*   let pl;
   state.playlistShuffle ? (pl = shuffledPlaylist) : (pl = state.playlistTracks);
   const byPlaylist = pl.map((item, index) => {
     return (
@@ -375,6 +382,23 @@ const InfiniteList = memo(() => {
         title={item.title ? item.title : item.audiotrack}
         album={item.album ? item.album : 'not available'}
       />
+    );
+  }); */
+
+  const CustomScroller = forwardRef((props, ref) => {
+    return (
+      <div
+        {...props}
+        ref={ref}
+        style={{
+          overflowY: 'auto',
+          height: '99%',
+          scrollbarWidth: '10px',
+          ...props.style // Preserve existing styles
+        }}
+      >
+        {props.children}
+      </div>
     );
   });
 
@@ -416,8 +440,12 @@ const InfiniteList = memo(() => {
           <>
             <div className="files">
               <Virtuoso
+                className="files-list"
+                style={{ height: '400px' }}
                 data={state.tracks}
-                totalCount={49}
+                totalCount={state.tracks.length}
+                endReached={loadMoreTracks}
+                /* components={{ Scroller: CustomScroller }} */
                 itemContent={(index, item) => {
                   if (!item) return null; // Handle empty items
 
@@ -431,7 +459,7 @@ const InfiniteList = memo(() => {
                           ? 'item active'
                           : 'item'
                       }
-                      ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
+                      //ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
                       href={item.track_id}
                       id={item.track_id}
                       like={item.like}
@@ -447,15 +475,10 @@ const InfiniteList = memo(() => {
                     />
                   );
                 }}
-                style={{ height: '500px' }} // Set a height for the Virtuoso container
               />
             </div>
-            <div className="albums" style={{ display: 'none' }}>
-              {byAlbums}
-            </div>
-            <div className="playlist" style={{ display: 'none' }}>
-              {byPlaylist}
-            </div>
+            <div className="albums" style={{ display: 'none' }}></div>
+            <div className="playlist" style={{ display: 'none' }}></div>
           </>
         )}
         {state.listType === 'albums' && (
@@ -463,7 +486,9 @@ const InfiniteList = memo(() => {
             <div className="albums">
               <Virtuoso
                 data={state.albums}
-                totalCount={49}
+                className="albums-list"
+                totalCount={state.albums.length}
+                style={{ height: '100vh' }}
                 itemContent={(index, item) => {
                   return (
                     <Item
@@ -486,27 +511,47 @@ const InfiniteList = memo(() => {
                     />
                   );
                 }}
-                style={{ height: '500px' }}
               />
             </div>
 
-            <div className="files" style={{ display: 'none' }}>
-              {/* {byFiles} */}
-            </div>
-            <div className="playlist" style={{ display: 'none' }}>
-              {/*  {byPlaylist} */}
-            </div>
+            <div className="files" style={{ display: 'none' }}></div>
+            <div className="playlist" style={{ display: 'none' }}></div>
           </>
         )}
         {state.listType === 'playlist' && (
           <>
-            <div className="playlist">{byPlaylist}</div>
-            <div className="albums" style={{ display: 'none' }}>
-              {byAlbums}
+            <div className="playlist">
+              <Virtuoso
+                data={state.playlistTracks}
+                className="playlist-list"
+                totalCount={state.playlistTracks.length}
+                style={{ height: '100vh' }}
+                itemContent={(index, item) => {
+                  return (
+                    <Item
+                      type="playlist"
+                      key={getKey()}
+                      divId={`${item.track_id}--item-div`}
+                      className={
+                        `${state.active}--item-div` === `${item.track_id}--item-div`
+                          ? 'item active'
+                          : 'item'
+                      }
+                      href={item.track_id}
+                      id={item.track_id}
+                      like={item.like}
+                      audiofile={item.audiotrack}
+                      val={index}
+                      artist={item.performers ? item.performers : 'not available'}
+                      title={item.title ? item.title : item.audiotrack}
+                      album={item.album ? item.album : 'not available'}
+                    />
+                  );
+                }}
+              />
             </div>
-            <div className="files" style={{ display: 'none' }}>
-              {byFiles}
-            </div>
+            <div className="albums" style={{ display: 'none' }}></div>
+            <div className="files" style={{ display: 'none' }}></div>
           </>
         )}
         {state.listType === 'files'

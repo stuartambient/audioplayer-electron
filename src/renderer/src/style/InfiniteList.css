@@ -1,10 +1,10 @@
 .results {
   grid-column: 2 / 3;
-  grid-row: 3 / 11;
-  overflow-y: scroll;
-  overflow-x: hidden;
+  grid-row: 3 / 4;
+  /* overflow-y: scroll;
+  overflow-x: hidden; */
+  overflow: hidden;
   scroll-behavior: smooth;
-  border-radius: 10px;
   background-color: black;
   /* margin-right: 50px; */
   scrollbar-color: rebeccapurple green;
@@ -15,7 +15,7 @@
   display: none;
 } */
 
-.results::-webkit-scrollbar {
+/* .results::-webkit-scrollbar {
   background: var(--blue2);
   width: 10px;
   margin-left: 1rem;
@@ -27,7 +27,7 @@
 .results::-webkit-scrollbar--track {
   background: red;
 }
-
+ */
 /* .albums-coverview--albums::-webkit-scrollbar {
   display: none;
 } */
@@ -180,6 +180,75 @@ div #minus path {
   list-style: none;
   color: white;
   padding: 0 1rem;
+}
+
+.files-list {
+  overflow-y: auto;
+}
+
+.files-list::-webkit-scrollbar {
+  background: var(--blue2);
+  width: 10px;
+  /* margin-left: 1rem; */
+}
+.files-list::-webkit-scrollbar-thumb {
+  background: orange;
+  height: 30px;
+}
+
+.files-list::-webkit-scrollbar--track {
+  background: red;
+}
+
+/* Style the scrollbar buttons */
+.files-list::-webkit-scrollbar-button {
+  height: 16px; /* Height of the buttons for vertical scrollbars */
+  width: 16px; /* Width of the buttons for horizontal scrollbars */
+  background-color: #ddd; /* Background color of the buttons */
+}
+
+.files-list::-webkit-scrollbar-button:single-button {
+  background-color: #bbb; /* Different background color when single button is visible */
+}
+
+.files-list::-webkit-scrollbar-button:increment,
+::-webkit-scrollbar-button:decrement {
+  background-color: #ccc; /* Background color for the increment and decrement buttons */
+}
+
+.files-list::-webkit-scrollbar-button:horizontal {
+  height: 16px; /* Adjust height for horizontal scrollbars */
+}
+
+.files-list::-webkit-scrollbar-button:vertical {
+  width: 16px; /* Adjust width for vertical scrollbars */
+}
+
+.albums-list::-webkit-scrollbar {
+  background: var(--blue2);
+  width: 10px;
+  margin-left: 1rem;
+}
+.albums-list::-webkit-scrollbar-thumb {
+  background: orange;
+}
+
+.albums-list::-webkit-scrollbar--track {
+  background: red;
+  height: 90%;
+}
+
+.playlist-list::-webkit-scrollbar {
+  background: var(--blue2);
+  width: 10px;
+  margin-left: 1rem;
+}
+.playlist-list::-webkit-scrollbar-thumb {
+  background: orange;
+}
+
+.playlist-list::-webkit-scrollbar--track {
+  background: red;
 }
 
 /*

@@ -396,22 +396,22 @@ const allTracksByScroll = (offsetNum, sort) => {
   let query;
   switch (sort) {
     case 'createdon':
-      query = `SELECT * FROM "audio-tracks" ORDER BY birthtime DESC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY birthtime DESC LIMIT 200 OFFSET $offset`;
       break;
     case 'artist':
-      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(performers)) ASC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(performers)) ASC LIMIT 200 OFFSET $offset`;
       break;
     case 'title':
-      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(title)) DESC LIMIT 200 OFFSET $offset`;
       break;
     case 'genres':
-      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(genres)) DESC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(genres)) DESC LIMIT 200 OFFSET $offset`;
       break;
     default:
       return;
   }
   const stmt = db.prepare(query);
-  return stmt.all({ offset: offsetNum * 50 });
+  return stmt.all({ offset: offsetNum * 200 });
 };
 
 const allTracksBySearchTerm = (offsetNum, text, sort) => {
@@ -421,20 +421,20 @@ const allTracksBySearchTerm = (offsetNum, text, sort) => {
   let params;
   switch (sort) {
     case 'createdon':
-      query = `SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ? ORDER BY birthtime DESC LIMIT 50 OFFSET ?`;
-      params = [term, offsetNum * 50];
+      query = `SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ? ORDER BY birthtime DESC LIMIT 200 OFFSET ?`;
+      params = [term, offsetNum * 200];
       break;
     case 'artist':
-      query = `SELECT * FROM "audio-tracks" WHERE performers LIKE ? ORDER BY unaccent(lower(performers)) ASC LIMIT 50 OFFSET ?`;
-      params = [term, offsetNum * 50];
+      query = `SELECT * FROM "audio-tracks" WHERE performers LIKE ? ORDER BY unaccent(lower(performers)) ASC LIMIT 200 OFFSET ?`;
+      params = [term, offsetNum * 200];
       break;
     case 'title':
-      query = `SELECT * FROM "audio-tracks" WHERE title LIKE ? ORDER BY unaccent(lower(title)) DESC LIMIT 50 OFFSET ?`;
-      params = [term, offsetNum * 50];
+      query = `SELECT * FROM "audio-tracks" WHERE title LIKE ? ORDER BY unaccent(lower(title)) DESC LIMIT 200 OFFSET ?`;
+      params = [term, offsetNum * 200];
       break;
     case 'genres':
-      query = `SELECT * FROM "audio-tracks" WHERE genres LIKE ? ORDER BY unaccent(lower(genres)) DESC LIMIT 50 OFFSET ?`;
-      params = [term, offsetNum * 50];
+      query = `SELECT * FROM "audio-tracks" WHERE genres LIKE ? ORDER BY unaccent(lower(genres)) DESC LIMIT 200 OFFSET ?`;
+      params = [term, offsetNum * 200];
       break;
     default:
       return;

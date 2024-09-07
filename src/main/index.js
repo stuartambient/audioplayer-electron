@@ -931,7 +931,7 @@ ipcMain.handle('set-shuffled-tracks-array', async () => {
 
 ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   const offset = args[0];
-  const limit = 50;
+  const limit = 200;
   try {
     const start = offset * limit;
     const end = start + limit - 1;
