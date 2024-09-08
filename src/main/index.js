@@ -363,6 +363,7 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
 
 ipcMain.handle('get-roots', async (event) => {
   const rootFolders = await getRoots();
+  console.log('root-folders: ', rootFolders);
   return rootFolders.map((r) => r.root);
 });
 
@@ -814,6 +815,7 @@ ipcMain.handle('open-playlist', async () => {
   if (open.canceled) return 'action cancelled';
   const plfiles = await fs.promises.readFile(open.filePaths.join(), 'utf8');
   const parsedPlFiles = plfiles.replaceAll('\\', '/').split('\n');
+  console.log('parsedPlFiles: ', parsedPlFiles);
   return getPlaylist(parsedPlFiles);
 });
 
@@ -936,7 +938,7 @@ ipcMain.handle('set-shuffled-tracks-array', async () => {
 
 ipcMain.handle('get-shuffled-tracks', async (_, ...args) => {
   const offset = args[0];
-  const limit = 50;
+  const limit = 200;
   try {
     const start = offset * limit;
     const end = start + limit - 1;

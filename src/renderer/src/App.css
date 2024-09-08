@@ -18,9 +18,9 @@ body {
   display: flex;
 }
 
-body::-webkit-scrollbar {
+/* body::-webkit-scrollbar {
   display: none;
-}
+} */
 
 button,
 input,
@@ -69,7 +69,7 @@ textarea {
   row-gap: 0;
 }
 
-.container::-webkit-scrollbar {
+/* .container::-webkit-scrollbar {
   display: none;
 }
 
@@ -79,7 +79,7 @@ textarea {
 
 .container-mini-expanded::-webkit-scrollbar {
   display: none;
-}
+} */
 
 .container-home {
   /* grid-template-rows: 2rem 0.5fr 0.5fr 2.5rem; */
@@ -94,6 +94,9 @@ textarea {
 
 .container-player {
   background: none;
+  grid-template-rows: 32px 75px 1fr;
+  grid-template-columns: 300px 1fr;
+  grid-auto-rows: 0px;
 }
 
 .container-update {

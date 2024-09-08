@@ -16,25 +16,34 @@ const useTracks = (
   const [hasMoreTracks, setHasMoreTracks] = useState(false);
   useEffect(() => {
     let isSubscribed = true;
+
     const loadTracks = async () => {
       setTracksLoading(true);
       setTracksError(false);
+
       let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm, sortType);
+
       if (trackRequest && isSubscribed) {
         if (tracksPageNumber === 0) {
-          dispatch({
-            type: 'add-shuffled-tracks',
-            tracks: trackRequest
-          });
+          setTimeout(() => {
+            dispatch({
+              type: 'add-shuffled-tracks',
+              tracks: trackRequest
+            });
+            setHasMoreTracks(trackRequest.length > 0);
+            setTracksLoading(false);
+          }, 500);
         }
         if (tracksPageNumber > 0) {
-          dispatch({
-            type: 'tracks-playlist',
-            tracks: trackRequest
-          });
+          setTimeout(() => {
+            dispatch({
+              type: 'tracks-playlist',
+              tracks: trackRequest
+            });
+            setHasMoreTracks(trackRequest.length > 0);
+            setTracksLoading(false);
+          }, 500);
         }
-        setHasMoreTracks(trackRequest.length > 0);
-        setTracksLoading(false);
       }
     };
 
@@ -50,19 +59,26 @@ const useTracks = (
       const shuffledTracks = await window.api.getShuffledTracks(tracksPageNumber);
       if (shuffledTracks && isSubscribed) {
         if (tracksPageNumber === 0) {
-          dispatch({
-            type: 'add-shuffled-tracks',
-            tracks: shuffledTracks
-          });
+          setTimeout(() => {
+            dispatch({
+              type: 'add-shuffled-tracks',
+              tracks: shuffledTracks
+            });
+            setHasMoreTracks(shuffledTracks.length < 200);
+            setTracksLoading(false);
+          }, 500);
         }
+
         if (tracksPageNumber > 0) {
-          dispatch({
-            type: 'tracks-playlist',
-            tracks: shuffledTracks
-          });
+          setTimeout(() => {
+            dispatch({
+              type: 'tracks-playlist',
+              tracks: shuffledTracks
+            });
+            setHasMoreTracks(shuffledTracks.length < 200);
+            setTracksLoading(false);
+          }, 500);
         }
-        setHasMoreTracks(shuffledTracks.length > 0);
-        setTracksLoading(false);
       }
     };
 
@@ -89,7 +105,7 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispa
     const loadAlbums = async () => {
       try {
         setAlbumsLoading(true);
-        /* setAlbumsError(false); */
+        setAlbumsError(false);
         const albumRequest = await window.api.getAlbums(
           albumsPageNumber,
           albumsSearchTerm,
@@ -98,20 +114,19 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispa
 
         if (albumRequest && isSubscribed) {
           /* console.log('album-request-length: ', albumRequest.length); */
-          dispatch({
-            type: 'albums-playlist',
-            albums: albumRequest
-          });
-          setHasMoreAlbums(albumRequest.length > 0);
-          /*         setAlbumsLoading(false); */
+          console.log('albumRequest: ', albumRequest.length);
+          setTimeout(() => {
+            dispatch({
+              type: 'albums-playlist',
+              albums: albumRequest
+            });
+            setHasMoreAlbums(albumRequest.length < 200);
+            setAlbumsLoading(false);
+          }, 500);
         }
       } catch (error) {
         if (isSubscribed) {
           setAlbumsError(true);
-        }
-      } finally {
-        if (isSubscribed) {
-          setAlbumsLoading(false);
         }
       }
     };
