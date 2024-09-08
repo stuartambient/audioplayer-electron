@@ -149,6 +149,14 @@
   border: 2px solid red;
 }
 
+.itemloading,
+.hasmoretracks,
+.trackserror {
+  grid-row: 1 / -1;
+  grid-column: 1 / -1;
+  height: 65px;
+}
+
 .itemloading {
   background: green;
 }
