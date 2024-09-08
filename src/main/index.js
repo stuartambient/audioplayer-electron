@@ -809,6 +809,7 @@ ipcMain.handle('open-playlist', async () => {
   if (open.canceled) return 'action cancelled';
   const plfiles = await fs.promises.readFile(open.filePaths.join(), 'utf8');
   const parsedPlFiles = plfiles.replaceAll('\\', '/').split('\n');
+  console.log('parsedPlFiles: ', parsedPlFiles);
   return getPlaylist(parsedPlFiles);
 });
 

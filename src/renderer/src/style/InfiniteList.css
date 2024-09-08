@@ -150,7 +150,15 @@
 }
 
 .itemloading {
-  background: red;
+  background: green;
+}
+
+.hasmoretracks {
+  background: gray;
+}
+
+.trackserror {
+  background-color: red;
 }
 
 .results .files .active,
@@ -186,45 +194,61 @@ div #minus path {
   overflow-y: auto;
 }
 
-.files-list::-webkit-scrollbar {
+.files-list::-webkit-scrollbar,
+.albums-list::-webkit-scrollbar,
+.playlist-list::-webkit-scrollbar {
   background: var(--blue2);
-  width: 10px;
-  /* margin-left: 1rem; */
+  width: 15px;
+  margin-top: 10px;
+  border-radius: 5px;
 }
-.files-list::-webkit-scrollbar-thumb {
+.files-list::-webkit-scrollbar-thumb,
+.albums-list::-webkit-scrollbar-thumb,
+.playlist-list::-webkit-scrollbar-thumb {
   background: orange;
   height: 30px;
+  border-radius: 5px;
 }
 
-.files-list::-webkit-scrollbar--track {
+/* .files-list::-webkit-scrollbar--track {
   background: red;
+} */
+
+.files-list::-webkit-scrollbar-button,
+.albums-list::-webkit-scrollbar-button,
+.playlist-list::-webkit-scrollbar-button {
+  height: 16px;
+  width: 16px;
+  background-color: #ddd;
+}
+.files-list::-webkit-scrollbar-button:single-button,
+.albums-list::-webkit-scrollbar-button:single-button,
+.playlist-list::-webkit-scrollbar-button:single-button {
+  background-color: #bbb;
 }
 
-/* Style the scrollbar buttons */
-.files-list::-webkit-scrollbar-button {
-  height: 16px; /* Height of the buttons for vertical scrollbars */
-  width: 16px; /* Width of the buttons for horizontal scrollbars */
-  background-color: #ddd; /* Background color of the buttons */
+.files-list::-webkit-scrollbar-button:decrement,
+.files-list::-webkit-scrollbar-button:decrement,
+.albums-list::-webkit-scrollbar-button:decrement,
+.albums-list::-webkit-scrollbar-button:decrement,
+.playlist-list::-webkit-scrollbar-button:decrement,
+.playlist-list::-webkit-scrollbar-button:decrement {
+  background-color: #ccc;
 }
 
-.files-list::-webkit-scrollbar-button:single-button {
-  background-color: #bbb; /* Different background color when single button is visible */
+.files-list::-webkit-scrollbar-button:horizontal,
+.albums-list::-webkit-scrollbar-button:horizontal,
+.playlist-list::-webkit-scrollbar-button:horizontal {
+  height: 16px;
 }
 
-.files-list::-webkit-scrollbar-button:increment,
-::-webkit-scrollbar-button:decrement {
-  background-color: #ccc; /* Background color for the increment and decrement buttons */
+.files-list::-webkit-scrollbar-button:vertical,
+.files-list::-webkit-scrollbar-button:vertical,
+.playlist--list::-webkit-scrollbar-button:vertical {
+  width: 16px;
 }
 
-.files-list::-webkit-scrollbar-button:horizontal {
-  height: 16px; /* Adjust height for horizontal scrollbars */
-}
-
-.files-list::-webkit-scrollbar-button:vertical {
-  width: 16px; /* Adjust width for vertical scrollbars */
-}
-
-.albums-list::-webkit-scrollbar {
+/* .albums-list::-webkit-scrollbar {
   background: var(--blue2);
   width: 10px;
   margin-left: 1rem;
@@ -249,7 +273,7 @@ div #minus path {
 
 .playlist-list::-webkit-scrollbar--track {
   background: red;
-}
+} */
 
 /*
 `${active}--item-div`

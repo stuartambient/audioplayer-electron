@@ -11,17 +11,21 @@
 }
 .albums-coverview::-webkit-scrollbar {
   background: var(--blue2);
-  width: 10px;
-  margin-left: 1rem;
+  width: 15px;
+  /* margin-left: 1rem; */
+  margin-top: 10px;
+  border-radius: 5px;
 }
 
 .albums-coverview::-webkit-scrollbar-thumb {
   background: orange;
+  height: 30px;
+  border-radius: 5px;
 }
 
-.albums-coverview::-webkit-scrollbar--track {
+/* .albums-coverview::-webkit-scrollbar--track {
   background: red;
-}
+} */
 
 .overlay {
   grid-column: span 1;

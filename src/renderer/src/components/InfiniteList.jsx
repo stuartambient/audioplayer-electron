@@ -29,6 +29,7 @@ const InfiniteList = memo(() => {
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
 
   const [playlistReq, setPlaylistReq] = useState('');
+
   const { tracksLoading, hasMoreTracks, tracksError } = useTracks(
     state.tracksPageNumber,
     tracksSearchTerm,
@@ -303,6 +304,13 @@ const InfiniteList = memo(() => {
     });
   };
 
+  const loadMoreAlbums = () => {
+    dispatch({
+      type: 'albums-pagenumber',
+      albumsPageNumber: state.albumsPageNumber + 1
+    });
+  };
+
   const lastAlbumElement = useCallback(
     (node) => {
       if (albumsLoading) return;
@@ -385,23 +393,6 @@ const InfiniteList = memo(() => {
     );
   }); */
 
-  const CustomScroller = forwardRef((props, ref) => {
-    return (
-      <div
-        {...props}
-        ref={ref}
-        style={{
-          overflowY: 'auto',
-          height: '99%',
-          scrollbarWidth: '10px',
-          ...props.style // Preserve existing styles
-        }}
-      >
-        {props.children}
-      </div>
-    );
-  });
-
   const listClassNames = () => {
     if (!state.library) {
       return 'results results-hidden';
@@ -438,10 +429,17 @@ const InfiniteList = memo(() => {
         ) : null}
         {state.listType === 'files' && (
           <>
-            <div className="files">
+            <div
+              className="files"
+              /*  style={{
+                overflow: 'hidden',
+                resize: 'vertical',
+                height: '418px'
+              }} */
+            >
               <Virtuoso
                 className="files-list"
-                style={{ height: '400px' }}
+                style={{ height: '390px' }}
                 data={state.tracks}
                 totalCount={state.tracks.length}
                 endReached={loadMoreTracks}
@@ -488,7 +486,8 @@ const InfiniteList = memo(() => {
                 data={state.albums}
                 className="albums-list"
                 totalCount={state.albums.length}
-                style={{ height: '100vh' }}
+                endReached={loadMoreAlbums}
+                style={{ height: '390px' }}
                 itemContent={(index, item) => {
                   return (
                     <Item
@@ -525,7 +524,7 @@ const InfiniteList = memo(() => {
                 data={state.playlistTracks}
                 className="playlist-list"
                 totalCount={state.playlistTracks.length}
-                style={{ height: '100vh' }}
+                style={{ height: '390px' }}
                 itemContent={(index, item) => {
                   return (
                     <Item
@@ -555,7 +554,13 @@ const InfiniteList = memo(() => {
           </>
         )}
         {state.listType === 'files'
-          ? tracksLoading && <div className="item itemloading">...Loading</div>
+          ? tracksLoading && <div className="item itemloading">Loading</div>
+          : null}
+        {state.listType === 'files'
+          ? !hasMoreTracks && <div className="item hasmoretracks">No more tracks</div>
+          : null}
+        {state.listType === 'files'
+          ? tracksError && <div className="item trackserror">Error loading tracks</div>
           : null}
         {state.listType === 'albums'
           ? albumsLoading && <div className="item itemloading">...Loading</div>

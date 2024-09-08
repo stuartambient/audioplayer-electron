@@ -16,10 +16,13 @@ const useTracks = (
   const [hasMoreTracks, setHasMoreTracks] = useState(false);
   useEffect(() => {
     let isSubscribed = true;
+
     const loadTracks = async () => {
       setTracksLoading(true);
       setTracksError(false);
+
       let trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm, sortType);
+
       if (trackRequest && isSubscribed) {
         if (tracksPageNumber === 0) {
           dispatch({

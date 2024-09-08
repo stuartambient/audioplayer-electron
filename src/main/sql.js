@@ -476,17 +476,17 @@ const allAlbumsByScroll = (offsetNum, sort) => {
   let query;
   switch (sort) {
     case 'foldername':
-      query = `SELECT * FROM albums ORDER BY unaccent(lower(foldername)) ASC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM albums ORDER BY unaccent(lower(foldername)) ASC LIMIT 200 OFFSET $offset`;
       break;
     case 'datecreated':
-      query = `SELECT * FROM albums ORDER BY datecreated DESC LIMIT 50 OFFSET $offset`;
+      query = `SELECT * FROM albums ORDER BY birthtime DESC LIMIT 200 OFFSET $offset`;
       break;
     default:
       return;
   }
   try {
     const stmt = db.prepare(query);
-    return stmt.all({ offset: offsetNum * 50 });
+    return stmt.all({ offset: offsetNum * 200 });
   } catch (e) {
     return e.message;
   }
@@ -500,12 +500,12 @@ const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
   let params;
   switch (sort) {
     case 'foldername':
-      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY unaccent(lower(foldername)) ASC LIMIT 50 OFFSET ?`;
-      params = [term, offsetNum * 50];
+      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY unaccent(lower(foldername)) ASC LIMIT 200 OFFSET ?`;
+      params = [term, offsetNum * 200];
       break;
     case 'datecreated':
-      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY datecreated DESC LIMIT 50 OFFSET ?`;
-      params = [term, offsetNum * 50];
+      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY datecreated DESC LIMIT 200 OFFSET ?`;
+      params = [term, offsetNum * 200];
       break;
     default:
       return;
