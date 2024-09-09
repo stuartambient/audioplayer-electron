@@ -45,6 +45,7 @@ const Update = () => {
     const reqRoots = async () => {
       const rootFolders = await window.api.getRoots();
       //console.log('rootFolders: ', rootFolders);
+      console.log('root-folders: ', rootFolders);
       setRootDirs(rootFolders);
     };
     if (rootsUpdateReq) {

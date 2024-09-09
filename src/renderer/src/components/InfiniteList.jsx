@@ -75,9 +75,17 @@ const InfiniteList = memo(() => {
   const albumsTracks = albumTracks.map((track) => {
     console.log('mapped: ', track);
     if (track.title) {
-      return <li key={track.track_id}>{track.title}</li>;
+      return (
+        <li key={track.track_id} className="albumtrack">
+          <a href={track.audiotrack}>{track.title}</a>
+        </li>
+      );
     } else {
-      return <li key={track.track_id}>{track.audiotrack}</li>;
+      return (
+        <li key={track.track_id} className="albumtrack">
+          <a href={track.audiotrack}>{track.audiotrack}</a>
+        </li>
+      );
     }
   });
 
@@ -252,7 +260,7 @@ const InfiniteList = memo(() => {
         type: 'reset-tracks',
         tracks: []
       });
-      setFilesSortType(e.target.value);
+      setFilesSortType(e.currentTarget.value);
     } else if (state.listType === 'albums') {
       dispatch({
         type: 'albums-pagenumber',
@@ -262,7 +270,7 @@ const InfiniteList = memo(() => {
         type: 'reset-albums',
         albums: []
       });
-      setAlbumsSortType(e.target.value);
+      setAlbumsSortType(e.currentTarget.value);
     }
   };
 

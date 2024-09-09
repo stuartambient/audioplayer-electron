@@ -364,7 +364,7 @@ ipcMain.on('toggle-resizable', (event, isResizable) => {
 ipcMain.handle('get-roots', async (event) => {
   const rootFolders = await getRoots();
   console.log('root-folders: ', rootFolders);
-  return rootFolders.map((r) => r.root);
+  return rootFolders;
 });
 
 ipcMain.handle('update-roots', async (event, roots) => {

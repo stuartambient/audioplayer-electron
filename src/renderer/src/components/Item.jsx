@@ -94,11 +94,12 @@ const Item = forwardRef((props, ref) => {
             })
           }
         >
-          Artist: {props.artist}
+          <span>Artist:</span> {props.artist}
           <br></br>
-          Title: {props.title}
+          <span>Title:</span>
+          {props.title}
           <br></br>
-          Album: {props.album}
+          <span>Album:</span>Album: {props.album}
           <br></br>
           {/* Genre: {props.genre}
           Lossless: {props.lossless}
@@ -120,13 +121,20 @@ const Item = forwardRef((props, ref) => {
         ref={ref}
         fromlisttype={props.type}
       >
-        <a href={props.href} id={props.id} val={props.val} onClick={(e) => e.preventDefault()}>
-          {props.foldername}
-        </a>
+        <div className="item-albumname">
+          <a href={props.href} id={props.id} val={props.val} onClick={(e) => e.preventDefault()}>
+            {props.foldername}
+          </a>
+        </div>
         <div className="item-menu" fullpath={props.fullpath}>
           <ContextMenu fromlisttype={props.type} id={props.id} fullpath={props.fullpath} />
         </div>
-        <div id={props.id} term={props.term} onClick={(e) => props.handleAlbumTracksRequest(e)}>
+        <div
+          className="item-albumtrack"
+          id={props.id}
+          term={props.term}
+          onClick={(e) => props.handleAlbumTracksRequest(e)}
+        >
           {props.showMore === props.id ? <Minus id="minus" /> : <Plus id="plus" />}
         </div>
         {props.albumPattern === props.fullpath && props.albumTracksLength ? (
