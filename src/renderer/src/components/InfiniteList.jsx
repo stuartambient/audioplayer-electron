@@ -27,6 +27,7 @@ const InfiniteList = memo(() => {
   const [albumsSortType, setAlbumsSortType /* scrollRef */] = useState('datecreated');
   const [resetKey, setResetKey] = useState(null);
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
+  const [isScrolling, setIsScrolling] = useState(true);
 
   const [playlistReq, setPlaylistReq] = useState('');
 
@@ -48,6 +49,10 @@ const InfiniteList = memo(() => {
   );
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
+
+  useEffect(() => {
+    console.log('hasMoreAlbums: ', hasMoreAlbums);
+  }, [hasMoreAlbums]);
 
   useEffect(() => {
     if (state.flashDiv?.id) {
@@ -77,6 +82,10 @@ const InfiniteList = memo(() => {
     if (track.title) {
       return (
         <li key={track.track_id} className="albumtrack">
+          <span>Disc: {track.disc}</span>{' '}
+          <span>
+            Track: {track.track} of {track.trackCount}
+          </span>
           <a href={track.audiotrack}>{track.title}</a>
         </li>
       );
@@ -276,12 +285,32 @@ const InfiniteList = memo(() => {
 
   const getKey = () => uuidv4();
 
-  const filesObserver = useRef();
+  /*   const filesObserver = useRef();
   const albumsObserver = useRef();
-  const playlistObserver = useRef();
+  const playlistObserver = useRef(); */
+
+  const fileslistRef = useRef(null);
+  const albumslistRef = useRef(null);
+
+  const [currentIndex, setCurrentIndex] = useState(0); // Track the current index
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (fileslistRef.current) {
+        fileslistRef.current.scrollToIndex({
+          index: currentIndex, // Scroll to the current index
+          behavior: 'smooth'
+        });
+
+        setCurrentIndex((prevIndex) => prevIndex + 1); // Increment the index for the next scroll
+      }
+    }, 200); // Adjust the interval as needed
+
+    return () => clearInterval(interval); // Clean up on component unmount
+  }, [currentIndex]);
 
   const loadMoreTracks = () => {
-    console.log('loadMoreTracks');
+    if (!hasMoreTracks) return;
     dispatch({
       type: 'tracks-pagenumber',
       tracksPageNumber: state.tracksPageNumber + 1
@@ -289,6 +318,7 @@ const InfiniteList = memo(() => {
   };
 
   const loadMoreAlbums = () => {
+    if (!hasMoreAlbums) return;
     dispatch({
       type: 'albums-pagenumber',
       albumsPageNumber: state.albumsPageNumber + 1
@@ -347,6 +377,7 @@ const InfiniteList = memo(() => {
           <>
             <div
               className="files"
+
               /*  style={{
                 overflow: 'hidden',
                 resize: 'vertical',
@@ -355,6 +386,7 @@ const InfiniteList = memo(() => {
             >
               <Virtuoso
                 className="files-list"
+                /*  ref={fileslistRef} */
                 style={{ height: '390px' }}
                 data={state.tracks}
                 totalCount={state.tracks.length}
@@ -415,6 +447,7 @@ const InfiniteList = memo(() => {
               <Virtuoso
                 data={state.albums}
                 className="albums-list"
+                /* ref={albumslistRef} */
                 totalCount={state.albums.length}
                 endReached={loadMoreAlbums}
                 components={{
@@ -426,7 +459,7 @@ const InfiniteList = memo(() => {
                       return <div className="item trackserror">{albumsError}</div>;
                     }
                     if (!hasMoreAlbums) {
-                      return <div className="item hasmoretracks">No more albums available.</div>;
+                      return <div className="item hasmoretracks">No more results.</div>;
                     }
                     return null; // No footer if none of the states apply
                   }

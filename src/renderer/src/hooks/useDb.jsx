@@ -30,8 +30,9 @@ const useTracks = (
               type: 'add-shuffled-tracks',
               tracks: trackRequest
             });
-            setHasMoreTracks(trackRequest.length > 0);
+
             setTracksLoading(false);
+            setHasMoreTracks(trackRequest.length === 200);
           }, 500);
         }
         if (tracksPageNumber > 0) {
@@ -40,8 +41,9 @@ const useTracks = (
               type: 'tracks-playlist',
               tracks: trackRequest
             });
-            setHasMoreTracks(trackRequest.length > 0);
+
             setTracksLoading(false);
+            setHasMoreTracks(trackRequest.length === 200);
           }, 500);
         }
       }
@@ -64,7 +66,7 @@ const useTracks = (
               type: 'add-shuffled-tracks',
               tracks: shuffledTracks
             });
-            setHasMoreTracks(shuffledTracks.length < 200);
+            setHasMoreTracks(shuffledTracks.length === 200);
             setTracksLoading(false);
           }, 500);
         }
@@ -75,7 +77,7 @@ const useTracks = (
               type: 'tracks-playlist',
               tracks: shuffledTracks
             });
-            setHasMoreTracks(shuffledTracks.length < 200);
+            setHasMoreTracks(shuffledTracks.length === 200);
             setTracksLoading(false);
           }, 500);
         }
@@ -120,7 +122,7 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispa
               type: 'albums-playlist',
               albums: albumRequest
             });
-            setHasMoreAlbums(albumRequest.length < 200);
+            setHasMoreAlbums(albumRequest.length === 200);
             setAlbumsLoading(false);
           }, 500);
         }

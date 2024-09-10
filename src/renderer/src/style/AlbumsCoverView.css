@@ -9,10 +9,27 @@
   position: relative;
   z-index: -2;
 }
+
+.playlist-list::-webkit-scrollbar {
+  background: var(--blue2);
+  width: 15px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+.playlist-list::-webkit-scrollbar-thumb {
+  background: orange;
+  height: 30px;
+  border-radius: 5px;
+}
+
+/* .files-list::-webkit-scrollbar--track {
+  background: red;
+} */
+
 .albums-coverview::-webkit-scrollbar {
   background: var(--blue2);
   width: 15px;
-  /* margin-left: 1rem; */
   margin-top: 10px;
   border-radius: 5px;
 }
@@ -21,6 +38,29 @@
   background: orange;
   height: 30px;
   border-radius: 5px;
+}
+
+.albums-coverview::-webkit-scrollbar-button {
+  height: 16px;
+  width: 16px;
+  background-color: #ddd;
+}
+
+.albums-coverview::-webkit-scrollbar-button:single-button {
+  background-color: #bbb;
+}
+
+.albums-coverview::-webkit-scrollbar-button:increment,
+.albums-coverview::-webkit-scrollbar-button:decrement {
+  background-color: #ccc;
+}
+
+.albums-coverview::-webkit-scrollbar-button:horizontal {
+  height: 16px;
+}
+
+.albums-coverview::-webkit-scrollbar-button:vertical {
+  width: 16px;
 }
 
 /* .albums-coverview::-webkit-scrollbar--track {
