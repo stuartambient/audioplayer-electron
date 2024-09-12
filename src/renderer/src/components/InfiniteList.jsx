@@ -50,6 +50,8 @@ const InfiniteList = memo(() => {
 
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
 
+  const fileslistRef = useRef(null);
+
   useEffect(() => {
     console.log('hasMoreAlbums: ', hasMoreAlbums);
   }, [hasMoreAlbums]);
@@ -78,7 +80,6 @@ const InfiniteList = memo(() => {
   usePlaylistDialog(playlistReq, state.playlistTracks, dispatch, setPlaylistReq);
 
   const albumsTracks = albumTracks.map((track) => {
-    console.log('mapped: ', track);
     if (track.title) {
       return (
         <li key={track.track_id} className="albumtrack">
@@ -161,13 +162,27 @@ const InfiniteList = memo(() => {
       });
 
       const toTrack = document.getElementById(trackId);
-      toTrack.dispatchEvent(changeTrack);
+      if (toTrack) {
+        toTrack.dispatchEvent(changeTrack);
+      } else {
+        console.error(`Element with ID ${trackId} not found in the DOM.`);
+      }
     };
 
     if (state.playNext && state.nextTrack) {
+      fileslistRef.current.scrollToIndex({
+        index: Number(`${state.newtrack + 1}`),
+        behavior: 'smooth',
+        align: 'center'
+      });
       handleTrackChange(state.nextTrack);
     }
     if (state.playPrev && state.prevTrack) {
+      fileslistRef.current.scrollToIndex({
+        index: Number(`${state.newtrack - 1}`),
+        behavior: 'smooth',
+        align: 'center'
+      });
       handleTrackChange(state.prevTrack);
     }
   }, [
@@ -176,7 +191,8 @@ const InfiniteList = memo(() => {
     state.playPrev,
     state.prevTrack,
     state.tracks,
-    state.nextTrack
+    state.nextTrack,
+    fileslistRef
   ]);
 
   const handleTextSearch = (e) => {
@@ -289,25 +305,24 @@ const InfiniteList = memo(() => {
   const albumsObserver = useRef();
   const playlistObserver = useRef(); */
 
-  const fileslistRef = useRef(null);
   const albumslistRef = useRef(null);
 
   const [currentIndex, setCurrentIndex] = useState(0); // Track the current index
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const interval = setInterval(() => {
       if (fileslistRef.current) {
         fileslistRef.current.scrollToIndex({
-          index: currentIndex, // Scroll to the current index
+          index: currentIndex, 
           behavior: 'smooth'
         });
 
-        setCurrentIndex((prevIndex) => prevIndex + 1); // Increment the index for the next scroll
+        setCurrentIndex((prevIndex) => prevIndex + 1); 
       }
-    }, 200); // Adjust the interval as needed
+    }, 200); 
 
-    return () => clearInterval(interval); // Clean up on component unmount
-  }, [currentIndex]);
+    return () => clearInterval(interval); 
+  }, [currentIndex]); */
 
   const loadMoreTracks = () => {
     if (!hasMoreTracks) return;
@@ -328,13 +343,15 @@ const InfiniteList = memo(() => {
   const scrollToView = useCallback(
     (node) => {
       if (!node) return;
+      /*  console.log(node.getAttribute('id'), '----', `${state.active}--item-div`); */
       if (state.active && node && node.getAttribute('id') === `${state.active}--item-div`) {
         scrollRef.current = node;
-        /* scrollRef.current.scrollIntoView(); */
+        scrollRef.current.scrollIntoView({
+          behavior: 'instant',
+          block: 'center',
+          inline: 'nearest'
+        });
       }
-      /*       if (active) {
-        console.log(activeRef);
-      } */
     },
     [state.active, scrollRef]
   );
@@ -386,8 +403,8 @@ const InfiniteList = memo(() => {
             >
               <Virtuoso
                 className="files-list"
-                /*  ref={fileslistRef} */
                 style={{ height: '390px' }}
+                ref={fileslistRef}
                 data={state.tracks}
                 totalCount={state.tracks.length}
                 endReached={loadMoreTracks}
@@ -419,7 +436,7 @@ const InfiniteList = memo(() => {
                           ? 'item active'
                           : 'item'
                       }
-                      //ref={state.tracks.length === index + 1 ? lastTrackElement : scrollToView}
+                      //ref={scrollToView}
                       href={item.track_id}
                       id={item.track_id}
                       like={item.like}

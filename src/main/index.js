@@ -39,6 +39,7 @@ import createUpdateCoversWorker from './updateCoversWorker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC, parseMeta } from './utility/index.js';
+import searchCover from './folderImageCheck.js';
 import db from './connection.js';
 import { roots } from '../constant/constants.js';
 
@@ -559,63 +560,18 @@ ipcMain.on('test-real-stream', async (event, ...args) => {
 ipcMain.handle('get-cover', async (event, arg) => {
   /* console.log('get-cover arg: ', arg, 'dirname: ', path.dirname(arg)); */
   const trackDirectory = path.dirname(arg);
+  /* console.log('arg: ', arg, 'trackDirectory: ', trackDirectory); */
   const myFile = await File.createFromPath(arg);
-
-  function escapeSpecialChars(path) {
-    return path.replace(/[\[\]\(\)\{\}]/g, '\\$&');
-  }
-  // let top;
-  // const parentDirectory = arg.lastIndexOf('/');
-
-  // const parentPath = arg.slice(0, parentDirectory);
-  // const parsedPath = path.parse(parentPath);
-  // console.log('parsed path: ', parsedPath);
-  // if (roots.includes(parsedPath.dir)) {
-  //   top = `${parsedPath.dir}/${parsedPath.base}`;
-  // } else {
-  //   top = `${parsedPath.dir}`;
-  // }
-
-  // console.log('top: ', top);
-  // let cover;
-  // try {
-  //   const escapeTopPath = escapeSpecialChars(top);
-  //   const images = await fg(`${escapeTopPath}/**/*.{jpg, jpeg, png, webp}`);
-  //   const filterForFolderCover = images.filter((img) => img.includes(parsedPath.base));
-  //   console.log('filterForFolderCover: ', filterForFolderCover);
-  //   if (filterForFolderCover.length > 0) {
-  //     console.log(filterForFolderCover);
-  //   } else {
-  //     console.log(images[0]);
-  //   }
-  // } catch (e) {
-  //   console.log(e.message);
-  // }
-  const options = {
-    caseSensitiveMatch: false,
-    suppressErrors: true,
-    dot: true
-  };
 
   if (myFile.tag.pictures?.[0]?.data) {
     return myFile.tag.pictures[0].data._bytes;
   } else if (!myFile.tag.pictures?.[0]?.data) {
-    const escapedCharacters = escapeSpecialChars(trackDirectory);
-    const cover = await fg(`${escapedCharacters}/*.{jpg, png, webp, jpeg}`, options);
-    console.log('** directory: ', trackDirectory);
-    console.log('** cover array: ', cover);
-    if (!cover.length > 0) {
-      return 0;
-    } else {
-      try {
-        const buffer = await fs.promises.readFile(cover[0]); // Read the file as a buffer using promises
-        return buffer; // Return the buffer
-      } catch (error) {
-        console.error('Error reading file:', error);
-        return 0;
-      }
+    const folderCover = await searchCover(trackDirectory);
+    if (folderCover) {
+      console.log('folder covers (fg) : ', folderCover);
+      return folderCover;
     }
-  }
+  } else return 0;
 
   /* console.log('pic from path: ', Picture.fromPath(arg)); */
   /* return; */

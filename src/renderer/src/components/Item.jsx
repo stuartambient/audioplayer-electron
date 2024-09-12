@@ -9,9 +9,12 @@ import '../style/FlashEffect.css';
 const Item = forwardRef((props, ref) => {
   const { state, dispatch } = useAudioPlayer();
   const handlePicture = (buffer) => {
+    if (!buffer) return;
     const bufferToString = Buffer.from(buffer).toString('base64');
     return `data:${buffer.format};base64,${bufferToString}`;
   };
+
+  /*   const getPicture = (file) => {} */
 
   const loadFile = async (file, id) => {
     try {
@@ -21,7 +24,8 @@ const Item = forwardRef((props, ref) => {
       console.log(e);
     }
     const picture = await window.api.getCover(file);
-    if (picture === 0) {
+    //console.log('picture: ', picture);
+    if (picture === 0 || !picture) {
       dispatch({
         type: 'set-cover',
         cover: 'not available'
