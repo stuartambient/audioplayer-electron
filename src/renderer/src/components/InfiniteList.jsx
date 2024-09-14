@@ -48,13 +48,25 @@ const InfiniteList = memo(() => {
     dispatch
   );
 
+  const [contSize, setContSize] = useState(0);
+
   const { albumTracks, setAlbumTracks } = useAlbumTracks(albumPattern);
 
   const fileslistRef = useRef(null);
+  const playlistRef = useRef(null);
+  const resultsRef = useRef(null);
 
   useEffect(() => {
     console.log('hasMoreAlbums: ', hasMoreAlbums);
   }, [hasMoreAlbums]);
+
+  useEffect(() => {
+    if (resultsRef && resultsRef.current) {
+      const contDimension = resultsRef.current.getBoundingClientRect();
+      console.log('contDimension: ', contDimension);
+      setContSize(contDimension);
+    }
+  }, [contSize, resultsRef]);
 
   useEffect(() => {
     if (state.flashDiv?.id) {
@@ -169,7 +181,7 @@ const InfiniteList = memo(() => {
       }
     };
 
-    if (state.playNext && state.nextTrack) {
+    if (state.playNext && state.nextTrack && state.listType === 'files') {
       fileslistRef.current.scrollToIndex({
         index: Number(`${state.newtrack + 1}`),
         behavior: 'smooth',
@@ -177,8 +189,25 @@ const InfiniteList = memo(() => {
       });
       handleTrackChange(state.nextTrack);
     }
-    if (state.playPrev && state.prevTrack) {
+    if (state.playPrev && state.prevTrack && state.listType === 'files') {
       fileslistRef.current.scrollToIndex({
+        index: Number(`${state.newtrack - 1}`),
+        behavior: 'smooth',
+        align: 'center'
+      });
+      handleTrackChange(state.prevTrack);
+    }
+
+    if (state.playNext && state.nextTrack && state.listType === 'playlist') {
+      playlistRef.current.scrollToIndex({
+        index: Number(`${state.newtrack + 1}`),
+        behavior: 'smooth',
+        align: 'center'
+      });
+      handleTrackChange(state.nextTrack);
+    }
+    if (state.playPrev && state.prevTrack && state.listType === 'playlist') {
+      playlistRef.current.scrollToIndex({
         index: Number(`${state.newtrack - 1}`),
         behavior: 'smooth',
         align: 'center'
@@ -326,6 +355,7 @@ const InfiniteList = memo(() => {
 
   const loadMoreTracks = () => {
     if (!hasMoreTracks) return;
+
     dispatch({
       type: 'tracks-pagenumber',
       tracksPageNumber: state.tracksPageNumber + 1
@@ -339,22 +369,6 @@ const InfiniteList = memo(() => {
       albumsPageNumber: state.albumsPageNumber + 1
     });
   };
-
-  const scrollToView = useCallback(
-    (node) => {
-      if (!node) return;
-      /*  console.log(node.getAttribute('id'), '----', `${state.active}--item-div`); */
-      if (state.active && node && node.getAttribute('id') === `${state.active}--item-div`) {
-        scrollRef.current = node;
-        scrollRef.current.scrollIntoView({
-          behavior: 'instant',
-          block: 'center',
-          inline: 'nearest'
-        });
-      }
-    },
-    [state.active, scrollRef]
-  );
 
   const listClassNames = () => {
     if (!state.library) {
@@ -380,7 +394,7 @@ const InfiniteList = memo(() => {
           /* playlistShuffle={state.playlistShuffle} */
         />
       ) : null}
-      <div className={listClassNames()}>
+      <div className={listClassNames()} ref={resultsRef}>
         {state.listType === 'files' && !state.tracks.length && !tracksLoading ? (
           <div className="noresults">No results</div>
         ) : null}
@@ -394,6 +408,8 @@ const InfiniteList = memo(() => {
           <>
             <div
               className="files"
+              ref={resultsRef}
+              /*    style={{ height: '100%' }} */
 
               /*  style={{
                 overflow: 'hidden',
@@ -403,7 +419,7 @@ const InfiniteList = memo(() => {
             >
               <Virtuoso
                 className="files-list"
-                style={{ height: '390px' }}
+                style={{ height: `${contSize.height}px` }}
                 ref={fileslistRef}
                 data={state.tracks}
                 totalCount={state.tracks.length}
@@ -436,7 +452,6 @@ const InfiniteList = memo(() => {
                           ? 'item active'
                           : 'item'
                       }
-                      //ref={scrollToView}
                       href={item.track_id}
                       id={item.track_id}
                       like={item.like}
@@ -460,10 +475,11 @@ const InfiniteList = memo(() => {
         )}
         {state.listType === 'albums' && (
           <>
-            <div className="albums">
+            <div className="albums" /* style={{ height: '100%' }} */>
               <Virtuoso
                 data={state.albums}
-                className="albums-list"
+                className="albums-list" /*  */
+                style={{ height: '390px' }}
                 /* ref={albumslistRef} */
                 totalCount={state.albums.length}
                 endReached={loadMoreAlbums}
@@ -481,7 +497,7 @@ const InfiniteList = memo(() => {
                     return null; // No footer if none of the states apply
                   }
                 }}
-                style={{ height: '390px' }}
+                /* style={{ height: '390px' }} */
                 itemContent={(index, item) => {
                   return (
                     <Item
@@ -489,7 +505,6 @@ const InfiniteList = memo(() => {
                       key={getKey()}
                       id={item.id}
                       className="item"
-                      //ref={state.albums.length === index + 1 ? lastAlbumElement : scrollToView}
                       href="http://"
                       val={index}
                       foldername={item.foldername}
@@ -515,6 +530,7 @@ const InfiniteList = memo(() => {
           <>
             <div className="playlist">
               <Virtuoso
+                ref={playlistRef}
                 data={state.playlistTracks}
                 className="playlist-list"
                 totalCount={state.playlistTracks.length}
