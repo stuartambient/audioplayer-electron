@@ -51,7 +51,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
     console.log(columns, rows, estimatedSize);
   }, [columns, rows, estimatedSize]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const handleResize = () => {
       if (parentRef.current) {
         setContainerSize({
@@ -64,9 +64,9 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [parentRef]);
+  }, [parentRef]); */
 
-  /*   useEffect(() => {
+  useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       if (parentRef.current) {
         setContainerSize({
@@ -85,7 +85,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
         resizeObserver.unobserve(parentRef.current);
       }
     };
-  }, [parentRef]);  */
+  }, [parentRef, containerSize]);
 
   const rowVirtualizer = useVirtualizer({
     count: rows,

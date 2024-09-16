@@ -32,7 +32,6 @@ const Update = () => {
   useEffect(() => {
     const handleFileUpdateComplete = (result) => {
       setFileUpdateReq(false);
-      console.log('result: ', result);
       setFileUpdateResults(result);
     };
     window.api.onUpdateFiles(handleFileUpdateComplete);
@@ -45,7 +44,6 @@ const Update = () => {
     const reqRoots = async () => {
       const rootFolders = await window.api.getRoots();
       //console.log('rootFolders: ', rootFolders);
-      console.log('root-folders: ', rootFolders);
       setRootDirs(rootFolders);
     };
     if (rootsUpdateReq) {
@@ -56,7 +54,6 @@ const Update = () => {
   useEffect(() => {
     const handleFolderUpdateComplete = (result) => {
       setFolderUpdateReq(false);
-      console.log('result: ', result);
       setFolderUpdateResults(result);
     };
     window.api.onUpdateFolders(handleFolderUpdateComplete);
@@ -68,7 +65,6 @@ const Update = () => {
   useEffect(() => {
     const handleCoversUpdateComplete = (result) => {
       setCoverUpdateReq(false);
-      console.log('result: ', result);
       setCoverUpdateResults(result);
     };
     window.api.onUpdateCovers(handleCoversUpdateComplete);
@@ -77,14 +73,10 @@ const Update = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log(fileUpdateResults);
-  }, [fileUpdateResults]);
+  useEffect(() => {}, [fileUpdateResults]);
 
   const handleUpdates = async (e) => {
     e.preventDefault();
-    console.log(e.currentTarget.id);
-    /*   console.log(e.currentTarget.id); */
     switch (e.currentTarget.id) {
       case 'filesupdate':
         setFileUpdateReq(true);
@@ -139,7 +131,6 @@ const Update = () => {
   }, [showFileDetails, showFolderDetails]);
 
   const handleDetailsRequest = async (e) => {
-    console.log(e.target.id);
     switch (e.target.id) {
       case 'file':
         setShowFileDetails(!showFileDetails);

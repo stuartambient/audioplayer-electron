@@ -80,21 +80,18 @@ contextBridge.exposeInMainWorld('api', {
   onUpdatedTags: (cb) => ipcRenderer.on('updated-tags', (event, msg) => cb(msg)),
   onChildWindowClosed: (cb) => ipcRenderer.on('window-closed', (event, name) => cb(name)),
   onUpdateFiles: (cb) => {
-    console.log('Preload: Setting up listener for file-update-complete...');
     ipcRenderer.on('file-update-complete', (event, result) => {
       console.log('Preload: Received file-update-complete event', event, result);
       cb(result);
     });
   },
   onUpdateFolders: (cb) => {
-    console.log('Preload: Setting up listener for folder-update-complete...');
     ipcRenderer.on('folder-update-complete', (event, result) => {
       console.log('Preload: Received file-update-complete event', event, result);
       cb(result);
     });
   },
   onUpdateCovers: (cb) => {
-    console.log('Preload: Setting up listener for folder-update-complete...');
     ipcRenderer.on('cover-update-complete', (event, result) => {
       console.log('Preload: Received file-update-complete event', event, result);
       cb(result);
