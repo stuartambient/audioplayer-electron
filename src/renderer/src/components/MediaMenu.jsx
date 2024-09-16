@@ -105,7 +105,7 @@ const MediaMenu = ({
       )}
 
       {/*   <div className="right-side"> */}
-      {!state.tracksShuffle && (
+      {!state.tracksShuffle && state.listType === 'files' && (
         <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
             <div className="formelements">
@@ -114,7 +114,8 @@ const MediaMenu = ({
                 className="textsearch"
                 name="textsearch"
                 id="textsearch"
-                onContextMenu={handleInputMenu}
+                placeholder="   search tracks"
+                /* onContextMenu={handleInputMenu} */
               />
 
               <button type="submit" className="submitbtn">
@@ -126,7 +127,7 @@ const MediaMenu = ({
           </form>
         </li>
       )}
-      {state.tracksShuffle && state.listType === 'albums' && (
+      {state.listType === 'albums' && (
         <li className="form">
           <form method="post" onSubmit={handleTextSearch}>
             <div className="formelements">
@@ -135,7 +136,8 @@ const MediaMenu = ({
                 className="textsearch"
                 name="textsearch"
                 id="textsearch"
-                onContextMenu={handleInputMenu}
+                placeholder="   search albums"
+                /* onContextMenu={handleInputMenu} */
               />
 
               <button type="submit" className="submitbtn">
@@ -165,7 +167,7 @@ const MediaMenu = ({
           className={state.listType === 'files' ? 'tab active' : 'tab'}
           onClick={() => handleListType('files')}
         >
-          <span>files</span>
+          <span>tracks</span>
         </div>
         <div
           className={state.listType === 'albums' ? 'tab active' : 'tab'}
@@ -178,12 +180,6 @@ const MediaMenu = ({
           onClick={() => handleListType('playlist')}
         >
           <span>playlist</span>
-        </div>
-        <div
-          className={state.listType === 'other' ? 'tab active' : 'tab'}
-          onClick={() => handleListType('other')}
-        >
-          <span>other</span>
         </div>
       </li>
       {/* </div> */}

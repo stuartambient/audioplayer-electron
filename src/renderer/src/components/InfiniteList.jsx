@@ -61,12 +61,22 @@ const InfiniteList = memo(() => {
   }, [hasMoreAlbums]);
 
   useEffect(() => {
-    if (resultsRef && resultsRef.current) {
-      const contDimension = resultsRef.current.getBoundingClientRect();
-      console.log('contDimension: ', contDimension);
-      setContSize(contDimension);
+    if (resultsRef.current) {
+      const handleResize = () => {
+        const contDimension = resultsRef.current.getBoundingClientRect();
+        console.log('contDimension: ', contDimension);
+        setContSize(contDimension);
+      };
+
+      const resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(resultsRef.current);
+
+      // Cleanup function to disconnect the observer on unmount
+      return () => {
+        resizeObserver.disconnect();
+      };
     }
-  }, [contSize, resultsRef]);
+  }, [resultsRef]);
 
   useEffect(() => {
     if (state.flashDiv?.id) {
@@ -406,17 +416,7 @@ const InfiniteList = memo(() => {
         ) : null}
         {state.listType === 'files' && (
           <>
-            <div
-              className="files"
-              ref={resultsRef}
-              /*    style={{ height: '100%' }} */
-
-              /*  style={{
-                overflow: 'hidden',
-                resize: 'vertical',
-                height: '418px'
-              }} */
-            >
+            <div className="files">
               <Virtuoso
                 className="files-list"
                 style={{ height: `${contSize.height}px` }}
@@ -475,11 +475,11 @@ const InfiniteList = memo(() => {
         )}
         {state.listType === 'albums' && (
           <>
-            <div className="albums" /* style={{ height: '100%' }} */>
+            <div className="albums" /* ref={resultsRef} */>
               <Virtuoso
                 data={state.albums}
                 className="albums-list" /*  */
-                style={{ height: '390px' }}
+                style={{ height: `${contSize.height}px` }}
                 /* ref={albumslistRef} */
                 totalCount={state.albums.length}
                 endReached={loadMoreAlbums}
@@ -534,7 +534,7 @@ const InfiniteList = memo(() => {
                 data={state.playlistTracks}
                 className="playlist-list"
                 totalCount={state.playlistTracks.length}
-                style={{ height: '390px' }}
+                style={{ height: `${contSize.height}px` }}
                 itemContent={(index, item) => {
                   return (
                     <Item

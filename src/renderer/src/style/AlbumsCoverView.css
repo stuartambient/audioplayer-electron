@@ -1,7 +1,7 @@
 .albums-coverview {
   grid-row: 3 / 4;
   grid-column: 1 / 3;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 .albums-hidden {
@@ -53,6 +53,10 @@
 .albums-coverview::-webkit-scrollbar-button:increment,
 .albums-coverview::-webkit-scrollbar-button:decrement {
   background-color: #ccc;
+}
+
+.albums-coverview::-webkit-scrollbar-button:increment {
+  border-top-left-radius: -10px;
 }
 
 .albums-coverview::-webkit-scrollbar-button:horizontal {

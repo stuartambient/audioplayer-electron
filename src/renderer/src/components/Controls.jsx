@@ -64,9 +64,11 @@ const Controls = ({
       <li className="btn" id="forward" onClick={handlePlayerControls}>
         <FaForward />
       </li>
-      <li className={shuffleButtonClassName()} id="shuffle" onClick={handlePlayerControls}>
-        <FaRandom />
-      </li>
+      {state.listType === 'files' && (
+        <li className={shuffleButtonClassName()} id="shuffle" onClick={handlePlayerControls}>
+          <FaRandom />
+        </li>
+      )}
       {!state.minimalmode && !state.home && (
         <li
           className={state.library ? 'btn on' : 'btn'}

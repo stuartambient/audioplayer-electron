@@ -50,6 +50,7 @@
   grid-area: form;
   display: flex;
   justify-self: center;
+  align-self: center;
   /* justify-self: center; */
 }
 
@@ -134,7 +135,8 @@
   justify-content: space-around;
   align-items: flex-end;
   grid-area: tabs;
-  margin-right: 10px;
+  /*  margin-right: 10px; */
+  width: 100%;
 }
 
 .media-menu--minimal .tabs {
@@ -164,9 +166,9 @@
 }
 
 .media-menu .tabs .tab {
-  border-right: 1px solid var(--blue1);
+  /*  border-right: 1px solid var(--blue1);
   border-left: 1px solid var(--blue1);
-  border-top: 1px solid var(--blue1);
+  border-top: 1px solid var(--blue1); */
   width: 25%;
   display: flex;
   justify-content: center;
@@ -174,7 +176,7 @@
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   align-items: center;
-  height: 100%;
+  height: 2.2rem;
 }
 
 .media-menu .tabs .tab span {
@@ -187,4 +189,7 @@
 
 .media-menu .tabs .active {
   background-color: orange;
+  color: black;
+  font-size: large;
+  border: none;
 }

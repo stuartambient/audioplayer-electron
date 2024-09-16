@@ -61,10 +61,31 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
       }
     };
 
-    handleResize(); // Initial calculation
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [parentRef]);
+
+  /*   useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      if (parentRef.current) {
+        setContainerSize({
+          width: parentRef.current.offsetWidth,
+          height: parentRef.current.offsetHeight
+        });
+      }
+    });
+
+    if (parentRef.current) {
+      resizeObserver.observe(parentRef.current);
+    }
+
+    return () => {
+      if (parentRef.current) {
+        resizeObserver.unobserve(parentRef.current);
+      }
+    };
+  }, [parentRef]);  */
 
   const rowVirtualizer = useVirtualizer({
     count: rows,
@@ -232,7 +253,10 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
       style={{
         /* height: '100%', */
         width: '100%',
-        overflow: 'auto'
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        maxHeight: '100vh',
+        maxWidth: '100vw'
       }}
     >
       <div
