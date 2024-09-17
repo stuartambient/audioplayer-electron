@@ -17,6 +17,12 @@ const Player = ({ onClick, children }) => {
   const { state, dispatch } = useAudioPlayer();
   const [cTime, setCTime] = useState('00:00');
   const [progbarInc, setProgbarInc] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const seekbarOutline = useRef();
+  const seekbar = useRef();
+  const volumebarOutline = useRef();
+  const volumeslider = useRef();
 
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -26,13 +32,43 @@ const Player = ({ onClick, children }) => {
 
   useEffect(() => {
     state.audioRef.current.ontimeupdate = () => {
-      setCTime(convertCurrentTime(state.audioRef.current));
+      if (!isDragging) {
+        setCTime(convertCurrentTime(state.audioRef.current));
+      }
     };
-  }, [state.audioRef]);
+  }, [state.audioRef, isDragging]);
 
-  const seekbarOutline = useRef();
-  const volumebarOutline = useRef();
-  const volumeslider = useRef();
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+
+    const outlineRect = seekbarOutline.current.getBoundingClientRect();
+    const outlineWidth = outlineRect.width;
+    const clickPosition = e.clientX - outlineRect.left;
+
+    if (clickPosition >= 0 && clickPosition <= outlineWidth) {
+      /*  const newTime = (clickPosition / outlineWidth) * convertToSeconds(state.duration, cTime);
+      console.log('newTime: ', newTime);
+      state.audioRef.current.currentTime = newTime; */
+      state.audioRef.current.currentTime =
+        (convertDurationSeconds(state.duration) / outlineWidth) * clickPosition;
+      //const newTime = (clickPosition / outlineWidth) * state.duration;
+      setProgbarInc(clickPosition); // Update the visual width during drag
+      setCTime(convertCurrentTime(state.audioRef.current));
+      //setCTime(convertCurrentTime(state.audioRef.current));
+      //setCTime(convertCurrentTime(state.audioRef.current));
+    }
+  };
+
+  const handleMouseUp = (e) => {
+    if (isDragging) {
+      handleSeekTime(e); // Final seek on mouse up
+    }
+    setIsDragging(false);
+  };
 
   const handleVolume = (e) => {
     if (e.buttons !== 1) return;
@@ -50,7 +86,6 @@ const Player = ({ onClick, children }) => {
       return;
     }
   };
-
   const handleSeekTime = (e) => {
     const totaltime = convertDurationSeconds(state.duration);
     /* const seekbar = document.querySelector('.seekbar'); */
@@ -211,11 +246,16 @@ const Player = ({ onClick, children }) => {
             <div
               className="seekbar-outline"
               /* id="waveform" */
+              id="waveform"
               ref={seekbarOutline}
-              onClick={handleSeekTime}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
             >
               <div
                 className="seekbar"
+                ref={seekbar}
                 style={{ width: progbarInc ? `${progbarInc}px` : null }}
               ></div>
             </div>
@@ -231,9 +271,13 @@ const Player = ({ onClick, children }) => {
             className="seekbar-outline"
             id="waveform"
             ref={seekbarOutline}
-            onClick={handleSeekTime}
+            /*  onClick={handleSeekTime} */
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
           >
-            <div className="seekbar" style={{ width: progbarInc ? `${progbarInc}px` : null }}></div>
+            <div className="seekbar" ref={seekbar} style={{ width: `${progbarInc}px` }}></div>
           </div>
         </>
       )}
