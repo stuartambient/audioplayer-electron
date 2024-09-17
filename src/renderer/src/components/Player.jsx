@@ -79,7 +79,7 @@ const Player = ({ onClick, children }) => {
 
     if (widthRange > 0 || widthRange < outlineWidth) {
       const mark = widthRange / outlineWidth;
-      state.audioRef.current.volume = Math.round(mark * 100) / 100;
+      state.audioRef.current.volume = Math.round(mark * 1000) / 1000;
 
       volumeslider.current.setAttribute('style', `width:${widthRange}px`);
     } else {
