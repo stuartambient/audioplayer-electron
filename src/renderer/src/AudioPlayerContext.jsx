@@ -212,7 +212,7 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    case 'play-album': {
+    /*     case 'play-album': {
       return {
         ...state,
         playlistTracks: [
@@ -221,6 +221,15 @@ const audioPlayerReducer = (state, action) => {
             (p) => !state.playlistTracks.find((d) => d.track_id === p.track_id)
           )
         ]
+      };
+    } */
+
+    case 'play-this-album': {
+      return {
+        ...state,
+        playlistTracks: action.playlistTracks,
+        listType: 'playlist',
+        newtrack: 0
       };
     }
 

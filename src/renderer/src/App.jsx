@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useReducer, useContext, createContext } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import classNames from 'classnames';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
@@ -330,7 +331,7 @@ function App() {
     }
   };
 
-  const containerClassNames = () => {
+  /*   const containerClassNames = () => {
     if (state.home) {
       return 'container container-home';
     }
@@ -353,13 +354,19 @@ function App() {
     if (state.player || state.minimalmode) {
       return 'container container-player';
     }
-    /*  if (!state.minimalmode) {
-      return 'container';
-    } */
-  };
+  }; */
+
+  const containerClassNames = classNames('container', {
+    'container-home': state.home || state.tagEditor,
+    'container-update': state.update,
+    'container-mini-expanded': state.miniModePlaylist,
+    'container-minimal': state.minimalmode && state.player,
+    'container-maximized': state.maximized,
+    'container-player': state.player && !state.minimalmode && !state.miniModePlaylist
+  });
 
   return (
-    <div className={containerClassNames()}>
+    <div className={containerClassNames}>
       {state.home || state.update || state.library || state.minimalmode || state.tagEditor ? (
         <MainNav onClick={handleMainNav} />
       ) : null}

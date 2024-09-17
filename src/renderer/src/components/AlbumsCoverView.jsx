@@ -173,7 +173,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
     const albumTracks = await window.api.getAlbumTracks(albumPath);
     if (albumTracks) {
       dispatch({
-        type: 'play-album',
+        type: 'play-this-album',
         playlistTracks: albumTracks
       });
     }

@@ -41,7 +41,6 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC, parseMeta } from './utility/index.js';
 import searchCover from './folderImageCheck.js';
 import db from './connection.js';
-import { roots } from '../constant/constants.js';
 
 import { getPreferences, savePreferences } from './preferences.js';
 import {
@@ -297,13 +296,6 @@ app.whenReady().then(async () => {
     optimizer.watchWindowShortcuts(window);
   });
 
-  /*   resumeSleep = powerSaveBlocker.start('prevent-app-suspension');
-  console.log(`Power save blocker started with id: ${resumeSleep}`); */
-
-  // LINUX or MACoS
-  powerMonitor.on('shutdown', () => {
-    console.log('The system is shutting down: ', new Date());
-  });
   initializeDatabase();
   mainWindow.show();
   mainWindow.webContents.openDevTools();
@@ -316,7 +308,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-const processUpdateResult = (type, result) => {
+/* const processUpdateResult = (type, result) => {
   let filename;
   switch (type) {
     case 'folder':
@@ -347,7 +339,7 @@ const processUpdateResult = (type, result) => {
   } else if (result.nochange === true) {
     writeFile(`\nDate: ${Date()} No changes`, `${updatesFolder}\\${filename}`);
   }
-};
+}; */
 
 ipcMain.on('toggle-resizable', (event, isResizable) => {
   mainWindow.setResizable(isResizable);
