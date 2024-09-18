@@ -64,7 +64,6 @@ const InfiniteList = memo(() => {
     if (resultsRef.current) {
       const handleResize = () => {
         const contDimension = resultsRef.current.getBoundingClientRect();
-        console.log('contDimension: ', contDimension);
         setContSize(contDimension);
       };
 
@@ -381,7 +380,12 @@ const InfiniteList = memo(() => {
   };
 
   const listClassNames = () => {
-    if (!state.library) {
+    if (
+      (!state.library && state.player) ||
+      (!state.library && state.update) ||
+      (!state.library && state.home) ||
+      (!state.library && state.tagEditor)
+    ) {
       return 'results results-hidden';
     }
     if (state.library && !state.minimalmode) {

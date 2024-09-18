@@ -219,21 +219,9 @@ function App() {
         window.api.appMinimize();
         break;
       case 'maximize':
-        /* if (minimalmode) {
-          await window.api.screenMode('default');
-        } */
-        /* dispatch({
-          type: 'set-maximize',
-          maximized: !state.maximized
-        }); */
         window.api.appMaximize();
         break;
-      case 'minimodeinfo':
-        dispatch({
-          type: 'mini-mode-info',
-          minimalmodeInfo: !state.minimalmodeInfo
-        });
-        break;
+
       case 'albums':
         dispatch({
           type: 'set-page',
@@ -244,15 +232,14 @@ function App() {
           tagEditor: false
         });
         break;
-      case 'playlists':
-        break;
       case 'home':
         dispatch({
           type: 'set-page',
           home: true,
           update: false,
           player: false,
-          library: false
+          library: false,
+          tagEditor: false
         });
         break;
       case 'update':
@@ -271,6 +258,7 @@ function App() {
           home: false,
           update: false,
           player: true,
+          library: false,
           tagEditor: false
         });
         break;
@@ -280,10 +268,10 @@ function App() {
           home: false,
           update: false,
           player: false,
+          library: false,
           tagEditor: true
         });
         break;
-
       case 'playerplaylist':
         dispatch({
           type: 'set-page',
@@ -315,7 +303,8 @@ function App() {
           minimalmode: !state.minimalmode,
           home: false,
           update: false,
-          player: true
+          player: true,
+          tagEditor: false
         });
 
         break;
@@ -324,6 +313,12 @@ function App() {
           type: 'mini-mode-playlist',
           miniModePlaylist: !state.miniModePlaylist,
           library: !state.library
+        });
+        break;
+      case 'minimodeinfo':
+        dispatch({
+          type: 'mini-mode-info',
+          minimalmodeInfo: !state.minimalmodeInfo
         });
         break;
       default:
@@ -386,7 +381,7 @@ function App() {
       {state.tagEditor && <Stats />}
       {state.minimalmode && <Controls handlePlayerControls={handlePlayerControls} />}
 
-      {state.player || state.miniModePlaylist || state.home || state.update ? (
+      {state.player || state.miniModePlaylist || state.home || state.update || state.tagEditor ? (
         <InfiniteList />
       ) : null}
       {/*       ) : null} */}

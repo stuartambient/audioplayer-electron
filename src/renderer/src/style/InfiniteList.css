@@ -44,7 +44,7 @@
 }
 
 .results-hidden {
-  display: none;
+  /* display: none; */
   position: relative;
   z-index: -2;
 }

@@ -18,6 +18,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
   const { state, dispatch } = useAudioPlayer();
   const [coverPath, setCoverPath] = useState('');
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [currentAlbum, setCurrentAlbum] = useState('');
   const [isScrolling, setIsScrolling] = useState(false); // State to control scrolling
 
   const { coversLoading, hasMoreCovers, coversError } = useAllAlbumsCovers(
@@ -170,6 +171,8 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
 
   const handlePlayReq = async (e) => {
     e.preventDefault();
+    //console.log('album id: ', e.currentTarget.id);
+    setCurrentAlbum(e.currentTarget.id);
     const albumPath = e.currentTarget.getAttribute('fullpath');
     const albumTracks = await window.api.getAlbumTracks(albumPath);
     if (albumTracks) {
@@ -307,6 +310,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
                 return (
                   <div
                     className="imagediv"
+                    id={item.id}
                     key={itemIndex}
                     style={{
                       width: `${estimatedSize}px`,
@@ -319,7 +323,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
                     ) : (
                       <img className={coverImageSize} src={NoImage} alt="" />
                     )}
-                    <div className="overlay">
+                    <div className={currentAlbum !== item.id ? 'overlay' : 'overlay active-album'}>
                       <span id={item.fullpath}>{item.foldername}</span>
                       <div
                         className="item-menu"
@@ -334,7 +338,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
                           album={item.foldername}
                         />
                       </div>
-                      <span id="coverplay" fullpath={item.fullpath} onClick={handlePlayReq}>
+                      <span id={item.id} fullpath={item.fullpath} onClick={handlePlayReq}>
                         <GiPlayButton />
                       </span>
                     </div>

@@ -97,6 +97,12 @@
   cursor: pointer;
 }
 
+.active-album {
+  transform: scale(1) translateY(-100%);
+  cursor: pointer;
+  background-color: red;
+}
+
 .cover-image {
   object-fit: cover;
   object-position: center;

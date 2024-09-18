@@ -99,7 +99,8 @@ const audioPlayerReducer = (state, action) => {
         minimalmode: action.minimalmode,
         home: action.home,
         update: action.update,
-        player: action.player
+        player: action.player,
+        tagEditor: action.tagEditor
       };
     }
 
@@ -212,7 +213,7 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    /*     case 'play-album': {
+    case 'play-album': {
       return {
         ...state,
         playlistTracks: [
@@ -222,7 +223,7 @@ const audioPlayerReducer = (state, action) => {
           )
         ]
       };
-    } */
+    }
 
     case 'play-this-album': {
       return {
