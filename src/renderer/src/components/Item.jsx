@@ -2,6 +2,7 @@ import { forwardRef, useState, useEffect, memo } from 'react';
 import ContextMenu from './ContextMenu';
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { Buffer } from 'buffer';
+import handleTrackSelect from '../utility/audioUtils';
 import { Plus, Minus } from '../assets/icons';
 import { BsThreeDots } from 'react-icons/bs';
 import '../style/FlashEffect.css';
@@ -16,15 +17,13 @@ const Item = forwardRef((props, ref) => {
 
   /*   const getPicture = (file) => {} */
 
-  const loadFile = async (file, id) => {
+  /*   const loadFile = async (file, id) => {
     try {
       state.audioRef.current.src = await `streaming://${file}`;
-      /* const buf = await state.audioRef.current.src.arrayBuffer(); */
     } catch (e) {
       console.log(e);
     }
     const picture = await window.api.getCover(file);
-    //console.log('picture: ', picture);
     if (picture === 0 || !picture) {
       dispatch({
         type: 'set-cover',
@@ -72,7 +71,7 @@ const Item = forwardRef((props, ref) => {
     });
 
     loadFile(params[0].audiofile, event.target.id);
-  };
+  }; */
 
   if (props.type === 'file') {
     const newId = props.divId.split('--')[0];
@@ -89,7 +88,7 @@ const Item = forwardRef((props, ref) => {
           val={props.val}
           fromlisttype={props.type}
           onClick={(e) =>
-            handleTrackSelect(e, {
+            handleTrackSelect(e, state, dispatch, {
               artist: props.artist,
               title: props.title,
               album: props.album,
@@ -162,7 +161,7 @@ const Item = forwardRef((props, ref) => {
           id={props.id}
           val={props.val}
           onClick={(e) =>
-            handleTrackSelect(e, {
+            handleTrackSelect(e, state, dispatch, {
               artist: props.artist,
               title: props.title,
               album: props.album,

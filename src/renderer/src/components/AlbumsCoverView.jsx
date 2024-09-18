@@ -5,6 +5,7 @@ import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { useAllAlbumsCovers } from '../hooks/useDb';
+import handleTrackSelect from '../utility/audioUtils';
 import { AlbumArt } from '../utility/AlbumArt';
 import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
@@ -172,9 +173,18 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
     const albumPath = e.currentTarget.getAttribute('fullpath');
     const albumTracks = await window.api.getAlbumTracks(albumPath);
     if (albumTracks) {
+      console.log('album-tracks: ', albumTracks);
       dispatch({
         type: 'play-this-album',
         playlistTracks: albumTracks
+      });
+      handleTrackSelect(e, state, dispatch, {
+        artist: albumTracks[0].performers,
+        title: albumTracks[0].title,
+        album: albumTracks[0].album,
+        audiofile: albumTracks[0].audiotrack,
+        like: albumTracks[0].like,
+        active: albumTracks[0].track_id
       });
     }
   };
