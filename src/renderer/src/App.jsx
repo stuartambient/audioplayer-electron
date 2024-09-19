@@ -357,7 +357,10 @@ function App() {
     'container-mini-expanded': state.miniModePlaylist,
     'container-minimal': state.minimalmode && state.player,
     'container-maximized': state.maximized,
-    'container-player': state.player && !state.minimalmode && !state.miniModePlaylist
+    'container-player':
+      state.player && !state.minimalmode && !state.miniModePlaylist && state.library,
+    'container-centered':
+      state.player && !state.minimalmode && !state.miniModePlaylist && !state.library
   });
 
   return (

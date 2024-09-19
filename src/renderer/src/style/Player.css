@@ -29,7 +29,8 @@
 /* PLAYER WITHOUT MEDIA LIBRARY MOUNTED */
 .centered {
   border: solid 1px var(--blue1);
-  grid-row: 2 / 10;
+  /* grid-row: 2 / 10; */
+  grid-row: 1 / 4;
   grid-column: 1 / 3;
   max-height: 425px;
   /*   width: 45%;

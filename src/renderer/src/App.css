@@ -99,6 +99,12 @@ textarea {
   grid-auto-rows: 0px;
 }
 
+.container-centered {
+  grid-template-rows: 393px;
+  grid-template-columns: 300px;
+  background: none;
+}
+
 .container-update {
   grid-template-rows: 2rem 1fr;
   grid-template-columns: 100vw;

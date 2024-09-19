@@ -381,6 +381,19 @@ const InfiniteList = memo(() => {
 
   const listClassNames = () => {
     if (
+      state.player &&
+      !state.library &&
+      !state.update &&
+      !state.home &&
+      !state.tagEditor &&
+      !state.minimalmode
+    ) {
+      return 'results results-hidden results-centered';
+    }
+    if (!state.library && state.player && state.minimalmode) {
+      return 'results results-hidden results-hidden-minimal';
+    }
+    if (
       (!state.library && state.player) ||
       (!state.library && state.update) ||
       (!state.library && state.home) ||
@@ -388,6 +401,7 @@ const InfiniteList = memo(() => {
     ) {
       return 'results results-hidden';
     }
+
     if (state.library && !state.minimalmode) {
       return 'results';
     }
