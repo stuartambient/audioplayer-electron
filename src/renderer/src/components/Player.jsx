@@ -24,6 +24,12 @@ const Player = ({ onClick, children }) => {
   const volumebarOutline = useRef();
   const volumeslider = useRef();
 
+  /*   useEffect(() => {
+    if (state.audioRef && state.audioRef.current.volume) {
+      console.log('state.audio.current.volume: ', state.audio.current.volume);
+    }
+  }, [state.audioRef]); */
+
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
     const convertForProgbar = convertToSeconds(state.duration, cTime);
@@ -37,6 +43,15 @@ const Player = ({ onClick, children }) => {
       }
     };
   }, [state.audioRef, isDragging]);
+
+  useEffect(() => {
+    if (state.minimalmodeInfo && !state.minimalmode) {
+      dispatch({
+        type: 'mini-mode-info',
+        minimalmodeInfo: false
+      });
+    }
+  }, [state.minimalmodeInfo, state.minimalmode]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -70,6 +85,16 @@ const Player = ({ onClick, children }) => {
     setIsDragging(false);
   };
 
+  // Set the volume bar width based on the current volume (percentage-based width)
+  const updateSliderWidth = (currentVolume) => {
+    const outlineRect = volumebarOutline.current.getBoundingClientRect();
+    const outlineWidth = Math.round(outlineRect.width);
+
+    // Calculate the percentage width for the volume slider
+    const percentageWidth = currentVolume * 100; // Volume is between 0 and 1
+    volumeslider.current.setAttribute('style', `width:${percentageWidth}%;`);
+  };
+
   const handleVolume = (e) => {
     if (e.buttons !== 1) return;
 
@@ -77,15 +102,21 @@ const Player = ({ onClick, children }) => {
     const outlineWidth = Math.round(outlineRect.width);
     const widthRange = e.clientX - volumebarOutline.current.offsetLeft;
 
-    if (widthRange > 0 || widthRange < outlineWidth) {
+    if (widthRange >= 0 && widthRange <= outlineWidth) {
       const mark = widthRange / outlineWidth;
       state.audioRef.current.volume = Math.round(mark * 1000) / 1000;
-
-      volumeslider.current.setAttribute('style', `width:${widthRange}px`);
+      /* console.log('widthRange: ', widthRange, 'current.volume: ', state.audioRef.current.volume); */
+      //volumeslider.current.setAttribute('style', `width:${widthRange}px`);
+      volumeslider.current.setAttribute('style', `width:${mark * 100}%;`);
     } else {
       return;
     }
   };
+
+  useEffect(() => {
+    updateSliderWidth(state.volume); // Use state.volume as the source of truth
+  }, []); // Re-run when `volume` changes
+
   const handleSeekTime = (e) => {
     const totaltime = convertDurationSeconds(state.duration);
     /* const seekbar = document.querySelector('.seekbar'); */

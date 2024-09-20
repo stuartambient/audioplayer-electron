@@ -1,7 +1,7 @@
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { FaHeart, FaBackward, FaForward, FaListUl, FaRandom } from 'react-icons/fa';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
-import Icon1 from '../assets/icon_1.png';
+/* import Icon1 from '../assets/icon_1.png'; */
 import '../style/Controls.css';
 
 const Controls = ({
@@ -77,9 +77,6 @@ const Controls = ({
           onClick={handlePlayerControls}
         >
           <FaListUl />
-          {/*           <div style={{ width: '16px', height: '16px' }}>
-            <img src={Icon1} />
-          </div> */}
         </li>
       )}
     </ul>

@@ -81,7 +81,6 @@ contextBridge.exposeInMainWorld('api', {
   onChildWindowClosed: (cb) => ipcRenderer.on('window-closed', (event, name) => cb(name)),
   onUpdateFiles: (cb) => {
     ipcRenderer.on('file-update-complete', (event, result) => {
-      console.log('Preload: Received file-update-complete event', event, result);
       cb(result);
     });
   },
