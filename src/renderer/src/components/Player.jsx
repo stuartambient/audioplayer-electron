@@ -159,27 +159,29 @@ const Player = ({ onClick, children }) => {
         state.minimalmode ? { backgroundImage: `url(${state.cover})` } : { backgroundImage: 'none' }
       }
     >
-      {!state.minimalmodeInfo && !state.home && (
-        <div className="title">
-          <p
-            className={
-              state.title.length > 35 /* && !minimalmode */ ? 'title-transform' : 'title-text'
-            }
-          >
-            {state.title}
-          </p>
-        </div>
-      )}
-
-      {!state.minimalmodeInfo && state.home && (
-        <div className="title">
-          <span className="real-time">
-            <span className={state.title.length > 50 ? 'title-transform' : 'title-text'}>
+      {!state.minimalmodeInfo &&
+        !state.home && ( //main player
+          <div className="title">
+            <p
+              className={
+                state.title.length > 35 /* && !minimalmode */ ? 'title-transform' : 'title-text'
+              }
+            >
               {state.title}
+            </p>
+          </div>
+        )}
+
+      {!state.minimalmodeInfo &&
+        state.home && ( // albums page
+          <div className="title">
+            <span className="real-time">
+              <span className={state.title.length > 50 ? 'title-transform' : 'title-text'}>
+                {state.title}
+              </span>
             </span>
-          </span>
-        </div>
-      )}
+          </div>
+        )}
 
       {state.cover && state.cover !== 'not available' && (
         <>
@@ -268,30 +270,40 @@ const Player = ({ onClick, children }) => {
           </div>
         </div>
       )}
-      {state.minimalmode && !state.minimalmodeInfo ? (
-        <div className="slider-group">
-          <>
-            <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
-              <div className="volumebar" ref={volumeslider}></div>
-            </div>
-            <div
-              className="seekbar-outline"
-              /* id="waveform" */
-              id="waveform"
-              ref={seekbarOutline}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
-              onMouseLeave={handleMouseUp}
-            >
-              <div
-                className="seekbar"
-                ref={seekbar}
-                style={{ width: progbarInc ? `${progbarInc}px` : null }}
-              ></div>
-            </div>
-          </>
+      {state.minimalmodeInfo && (
+        <div className="time" style={{ backgroundColor: 'red' }}>
+          <div className="duration">
+            {!state.home && <span className="label">Duration: </span>}
+            <span className="real-time">{state.duration}</span>
+          </div>
+          <div className="elapsed">
+            {!state.home && <span className="label">Elapsed: </span>}
+            <span className="real-time">{cTime}</span>
+          </div>
         </div>
+      )}
+      {state.minimalmode && !state.minimalmodeInfo ? (
+        <>
+          <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
+            <div className="volumebar" ref={volumeslider}></div>
+          </div>
+          <div
+            className="seekbar-outline"
+            /* id="waveform" */
+            id="waveform"
+            ref={seekbarOutline}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            <div
+              className="seekbar"
+              ref={seekbar}
+              style={{ width: progbarInc ? `${progbarInc}px` : null }}
+            ></div>
+          </div>
+        </>
       ) : (
         <>
           <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>

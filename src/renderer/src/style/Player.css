@@ -233,9 +233,9 @@
 .minimal-player,
 .minimal-player--expanded {
   grid-row: 2 / 3;
-  grid-column: 1 / 2;
+  grid-column: 1 / 3;
   grid-template-rows: 20px 100px 40px;
-  grid-template-columns: 100%;
+  grid-template-columns: 50% 50%;
 
   grid-template-areas:
     'image image'
@@ -244,7 +244,7 @@
     'title title'
     'meta meta'
     'time time'
-    'sliders sliders';
+    'volume seekbar';
 }
 
 .minimal-player {
@@ -261,11 +261,14 @@
   margin-bottom: 10px;
 }
 
-.slider-group .volume-outline,
-.slider-group .seekbar-outline {
-  width: 40%;
-  -webkit-app-region: no-drag;
+.minimal-player .volume-outline {
+  grid-area: volume;
 }
+
+.minimal-player .seekbar-outline {
+  grid-area: seekbar;
+}
+
 .minimal-player .time,
 .minimal-player--expanded .time {
   grid-area: time;
@@ -280,6 +283,9 @@
   justify-self: center;
   grid-area: meta;
   display: flex;
+  background-color: black;
+  padding: 0.2rem;
+  border-radius: 10px;
   /* align-items: center; */
 }
 
@@ -310,37 +316,12 @@
   height: 150px;
 }
 
-/* .minimal-player .controls,
-.minimal-player--expanded .controls {
-  width: 125px;
-  margin: 0;
-
-  -webkit-app-region: no-drag;
-} */
-
-/* .minimal-player .controls li,
-.minimal-player--expanded li {
-  padding: 0;
-} */
-
-/* .minimal-player .controls .btn,
-.minimal-player--expanded .controls .btn {
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px;
-  position: relative;
-  background: none;
-  z-index: 0;
-  border-bottom: none;
-  border-right: none;
+.minimal-player .title .title-text {
+  background: black;
+  padding: 0.2rem;
+  border-radius: 10px;
+  width: 100%;
 }
-
-.minimal-player .controls .btn svg:hover,
-.minimal-player--expanded .controls .btn svg:hover {
-  fill: var(--blue1);
-} */
 
 .audio-player--homepage {
   grid-row: 4 / 5;

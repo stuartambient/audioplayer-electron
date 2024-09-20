@@ -91,8 +91,17 @@ const MainNav = ({ onClick }) => {
             {/*  <li onClick={onClick} id="maximize">
               <AiOutlineFullscreen />
             </li> */}
-            <li onClick={onClick} id="close">
+            {/* <li onClick={onClick} id="close">
               <AiOutlineClose />
+            </li> */}
+            <li onClick={onClick} id="minimize">
+              <VscChromeMinimize />
+            </li>
+            <li onClick={onClick} id="maximize">
+              <VscChromeMaximize />
+            </li>
+            <li onClick={onClick} id="close">
+              <VscChromeClose />
             </li>
           </ul>
         </>
