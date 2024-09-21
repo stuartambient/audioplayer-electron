@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import classNames from 'classnames';
 import { useAudioPlayer } from '../AudioPlayerContext';
+import classNames from 'classnames';
 import { BsVolumeMute } from 'react-icons/bs';
 import { BiVolumeFull } from 'react-icons/bi';
 import {
@@ -128,10 +128,35 @@ const Player = ({ onClick, children }) => {
     /* setCTime(totaltime / seekbarOutlineWidth) * seekPoint; */
   };
 
+  /*   const playerClassNames = () => {
+    if (!state.library && !state.minimalmode && !state.home) {
+      return 'audio-player centered';
+    }
+
+    if (state.maximized && !state.home) {
+      return 'audio-player audio-player--maximized';
+    }
+    if (state.home) {
+      return 'audio-player--homepage';
+    }
+    if (state.library && !state.minimalmode) {
+      return 'audio-player';
+    }
+    if (!state.library && state.minimalmode) {
+      return 'audio-player minimal-player';
+    }
+    if (state.minimalmode) {
+      return 'audio-player minimal-player';
+    }
+    if (state.library && state.minimalmode) {
+      return 'audio-player minimal-player--expanded';
+    }
+  }; */
+
   const getPlayerClassNames = () => {
     return classNames('audio-player', {
       'audio-player--homepage': state.home,
-      'audio-player--maximized': state.maximized && !state.home,
+      //'audio-player--maximized': state.maximized && !state.home,
       'minimal-player': state.minimalmode && !state.library,
       'minimal-player--expanded': state.library && state.minimalmode,
       centered: !state.library && !state.minimalmode && !state.home
@@ -140,7 +165,7 @@ const Player = ({ onClick, children }) => {
 
   return (
     <div
-      className={playerClassNames()}
+      className={getPlayerClassNames()}
       style={
         state.minimalmode ? { backgroundImage: `url(${state.cover})` } : { backgroundImage: 'none' }
       }
@@ -162,7 +187,7 @@ const Player = ({ onClick, children }) => {
         state.home && ( // albums page
           <div className="title">
             <span className="real-time">
-              <span className={state.title.length > 50 ? 'title-transform' : 'title-text'}>
+              <span className={state.title.length > 10 ? 'title-transform' : 'title-text'}>
                 {state.title}
               </span>
             </span>
@@ -189,7 +214,7 @@ const Player = ({ onClick, children }) => {
                 <span className="real-time">
                   <span
                     className={
-                      state.artist.length > 35 /* && !minimalmode */
+                      state.artist.length > 20 /* && !minimalmode */
                         ? 'artist-transform'
                         : 'artist-text'
                     }

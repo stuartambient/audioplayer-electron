@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
+import classNames from 'classnames';
 import { BsVolumeMute } from 'react-icons/bs';
 import { BiVolumeFull } from 'react-icons/bi';
 import {
@@ -23,12 +24,6 @@ const Player = ({ onClick, children }) => {
   const seekbar = useRef();
   const volumebarOutline = useRef();
   const volumeslider = useRef();
-
-  /*   useEffect(() => {
-    if (state.audioRef && state.audioRef.current.volume) {
-      console.log('state.audio.current.volume: ', state.audio.current.volume);
-    }
-  }, [state.audioRef]); */
 
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -65,33 +60,25 @@ const Player = ({ onClick, children }) => {
     const clickPosition = e.clientX - outlineRect.left;
 
     if (clickPosition >= 0 && clickPosition <= outlineWidth) {
-      /*  const newTime = (clickPosition / outlineWidth) * convertToSeconds(state.duration, cTime);
-      console.log('newTime: ', newTime);
-      state.audioRef.current.currentTime = newTime; */
       state.audioRef.current.currentTime =
         (convertDurationSeconds(state.duration) / outlineWidth) * clickPosition;
-      //const newTime = (clickPosition / outlineWidth) * state.duration;
-      setProgbarInc(clickPosition); // Update the visual width during drag
+      setProgbarInc(clickPosition);
       setCTime(convertCurrentTime(state.audioRef.current));
-      //setCTime(convertCurrentTime(state.audioRef.current));
-      //setCTime(convertCurrentTime(state.audioRef.current));
     }
   };
 
   const handleMouseUp = (e) => {
     if (isDragging) {
-      handleSeekTime(e); // Final seek on mouse up
+      handleSeekTime(e);
     }
     setIsDragging(false);
   };
 
-  // Set the volume bar width based on the current volume (percentage-based width)
   const updateSliderWidth = (currentVolume) => {
     const outlineRect = volumebarOutline.current.getBoundingClientRect();
     const outlineWidth = Math.round(outlineRect.width);
 
-    // Calculate the percentage width for the volume slider
-    const percentageWidth = currentVolume * 100; // Volume is between 0 and 1
+    const percentageWidth = currentVolume * 100;
     volumeslider.current.setAttribute('style', `width:${percentageWidth}%;`);
   };
 
@@ -105,8 +92,6 @@ const Player = ({ onClick, children }) => {
     if (widthRange >= 0 && widthRange <= outlineWidth) {
       const mark = widthRange / outlineWidth;
       state.audioRef.current.volume = Math.round(mark * 1000) / 1000;
-      /* console.log('widthRange: ', widthRange, 'current.volume: ', state.audioRef.current.volume); */
-      //volumeslider.current.setAttribute('style', `width:${widthRange}px`);
       volumeslider.current.setAttribute('style', `width:${mark * 100}%;`);
     } else {
       return;
@@ -114,74 +99,50 @@ const Player = ({ onClick, children }) => {
   };
 
   useEffect(() => {
-    updateSliderWidth(state.volume); // Use state.volume as the source of truth
-  }, []); // Re-run when `volume` changes
+    updateSliderWidth(state.volume);
+  }, []);
 
   const handleSeekTime = (e) => {
     const totaltime = convertDurationSeconds(state.duration);
-    /* const seekbar = document.querySelector('.seekbar'); */
     const seekbarOutlineWidth = seekbarOutline.current.clientWidth;
     const seekPoint = e.clientX - seekbarOutline.current.getBoundingClientRect().left;
 
     state.audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
-    /* setCTime(totaltime / seekbarOutlineWidth) * seekPoint; */
   };
 
-  const playerClassNames = () => {
-    if (!state.library && !state.minimalmode && !state.home) {
-      return 'audio-player centered';
-    }
-
-    if (state.maximized && !state.home) {
-      return 'audio-player audio-player--maximized';
-    }
-    if (state.home) {
-      return 'audio-player--homepage';
-    }
-    if (state.library && !state.minimalmode) {
-      return 'audio-player';
-    }
-    if (!state.library && state.minimalmode) {
-      return 'audio-player minimal-player';
-    }
-    if (state.minimalmode) {
-      return 'audio-player minimal-player';
-    }
-    if (state.library && state.minimalmode) {
-      return 'audio-player minimal-player--expanded';
-    }
+  const getPlayerClassNames = () => {
+    return classNames('audio-player', {
+      'audio-player--homepage': state.home,
+      'minimal-player': state.minimalmode && !state.library,
+      'minimal-player--expanded': state.library && state.minimalmode,
+      centered: !state.library && !state.minimalmode && !state.home
+    });
   };
 
   return (
     <div
-      className={playerClassNames()}
+      className={getPlayerClassNames()}
       style={
         state.minimalmode ? { backgroundImage: `url(${state.cover})` } : { backgroundImage: 'none' }
       }
     >
-      {!state.minimalmodeInfo &&
-        !state.home && ( //main player
-          <div className="title">
-            <p
-              className={
-                state.title.length > 35 /* && !minimalmode */ ? 'title-transform' : 'title-text'
-              }
-            >
-              {state.title}
-            </p>
-          </div>
-        )}
+      {!state.minimalmode && !state.home && (
+        <div className="title">
+          <p className={state.title.length > 35 ? 'title-transform' : 'title-text'}>
+            {state.title}
+          </p>
+        </div>
+      )}
 
-      {!state.minimalmodeInfo &&
-        state.home && ( // albums page
-          <div className="title">
-            <span className="real-time">
-              <span className={state.title.length > 50 ? 'title-transform' : 'title-text'}>
-                {state.title}
-              </span>
+      {!state.minimalmodeInfo && state.home && (
+        <div className="title">
+          <span className="real-time">
+            <span className={state.title.length > 50 ? 'title-transform' : 'title-text'}>
+              {state.title}
             </span>
-          </div>
-        )}
+          </span>
+        </div>
+      )}
 
       {state.cover && state.cover !== 'not available' && (
         <>
@@ -194,20 +155,14 @@ const Player = ({ onClick, children }) => {
         <p style={{ gridRow: '2 / 3' }}>No available image</p>
       )}
 
-      {!state.minimalmodeInfo && !state.home && (
+      {!state.minimalmode && !state.home && (
         <div className="metadata">
           <>
             {state.artist ? (
               <div className="metadata-artist">
                 {!state.home && <span className="label">Artist: </span>}
                 <span className="real-time">
-                  <span
-                    className={
-                      state.artist.length > 35 /* && !minimalmode */
-                        ? 'artist-transform'
-                        : 'artist-text'
-                    }
-                  >
+                  <span className={state.artist.length > 20 ? 'artist-transform' : 'artist-text'}>
                     {state.artist}
                   </span>
                 </span>
@@ -217,13 +172,7 @@ const Player = ({ onClick, children }) => {
               <div className="metadata-album">
                 {!state.home && <span className="label">Album: </span>}
                 <span className="real-time">
-                  <span
-                    className={
-                      state.album.length > 25 /* && !minimalmode */
-                        ? 'album-transform'
-                        : 'album-text'
-                    }
-                  >
+                  <span className={state.album.length > 25 ? 'album-transform' : 'album-text'}>
                     {state.album}
                   </span>
                 </span>
@@ -233,7 +182,7 @@ const Player = ({ onClick, children }) => {
         </div>
       )}
 
-      {!state.minimalmodeInfo && state.home && (
+      {!state.minimalmode && state.home && (
         <>
           {state.artist ? (
             <div className="metadata-artist">
@@ -258,7 +207,7 @@ const Player = ({ onClick, children }) => {
         </>
       )}
 
-      {!state.minimalmodeInfo && (
+      {!state.minimalmode && (
         <div className="time">
           <div className="duration">
             {!state.home && <span className="label">Duration: </span>}
@@ -270,19 +219,7 @@ const Player = ({ onClick, children }) => {
           </div>
         </div>
       )}
-      {state.minimalmodeInfo && (
-        <div className="time" style={{ backgroundColor: 'red' }}>
-          <div className="duration">
-            {!state.home && <span className="label">Duration: </span>}
-            <span className="real-time">{state.duration}</span>
-          </div>
-          <div className="elapsed">
-            {!state.home && <span className="label">Elapsed: </span>}
-            <span className="real-time">{cTime}</span>
-          </div>
-        </div>
-      )}
-      {state.minimalmode && !state.minimalmodeInfo ? (
+      {!state.minimalmode && (
         <>
           <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
             <div className="volumebar" ref={volumeslider}></div>
@@ -304,23 +241,27 @@ const Player = ({ onClick, children }) => {
             ></div>
           </div>
         </>
-      ) : (
+      )}
+      {state.minimalmodeInfo && (
         <>
           <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
             <div className="volumebar" ref={volumeslider}></div>
           </div>
-
           <div
             className="seekbar-outline"
+            /* id="waveform" */
             id="waveform"
             ref={seekbarOutline}
-            /*  onClick={handleSeekTime} */
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
           >
-            <div className="seekbar" ref={seekbar} style={{ width: `${progbarInc}px` }}></div>
+            <div
+              className="seekbar"
+              ref={seekbar}
+              style={{ width: progbarInc ? `${progbarInc}px` : null }}
+            ></div>
           </div>
         </>
       )}
