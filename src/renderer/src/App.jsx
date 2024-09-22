@@ -69,7 +69,6 @@ function App() {
     };
 
     const handleVolumeChange = () => {
-      console.log('app.jsx volume: ', audio.volume);
       dispatch({ type: 'set-volume', volume: audio.volume });
     };
 

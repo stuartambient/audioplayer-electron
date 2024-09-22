@@ -7,13 +7,13 @@ import {
   convertToSeconds
 } from '../hooks/useTime';
 
-const PlayerScrubber = () => {
+const PlayerScrubber = ({ cTime, setCTime }) => {
   const { state, dispatch } = useAudioPlayer();
-  const [cTime, setCTime] = useState('00:00');
+  /*   const [cTime, setCTime] = useState('00:00'); */
   const [progbarInc, setProgbarInc] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const seekbarOutline = useRef();
-  const seekbar = useRef();
+  const seekbarOutline = useRef(null);
+  const seekbar = useRef(null);
 
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
@@ -55,9 +55,9 @@ const PlayerScrubber = () => {
     setIsDragging(false);
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     updateSliderWidth(state.volume);
-  }, []);
+  }, []); */
 
   const handleSeekTime = (e) => {
     const totaltime = convertDurationSeconds(state.duration);

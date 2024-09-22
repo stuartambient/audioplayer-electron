@@ -12,6 +12,8 @@ import {
 import { FaHeart, FaBackward, FaForward, FaListUl } from 'react-icons/fa';
 import { GiJetPack, GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FiVolume } from 'react-icons/fi';
+import PlayerScrubber from './PlayerScrubber';
+import PlayerVolume from './PlayerVolume';
 import '../style/Player.css';
 
 const Player = ({ onClick, children }) => {
@@ -20,24 +22,24 @@ const Player = ({ onClick, children }) => {
   /*   const [progbarInc, setProgbarInc] = useState(0);
   const [isDragging, setIsDragging] = useState(false); */
 
-  const seekbarOutline = useRef();
+  /*   const seekbarOutline = useRef();
   const seekbar = useRef();
   const volumebarOutline = useRef();
-  const volumeslider = useRef();
+  const volumeslider = useRef(); */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
     const convertForProgbar = convertToSeconds(state.duration, cTime);
     setProgbarInc(convertForProgbar * outlineWidth);
-  }, [state.duration, cTime]);
+  }, [state.duration, cTime]); */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     state.audioRef.current.ontimeupdate = () => {
       if (!isDragging) {
         setCTime(convertCurrentTime(state.audioRef.current));
       }
     };
-  }, [state.audioRef, isDragging]);
+  }, [state.audioRef, isDragging]); */
 
   useEffect(() => {
     if (state.minimalmodeInfo && !state.minimalmode) {
@@ -48,11 +50,11 @@ const Player = ({ onClick, children }) => {
     }
   }, [state.minimalmodeInfo, state.minimalmode]);
 
-  const handleMouseDown = (e) => {
+  /*   const handleMouseDown = (e) => {
     setIsDragging(true);
-  };
+  }; */
 
-  const handleMouseMove = (e) => {
+  /*   const handleMouseMove = (e) => {
     if (!isDragging) return;
 
     const outlineRect = seekbarOutline.current.getBoundingClientRect();
@@ -65,16 +67,16 @@ const Player = ({ onClick, children }) => {
       setProgbarInc(clickPosition);
       setCTime(convertCurrentTime(state.audioRef.current));
     }
-  };
+  }; */
 
-  const handleMouseUp = (e) => {
+  /*   const handleMouseUp = (e) => {
     if (isDragging) {
       handleSeekTime(e);
     }
     setIsDragging(false);
-  };
+  }; */
 
-  const updateSliderWidth = (currentVolume) => {
+  /*   const updateSliderWidth = (currentVolume) => {
     const outlineRect = volumebarOutline.current.getBoundingClientRect();
     const outlineWidth = Math.round(outlineRect.width);
 
@@ -100,15 +102,15 @@ const Player = ({ onClick, children }) => {
 
   useEffect(() => {
     updateSliderWidth(state.volume);
-  }, []);
+  }, []); */
 
-  const handleSeekTime = (e) => {
+  /*   const handleSeekTime = (e) => {
     const totaltime = convertDurationSeconds(state.duration);
     const seekbarOutlineWidth = seekbarOutline.current.clientWidth;
     const seekPoint = e.clientX - seekbarOutline.current.getBoundingClientRect().left;
 
     state.audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
-  };
+  }; */
 
   const getPlayerClassNames = () => {
     return classNames('audio-player', {
@@ -221,12 +223,13 @@ const Player = ({ onClick, children }) => {
       )}
       {!state.minimalmode && (
         <>
-          <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
+          <PlayerVolume />
+          <PlayerScrubber cTime={cTime} setCTime={setCTime} />
+          {/*           <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
             <div className="volumebar" ref={volumeslider}></div>
           </div>
           <div
             className="seekbar-outline"
-            /* id="waveform" */
             id="waveform"
             ref={seekbarOutline}
             onMouseDown={handleMouseDown}
@@ -239,17 +242,16 @@ const Player = ({ onClick, children }) => {
               ref={seekbar}
               style={{ width: progbarInc ? `${progbarInc}px` : null }}
             ></div>
-          </div>
+          </div> */}
         </>
       )}
       {state.minimalmodeInfo && (
         <>
-          <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
+          {/*   <div className="volume-outline" onMouseMove={handleVolume} ref={volumebarOutline}>
             <div className="volumebar" ref={volumeslider}></div>
-          </div>
-          <div
+          </div> */}
+          {/*           <div
             className="seekbar-outline"
-            /* id="waveform" */
             id="waveform"
             ref={seekbarOutline}
             onMouseDown={handleMouseDown}
@@ -262,7 +264,9 @@ const Player = ({ onClick, children }) => {
               ref={seekbar}
               style={{ width: progbarInc ? `${progbarInc}px` : null }}
             ></div>
-          </div>
+          </div> */}
+          {/*  <PlayerVolume />
+          <PlayerScrubber cTime={cTime} setCTime={setCTime} /> */}
         </>
       )}
 
