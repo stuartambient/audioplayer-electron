@@ -17,8 +17,8 @@ import '../style/Player.css';
 const Player = ({ onClick, children }) => {
   const { state, dispatch } = useAudioPlayer();
   const [cTime, setCTime] = useState('00:00');
-  const [progbarInc, setProgbarInc] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  /*   const [progbarInc, setProgbarInc] = useState(0);
+  const [isDragging, setIsDragging] = useState(false); */
 
   const seekbarOutline = useRef();
   const seekbar = useRef();
