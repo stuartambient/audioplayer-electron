@@ -234,6 +234,13 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
+    case 'stop-this-album': {
+      return {
+        ...state,
+        playlistTracks: []
+      };
+    }
+
     /*     case 'update-cover': {
       return {
         ...state,

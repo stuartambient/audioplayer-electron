@@ -97,10 +97,25 @@
   cursor: pointer;
 }
 
+@keyframes albumAnimation {
+  0% {
+    border-image-source: linear-gradient(-90deg, lightblue, yellow, red);
+  }
+  50% {
+    border-image-source: linear-gradient(90deg, darkblue, lightblue, green);
+  }
+  100% {
+    border-image-source: linear-gradient(90deg, lightblue, red);
+  }
+}
+
 .active-album {
   transform: scale(1) translateY(-100%);
   cursor: pointer;
-  background-color: red;
+  background-color: var(--blue4);
+  border: 5px solid white;
+  border-image-slice: 1;
+  animation: albumAnimation 5s ease infinite alternate;
 }
 
 .cover-image {

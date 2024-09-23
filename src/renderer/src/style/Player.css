@@ -85,10 +85,10 @@
 
 @keyframes slidein {
   from {
-    margin-left: -120%;
+    margin-left: -90%;
   }
   to {
-    margin-left: 120%;
+    margin-left: 90%;
   }
 }
 
@@ -195,8 +195,11 @@
 } */
 
 .minimal-player .metadata-album,
+.minimal-player--expanded .metadata-album,
 .minimal-player .metadata-artist,
-.minimal-player .title {
+.minimal-player--expanded .metadata-artist,
+.minimal-player .title,
+.minimal-player--expanded .title {
   white-space: nowrap;
   width: 90%;
   overflow: hidden;
@@ -209,27 +212,48 @@
   padding: 0.5rem;
 }
 
-.minimal-player .metadata-artist {
+.minimal-player .metadata-artist,
+.minimal-player--expanded .metadata-artist {
   grid-row: 1 / 2;
 }
 
-.minimal-player .title {
+.minimal-player .title,
+.minimal-player--expanded .title {
   grid-row: 3 / 4;
 }
 
-.minimal-player .metadata-album {
+.minimal-player .metadata-album,
+.minimal-player--expanded .metadata-album {
   grid-row: 2 / 3;
 }
 
-.minimal-player .time {
+.minimal-player .time,
+.minimal-player--expanded .time {
   grid-row: 4 / 5;
 }
 
-.minimal-player .volume-outline {
-  grid-row: 9 / 10;
+.minimal-player .volume-label,
+.minimal-player--expanded .volume-label {
+  grid-row: 6 / 7;
+  background: black;
+  width: 90%;
+  color: var(--blue1);
+}
+.minimal-player .volume-outline,
+.minimal-player--expanded .volume-outline {
+  grid-row: 7 / 8;
 }
 
-.minimal-player .seekbar-outline {
+.minimal-player .seek-label,
+.minimal-player--expanded .seek-label {
+  grid-row: 9 / 10;
+  background: black;
+  width: 90%;
+  color: var(--blue1);
+}
+
+.minimal-player .seekbar-outline,
+.minimal-player--expanded .seekbar-outline {
   grid-row: 10 / 11;
 }
 

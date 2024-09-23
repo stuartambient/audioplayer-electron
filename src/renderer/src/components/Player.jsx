@@ -154,11 +154,11 @@ const Player = ({ onClick, children }) => {
       {!state.minimalmode && (
         <div className="time">
           <div className="duration">
-            {!state.home || (!state.minimalmodeInfo && <span className="label">Duration: </span>)}
+            {!state.home && !state.minimalmodeInfo && <span className="label">Duration: </span>}
             <span className="real-time">{state.duration}</span>
           </div>
           <div className="elapsed">
-            {!state.home || (!state.minimalmodeInfo && <span className="label">Elapsed: </span>)}
+            {!state.home && !state.minimalmodeInfo && <span className="label">Elapsed: </span>}
             <span className="real-time">{cTime}</span>
           </div>
         </div>
@@ -187,7 +187,9 @@ const Player = ({ onClick, children }) => {
       )}
       {state.minimalmodeInfo && (
         <>
+          <span className="volume-label">Volume</span>
           <PlayerVolume />
+          <span className="seek-label">Scrub</span>
           <PlayerScrubber cTime={cTime} setCTime={setCTime} />
         </>
       )}

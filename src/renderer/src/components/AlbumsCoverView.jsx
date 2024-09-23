@@ -172,6 +172,26 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
   const handlePlayReq = async (e) => {
     e.preventDefault();
     //console.log('album id: ', e.currentTarget.id);
+    if (currentAlbum === e.currentTarget.id) {
+      setCurrentAlbum('');
+      dispatch({
+        type: 'stop-this-album'
+      });
+      /* audioRef.current.pause(); */
+      dispatch({
+        type: 'newtrack',
+        pause: true,
+        newtrack: '',
+        selectedTrackListType: 'playlist',
+        artist: '',
+        title: '',
+        album: '',
+        active: '',
+        nextTrack: '',
+        prevTrack: ''
+      });
+      return; //(state.audioRef.current.src = '');
+    }
     setCurrentAlbum(e.currentTarget.id);
     const albumPath = e.currentTarget.getAttribute('fullpath');
     const albumTracks = await window.api.getAlbumTracks(albumPath);

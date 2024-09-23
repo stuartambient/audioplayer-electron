@@ -49,7 +49,7 @@ const Controls = ({
         <FaHeart />
       </li>
 
-      {state.pause ? (
+      {state.pause || state.active === '' ? (
         <li className="btn" id="pauseplay" onClick={handlePlayerControls}>
           <GiPlayButton />
         </li>
