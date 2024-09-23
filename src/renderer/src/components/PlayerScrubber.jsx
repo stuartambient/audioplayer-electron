@@ -12,11 +12,12 @@ const PlayerScrubber = ({ cTime, setCTime }) => {
   /*   const [cTime, setCTime] = useState('00:00'); */
   const [progbarInc, setProgbarInc] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const seekbarOutline = useRef(null);
-  const seekbar = useRef(null);
+  const seekbarOutline = useRef();
+  const seekbar = useRef();
 
   useEffect(() => {
     const outlineWidth = seekbarOutline.current.clientWidth;
+
     const convertForProgbar = convertToSeconds(state.duration, cTime);
     setProgbarInc(convertForProgbar * outlineWidth);
   }, [state.duration, cTime]);
@@ -67,22 +68,25 @@ const PlayerScrubber = ({ cTime, setCTime }) => {
     state.audioRef.current.currentTime = (totaltime / seekbarOutlineWidth) * seekPoint;
   };
 
-  <div
-    className="seekbar-outline"
-    /* id="waveform" */
-    id="waveform"
-    ref={seekbarOutline}
-    onMouseDown={handleMouseDown}
-    onMouseMove={handleMouseMove}
-    onMouseUp={handleMouseUp}
-    onMouseLeave={handleMouseUp}
-  >
+  return (
     <div
-      className="seekbar"
-      ref={seekbar}
-      style={{ width: progbarInc ? `${progbarInc}px` : null }}
-    ></div>
-  </div>;
+      className="seekbar-outline"
+      /* id="waveform" */
+      id="waveform"
+      ref={seekbarOutline}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+    >
+      <div
+        className="seekbar"
+        ref={seekbar}
+        //style={{ width: progbarInc ? `${progbarInc}px` : null }}
+        style={{ width: `${progbarInc}px` }}
+      ></div>
+    </div>
+  );
 };
 
 export default PlayerScrubber;
