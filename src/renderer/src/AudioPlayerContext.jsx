@@ -287,7 +287,11 @@ const audioPlayerReducer = (state, action) => {
     case 'set-list-type': {
       return {
         ...state,
-        listType: action.listType
+        listType: action.listType,
+        newtrack: action.newtrack,
+        nextTrack: action.nextTrack,
+        prevTrack: action.prevTrack,
+        pause: action.pause
       };
     }
     case 'playlist-clear': {
@@ -436,7 +440,7 @@ export const AudioPlayerProvider = ({ children }) => {
     newtrack: '',
     playNext: false,
     playPrev: false,
-    nextTrack: null,
+    nextTrack: '',
     prevTrack: '',
     artist: '',
     title: '',

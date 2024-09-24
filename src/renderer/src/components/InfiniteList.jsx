@@ -138,72 +138,12 @@ const InfiniteList = memo(() => {
       }
     };
 
-    if (state.listType === 'files') {
+    if (state.listType === 'files' && state.newtrack !== '') {
       setTrackNavigation(state.tracks);
-    } else if (state.listType === 'playlist' /*  && !state.playlistShuffle */) {
+    } else if (state.listType === 'playlist' && state.newtrack !== '') {
       setTrackNavigation(state.playlistTracks);
-    } /* else if (state.playlistShuffle) {
-      setTrackNavigation(shuffledPlaylist);
-    } */
-  }, [
-    state.newtrack,
-    state.tracks,
-    state.playlistTracks,
-    /*     shuffledPlaylist, */
-    state.listType
-    /*     dispatch */
-  ]);
-
-  /*   useEffect(() => {
-    if (state.listType === 'files') {
-      if (state.newtrack >= 0 && state.tracks[+state.newtrack + 1]) {
-        dispatch({
-          type: 'set-next-track',
-          nextTrack: state.tracks[+state.newtrack + 1].track_id
-        });
-      }
-      if (state.newtrack >= 1 && state.tracks[+state.newtrack - 1]) {
-        dispatch({
-          type: 'set-prev-track',
-          prevTrack: state.tracks[+state.newtrack - 1].track_id
-        });
-      }
     }
-    if (state.listType === 'playlist' ) {
-      if (state.newtrack >= 0 && state.playlistTracks[state.newtrack + 1]) {
-        dispatch({
-          type: 'set-next-track',
-          nextTrack: state.playlistTracks[+state.newtrack + 1].track_id
-        });
-      }
-      if (state.newtrack >= 1 && state.playlistTracks[state.newtrack - 1]) {
-        dispatch({
-          type: 'set-prev-track',
-          prevTrack: state.playlistTracks[+state.newtrack - 1].track_id
-        });
-      }
-    } */
-  /*  if (state.playlistShuffle) {
-      if (state.newtrack >= 0 && shuffledPlaylist[+state.newtrack + 1]) {
-        dispatch({
-          type: 'set-next-track',
-          nextTrack: shuffledPlaylist[+state.newtrack + 1].track_id
-        });
-      }
-      if (state.newtrack >= 1 && shuffledPlaylist[+state.newtrack - 1]) {
-        dispatch({
-          type: 'set-prev-track',
-          prevTrack: shuffledPlaylist[+state.newtrack - 1].track_id
-        });
-      }
-    } */
-  /*   }, [
-    state.newtrack,
-    state.tracks,
-    state.playlistTracks,
-    state.listType,
-    dispatch
-  ]); */
+  }, [state.newtrack, state.tracks, state.playlistTracks]);
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
@@ -517,8 +457,19 @@ const InfiniteList = memo(() => {
                 }}
               />
             </div>
-            <div className="albums" style={{ display: 'none' }}></div>
-            <div className="playlist" style={{ display: 'none' }}></div>
+            <div
+              className="albums"
+              style={{
+                /* display: 'none' */
+                zIndex: '-2'
+              }}
+            ></div>
+            <div
+              className="playlist"
+              style={{
+                zIndex: '-2'
+              }}
+            ></div>
           </>
         )}
         {state.listType === 'albums' && (
@@ -570,8 +521,22 @@ const InfiniteList = memo(() => {
               />
             </div>
 
-            <div className="files" style={{ display: 'none' }}></div>
-            <div className="playlist" style={{ display: 'none' }}></div>
+            <div
+              className="files"
+              style={
+                {
+                  /* display: 'none' */
+                  /* zIndex: '-2' */
+                }
+              }
+            ></div>
+            <div
+              className="playlist"
+              style={{
+                /*  display: 'none' */
+                zIndex: '-2'
+              }}
+            ></div>
           </>
         )}
         {state.listType === 'playlist' && (
@@ -607,8 +572,20 @@ const InfiniteList = memo(() => {
                 }}
               />
             </div>
-            <div className="albums" style={{ display: 'none' }}></div>
-            <div className="files" style={{ display: 'none' }}></div>
+            <div
+              className="albums"
+              style={{
+                /* display: 'none' */
+                zIndex: '-2'
+              }}
+            ></div>
+            <div
+              className="files"
+              style={{
+                /* display: 'none' */
+                zIndex: '-2'
+              }}
+            ></div>
           </>
         )}
       </div>

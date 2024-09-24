@@ -13,7 +13,11 @@ const MediaMenu = ({
   const handleListType = (type) => {
     dispatch({
       type: 'set-list-type',
-      listType: type
+      listType: type,
+      newtrack: '',
+      nextTrack: '',
+      prevTrack: '',
+      pause: true
     });
   };
 
