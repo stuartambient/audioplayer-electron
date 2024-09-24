@@ -97,6 +97,13 @@
   cursor: pointer;
 }
 
+.overlay .item-menu {
+  margin-top: 5px;
+}
+.overlay .item-menu:hover {
+  background: orange;
+}
+
 @keyframes albumAnimation {
   0% {
     border-image-source: linear-gradient(-90deg, lightblue, yellow, red);

@@ -123,9 +123,40 @@ const InfiniteList = memo(() => {
   const scrollRef = useRef();
 
   useEffect(() => {
+    const setTrackNavigation = (tracksArray) => {
+      if (state.newtrack >= 0 && tracksArray[state.newtrack + 1]) {
+        dispatch({
+          type: 'set-next-track',
+          nextTrack: tracksArray[state.newtrack + 1].track_id
+        });
+      }
+      if (state.newtrack >= 1 && tracksArray[state.newtrack - 1]) {
+        dispatch({
+          type: 'set-prev-track',
+          prevTrack: tracksArray[state.newtrack - 1].track_id
+        });
+      }
+    };
+
+    if (state.listType === 'files') {
+      setTrackNavigation(state.tracks);
+    } else if (state.listType === 'playlist' /*  && !state.playlistShuffle */) {
+      setTrackNavigation(state.playlistTracks);
+    } /* else if (state.playlistShuffle) {
+      setTrackNavigation(shuffledPlaylist);
+    } */
+  }, [
+    state.newtrack,
+    state.tracks,
+    state.playlistTracks,
+    /*     shuffledPlaylist, */
+    state.listType
+    /*     dispatch */
+  ]);
+
+  /*   useEffect(() => {
     if (state.listType === 'files') {
       if (state.newtrack >= 0 && state.tracks[+state.newtrack + 1]) {
-        /* console.log('next up: ', state.tracks[+state.newtrack + 1]); */
         dispatch({
           type: 'set-next-track',
           nextTrack: state.tracks[+state.newtrack + 1].track_id
@@ -138,7 +169,7 @@ const InfiniteList = memo(() => {
         });
       }
     }
-    if (state.listType === 'playlist' && !state.playlistShuffle) {
+    if (state.listType === 'playlist' ) {
       if (state.newtrack >= 0 && state.playlistTracks[state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
@@ -151,8 +182,8 @@ const InfiniteList = memo(() => {
           prevTrack: state.playlistTracks[+state.newtrack - 1].track_id
         });
       }
-    }
-    if (state.playlistShuffle) {
+    } */
+  /*  if (state.playlistShuffle) {
       if (state.newtrack >= 0 && shuffledPlaylist[+state.newtrack + 1]) {
         dispatch({
           type: 'set-next-track',
@@ -165,15 +196,14 @@ const InfiniteList = memo(() => {
           prevTrack: shuffledPlaylist[+state.newtrack - 1].track_id
         });
       }
-    }
-  }, [
+    } */
+  /*   }, [
     state.newtrack,
     state.tracks,
     state.playlistTracks,
-    shuffledPlaylist,
     state.listType,
     dispatch
-  ]);
+  ]); */
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {

@@ -9,6 +9,7 @@ import handleTrackSelect from '../utility/audioUtils';
 import { AlbumArt } from '../utility/AlbumArt';
 import { BsThreeDots } from 'react-icons/bs';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
+import { FaStop } from 'react-icons/fa';
 import NoImage from '../assets/noimage.jpg';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { openChildWindow } from './ChildWindows/openChildWindow';
@@ -358,8 +359,13 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
                           album={item.foldername}
                         />
                       </div>
-                      <span id={item.id} fullpath={item.fullpath} onClick={handlePlayReq}>
-                        <GiPlayButton />
+                      <span
+                        id={item.id}
+                        fullpath={item.fullpath}
+                        onClick={handlePlayReq}
+                        style={{ alignSelf: 'end' }}
+                      >
+                        {currentAlbum === item.id ? <FaStop /> : <GiPlayButton />}
                       </span>
                     </div>
                   </div>
