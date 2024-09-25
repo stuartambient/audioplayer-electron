@@ -402,192 +402,155 @@ const InfiniteList = memo(() => {
         {state.listType === 'playlist' && !state.playlistTracks.length ? (
           <div className="noresults">No current playlist</div>
         ) : null}
-        {state.listType === 'files' && (
-          <>
-            <div className="files">
-              <Virtuoso
-                className="files-list"
-                style={{ height: `${contSize.height}px` }}
-                ref={fileslistRef}
-                data={state.tracks}
-                totalCount={state.tracks.length}
-                endReached={loadMoreTracks}
-                components={{
-                  Footer: () => {
-                    if (tracksLoading) {
-                      return <div className="item itemloading">Loading...</div>;
-                    }
-                    if (tracksError) {
-                      return <div className="item trackserror">{tracksError}</div>;
-                    }
-                    if (!hasMoreTracks) {
-                      return <div className="item hasmoretracks">No more tracks available.</div>;
-                    }
-                    return null; // No footer if none of the states apply
+        <>
+          <div className={state.listType === 'files' ? 'files' : 'files-list-hidden'}>
+            <Virtuoso
+              className="files-list"
+              style={{ height: `${contSize.height}px` }}
+              ref={fileslistRef}
+              data={state.tracks}
+              totalCount={state.tracks.length}
+              endReached={loadMoreTracks}
+              components={{
+                Footer: () => {
+                  if (tracksLoading) {
+                    return <div className="item itemloading">Loading...</div>;
                   }
-                }}
-                /* components={{ Scroller: CustomScroller }} */
-                itemContent={(index, item) => {
-                  if (!item) return null; // Handle empty items
-
-                  return (
-                    <Item
-                      type="file"
-                      key={getKey()}
-                      divId={`${item.track_id}--item-div`}
-                      className={
-                        `${state.active}--item-div` === `${item.track_id}--item-div`
-                          ? 'item active'
-                          : 'item'
-                      }
-                      href={item.track_id}
-                      id={item.track_id}
-                      like={item.like}
-                      audiofile={item.audiotrack}
-                      val={index}
-                      artist={item.performers ? item.performers : 'not available'}
-                      title={item.title ? item.title : item.audiotrack}
-                      album={item.album ? item.album : 'not available'}
-                      genre={item.genres ? item.genres : 'not available'}
-                      codecs={item.codecs ? item.codecs : 'not available'}
-                      bitrate={item.audioBitrate ? item.audioBitrate : 'not available'}
-                      samplerate={item.audioSampleRate ? item.audioSampleRate : 'not available'}
-                    />
-                  );
-                }}
-              />
-            </div>
-            <div
-              className="albums"
-              style={{
-                /* display: 'none' */
-                zIndex: '-2'
-              }}
-            ></div>
-            <div
-              className="playlist"
-              style={{
-                zIndex: '-2'
-              }}
-            ></div>
-          </>
-        )}
-        {state.listType === 'albums' && (
-          <>
-            <div className="albums" /* ref={resultsRef} */>
-              <Virtuoso
-                data={state.albums}
-                className="albums-list" /*  */
-                style={{ height: `${contSize.height}px` }}
-                /* ref={albumslistRef} */
-                totalCount={state.albums.length}
-                endReached={loadMoreAlbums}
-                components={{
-                  Footer: () => {
-                    if (albumsLoading) {
-                      return <div className="item itemloading">Loading...</div>;
-                    }
-                    if (albumsError) {
-                      return <div className="item trackserror">{albumsError}</div>;
-                    }
-                    if (!hasMoreAlbums) {
-                      return <div className="item hasmoretracks">No more results.</div>;
-                    }
-                    return null; // No footer if none of the states apply
+                  if (tracksError) {
+                    return <div className="item trackserror">{tracksError}</div>;
                   }
-                }}
-                /* style={{ height: '390px' }} */
-                itemContent={(index, item) => {
-                  return (
-                    <Item
-                      type="folder"
-                      key={getKey()}
-                      id={item.id}
-                      className="item"
-                      href="http://"
-                      val={index}
-                      foldername={item.foldername}
-                      term={item.fullpath}
-                      fullpath={item.fullpath}
-                      handleAlbumTracksRequest={handleAlbumTracksRequest}
-                      /* showContextMenu={handleContextMenu} */
-                      showMore={showMore}
-                      albumPattern={albumPattern}
-                      albumTracksLength={albumTracks.length}
-                      albumsTracks={albumsTracks}
-                    />
-                  );
-                }}
-              />
-            </div>
-
-            <div
-              className="files"
-              style={
-                {
-                  /* display: 'none' */
-                  /* zIndex: '-2' */
+                  if (!hasMoreTracks) {
+                    return <div className="item hasmoretracks">No more tracks available.</div>;
+                  }
+                  return null; // No footer if none of the states apply
                 }
-              }
-            ></div>
-            <div
-              className="playlist"
-              style={{
-                /*  display: 'none' */
-                zIndex: '-2'
               }}
-            ></div>
-          </>
-        )}
-        {state.listType === 'playlist' && (
-          <>
-            <div className="playlist">
-              <Virtuoso
-                ref={playlistRef}
-                data={state.playlistTracks}
-                className="playlist-list"
-                totalCount={state.playlistTracks.length}
-                style={{ height: `${contSize.height}px` }}
-                itemContent={(index, item) => {
-                  return (
-                    <Item
-                      type="playlist"
-                      key={getKey()}
-                      divId={`${item.track_id}--item-div`}
-                      className={
-                        `${state.active}--item-div` === `${item.track_id}--item-div`
-                          ? 'item active'
-                          : 'item'
-                      }
-                      href={item.track_id}
-                      id={item.track_id}
-                      like={item.like}
-                      audiofile={item.audiotrack}
-                      val={index}
-                      artist={item.performers ? item.performers : 'not available'}
-                      title={item.title ? item.title : item.audiotrack}
-                      album={item.album ? item.album : 'not available'}
-                    />
-                  );
-                }}
-              />
-            </div>
-            <div
-              className="albums"
-              style={{
-                /* display: 'none' */
-                zIndex: '-2'
+              /* components={{ Scroller: CustomScroller }} */
+              itemContent={(index, item) => {
+                if (!item) return null; // Handle empty items
+
+                return (
+                  <Item
+                    type="file"
+                    key={getKey()}
+                    divId={`${item.track_id}--item-div`}
+                    className={
+                      `${state.active}--item-div` === `${item.track_id}--item-div`
+                        ? 'item active'
+                        : 'item'
+                    }
+                    href={item.track_id}
+                    id={item.track_id}
+                    like={item.like}
+                    audiofile={item.audiotrack}
+                    val={index}
+                    artist={item.performers ? item.performers : 'not available'}
+                    title={item.title ? item.title : item.audiotrack}
+                    album={item.album ? item.album : 'not available'}
+                    genre={item.genres ? item.genres : 'not available'}
+                    codecs={item.codecs ? item.codecs : 'not available'}
+                    bitrate={item.audioBitrate ? item.audioBitrate : 'not available'}
+                    samplerate={item.audioSampleRate ? item.audioSampleRate : 'not available'}
+                  />
+                );
               }}
-            ></div>
-            <div
-              className="files"
-              style={{
-                /* display: 'none' */
-                zIndex: '-2'
+            />
+          </div>
+          {/*           <div
+            className="albums"
+          ></div>
+          <div
+            className="playlist"
+           ></div> */}
+        </>
+        <>
+          <div
+            className={
+              state.listType === 'albums' ? 'albums' : 'albums-list-hidden'
+            } /* ref={resultsRef} */
+          >
+            <Virtuoso
+              data={state.albums}
+              className="albums-list" /*  */
+              style={{ height: `${contSize.height}px` }}
+              /* ref={albumslistRef} */
+              totalCount={state.albums.length}
+              endReached={loadMoreAlbums}
+              components={{
+                Footer: () => {
+                  if (albumsLoading) {
+                    return <div className="item itemloading">Loading...</div>;
+                  }
+                  if (albumsError) {
+                    return <div className="item trackserror">{albumsError}</div>;
+                  }
+                  if (!hasMoreAlbums) {
+                    return <div className="item hasmoretracks">No more results.</div>;
+                  }
+                  return null; // No footer if none of the states apply
+                }
               }}
-            ></div>
-          </>
-        )}
+              /* style={{ height: '390px' }} */
+              itemContent={(index, item) => {
+                return (
+                  <Item
+                    type="folder"
+                    key={getKey()}
+                    id={item.id}
+                    className="item"
+                    href="http://"
+                    val={index}
+                    foldername={item.foldername}
+                    term={item.fullpath}
+                    fullpath={item.fullpath}
+                    handleAlbumTracksRequest={handleAlbumTracksRequest}
+                    /* showContextMenu={handleContextMenu} */
+                    showMore={showMore}
+                    albumPattern={albumPattern}
+                    albumTracksLength={albumTracks.length}
+                    albumsTracks={albumsTracks}
+                  />
+                );
+              }}
+            />
+          </div>
+          {/* 
+          <div className="files"></div>
+          <div className="playlist"></div> */}
+        </>
+        <>
+          <div className={state.listType === 'playlist' ? 'playlist' : 'playlist-list-hidden'}>
+            <Virtuoso
+              ref={playlistRef}
+              data={state.playlistTracks}
+              className="playlist-list"
+              totalCount={state.playlistTracks.length}
+              style={{ height: `${contSize.height}px` }}
+              itemContent={(index, item) => {
+                return (
+                  <Item
+                    type="playlist"
+                    key={getKey()}
+                    divId={`${item.track_id}--item-div`}
+                    className={
+                      `${state.active}--item-div` === `${item.track_id}--item-div`
+                        ? 'item active'
+                        : 'item'
+                    }
+                    href={item.track_id}
+                    id={item.track_id}
+                    like={item.like}
+                    audiofile={item.audiotrack}
+                    val={index}
+                    artist={item.performers ? item.performers : 'not available'}
+                    title={item.title ? item.title : item.audiotrack}
+                    album={item.album ? item.album : 'not available'}
+                  />
+                );
+              }}
+            />
+          </div>
+        </>
       </div>
     </>
   );

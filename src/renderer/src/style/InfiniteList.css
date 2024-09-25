@@ -272,10 +272,12 @@ div #minus path {
   overflow-y: auto;
 }
 
-.files-list-hidden {
+.files-list-hidden,
+.albums-list-hidden,
+.playlist-list-hidden {
   /* z-index: -2; */
   visibility: hidden;
-  height: 393px;
+  height: 0;
 }
 
 /* .albums-list {

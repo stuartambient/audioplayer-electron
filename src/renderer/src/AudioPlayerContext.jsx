@@ -287,11 +287,11 @@ const audioPlayerReducer = (state, action) => {
     case 'set-list-type': {
       return {
         ...state,
-        listType: action.listType,
-        newtrack: action.newtrack,
+        listType: action.listType
+        /*  newtrack: action.newtrack,
         nextTrack: action.nextTrack,
         prevTrack: action.prevTrack,
-        pause: action.pause
+        pause: action.pause */
       };
     }
     case 'playlist-clear': {
