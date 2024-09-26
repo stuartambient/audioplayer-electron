@@ -115,8 +115,6 @@ const useAlbums = (albumsPageNumber, albumsSearchTerm, sortType, resetKey, dispa
         );
 
         if (albumRequest && isSubscribed) {
-          /* console.log('album-request-length: ', albumRequest.length); */
-          console.log('albumRequest: ', albumRequest.length);
           setTimeout(() => {
             dispatch({
               type: 'albums-playlist',

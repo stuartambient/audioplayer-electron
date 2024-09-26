@@ -450,6 +450,10 @@ export const AudioPlayerProvider = ({ children }) => {
     /*  maximized: false, */
     active: '',
     newtrack: '',
+    playlistActive: '',
+    playlistNewtrack: '',
+    tracksActive: '',
+    tracksNewtrack: '',
     playNext: false,
     playPrev: false,
     nextTrack: '',

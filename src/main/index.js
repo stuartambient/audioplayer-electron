@@ -560,7 +560,7 @@ ipcMain.handle('get-cover', async (event, arg) => {
   } else if (!myFile.tag.pictures?.[0]?.data) {
     const folderCover = await searchCover(trackDirectory);
     if (folderCover) {
-      console.log('folder covers (fg) : ', folderCover);
+      console.log('folder cover: ', folderCover);
       return folderCover;
     }
   } else return 0;

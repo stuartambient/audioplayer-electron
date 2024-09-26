@@ -50,10 +50,6 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
 
   const { columns, rows, estimatedSize } = useMemo(() => calculateLayout(), [calculateLayout]);
 
-  useEffect(() => {
-    console.log(columns, rows, estimatedSize);
-  }, [columns, rows, estimatedSize]);
-
   /*   useEffect(() => {
     const handleResize = () => {
       if (parentRef.current) {

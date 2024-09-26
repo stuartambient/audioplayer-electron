@@ -59,10 +59,6 @@ const InfiniteList = memo(() => {
   const resultsRef = useRef(null);
 
   useEffect(() => {
-    console.log('hasMoreAlbums: ', hasMoreAlbums);
-  }, [hasMoreAlbums]);
-
-  useEffect(() => {
     if (resultsRef.current) {
       const handleResize = () => {
         const contDimension = resultsRef.current.getBoundingClientRect();

@@ -59,6 +59,12 @@ function App() {
     const handleError = (e) => {
       const { code, message } = e.target.error; // Note: Adjusted for potential cross-browser compatibility
       console.log(code, message);
+      if (code === 3 && message === 'AUDIO_RENDERER_ERROR: audio render error') {
+        setTimeout(() => {
+          e.target.load(); // Reloads the audio file
+          e.target.play(); // Attempts to play again
+        }, 500); // Adjust delay as necessary
+      }
     };
 
     const handleSeeking = () => {
