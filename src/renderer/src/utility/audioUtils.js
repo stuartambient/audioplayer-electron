@@ -27,7 +27,9 @@ const loadFile = async (file, id, state, dispatch) => {
     });
   }
   state.audioRef.current.load();
-  state.audioRef.current.play();
+  if (!state.pause) {
+    state.audioRef.current.play();
+  }
 };
 
 const handleTrackSelect = (event, state, dispatch, ...params) => {
@@ -41,9 +43,11 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
 
   state.audioRef.current.src = '';
 
+  console.log('pause statuse: ', state.pause);
+
   dispatch({
     type: 'newtrack',
-    pause: false,
+    pause: state.pause,
     newtrack: event.target.getAttribute('val'),
     selectedTrackListType: listType,
     artist: params[0].artist,

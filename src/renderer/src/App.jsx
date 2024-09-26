@@ -52,8 +52,6 @@ function App() {
     const audio = state.audioRef.current;
 
     const handleLoadedMetadata = (e) => {
-      /* console.log('onloadedmetadata: ', e); */
-      /* audio.play(); */
       dispatch({ type: 'duration', duration: convertDuration(audio) });
       dispatch({ type: 'set-delay', delay: true });
     };
@@ -97,6 +95,14 @@ function App() {
     if (!state.pause) state.audioRef.current.play();
   }, [state.pause, state.audioRef.current]);
 
+  /*   useEffect(() => {
+    if (state.active === '') {
+      dispatch({
+        type: 'pause-on-empty'
+      });
+    }
+  }, [state.active, state.pause]); */
+
   useEffect(() => {
     let subscribed = true;
     const changeScreenMode = async () => {
@@ -127,6 +133,7 @@ function App() {
   };
 
   const handlePlayerControls = (e) => {
+    console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
       case 'playlist':
         dispatch({
@@ -138,7 +145,10 @@ function App() {
           type: 'pauseplay'
         });
         break;
+
       case 'backward':
+        if (state.listType === 'albums') return;
+        if (state.listType === 'playlist' && state.playlistTracks.length === 0) return;
         dispatch({
           type: 'direction',
           playNext: false,
@@ -146,6 +156,8 @@ function App() {
         });
         break;
       case 'forward':
+        if (state.listType === 'albums') return;
+        if (state.listType === 'playlist' && !state.playlistTracks.length) return;
         dispatch({
           type: 'direction',
           playPrev: false,

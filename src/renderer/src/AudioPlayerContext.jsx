@@ -13,6 +13,18 @@ const audioPlayerReducer = (state, action) => {
     case 'pauseplay': {
       return { ...state, pause: !state.pause };
     }
+
+    /*     case 'player-pause': {
+      return { ...state, pause: action.pause };
+    }
+
+    case 'player-play': {
+      return { ...state, pause: action.pause };
+    } */
+
+    case 'pause-on-empty': {
+      return { ...state, pause: false };
+    }
     case 'direction': {
       return {
         ...state,
@@ -448,7 +460,7 @@ export const AudioPlayerProvider = ({ children }) => {
     cover: '',
     duration: '',
     currentTime: '',
-    pause: false,
+    pause: true,
     progbarInc: 0,
     volume: 1,
     /* filesPageNumber: 0, */

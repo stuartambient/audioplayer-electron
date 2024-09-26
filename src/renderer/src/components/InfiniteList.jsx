@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useEffect, forwardRef, memo, useMemo } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
+import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
+GiPlayButton;
 import { v4 as uuidv4 } from 'uuid';
 import { Virtuoso } from 'react-virtuoso';
 import MediaMenu from './MediaMenu';
@@ -109,6 +111,9 @@ const InfiniteList = memo(() => {
             Track: {track.track} of {track.trackCount}
           </span>
           <a href={track.audiotrack}>{track.title}</a>
+          <span style={{ backgroundColor: 'transparent' }}>
+            <GiPlayButton style={{ fill: 'var(--blue1' }} />
+          </span>
         </li>
       );
     } else {
@@ -147,6 +152,15 @@ const InfiniteList = memo(() => {
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
+      let trackIndex;
+
+      if (state.listType === 'files') {
+        trackIndex = state.tracks.findIndex((obj) => obj.track_id === trackId);
+      } else if (state.listType === 'playlist') {
+        trackIndex = state.playlistTracks.findIndex((obj) => obj.track_id === trackId);
+      }
+      console.log('trackId: ', trackId, 'index: ', trackIndex);
+
       const changeTrack = new Event('click', {
         bubbles: true,
         cancelable: false
@@ -155,6 +169,18 @@ const InfiniteList = memo(() => {
       const toTrack = document.getElementById(trackId);
       if (toTrack) {
         toTrack.dispatchEvent(changeTrack);
+        /*  } else if (listType === 'files') {
+        fileslistRef.current.scrollToIndex({
+          index: Number(`${trackIndex}`),
+          behavior: 'smooth',
+          align: 'center'
+        });
+      } else if (listType === 'playlist') {
+        playlistRef.current.scrollToIndex({
+          index: Number(`${trackIndex}`),
+          behavior: 'smooth',
+          align: 'center'
+        }); */
       } else {
         console.error(`Element with ID ${trackId} not found in the DOM.`);
       }
@@ -199,8 +225,10 @@ const InfiniteList = memo(() => {
     state.playPrev,
     state.prevTrack,
     state.tracks,
-    state.nextTrack,
-    fileslistRef
+    state.playlistTracks,
+    fileslistRef,
+    playlistRef,
+    state.newtrack
   ]);
 
   const handleTextSearch = (e) => {

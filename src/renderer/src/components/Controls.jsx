@@ -4,18 +4,7 @@ import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 /* import Icon1 from '../assets/icon_1.png'; */
 import '../style/Controls.css';
 
-const Controls = ({
-  isLiked,
-  handlePlayerControls,
-  pause,
-  minimalmode,
-  player,
-  home,
-  library,
-  tracksShuffle,
-  playlistShuffle,
-  listType
-}) => {
+const Controls = ({ handlePlayerControls }) => {
   const { state, dispatch } = useAudioPlayer();
   const controlsClassNames = () => {
     if (state.player && !state.minimalmode) {
@@ -49,7 +38,7 @@ const Controls = ({
         <FaHeart />
       </li>
 
-      {state.pause || state.active === '' ? (
+      {state.pause ? (
         <li className="btn" id="pauseplay" onClick={handlePlayerControls}>
           <GiPlayButton />
         </li>
