@@ -43,20 +43,30 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
 
   state.audioRef.current.src = '';
 
-  console.log('pause statuse: ', state.pause);
+  console.log('newtrack: ', event.target.getAttribute('val'), 'playlist: ', params[0].list);
+  /* 
+  if (
+    (state.activeList === 'tracklistActive' && params[0].list === 'playlistActive') ||
+    (state.active === 'playlistActive' && params[0].list === 'tracklistActive')
+  ) {
+    dispatch({
+      type: 'reset-queue'
+    });
+  } */
 
   dispatch({
     type: 'newtrack',
     pause: state.pause,
     newtrack: event.target.getAttribute('val'),
-    selectedTrackListType: listType,
+    /*     selectedTrackListType: listType, */
     artist: params[0].artist,
     title: params[0].title,
     album: params[0].album,
     active: event.target.id || params[0].active,
     nextTrack: '',
     prevTrack: '',
-    isLiked: params[0].like === 1 ? true : false
+    isLiked: params[0].like === 1 ? true : false,
+    activeList: params[0].list
   });
 
   dispatch({

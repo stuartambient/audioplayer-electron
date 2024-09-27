@@ -123,6 +123,17 @@ const InfiniteList = memo(() => {
 
   const scrollRef = useRef();
 
+  /*   useEffect(() => {
+    if (
+      (state.activeList === 'tracklistActive' && state.listType === 'playlist') ||
+      (state.activeList === 'playlistActive' && state.listType === 'files')
+    ) {
+      dispatch({
+        type: 'reset-queue'
+      });
+    }
+  }, [state.activeList, state.listType]); */
+
   useEffect(() => {
     const setTrackNavigation = (tracksArray) => {
       if (state.newtrack >= 0 && tracksArray[state.newtrack + 1]) {
@@ -144,7 +155,7 @@ const InfiniteList = memo(() => {
     } else if (state.listType === 'playlist' && state.newtrack !== '') {
       setTrackNavigation(state.playlistTracks);
     }
-  }, [state.newtrack, state.tracks, state.playlistTracks]);
+  }, [state.newtrack, state.tracks, state.listType, state.playlistTracks]);
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {

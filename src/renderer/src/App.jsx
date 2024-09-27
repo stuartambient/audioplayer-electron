@@ -132,6 +132,15 @@ function App() {
     return () => (subscribed = false);
   }, [state.minimalmode, state.player, state.miniModePlaylist, state.library]);
 
+  const shouldReturn = () => {
+    return (
+      state.listType === 'albums' ||
+      (state.listType === 'playlist' && state.playlistTracks.length === 0) ||
+      (state.listType === 'files' && state.activeList === 'playlistActive') ||
+      (state.listType === 'playlist' && state.activeList === 'tracklistActive')
+    );
+  };
+
   const handleUpdateLike = async (id) => {
     if (!id) return;
     const updatelike = await window.api.updateLike(id);
@@ -153,8 +162,7 @@ function App() {
         break;
 
       case 'backward':
-        if (state.listType === 'albums') return;
-        if (state.listType === 'playlist' && state.playlistTracks.length === 0) return;
+        if (shouldReturn()) return;
         dispatch({
           type: 'direction',
           playNext: false,
@@ -162,8 +170,7 @@ function App() {
         });
         break;
       case 'forward':
-        if (state.listType === 'albums') return;
-        if (state.listType === 'playlist' && !state.playlistTracks.length) return;
+        if (shouldReturn()) return;
         dispatch({
           type: 'direction',
           playPrev: false,

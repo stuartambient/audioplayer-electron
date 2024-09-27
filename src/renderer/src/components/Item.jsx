@@ -30,7 +30,8 @@ const Item = forwardRef((props, ref) => {
               title: props.title,
               album: props.album,
               audiofile: props.audiofile,
-              like: props.like
+              like: props.like,
+              list: 'tracklistActive'
             })
           }
         >
@@ -92,7 +93,8 @@ const Item = forwardRef((props, ref) => {
               title: props.title,
               album: props.album,
               audiofile: props.audiofile,
-              like: props.like
+              like: props.like,
+              list: 'playlistActive'
             })
           }
         >

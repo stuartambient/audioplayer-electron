@@ -45,7 +45,8 @@ const audioPlayerReducer = (state, action) => {
         nextTrack: action.nextTrack,
         prevTrack: action.prevTrack,
         isLiked: action.isLiked,
-        selectedTrackListType: action.selectedTrackListType
+        activeList: action.activeList
+        /* selectedTrackListType: action.selectedTrackListType */
       };
     }
     case 'duration': {
@@ -164,6 +165,17 @@ const audioPlayerReducer = (state, action) => {
       return {
         ...state,
         tracks: action.tracks
+      };
+    }
+
+    case 'reset-queue': {
+      return {
+        ...state,
+        newtrack: '',
+        nextTrack: '',
+        prevTrack: ''
+        /*         nextTrack: '',
+        prevTrack: '' */
       };
     }
 
@@ -450,7 +462,7 @@ export const AudioPlayerProvider = ({ children }) => {
     /*  maximized: false, */
     active: '',
     newtrack: '',
-    playlistActive: '',
+    activeList: '',
     playlistNewtrack: '',
     tracksActive: '',
     tracksNewtrack: '',
