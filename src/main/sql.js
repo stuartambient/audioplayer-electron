@@ -533,7 +533,7 @@ const allCoversByScroll = (offsetNum, sort, term = null) => {
   } else {
     const searchTerm = `%${term}%`;
     const stmt = db.prepare(
-      `SELECT foldername, fullpath, img FROM albums WHERE fullpath LIKE ? ORDER BY birthtime ${order} LIMIT 100 OFFSET ${
+      `SELECT id, foldername, fullpath, img FROM albums WHERE fullpath LIKE ? ORDER BY birthtime ${order} LIMIT 100 OFFSET ${
         offsetNum * 100
       }`
     );

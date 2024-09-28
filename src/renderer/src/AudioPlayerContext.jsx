@@ -5,8 +5,6 @@ const AudioPlayerContext = createContext();
 
 // Reducer function to manage state updates
 const audioPlayerReducer = (state, action) => {
-  /*   console.log('state: ', state, 'action: ', action); */
-  console.log('action: ', action);
   switch (action.type) {
     case 'library': {
       return { ...state, library: !state.library };
