@@ -84,12 +84,24 @@
   align-items: center;
   justify-content: center;
   height: 106%;
-  font-size: 0.8rem;
+  /* font-size: 0.8rem; */
 }
 
 .overlay span {
   text-align: center;
   margin: 0 0.1rem;
+}
+
+.overlay-text.text-small {
+  font-size: 0.8rem;
+}
+
+.overlay-text.text-medium {
+  font-size: 1.2rem;
+}
+
+.overlay-text.text-large {
+  font-size: 1.5rem;
 }
 
 .imagediv:hover .overlay {

@@ -11,6 +11,7 @@ import {
 } from '../hooks/useTime';
 import { FaHeart, FaBackward, FaForward, FaListUl } from 'react-icons/fa';
 import { GiJetPack, GiPauseButton, GiPlayButton } from 'react-icons/gi';
+import { TbWorldSearch } from 'react-icons/tb';
 import { FiVolume } from 'react-icons/fi';
 import PlayerScrubber from './PlayerScrubber';
 import PlayerVolume from './PlayerVolume';
@@ -80,7 +81,9 @@ const Player = ({ onClick, children }) => {
         </>
       )}
       {state.cover === 'not available' && !state.home && state.delay === true && (
-        <p style={{ gridRow: '2 / 3' }}>No available image</p>
+        <p style={{ gridRow: '2 / 3' }}>
+          No available image - <TbWorldSearch />
+        </p>
       )}
       {!state.minimalmode && (
         <>

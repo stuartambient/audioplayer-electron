@@ -196,7 +196,9 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
       console.log('album-tracks: ', albumTracks);
       dispatch({
         type: 'play-this-album',
-        playlistTracks: albumTracks
+        playlistTracks: albumTracks,
+        list: 'playlistActive'
+        /* pause: false */
       });
       handleTrackSelect(e, state, dispatch, {
         artist: albumTracks[0].performers,
@@ -204,8 +206,10 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
         album: albumTracks[0].album,
         audiofile: albumTracks[0].audiotrack,
         like: albumTracks[0].like,
-        active: albumTracks[0].track_id
+        active: albumTracks[0].track_id,
+        list: 'playlistActive'
       });
+      setTimeout(() => dispatch({ type: 'start-album' }));
     }
   };
 
@@ -276,6 +280,12 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
     'image-large': coverSize === 3
   });
 
+  const coverTextSize = classNames('overlay-text', {
+    'text-small': coverSize === 1,
+    'text-medium': coverSize === 2,
+    'text-large': coverSize === 3
+  });
+
   return (
     <div
       ref={parentRef}
@@ -341,7 +351,9 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
                       <img className={coverImageSize} src={NoImage} alt="" />
                     )}
                     <div className={currentAlbum !== item.id ? 'overlay' : 'overlay active-album'}>
-                      <span id={item.fullpath}>{item.foldername}</span>
+                      <span className={coverTextSize} id={item.fullpath}>
+                        {item.foldername}
+                      </span>
                       <div
                         className="item-menu"
                         id={item.fullpath}

@@ -150,12 +150,18 @@ const InfiniteList = memo(() => {
       }
     };
 
-    if (state.listType === 'files' && state.newtrack !== '') {
+    if (
+      state.listType === 'files' &&
+      state.activeList === 'tracklistActive' /* state.newtrack !== '' */
+    ) {
       setTrackNavigation(state.tracks);
-    } else if (state.listType === 'playlist' && state.newtrack !== '') {
+    } else if (
+      state.listType === 'playlist' &&
+      state.activeList === 'playlistActive' /* state.newtrack !== '' */
+    ) {
       setTrackNavigation(state.playlistTracks);
     }
-  }, [state.newtrack, state.tracks, state.listType, state.playlistTracks]);
+  }, [state.newtrack, state.tracks, state.listType, state.playlistTracks, state.activeList]);
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
@@ -176,18 +182,18 @@ const InfiniteList = memo(() => {
       const toTrack = document.getElementById(trackId);
       if (toTrack) {
         toTrack.dispatchEvent(changeTrack);
-        /*  } else if (listType === 'files') {
+      } else if (listType === 'files') {
         fileslistRef.current.scrollToIndex({
           index: Number(`${trackIndex}`),
           behavior: 'smooth',
-          align: 'center'
+          align: 'start'
         });
       } else if (listType === 'playlist') {
         playlistRef.current.scrollToIndex({
           index: Number(`${trackIndex}`),
           behavior: 'smooth',
-          align: 'center'
-        }); */
+          align: 'start'
+        });
       } else {
         console.error(`Element with ID ${trackId} not found in the DOM.`);
       }
@@ -197,7 +203,7 @@ const InfiniteList = memo(() => {
       fileslistRef.current.scrollToIndex({
         index: Number(`${state.newtrack + 1}`),
         behavior: 'smooth',
-        align: 'center'
+        align: 'start'
       });
       handleTrackChange(state.nextTrack);
     }
@@ -205,7 +211,7 @@ const InfiniteList = memo(() => {
       fileslistRef.current.scrollToIndex({
         index: Number(`${state.newtrack - 1}`),
         behavior: 'smooth',
-        align: 'center'
+        align: 'start'
       });
       handleTrackChange(state.prevTrack);
     }
@@ -214,7 +220,7 @@ const InfiniteList = memo(() => {
       playlistRef.current.scrollToIndex({
         index: Number(`${state.newtrack + 1}`),
         behavior: 'smooth',
-        align: 'center'
+        align: 'start'
       });
       handleTrackChange(state.nextTrack);
     }
@@ -222,7 +228,7 @@ const InfiniteList = memo(() => {
       playlistRef.current.scrollToIndex({
         index: Number(`${state.newtrack - 1}`),
         behavior: 'smooth',
-        align: 'center'
+        align: 'start'
       });
       handleTrackChange(state.prevTrack);
     }

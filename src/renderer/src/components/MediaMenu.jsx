@@ -11,11 +11,11 @@ const MediaMenu = ({
 }) => {
   const { state, dispatch } = useAudioPlayer();
   const handleListType = (type) => {
-    if (type !== 'albums') {
+    /*     if (type !== 'albums') {
       dispatch({
         type: 'reset-queue'
       });
-    }
+    } */
     dispatch({
       type: 'set-list-type',
       listType: type

@@ -6,6 +6,7 @@ const AudioPlayerContext = createContext();
 // Reducer function to manage state updates
 const audioPlayerReducer = (state, action) => {
   /*   console.log('state: ', state, 'action: ', action); */
+  console.log('action: ', action);
   switch (action.type) {
     case 'library': {
       return { ...state, library: !state.library };
@@ -173,7 +174,8 @@ const audioPlayerReducer = (state, action) => {
         ...state,
         newtrack: '',
         nextTrack: '',
-        prevTrack: ''
+        prevTrack: '',
+        active: ''
         /*         nextTrack: '',
         prevTrack: '' */
       };
@@ -254,14 +256,23 @@ const audioPlayerReducer = (state, action) => {
         ...state,
         playlistTracks: action.playlistTracks,
         listType: 'playlist',
-        newtrack: 0
+        newtrack: 0,
+        activeList: action.list
+      };
+    }
+
+    case 'start-album': {
+      return {
+        ...state,
+        pause: false
       };
     }
 
     case 'stop-this-album': {
       return {
         ...state,
-        playlistTracks: []
+        playlistTracks: [],
+        pause: true
       };
     }
 
