@@ -13,14 +13,6 @@ const audioPlayerReducer = (state, action) => {
       return { ...state, pause: !state.pause };
     }
 
-    /*     case 'player-pause': {
-      return { ...state, pause: action.pause };
-    }
-
-    case 'player-play': {
-      return { ...state, pause: action.pause };
-    } */
-
     case 'pause-on-empty': {
       return { ...state, pause: false };
     }
@@ -55,12 +47,6 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    /*     case 'current-time': {
-      return {
-        ...state,
-        currentTime: action.currentTime
-      };
-    } */
     case 'set-next-track': {
       return {
         ...state,
@@ -131,13 +117,6 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    /*     case 'slice-prev-tracks': {
-      return {
-        ...state,
-        tracks: action.tracks
-      };
-    } */
-
     case 'current-playlist': {
       return {
         ...state,
@@ -146,17 +125,9 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    /*     case 'current-playlist-length': {
-      return {
-        ...state,
-        playlistLength: state.playlistTracks.length
-      };
-    } */
-
     case 'albums-playlist': {
       return {
         ...state,
-        /*  tracks: action.tracks */
         albums: [...state.albums, ...action.albums]
       };
     }
@@ -174,8 +145,6 @@ const audioPlayerReducer = (state, action) => {
         nextTrack: '',
         prevTrack: '',
         active: ''
-        /*         nextTrack: '',
-        prevTrack: '' */
       };
     }
 
@@ -218,18 +187,7 @@ const audioPlayerReducer = (state, action) => {
         minimalmode: action.minimalmode
       };
     }
-    /*     case 'library-reload': {
-      return {
-        ...state,
-        libraryReload: action.libraryReload
-      };
-    } */
-    /*   case 'set-maximize': {
-      return {
-        ...state,
-        maximized: action.maximized
-      };
-    } */
+
     case 'load-playlist': {
       return {
         ...state,
@@ -274,17 +232,9 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    /*     case 'update-cover': {
-      return {
-        ...state,
-        covers: action.covers
-      };
-    } */
-
     case 'track-to-playlist': {
       return {
         ...state,
-        /*  tracks: action.tracks */
         playlistTracks: [
           ...state.playlistTracks,
           ...action.playlistTracks.filter(
@@ -309,22 +259,10 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    /*   case 'reset-albums-covers': {
-      return {
-        ...state,
-        covers: action.covers,
-        coversPageNumber: action.coversPageNumber
-      };
-    } */
-
     case 'set-list-type': {
       return {
         ...state,
         listType: action.listType
-        /*  newtrack: action.newtrack,
-        nextTrack: action.nextTrack,
-        prevTrack: action.prevTrack,
-        pause: action.pause */
       };
     }
     case 'playlist-clear': {
@@ -361,22 +299,9 @@ const audioPlayerReducer = (state, action) => {
       };
     }
 
-    /*     case 'shuffled-tracks': {
-      return {
-        ...state,
-        shuffledTracks: action.shuffledTracks
-      };
-    } */
     case 'seeking': {
       return { ...state, seeking: action.seeking };
     }
-    /*  case 'albums-in-playlist': {
-      return {
-        ...state,
-        albumsInPlaylist: action.albumsInPlaylist
-      };
-    } */
-
     case 'covers-date-sort': {
       return {
         ...state,
@@ -423,18 +348,6 @@ const audioPlayerReducer = (state, action) => {
     case 'reset-flash-div':
       return { ...state, flashDiv: null };
 
-    /*    case 'loaded-albums':
-      return {
-        ...state,
-        loadedAlbums: action.loadedAlbums
-      }; */
-
-    /*     case 'remove-from-loaded-albums':
-      return {
-        ...state,
-        loadedAlbums: action.removeAlbum
-      }; */
-
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -472,9 +385,6 @@ export const AudioPlayerProvider = ({ children }) => {
     active: '',
     newtrack: '',
     activeList: '',
-    playlistNewtrack: '',
-    tracksActive: '',
-    tracksNewtrack: '',
     playNext: false,
     playPrev: false,
     nextTrack: '',
@@ -484,11 +394,8 @@ export const AudioPlayerProvider = ({ children }) => {
     album: '',
     cover: '',
     duration: '',
-    currentTime: '',
     pause: true,
-    progbarInc: 0,
     volume: 1,
-    /* filesPageNumber: 0, */
     albums: [],
     albumsPageNumber: 0,
     tracks: [],
@@ -502,21 +409,17 @@ export const AudioPlayerProvider = ({ children }) => {
     playlistTracks: [],
     shuffledTracks: [],
     playlistInOrder: [],
-    albumsInPlaylist: [],
-    loadedAlbums: [],
     listType: 'files',
     selectedTrackListType: 'file',
     searchTermFiles: '',
     searchTermAlbums: '',
     randomize: false,
-    albumPath: '',
     showMore: null,
     delay: false,
     isLiked: false,
     shuffle: false,
     tracksShuffle: false,
     playlistShuffle: false,
-    playlistMode: false,
     seeking: false,
     flashDiv: ''
   };
@@ -529,16 +432,3 @@ export const AudioPlayerProvider = ({ children }) => {
     </AudioPlayerContext.Provider>
   );
 };
-
-/* import React from 'react';
-import ReactDOM from 'react-dom';
-import { AudioPlayerProvider } from './AudioPlayerContext'; // Import the provider
-import App from './App';
-
-ReactDOM.render(
-  <AudioPlayerProvider>
-    <App />
-  </AudioPlayerProvider>,
-  document.getElementById('root')
-);
- */

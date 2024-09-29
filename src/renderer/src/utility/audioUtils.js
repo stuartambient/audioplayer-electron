@@ -43,7 +43,7 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
 
   state.audioRef.current.src = '';
 
-  console.log('newtrack: ', event.target.getAttribute('val'), 'playlist: ', params[0].list);
+  //console.log('newtrack: ', event.target.getAttribute('val'), 'playlist: ', params[0].list);
   /* 
   if (
     (state.activeList === 'tracklistActive' && params[0].list === 'playlistActive') ||
@@ -74,6 +74,10 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
     playNext: false,
     playPrev: false
   });
+
+  /*  dispatch({
+    type: 'usertriggered'
+  }); */
 
   loadFile(params[0].audiofile, event.target.id, state, dispatch);
 };

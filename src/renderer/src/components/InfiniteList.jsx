@@ -135,6 +135,23 @@ const InfiniteList = memo(() => {
   }, [state.activeList, state.listType]); */
 
   useEffect(() => {
+    if (state.newtrack && state.activeList === 'tracklistActive') {
+      fileslistRef.current.scrollToIndex({
+        index: state.newtrack,
+        behavior: 'smooth',
+        align: 'start'
+      });
+    }
+    if (state.newtrack && state.activeList === 'playlistActive') {
+      playlistRef.current.scrollToIndex({
+        index: state.newtrack,
+        behavior: 'smooth',
+        align: 'start'
+      });
+    }
+  }, [state.activeList, state.newtrack, fileslistRef, playlistRef]);
+
+  useEffect(() => {
     const setTrackNavigation = (tracksArray) => {
       if (state.newtrack >= 0 && tracksArray[state.newtrack + 1]) {
         dispatch({
@@ -163,26 +180,24 @@ const InfiniteList = memo(() => {
     }
   }, [state.newtrack, state.tracks, state.listType, state.playlistTracks, state.activeList]);
 
-  useEffect(() => {
-    const handleTrackChange = (trackId) => {
-      let trackIndex;
+  useEffect(
+    () => {
+      const handleTrackChange = (trackId) => {
+        const trackIndex =
+          state.activeList === 'tracklistActive'
+            ? state.tracks.findIndex((obj) => obj.track_id === trackId)
+            : state.playlistTracks.findIndex((obj) => obj.track_id === trackId);
+        console.log('trackId: ', trackId, 'index: ', trackIndex);
 
-      if (state.listType === 'files') {
-        trackIndex = state.tracks.findIndex((obj) => obj.track_id === trackId);
-      } else if (state.listType === 'playlist') {
-        trackIndex = state.playlistTracks.findIndex((obj) => obj.track_id === trackId);
-      }
-      console.log('trackId: ', trackId, 'index: ', trackIndex);
+        const changeTrack = new Event('click', {
+          bubbles: true,
+          cancelable: false
+        });
 
-      const changeTrack = new Event('click', {
-        bubbles: true,
-        cancelable: false
-      });
-
-      const toTrack = document.getElementById(trackId);
-      if (toTrack) {
-        toTrack.dispatchEvent(changeTrack);
-      } else if (listType === 'files') {
+        const toTrack = document.getElementById(trackId);
+        if (toTrack) {
+          toTrack.dispatchEvent(changeTrack);
+        } /*  else if (listType === 'files') {
         fileslistRef.current.scrollToIndex({
           index: Number(`${trackIndex}`),
           behavior: 'smooth',
@@ -194,55 +209,87 @@ const InfiniteList = memo(() => {
           behavior: 'smooth',
           align: 'start'
         });
-      } else {
-        console.error(`Element with ID ${trackId} not found in the DOM.`);
-      }
-    };
+      } */ else {
+          console.error(`Element with ID ${trackId} not found in the DOM.`);
+        }
+      };
 
-    if (state.playNext && state.nextTrack && state.listType === 'files') {
+      if (state.playNext && state.nextTrack && state.newtrack < state.tracks.length - 1) {
+        const listRef = state.listType === 'files' ? fileslistRef : playlistRef;
+        listRef.current.scrollToIndex({
+          index: state.newtrack + 1,
+          behavior: 'smooth',
+          align: 'start'
+        });
+        handleTrackChange(state.nextTrack);
+      }
+
+      if (state.playPrev && state.prevTrack && state.newtrack > 0) {
+        const listRef = state.listType === 'files' ? fileslistRef : playlistRef;
+        listRef.current.scrollToIndex({
+          index: state.newtrack - 1,
+          behavior: 'smooth',
+          align: 'start'
+        });
+        handleTrackChange(state.prevTrack);
+      }
+    },
+
+    /*  if (
+      state.playNext &&
+      state.nextTrack &&
+      state.listType === 'files' &&
+      state.newtrack < state.tracks.length - 1
+    ) {
       fileslistRef.current.scrollToIndex({
-        index: Number(`${state.newtrack + 1}`),
+        index: state.newtrack + 1,
         behavior: 'smooth',
-        align: 'start'
+        align: 'center'
       });
       handleTrackChange(state.nextTrack);
     }
     if (state.playPrev && state.prevTrack && state.listType === 'files') {
       fileslistRef.current.scrollToIndex({
-        index: Number(`${state.newtrack - 1}`),
+        index: state.newtrack - 1,
         behavior: 'smooth',
-        align: 'start'
+        align: 'center'
       });
       handleTrackChange(state.prevTrack);
     }
 
-    if (state.playNext && state.nextTrack && state.listType === 'playlist') {
+    if (
+      state.playNext &&
+      state.nextTrack &&
+      state.listType === 'playlist' &&
+      state.newtrack < state.playlistTracks.length - 1
+    ) {
       playlistRef.current.scrollToIndex({
-        index: Number(`${state.newtrack + 1}`),
+        index: state.newtrack + 1,
         behavior: 'smooth',
-        align: 'start'
+        align: 'center'
       });
       handleTrackChange(state.nextTrack);
     }
     if (state.playPrev && state.prevTrack && state.listType === 'playlist') {
       playlistRef.current.scrollToIndex({
-        index: Number(`${state.newtrack - 1}`),
+        index: state.newtrack - 1,
         behavior: 'smooth',
-        align: 'start'
+        align: 'center'
       });
       handleTrackChange(state.prevTrack);
     }
-  }, [
-    state.playNext,
-    state.nextTrack,
-    state.playPrev,
-    state.prevTrack,
-    state.tracks,
-    state.playlistTracks,
-    fileslistRef,
-    playlistRef,
-    state.newtrack
-  ]);
+  } */ [
+      state.playNext,
+      state.nextTrack,
+      state.playPrev,
+      state.prevTrack,
+      state.tracks,
+      state.playlistTracks,
+      fileslistRef,
+      playlistRef,
+      state.newtrack
+    ]
+  );
 
   const handleTextSearch = (e) => {
     e.preventDefault();

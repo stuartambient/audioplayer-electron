@@ -52,6 +52,7 @@ function App() {
     const audio = state.audioRef.current;
 
     const handleLoadedMetadata = (e) => {
+      console.log('loaded meta data: ', e.target, '----', state.audioRef.current);
       dispatch({ type: 'duration', duration: convertDuration(audio) });
       dispatch({ type: 'set-delay', delay: true });
     };
@@ -60,6 +61,7 @@ function App() {
       const { code, message } = e.target.error; // Note: Adjusted for potential cross-browser compatibility
       console.log(code, message);
       if (code === 3 && message === 'AUDIO_RENDERER_ERROR: audio render error') {
+        console.log('audio: ', state.audioRef.current);
         setTimeout(() => {
           e.target.load(); // Reloads the audio file
           e.target.play(); // Attempts to play again
@@ -132,12 +134,13 @@ function App() {
     return () => (subscribed = false);
   }, [state.minimalmode, state.player, state.miniModePlaylist, state.library]);
 
-  const shouldReturn = () => {
+  const shouldReturn = (direction) => {
     return (
       state.listType === 'albums' ||
       (state.listType === 'playlist' && state.playlistTracks.length === 0) ||
       (state.listType === 'files' && state.activeList === 'playlistActive') ||
-      (state.listType === 'playlist' && state.activeList === 'tracklistActive')
+      (state.listType === 'playlist' && state.activeList === 'tracklistActive') /* ||
+      (direction === 'forward' && state.newtrack >= state.playlistTracks.length - 1) */
     );
   };
 
@@ -162,7 +165,7 @@ function App() {
         break;
 
       case 'backward':
-        if (shouldReturn()) return;
+        if (shouldReturn('backward')) return;
         dispatch({
           type: 'direction',
           playNext: false,
@@ -170,7 +173,7 @@ function App() {
         });
         break;
       case 'forward':
-        if (shouldReturn()) return;
+        if (shouldReturn('forward')) return;
         dispatch({
           type: 'direction',
           playPrev: false,
