@@ -58,7 +58,6 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
     type: 'newtrack',
     pause: state.pause,
     newtrack: event.target.getAttribute('val'),
-    /*     selectedTrackListType: listType, */
     artist: params[0].artist,
     title: params[0].title,
     album: params[0].album,

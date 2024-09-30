@@ -215,23 +215,25 @@ const InfiniteList = memo(() => {
       };
 
       if (state.playNext && state.nextTrack && state.newtrack < state.tracks.length - 1) {
-        const listRef = state.listType === 'files' ? fileslistRef : playlistRef;
+        const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef;
+
         listRef.current.scrollToIndex({
           index: state.newtrack + 1,
           behavior: 'smooth',
           align: 'start'
         });
-        handleTrackChange(state.nextTrack);
+        setTimeout(() => handleTrackChange(state.nextTrack), 100);
       }
 
       if (state.playPrev && state.prevTrack && state.newtrack > 0) {
-        const listRef = state.listType === 'files' ? fileslistRef : playlistRef;
+        const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef;
+
         listRef.current.scrollToIndex({
           index: state.newtrack - 1,
           behavior: 'smooth',
           align: 'start'
         });
-        handleTrackChange(state.prevTrack);
+        setTimeout(() => handleTrackChange(state.prevTrack), 100);
       }
     },
 

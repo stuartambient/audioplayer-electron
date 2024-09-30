@@ -410,7 +410,7 @@ export const AudioPlayerProvider = ({ children }) => {
     shuffledTracks: [],
     playlistInOrder: [],
     listType: 'files',
-    selectedTrackListType: 'file',
+    /*     selectedTrackListType: 'file', */
     searchTermFiles: '',
     searchTermAlbums: '',
     randomize: false,

@@ -179,7 +179,6 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
         type: 'newtrack',
         pause: true,
         newtrack: '',
-        selectedTrackListType: 'playlist',
         artist: '',
         title: '',
         album: '',
