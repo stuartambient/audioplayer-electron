@@ -7,6 +7,7 @@ const handlePicture = (buffer) => {
 };
 
 const loadFile = async (file, id, state, dispatch) => {
+  console.log('loadFile: ', id);
   try {
     state.audioRef.current.src = await `streaming://${file}`;
     /* const buf = await state.audioRef.current.src.arrayBuffer(); */
