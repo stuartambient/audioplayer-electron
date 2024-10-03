@@ -507,6 +507,7 @@ ipcMain.handle('update-covers', async (event) => {
 }); */
 
 ipcMain.handle('get-tracks', async (event, ...args) => {
+  console.log('args: ', args);
   /* console.log('get-tracks'); */
   /* console.log('sort: ', args[2]); */
   if (args[1] === '') {
@@ -763,7 +764,6 @@ ipcMain.handle('open-playlist', async () => {
   if (open.canceled) return 'action cancelled';
   const plfiles = await fs.promises.readFile(open.filePaths.join(), 'utf8');
   const parsedPlFiles = plfiles.replaceAll('\\', '/').split('\n');
-  console.log('parsedPlFiles: ', parsedPlFiles);
   return getPlaylist(parsedPlFiles);
 });
 

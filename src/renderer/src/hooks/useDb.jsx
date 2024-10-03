@@ -293,17 +293,19 @@ const useAllAlbumsCovers = (
 const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
   useEffect(() => {
     let isSubscribed = true;
+
     const openplaylist = async () => {
       try {
         const openpl = await window.api.openPlaylist();
-        if (openpl && isSubscribed) {
+        if (isSubscribed) {
           if (openpl === 'action cancelled') {
-            return setPlaylistReq('');
+            setPlaylistReq('');
           } else {
             dispatch({
               type: 'load-playlist',
               playlistTracks: openpl
             });
+            setPlaylistReq('');
           }
         }
       } catch (e) {
@@ -314,35 +316,29 @@ const usePlaylistDialog = (req, playlistTracks, dispatch, setPlaylistReq) => {
     const saveplaylist = async () => {
       try {
         const savepl = await window.api.savePlaylist(playlistTracks);
-        if (savepl && isSubscribed) {
+        if (isSubscribed) {
           if (savepl === 'action cancelled') {
             setPlaylistReq('');
           } else {
             console.log(savepl);
+            setPlaylistReq(''); // Clear request after handling
           }
-          /* setPlaylistReq(''); */
         }
       } catch (e) {
         console.log(e.message);
       }
     };
+
     if (req === 'playlist-open') {
       openplaylist();
-      /* setPlaylistReq(''); */
-      return () => {
-        isSubscribed = false;
-        /* setPlaylistReq(''); */
-      };
-    }
-    if (req === 'playlist-save') {
+    } else if (req === 'playlist-save') {
       saveplaylist();
-      /* setPlaylistReq(''); */
-      return () => {
-        isSubscribed = false;
-        /* setPlaylistReq(''); */
-      };
     }
-  }, [req]);
+
+    return () => {
+      isSubscribed = false; // Cleanup when component unmounts
+    };
+  }, [req, playlistTracks, dispatch, setPlaylistReq]);
 };
 
 const useGetPlaylists = (setMyPlaylists) => {

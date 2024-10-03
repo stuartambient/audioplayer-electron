@@ -25,8 +25,8 @@ const InfiniteList = memo(() => {
 
   const [albumPattern, setAlbumPattern] = useState('');
   const [showMore, setShowMore] = useState(null);
-  const [filesSortType, setFilesSortType /* scrollRef */] = useState('createdon');
-  const [albumsSortType, setAlbumsSortType /* scrollRef */] = useState('datecreated');
+  const [filesSortType, setFilesSortType] = useState('DESC');
+  const [albumsSortType, setAlbumsSortType] = useState('DESC');
   const [resetKey, setResetKey] = useState(null);
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
   const [isScrolling, setIsScrolling] = useState(true);
@@ -186,28 +186,13 @@ const InfiniteList = memo(() => {
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
-      console.log('trackId: ', trackId);
-      const trackIndex =
-        state.activeList === 'tracklistActive'
-          ? state.tracks.findIndex((obj) => obj.track_id === trackId)
-          : state.playlistTracks.findIndex((obj) => obj.track_id === trackId);
-
       const changeTrack = new Event('click', {
         bubbles: true,
         cancelable: false
       });
 
-      /* const toTrack = document.getElementById(trackId); */
-      console.log(
-        'startindex: ',
-        visibleRange.startIndex,
-        'endIndex: ',
-        visibleRange.endIndex,
-        'trackIndex: ',
-        trackIndex
-      );
-      if (trackIndex >= visibleRange.startIndex && trackIndex <= visibleRange.endIndex) {
-        const toTrack = document.getElementById(trackId);
+      const toTrack = document.getElementById(trackId);
+      if (toTrack) {
         toTrack.dispatchEvent(changeTrack);
       } else {
         console.error(`Element with ID ${trackId} not found in the DOM.`);
@@ -217,12 +202,17 @@ const InfiniteList = memo(() => {
     if (state.playNext && state.nextTrack && state.newtrack < state.tracks.length - 1) {
       const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef;
 
-      /*     listRef.current.scrollToIndex({
+      listRef.current.scrollToIndex({
         index: state.newtrack + 1,
-        behavior: 'auto',
         align: 'start'
-      }); */
-      handleTrackChange(state.nextTrack);
+      });
+      const trackIndex =
+        state.activeList === 'tracklistActive'
+          ? state.tracks.findIndex((obj) => obj.track_id === state.nextTrack)
+          : state.playlistTracks.findIndex((obj) => obj.track_id === state.nextTrack);
+      if (trackIndex >= visibleRange.startIndex && trackIndex <= visibleRange.endIndex) {
+        handleTrackChange(state.nextTrack);
+      }
     }
 
     if (state.playPrev && state.prevTrack && state.newtrack > 0) {
@@ -230,10 +220,16 @@ const InfiniteList = memo(() => {
 
       listRef.current.scrollToIndex({
         index: state.newtrack - 1,
-        behavior: 'auto',
         align: 'start'
       });
-      handleTrackChange(state.prevTrack);
+      const trackIndex =
+        state.activeList === 'tracklistActive'
+          ? state.tracks.findIndex((obj) => obj.track_id === state.prevTrack)
+          : state.playlistTracks.findIndex((obj) => obj.track_id === state.prevTrack);
+
+      if (trackIndex >= visibleRange.startIndex && trackIndex <= visibleRange.endIndex) {
+        handleTrackChange(state.prevTrack);
+      }
     }
   }, [
     state.playNext,
@@ -329,6 +325,7 @@ const InfiniteList = memo(() => {
 
   const handleSortClick = (e) => {
     if (state.tracksShuffle || state.playlistShuffle) return;
+    console.log(e.currentTarget.id);
     if (state.listType === 'files') {
       dispatch({
         type: 'tracks-pagenumber',
@@ -338,7 +335,7 @@ const InfiniteList = memo(() => {
         type: 'reset-tracks',
         tracks: []
       });
-      setFilesSortType(e.currentTarget.value);
+      setFilesSortType(e.currentTarget.id);
     } else if (state.listType === 'albums') {
       dispatch({
         type: 'albums-pagenumber',
@@ -348,7 +345,7 @@ const InfiniteList = memo(() => {
         type: 'reset-albums',
         albums: []
       });
-      setAlbumsSortType(e.currentTarget.value);
+      setAlbumsSortType(e.currentTarget.id);
     }
   };
 
@@ -434,6 +431,8 @@ const InfiniteList = memo(() => {
           handleSortClick={handleSortClick}
           handleTextSearch={handleTextSearch}
           handlePlaylistFiles={handlePlaylistFiles}
+          filesSortType={filesSortType}
+          albumsSortType={albumsSortType}
           /* playlistShuffle={state.playlistShuffle} */
         />
       ) : null}
@@ -569,6 +568,7 @@ const InfiniteList = memo(() => {
             <Virtuoso
               ref={playlistRef}
               data={state.playlistTracks}
+              rangeChanged={setVisibleRange}
               className="playlist-list"
               totalCount={state.playlistTracks.length}
               style={{ height: `${contSize.height}px` }}

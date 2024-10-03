@@ -395,23 +395,7 @@ const searchAlbums = async () => {
 
 const allTracksByScroll = (offsetNum, sort) => {
   console.log('allTracksByScroll');
-  let query;
-  switch (sort) {
-    case 'createdon':
-      query = `SELECT * FROM "audio-tracks" ORDER BY birthtime DESC LIMIT 200 OFFSET $offset`;
-      break;
-    case 'artist':
-      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(performers)) ASC LIMIT 200 OFFSET $offset`;
-      break;
-    case 'title':
-      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(title)) DESC LIMIT 200 OFFSET $offset`;
-      break;
-    case 'genres':
-      query = `SELECT * FROM "audio-tracks" ORDER BY unaccent(lower(genres)) DESC LIMIT 200 OFFSET $offset`;
-      break;
-    default:
-      return;
-  }
+  const query = `SELECT * FROM "audio-tracks" ORDER BY birthtime ${sort} LIMIT 200 OFFSET $offset`;
   const stmt = db.prepare(query);
   return stmt.all({ offset: offsetNum * 200 });
 };
@@ -419,28 +403,8 @@ const allTracksByScroll = (offsetNum, sort) => {
 const allTracksBySearchTerm = (offsetNum, text, sort) => {
   console.log('allTracksBySearchTerm');
   const term = `%${text}%`;
-  let query;
-  let params;
-  switch (sort) {
-    case 'createdon':
-      query = `SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ? ORDER BY birthtime DESC LIMIT 200 OFFSET ?`;
-      params = [term, offsetNum * 200];
-      break;
-    case 'artist':
-      query = `SELECT * FROM "audio-tracks" WHERE performers LIKE ? ORDER BY unaccent(lower(performers)) ASC LIMIT 200 OFFSET ?`;
-      params = [term, offsetNum * 200];
-      break;
-    case 'title':
-      query = `SELECT * FROM "audio-tracks" WHERE title LIKE ? ORDER BY unaccent(lower(title)) DESC LIMIT 200 OFFSET ?`;
-      params = [term, offsetNum * 200];
-      break;
-    case 'genres':
-      query = `SELECT * FROM "audio-tracks" WHERE genres LIKE ? ORDER BY unaccent(lower(genres)) DESC LIMIT 200 OFFSET ?`;
-      params = [term, offsetNum * 200];
-      break;
-    default:
-      return;
-  }
+  const query = `SELECT * FROM "audio-tracks" WHERE audiotrack LIKE ? ORDER BY birthtime ${sort} LIMIT 200 OFFSET ?`;
+  const params = [term, offsetNum * 200];
   const stmt = db.prepare(query);
   return stmt.all(...params);
 };
@@ -460,32 +424,39 @@ const getUpdatedTracks = (tracks) => {
 };
 
 const getPlaylist = (playlist) => {
+  console.log('playlist: ', playlist);
   console.log('getPlaylist');
-  const plfile = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack = ?');
-  /* const assocFiles = files.all(`${albumPath}%`); */
+
+  if (!playlist || playlist.length === 0) {
+    console.log('Empty playlist');
+    return [];
+  }
+
   const albumFiles = [];
+  const plfile = db.prepare('SELECT * FROM "audio-tracks" WHERE audiotrack = ?');
+
   playlist.forEach((pl) => {
-    const file = plfile.get(pl);
-    if (!file) return;
-    albumFiles.push(file);
+    try {
+      const file = plfile.get(pl);
+      if (file) {
+        albumFiles.push(file);
+      } else {
+        console.warn(`File for audiotrack ${pl} not found in the database.`);
+      }
+    } catch (error) {
+      console.error(`Error retrieving audiotrack ${pl}:`, error);
+    }
   });
 
+  console.log('albumFiles: ', albumFiles);
   return albumFiles;
 };
 
 const allAlbumsByScroll = (offsetNum, sort) => {
   console.log('allAlbumsByScroll');
-  let query;
-  switch (sort) {
-    case 'foldername':
-      query = `SELECT * FROM albums ORDER BY unaccent(lower(foldername)) ASC LIMIT 200 OFFSET $offset`;
-      break;
-    case 'datecreated':
-      query = `SELECT * FROM albums ORDER BY birthtime DESC LIMIT 200 OFFSET $offset`;
-      break;
-    default:
-      return;
-  }
+
+  const query = `SELECT * FROM albums ORDER BY birthtime ${sort} LIMIT 200 OFFSET $offset`;
+
   try {
     const stmt = db.prepare(query);
     return stmt.all({ offset: offsetNum * 200 });
@@ -498,20 +469,8 @@ const allAlbumsBySearchTerm = (offsetNum, text, sort) => {
   console.log('allAlbumsBySearchTerm');
   const term = `%${text}%`;
 
-  let query;
-  let params;
-  switch (sort) {
-    case 'foldername':
-      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY unaccent(lower(foldername)) ASC LIMIT 200 OFFSET ?`;
-      params = [term, offsetNum * 200];
-      break;
-    case 'datecreated':
-      query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY datecreated DESC LIMIT 200 OFFSET ?`;
-      params = [term, offsetNum * 200];
-      break;
-    default:
-      return;
-  }
+  const query = `SELECT * FROM albums WHERE fullpath LIKE ? ORDER BY birthtime ${sort} LIMIT 200 OFFSET ?`;
+  const params = [term, offsetNum * 200];
 
   try {
     const stmt = db.prepare(query);

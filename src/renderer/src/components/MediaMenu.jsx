@@ -1,5 +1,7 @@
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { GiMagnifyingGlass } from 'react-icons/gi';
+import { AiFillDownSquare } from 'react-icons/ai';
+import { LuScrollText } from 'react-icons/lu';
 import '../style/MediaMenu.css';
 
 const MediaMenu = ({
@@ -7,7 +9,9 @@ const MediaMenu = ({
   isAlbumsSortSelected,
   handleSortClick,
   handleTextSearch,
-  handlePlaylistFiles
+  handlePlaylistFiles,
+  filesSortType,
+  albumsSortType
 }) => {
   const { state, dispatch } = useAudioPlayer();
   const handleListType = (type) => {
@@ -26,6 +30,13 @@ const MediaMenu = ({
     });
   };
 
+  const handleScrollOption = () => {
+    console.log('scroller');
+    dispatch({
+      type: 'list-scroll-option'
+    });
+  };
+
   const handleInputMenu = async (e) => {
     console.log(e.target);
     await window.api.showTextInputMenu();
@@ -33,86 +44,63 @@ const MediaMenu = ({
   };
 
   return (
+    /*     <div><span className="svg-container" id="desc">
+    <AiFillDownSquare
+      className={coversSortOrder === 'DESC' ? 'sort-icon' : null}
+      style={{ transform: 'rotate(180deg)' }}
+    />
+    
+  </span></div> */
     <ul className={state.miniModePlaylist ? 'media-menu media-menu--minimal' : 'media-menu'}>
       {!state.miniModePlaylist && !state.tracksShuffle && state.listType === 'files' && (
-        <div className="sort-menu">
-          <fieldset>
-            <li className="sort-menu--option">
-              <label htmlFor="new">new</label>
-              <input
-                type="radio"
-                id="createdon"
-                name="sortby"
-                value="createdon"
-                checked={isFilesSortSelected('createdon')}
-                onChange={handleSortClick}
-              />
-            </li>
-            <li className="sort-menu--option">
-              <label htmlFor="artist">artist</label>
-              <input
-                type="radio"
-                id="artist"
-                name="sortby"
-                value="artist"
-                checked={isFilesSortSelected('artist')}
-                onChange={handleSortClick}
-              />
-            </li>
-            <li className="sort-menu--option">
-              <label htmlFor="recent">title</label>
-              <input
-                type="radio"
-                id="title"
-                name="sortby"
-                value="title"
-                checked={isFilesSortSelected('title')}
-                onChange={handleSortClick}
-              />
-            </li>
-            <li className="sort-menu--option">
-              <label htmlFor="genres">genres</label>
-              <input
-                type="radio"
-                id="genres"
-                name="sortby"
-                value="genres"
-                checked={isFilesSortSelected('genres')}
-                onChange={handleSortClick}
-              />
-            </li>
-          </fieldset>
-        </div>
+        <>
+          <div
+            className={state.listScroll ? 'list-scroll' : 'list-scroll disabled'}
+            onClick={handleScrollOption}
+          >
+            <LuScrollText
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the event from bubbling to the <li>
+                handleScrollOption(); // If you want it to handle clicks specifically on the icon
+              }}
+            />
+          </div>
+          <div className="sort-menu">
+            <div className="cover-icons" style={{ display: 'flex', flexDirection: 'column' }}>
+              <span className="svg-container" id="DESC" onClick={handleSortClick}>
+                <AiFillDownSquare
+                  className={filesSortType === 'DESC' ? 'sort-icon' : 'sort-icon-static'}
+                  style={{ transform: 'rotate(180deg)' }}
+                />
+              </span>
+
+              <span className="svg-container" id="ASC" onClick={handleSortClick}>
+                <AiFillDownSquare
+                  className={filesSortType === 'ASC' ? 'sort-icon' : 'sort-icon-static'}
+                />
+              </span>
+            </div>
+          </div>
+        </>
       )}
       {!state.miniModePlaylist && state.listType === 'albums' && (
         <div className="sort-menu">
-          <fieldset>
-            <li className="sort-menu--option">
-              <label htmlFor="new">new</label>
-              <input
-                type="radio"
-                id="datecreated"
-                name="sortby"
-                value="datecreated"
-                checked={isAlbumsSortSelected('datecreated')}
-                onChange={handleSortClick}
+          <div className="cover-icons" style={{ display: 'flex', flexDirection: 'column' }}>
+            <span className="svg-container" id="DESC" onClick={handleSortClick}>
+              <AiFillDownSquare
+                className={albumsSortType === 'DESC' ? 'sort-icon' : 'sort-icon-static'}
+                style={{ transform: 'rotate(180deg)' }}
               />
-            </li>
-            <li className="sort-menu--option">
-              <label htmlFor="artist">album</label>
-              <input
-                type="radio"
-                id="foldername"
-                name="sortby"
-                value="foldername"
-                checked={isAlbumsSortSelected('foldername')}
-                onChange={handleSortClick}
+            </span>
+
+            <span className="svg-container" id="ASC" onClick={handleSortClick}>
+              <AiFillDownSquare
+                className={albumsSortType === 'ASC' ? 'sort-icon' : 'sort-icon-static'}
               />
-            </li>
-          </fieldset>
+            </span>
+          </div>
         </div>
       )}
-
       {/*   <div className="right-side"> */}
       {!state.tracksShuffle && state.listType === 'files' && (
         <li className="form">
@@ -159,17 +147,30 @@ const MediaMenu = ({
         </li>
       )}
       {state.listType === 'playlist' && (
-        <li className="playlist-dialogs">
-          <span id="playlist-clear" onClick={handlePlaylistFiles}>
-            Clear
-          </span>
-          <span id="playlist-open" onClick={handlePlaylistFiles}>
-            Open
-          </span>
-          <span id="playlist-save" onClick={handlePlaylistFiles}>
-            Save
-          </span>
-        </li>
+        <>
+          <div
+            className={state.listScroll ? 'list-scroll-playlist' : 'list-scroll-playlist disabled'}
+            onClick={handleScrollOption}
+          >
+            <LuScrollText
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent the event from bubbling to the <li>
+                handleScrollOption(); // If you want it to handle clicks specifically on the icon
+              }}
+            />
+          </div>
+          <li className="playlist-dialogs">
+            <span id="playlist-clear" onClick={handlePlaylistFiles}>
+              Clear
+            </span>
+            <span id="playlist-open" onClick={handlePlaylistFiles}>
+              Open
+            </span>
+            <span id="playlist-save" onClick={handlePlaylistFiles}>
+              Save
+            </span>
+          </li>
+        </>
       )}
       <li className="tabs" style={{ color: 'white' }}>
         <div

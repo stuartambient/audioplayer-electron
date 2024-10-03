@@ -348,6 +348,12 @@ const audioPlayerReducer = (state, action) => {
     case 'reset-flash-div':
       return { ...state, flashDiv: null };
 
+    case 'list-scroll-option':
+      return {
+        ...state,
+        listScroll: !state.listScroll
+      };
+
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -410,6 +416,7 @@ export const AudioPlayerProvider = ({ children }) => {
     shuffledTracks: [],
     playlistInOrder: [],
     listType: 'files',
+    listScroll: true,
     /*     selectedTrackListType: 'file', */
     searchTermFiles: '',
     searchTermAlbums: '',

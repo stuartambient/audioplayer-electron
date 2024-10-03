@@ -8,11 +8,10 @@
   justify-content: space-around;
   align-items: center; */
   display: grid;
-  grid-template-columns: 300px 1fr;
-  grid-template-areas:
-    'sortmenu form '
-    'sortmenu tabs ';
-  row-gap: 5px;
+  grid-template-columns: 40px 60px 200px 1fr;
+  grid-template-areas: 'sortmenu scrolloption form tabs';
+  /* 'sortmenu tabs '; */
+  /*  row-gap: 5px; */
   background-color: black;
 }
 
@@ -26,9 +25,55 @@
   row-gap: 0;
 }
 
+.media-menu .list-scroll,
+.media-menu .list-scroll-playlist {
+  grid-area: scrolloption;
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-menu .list-scroll,
+.media-menu .list-scroll-playlist {
+  /* grid-area: scrolloption; */
+  width: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.media-menu .list-scroll {
+  grid-area: scrolloption;
+}
+
+.media-menu .list-scroll-playlist {
+  grid-area: sortmenu;
+  margin-left: 20px;
+}
+
+.media-menu .list-scroll:hover,
+.media-menu .list-scroll-playlist:hover {
+  cursor: pointer;
+}
+
+.media-menu .list-scroll svg,
+.media-menu .list-scroll-playlist svg {
+  stroke: var(--blue1);
+  z-index: 0;
+}
+
+.media-menu .list-scroll.disabled svg,
+.media-menu .list-scroll-playlist.disabled svg {
+  stroke: white;
+  z-index: 0;
+}
+
 .media-menu .sort-menu {
   grid-area: sortmenu;
   align-self: center;
+  margin-left: 12px;
+  width: 1em;
 }
 
 .media-menu .sort-menu fieldset {
@@ -46,16 +91,22 @@
   flex-direction: column;
 }
 
+.sort-icon-static {
+  fill: white;
+}
+
 .media-menu .form {
   grid-area: form;
   display: flex;
-  justify-self: center;
+  justify-self: end;
   align-self: center;
+  margin-right: 20px;
   /* justify-self: center; */
 }
 
 .media-menu .playlist-dialogs {
-  grid-area: sortmenu;
+  grid-column: 2 / 4;
+  grid-row: 1 / 3;
   color: white;
   justify-self: end;
   align-self: center;
