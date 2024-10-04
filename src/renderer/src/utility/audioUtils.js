@@ -42,6 +42,10 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
     listType = event.target.getAttribute('fromlisttype');
   }
 
+  if (event.target.id === state.active || params[0].active === state.active) {
+    console.log('state.active: ', state.active, '==>', event.target.id, '----', params[0].active);
+  }
+
   state.audioRef.current.src = '';
 
   //console.log('newtrack: ', event.target.getAttribute('val'), 'playlist: ', params[0].list);

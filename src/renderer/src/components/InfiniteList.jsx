@@ -91,6 +91,15 @@ const InfiniteList = memo(() => {
   }, [state.flashDiv]);
 
   useEffect(() => {
+    if (state.tracksShuffle || !state.tracksShuffle) {
+      dispatch({
+        type: 'shuffle-reset',
+        newtrack: 0
+      });
+    }
+  }, [state.tracksShuffle]);
+
+  useEffect(() => {
     const handleShuffling = () => {
       setShuffledPlaylist(
         state.playlistTracks.map((item) => item).sort((a) => (Math.random() > 0.5 ? 1 : -1))
@@ -171,15 +180,10 @@ const InfiniteList = memo(() => {
       }
     };
 
-    if (
-      state.listType === 'files' &&
-      state.activeList === 'tracklistActive' /* state.newtrack !== '' */
-    ) {
+    if (state.listType === 'files' && state.activeList === 'tracklistActive') {
+      console.log('state list: ', state.listType, state.activeList);
       setTrackNavigation(state.tracks);
-    } else if (
-      state.listType === 'playlist' &&
-      state.activeList === 'playlistActive' /* state.newtrack !== '' */
-    ) {
+    } else if (state.listType === 'playlist' && state.activeList === 'playlistActive') {
       setTrackNavigation(state.playlistTracks);
     }
   }, [state.newtrack, state.tracks, state.listType, state.playlistTracks, state.activeList]);

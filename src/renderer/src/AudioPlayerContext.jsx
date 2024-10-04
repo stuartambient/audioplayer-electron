@@ -285,6 +285,13 @@ const audioPlayerReducer = (state, action) => {
         minimalmodeInfo: action.minimalmodeInfo
       };
     }
+
+    case 'shuffle-reset': {
+      return {
+        ...state,
+        newtrack: action.newtrack
+      };
+    }
     case 'tracks-shuffle': {
       return {
         ...state,
