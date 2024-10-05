@@ -181,7 +181,6 @@ const InfiniteList = memo(() => {
     };
 
     if (state.listType === 'files' && state.activeList === 'tracklistActive') {
-      console.log('state list: ', state.listType, state.activeList);
       setTrackNavigation(state.tracks);
     } else if (state.listType === 'playlist' && state.activeList === 'playlistActive') {
       setTrackNavigation(state.playlistTracks);
@@ -480,11 +479,12 @@ const InfiniteList = memo(() => {
 
                 return (
                   <Item
-                    type="file"
+                    type="files"
                     key={getKey()}
                     divId={`${item.track_id}--item-div`}
                     className={
-                      `${state.active}--item-div` === `${item.track_id}--item-div`
+                      `${state.active}--item-div` === `${item.track_id}--item-div` &&
+                      state.activeList === 'tracklistActive'
                         ? 'item active'
                         : 'item'
                     }
@@ -583,7 +583,8 @@ const InfiniteList = memo(() => {
                     key={getKey()}
                     divId={`${item.track_id}--item-div`}
                     className={
-                      `${state.active}--item-div` === `${item.track_id}--item-div`
+                      `${state.active}--item-div` === `${item.track_id}--item-div` &&
+                      state.activeList === 'playlistActive'
                         ? 'item active'
                         : 'item'
                     }

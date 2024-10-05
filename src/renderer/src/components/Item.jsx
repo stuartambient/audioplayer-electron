@@ -10,7 +10,7 @@ import '../style/FlashEffect.css';
 const Item = forwardRef((props, ref) => {
   const { state, dispatch } = useAudioPlayer();
 
-  if (props.type === 'file') {
+  if (props.type === 'files') {
     const newId = props.divId.split('--')[0];
     return (
       <div
@@ -87,6 +87,7 @@ const Item = forwardRef((props, ref) => {
           href={props.href}
           id={props.id}
           val={props.val}
+          fromlisttype={props.type}
           onClick={(e) =>
             handleTrackSelect(e, state, dispatch, {
               artist: props.artist,

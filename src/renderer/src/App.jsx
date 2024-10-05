@@ -52,7 +52,6 @@ function App() {
     const audio = state.audioRef.current;
 
     const handleLoadedMetadata = (e) => {
-      console.log('loaded meta data: ', e.target, '----', state.audioRef.current);
       dispatch({ type: 'duration', duration: convertDuration(audio) });
       dispatch({ type: 'set-delay', delay: true });
     };

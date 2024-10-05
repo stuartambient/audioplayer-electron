@@ -7,7 +7,6 @@ const handlePicture = (buffer) => {
 };
 
 const loadFile = async (file, id, state, dispatch) => {
-  console.log('loadFile: ', id);
   try {
     state.audioRef.current.src = await `streaming://${file}`;
     /* const buf = await state.audioRef.current.src.arrayBuffer(); */
@@ -34,30 +33,25 @@ const loadFile = async (file, id, state, dispatch) => {
 };
 
 const handleTrackSelect = (event, state, dispatch, ...params) => {
+  console.log('event.target: ', event.target, event.target.getAttribute('fromlisttype'));
+  const listType = event.target.getAttribute('fromlistType');
   event.preventDefault();
-  let listType;
-  if (!event.target.getAttribute('fromlisttype')) {
-    listType = 'playlist';
-  } else {
-    listType = event.target.getAttribute('fromlisttype');
+
+  if (event.target.id) {
+    console.log('event.target.id: ', event.target, '----', state.active);
+    if (event.target.id === state.active) {
+      return;
+    }
   }
 
-  if (event.target.id === state.active || params[0].active === state.active) {
-    console.log('state.active: ', state.active, '==>', event.target.id, '----', params[0].active);
-  }
+  /*   if (params[0].active) {
+    console.log('params: ', event.params[0].active, '----', state.active);
+    if (params[0].active) {
+      return;
+    }
+  } */
 
   state.audioRef.current.src = '';
-
-  //console.log('newtrack: ', event.target.getAttribute('val'), 'playlist: ', params[0].list);
-  /* 
-  if (
-    (state.activeList === 'tracklistActive' && params[0].list === 'playlistActive') ||
-    (state.active === 'playlistActive' && params[0].list === 'tracklistActive')
-  ) {
-    dispatch({
-      type: 'reset-queue'
-    });
-  } */
 
   dispatch({
     type: 'newtrack',
