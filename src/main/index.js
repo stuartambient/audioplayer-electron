@@ -948,14 +948,14 @@ ipcMain.on('show-context-menu', (event, id, type) => {
   const template = [
     {
       label: 'Add Track to Playlist',
-      visible: type === 'file',
+      visible: type === 'files',
       click: () => {
         return event.sender.send('context-menu-command', 'add-track-to-playlist');
       }
     },
     {
       label: 'Edit Track Metadata',
-      visible: type === 'file',
+      visible: type === 'files',
       click: () => {
         return event.sender.send('context-menu-command', 'edit-track-metadata');
       }
