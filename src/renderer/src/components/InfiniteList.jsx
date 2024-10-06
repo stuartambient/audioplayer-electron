@@ -193,9 +193,9 @@ const InfiniteList = memo(() => {
   }, [state.newtrack, state.tracks, state.listType, state.playlistTracks, state.activeList]);
 
   const handleManualChange = (track) => {
-    const listType = state.activeList === 'tracklistActive' ? state.track : state.playlistTracks;
-    const newTrack = state.tracks.findIndex((obj) => obj.track_id === track);
-    console.log('newTrack: ', state.tracks[newTrack]);
+    const listType = state.activeList === 'tracklistActive' ? state.tracks : state.playlistTracks;
+    const newTrack = listType.findIndex((obj) => obj.track_id === track);
+    console.log(listType[newTrack]);
     const evt = {
       preventDefault: () => {
         console.log('preventDefault called');
@@ -204,20 +204,20 @@ const InfiniteList = memo(() => {
         id: track,
         getAttribute: (attr) => {
           const attributes = {
-            val: newTrack // Add your custom attributes here
+            val: newTrack
           };
-          return attributes[attr] || null; // Return the attribute value if it exists
+          return attributes[attr] || null;
         }
       }
     };
     return handleTrackSelect(evt, state, dispatch, {
-      newtrack: newTrack,
-      artist: state.tracks[newTrack].performers,
-      title: state.tracks[newTrack].title,
-      album: state.tracks[newTrack].album,
-      audiofile: state.tracks[newTrack].audiotrack,
-      like: state.tracks[newTrack].like,
-      active: state.tracks[newTrack].track_id,
+      //newtrack: newTrack,
+      artist: listType[newTrack].performers ? listType[newTrack].performers : 'not available',
+      title: listType[newTrack].title ? listType[newTrack].title : listType[newTrack].audiotrack,
+      album: listType[newTrack].album ? listType[newTrack].album : 'not available',
+      audiofile: listType[newTrack].audiotrack,
+      like: listType[newTrack].like,
+      active: listType[newTrack].track_id,
       list: state.activeList
     });
   };
@@ -289,6 +289,7 @@ const InfiniteList = memo(() => {
     state.prevTrack,
     state.tracks,
     state.playlistTracks,
+    state.activeList,
     fileslistRef,
     playlistRef,
     state.newtrack,

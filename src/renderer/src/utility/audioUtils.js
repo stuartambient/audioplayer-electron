@@ -37,8 +37,10 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
   //const listType = event.target.getAttribute('fromlistType');
   event.preventDefault();
 
+  //console.log(event.target.id, '----', event.target.getAttribute('val'), '---', params);
+
   if (event.target.id) {
-    console.log('event.target.id: ', event.target, '----', state.active);
+    //console.log('event.target.id: ', event.target, '----', state.active);
     if (event.target.id === state.active) {
       return;
     }
@@ -56,7 +58,7 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
   dispatch({
     type: 'newtrack',
     pause: state.pause,
-    newtrack: event.target.getAttribute('val') || params[0].newtrack,
+    newtrack: event.target.getAttribute('val'),
     artist: params[0].artist,
     title: params[0].title,
     album: params[0].album,
