@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect, forwardRef, memo, useMemo } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
+import handleTrackSelect from '../utility/audioUtils';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 GiPlayButton;
@@ -147,13 +148,17 @@ const InfiniteList = memo(() => {
     }
   }, [state.activeList, state.listType]); */
 
+  const handleElementOutOfDom = () => {};
+
   useEffect(() => {
-    if (state.newtrack && state.activeList === 'tracklistActive') {
-      fileslistRef.current.scrollToIndex({
-        index: state.newtrack,
-        behavior: 'smooth',
-        align: 'start'
-      });
+    if (state.listScroll) {
+      if (state.newtrack && state.activeList === 'tracklistActive') {
+        fileslistRef.current.scrollToIndex({
+          index: state.newtrack,
+          behavior: 'smooth',
+          align: 'start'
+        });
+      }
     }
     if (state.newtrack && state.activeList === 'playlistActive') {
       playlistRef.current.scrollToIndex({
@@ -187,7 +192,110 @@ const InfiniteList = memo(() => {
     }
   }, [state.newtrack, state.tracks, state.listType, state.playlistTracks, state.activeList]);
 
+  const handleManualChange = (track) => {
+    const listType = state.activeList === 'tracklistActive' ? state.track : state.playlistTracks;
+    const newTrack = state.tracks.findIndex((obj) => obj.track_id === track);
+    console.log('newTrack: ', state.tracks[newTrack]);
+    const evt = {
+      preventDefault: () => {
+        console.log('preventDefault called');
+      },
+      target: {
+        id: track,
+        getAttribute: (attr) => {
+          const attributes = {
+            val: newTrack // Add your custom attributes here
+          };
+          return attributes[attr] || null; // Return the attribute value if it exists
+        }
+      }
+    };
+    return handleTrackSelect(evt, state, dispatch, {
+      newtrack: newTrack,
+      artist: state.tracks[newTrack].performers,
+      title: state.tracks[newTrack].title,
+      album: state.tracks[newTrack].album,
+      audiofile: state.tracks[newTrack].audiotrack,
+      like: state.tracks[newTrack].like,
+      active: state.tracks[newTrack].track_id,
+      list: state.activeList
+    });
+  };
+
   useEffect(() => {
+    const handleTrackChange = (trackId) => {
+      const changeTrack = new Event('click', {
+        bubbles: true,
+        cancelable: false
+      });
+
+      const toTrack = document.getElementById(trackId);
+      if (toTrack) {
+        toTrack.dispatchEvent(changeTrack);
+      } else {
+        console.error(`Element with ID ${trackId} not found in the DOM.`);
+      }
+    };
+
+    const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef;
+
+    const nextIndex =
+      state.activeList === 'tracklistActive'
+        ? state.tracks.findIndex((obj) => obj.track_id === state.nextTrack)
+        : state.playlistTracks.findIndex((obj) => obj.track_id === state.nextTrack);
+
+    const prevIndex =
+      state.activeList === 'tracklistActive'
+        ? state.tracks.findIndex((obj) => obj.track_id === state.prevTrack)
+        : state.playlistTracks.findIndex((obj) => obj.track_id === state.prevTrack);
+
+    if (state.playNext && state.nextTrack && state.newtrack < state.tracks.length - 1) {
+      /*     const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef; */
+
+      if (!state.listScroll) {
+        return handleManualChange(state.nextTrack);
+      }
+
+      if (state.listScroll) {
+        listRef.current.scrollToIndex({
+          index: state.newtrack + 1,
+          align: 'start'
+        });
+        if (nextIndex >= visibleRange.startIndex && nextIndex <= visibleRange.endIndex) {
+          handleTrackChange(state.nextTrack);
+        }
+      }
+    }
+
+    if (state.playPrev && state.prevTrack && state.newtrack > 0) {
+      if (!state.listScroll) {
+        return handleManualChange(state.prevTrack);
+      }
+
+      if (state.listScroll) {
+        listRef.current.scrollToIndex({
+          index: state.newtrack - 1,
+          align: 'start'
+        });
+        if (prevIndex >= visibleRange.startIndex && prevIndex <= visibleRange.endIndex) {
+          handleTrackChange(state.prevTrack);
+        }
+      }
+    }
+  }, [
+    state.playNext,
+    state.nextTrack,
+    state.playPrev,
+    state.prevTrack,
+    state.tracks,
+    state.playlistTracks,
+    fileslistRef,
+    playlistRef,
+    state.newtrack,
+    visibleRange
+  ]);
+
+  /* useEffect(() => {
     const handleTrackChange = (trackId) => {
       const changeTrack = new Event('click', {
         bubbles: true,
@@ -205,16 +313,47 @@ const InfiniteList = memo(() => {
     if (state.playNext && state.nextTrack && state.newtrack < state.tracks.length - 1) {
       const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef;
 
-      listRef.current.scrollToIndex({
-        index: state.newtrack + 1,
-        align: 'start'
-      });
-      const trackIndex =
-        state.activeList === 'tracklistActive'
-          ? state.tracks.findIndex((obj) => obj.track_id === state.nextTrack)
-          : state.playlistTracks.findIndex((obj) => obj.track_id === state.nextTrack);
-      if (trackIndex >= visibleRange.startIndex && trackIndex <= visibleRange.endIndex) {
-        handleTrackChange(state.nextTrack);
+      if (!state.listScroll) {
+        const newTrack = state.tracks.findIndex((obj) => obj.track_id === state.nextTrack);
+        console.log('newTrack: ', state.tracks[newTrack]);
+        const evt = {
+          preventDefault: () => {
+            console.log('preventDefault called');
+          },
+          target: {
+            id: state.nextTrack,
+            getAttribute: (attr) => {
+              const attributes = {
+                val: newTrack
+              };
+              return attributes[attr] || null;
+            }
+          }
+        };
+        return handleTrackSelect(evt, state, dispatch, {
+          newtrack: newTrack,
+          artist: state.tracks[newTrack].performers,
+          title: state.tracks[newTrack].title,
+          album: state.tracks[newTrack].album,
+          audiofile: state.tracks[newTrack].audiotrack,
+          like: state.tracks[newTrack].like,
+          active: state.tracks[newTrack].track_id,
+          list: 'tracklistActive'
+        });
+      }
+
+      if (state.listScroll) {
+        listRef.current.scrollToIndex({
+          index: state.newtrack + 1,
+          align: 'start'
+        });
+        const trackIndex =
+          state.activeList === 'tracklistActive'
+            ? state.tracks.findIndex((obj) => obj.track_id === state.nextTrack)
+            : state.playlistTracks.findIndex((obj) => obj.track_id === state.nextTrack);
+        if (trackIndex >= visibleRange.startIndex && trackIndex <= visibleRange.endIndex) {
+          handleTrackChange(state.nextTrack);
+        }
       }
     }
 
@@ -245,7 +384,7 @@ const InfiniteList = memo(() => {
     playlistRef,
     state.newtrack,
     visibleRange
-  ]);
+  ]); */
 
   const handleTextSearch = (e) => {
     e.preventDefault();

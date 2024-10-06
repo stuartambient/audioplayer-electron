@@ -33,8 +33,8 @@ const loadFile = async (file, id, state, dispatch) => {
 };
 
 const handleTrackSelect = (event, state, dispatch, ...params) => {
-  console.log('event.target: ', event.target, event.target.getAttribute('fromlisttype'));
-  const listType = event.target.getAttribute('fromlistType');
+  //console.log('event.target: ', event.target, event.target.getAttribute('fromlisttype'));
+  //const listType = event.target.getAttribute('fromlistType');
   event.preventDefault();
 
   if (event.target.id) {
@@ -56,7 +56,7 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
   dispatch({
     type: 'newtrack',
     pause: state.pause,
-    newtrack: event.target.getAttribute('val'),
+    newtrack: event.target.getAttribute('val') || params[0].newtrack,
     artist: params[0].artist,
     title: params[0].title,
     album: params[0].album,
