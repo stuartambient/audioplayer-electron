@@ -200,9 +200,9 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
         /* pause: false */
       });
       handleTrackSelect(e, state, dispatch, {
-        artist: albumTracks[0].performers,
-        title: albumTracks[0].title,
-        album: albumTracks[0].album,
+        artist: albumTracks[0].performers ? albumTracks[0].performers : 'not available',
+        title: albumTracks[0].title ? albumTracks[0].title : albumTracks[0].audiotrack,
+        album: albumTracks[0].album ? albumTracks[0].album : 'not available',
         audiofile: albumTracks[0].audiotrack,
         like: albumTracks[0].like,
         active: albumTracks[0].track_id,
