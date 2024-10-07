@@ -92,8 +92,13 @@
   grid-row: 2 / 3;
 }
 
+.meta-update-results {
+  grid-column: 3 / 4;
+  grid-row: 4 / 5;
+}
+
 .cover-update-results {
-  grid-column: 1 / 2;
+  grid-column: 2 /3;
   grid-row: 4 / 5;
 }
 

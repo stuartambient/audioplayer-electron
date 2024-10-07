@@ -13,7 +13,7 @@ const run = async (cb) => {
     const stats = await fs.promises.stat(r.audiotrack);
     const lastModified = stats.mtimeMs;
     if (lastModified > r.modified) {
-      updatedTracks.push(r /* .audiotrack */);
+      updatedTracks.push(r);
     }
   }
   if (!updatedTracks.length) {
@@ -25,9 +25,9 @@ const run = async (cb) => {
     const { audiotrack, ...rest } = obj;
     return { id: audiotrack, ...rest };
   });
+
   const updatedMeta = await parseMeta(moddedArray, 'mod');
-  /*  Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta)); */
-  console.log('updatedMeta: ', updatedMeta);
+  Promise.resolve(await refreshMetadata(updatedMeta)).then((response) => cb(updatedMeta));
 };
 /* Promise.resolve(await refreshMetadata(updatedMeta)) */
 /*     .then((message) => {

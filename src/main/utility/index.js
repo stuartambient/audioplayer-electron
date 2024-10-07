@@ -8,7 +8,7 @@ import { File } from 'node-taglib-sharp';
 import Database from 'better-sqlite3';
 import processFile from '../processProblemTracks';
 
-/* const mode = import.meta.env.MODE;
+const mode = import.meta.env.MODE;
 const dbPath =
   mode === 'development'
     ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
@@ -22,7 +22,7 @@ const getRoots = () => {
   newestRoots = roots.all().map((row) => row.root);
 };
 
-getRoots(); */
+getRoots();
 
 const streamFinished = promisify(finished);
 

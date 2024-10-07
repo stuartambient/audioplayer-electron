@@ -160,12 +160,14 @@ const InfiniteList = memo(() => {
         });
       }
     }
-    if (state.newtrack && state.activeList === 'playlistActive') {
-      playlistRef.current.scrollToIndex({
-        index: state.newtrack,
-        behavior: 'smooth',
-        align: 'start'
-      });
+    if (state.listScroll) {
+      if (state.newtrack && state.activeList === 'playlistActive') {
+        playlistRef.current.scrollToIndex({
+          index: state.newtrack,
+          behavior: 'smooth',
+          align: 'start'
+        });
+      }
     }
   }, [state.activeList, state.newtrack, fileslistRef, playlistRef]);
 

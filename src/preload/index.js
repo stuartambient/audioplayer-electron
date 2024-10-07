@@ -23,8 +23,8 @@ contextBridge.exposeInMainWorld('api', {
   appMinimize: () => ipcRenderer.send('minimize'),
   appMaximize: () => ipcRenderer.send('maximize'),
   appClose: () => ipcRenderer.send('app-close'),
-  fileUpdateDetails: () => ipcRenderer.invoke('file-update-details'),
-  folderUpdateDetails: () => ipcRenderer.invoke('folder-update-details'),
+  /*   fileUpdateDetails: () => ipcRenderer.invoke('file-update-details'), */
+  /* folderUpdateDetails: () => ipcRenderer.invoke('folder-update-details'), */
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
   updateLike: (id) => ipcRenderer.invoke('update-like', id),
   isLiked: (id) => ipcRenderer.invoke('is-liked', id),
@@ -35,7 +35,7 @@ contextBridge.exposeInMainWorld('api', {
   openPlaylist: () => ipcRenderer.invoke('open-playlist'),
   savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks),
   getPlaylists: () => ipcRenderer.invoke('get-playlists'),
-  homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id),
+  /* homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id), */
   getCovers: (coversPageNum, coversSearchTerm, coversDateSort, coversMissingReq) =>
     /* console.log('missing req: ', coversMissingReq); */
     ipcRenderer.invoke(
@@ -59,7 +59,7 @@ contextBridge.exposeInMainWorld('api', {
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
   updateMeta: () => ipcRenderer.invoke('update-meta'),
   genresStat: () => ipcRenderer.invoke('genres-stat'),
-  foldersStat: (dirs) => ipcRenderer.invoke('folders-stat', dirs),
+  /* foldersStat: (dirs) => ipcRenderer.invoke('folders-stat', dirs), */
   distinctDirectories: () => ipcRenderer.invoke('distinct-directories'),
   getTracksByArtist: (artist, listType) =>
     ipcRenderer.invoke('get-tracks-by-artist', artist, listType),
@@ -108,7 +108,7 @@ contextBridge.exposeInMainWorld('api', {
   getRoots: () => ipcRenderer.invoke('get-roots'),
   updateRoots: (roots) => ipcRenderer.invoke('update-roots', roots),
   getFolderPath: (folderName) => ipcRenderer.invoke('get-folder-path', folderName),
-  selectFolder: () => ipcRenderer.invoke('select-folder'),
+  /* selectFolder: () => ipcRenderer.invoke('select-folder'), */
   // startDrag: (folderName) => ipcRenderer.send('ondragstart', path.join(process.cwd(), fileName)),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });

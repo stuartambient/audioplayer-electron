@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Loader from './Loader';
 import RootsForm from './RootsForm';
 import DragDropFolderInput from './DragDropFolderInput';
-import FolderSelector from './FolderSelector';
+/* import FolderSelector from './FolderSelector'; */
 import NativeDragDropFolderInput from './NativeDragDropFolderInput';
 import { AiOutlineFolderOpen, AiOutlineFileAdd, AiOutlineDeploymentUnit } from 'react-icons/ai';
 import { GrConfigure } from 'react-icons/gr';
@@ -18,16 +18,16 @@ const Update = () => {
   const [folderUpdateResults, setFolderUpdateResults] = useState();
   const [metaUpdateResults, setMetaUpdateResults] = useState();
   const [coverUpdateResults, setCoverUpdateResults] = useState();
-  const [folderUpdateDetails, setFolderUpdateDetails] = useState();
-  const [fileUpdateDetails, setFileUpdateDetails] = useState();
+  /*  const [folderUpdateDetails, setFolderUpdateDetails] = useState(); */
+  /*   const [fileUpdateDetails, setFileUpdateDetails] = useState(); */
   const [folderUpdateReq, setFolderUpdateReq] = useState();
   const [fileUpdateReq, setFileUpdateReq] = useState();
   const [metaUpdateReq, setMetaUpdateReq] = useState();
   const [coverUpdateReq, setCoverUpdateReq] = useState();
   const [rootsUpdateReq, setRootsUpdateReq] = useState(false);
   const [rootDirs, setRootDirs] = useState([]);
-  const [showFileDetails, setShowFileDetails] = useState();
-  const [showFolderDetails, setShowFolderDetails] = useState();
+  /* const [showFileDetails, setShowFileDetails] = useState(); */
+  /*  const [showFolderDetails, setShowFolderDetails] = useState(); */
 
   useEffect(() => {
     const handleFileUpdateComplete = (result) => {
@@ -73,8 +73,6 @@ const Update = () => {
     };
   }, []);
 
-  useEffect(() => {}, [fileUpdateResults]);
-
   const handleUpdates = async (e) => {
     e.preventDefault();
     switch (e.currentTarget.id) {
@@ -113,24 +111,7 @@ const Update = () => {
 
   /* const foldersUpdate = await window.api.updateFolders(); */
 
-  useEffect(() => {
-    /*  const getFilesUpdateDetails = async () => {
-      const updateFilesFile = await window.api.fileUpdateDetails();
-      setFileUpdateDetails(updateFilesFile);
-    }; */
-    const getFoldersUpdateDetails = async () => {
-      const updateFoldersFile = await window.api.folderUpdateDetails();
-      setFolderUpdateDetails(updateFoldersFile);
-    };
-    if (showFileDetails) {
-      getFilesUpdateDetails();
-    }
-    if (showFolderDetails) {
-      getFoldersUpdateDetails();
-    }
-  }, [showFileDetails, showFolderDetails]);
-
-  const handleDetailsRequest = async (e) => {
+  /*   const handleDetailsRequest = async (e) => {
     switch (e.target.id) {
       case 'file':
         setShowFileDetails(!showFileDetails);
@@ -141,7 +122,7 @@ const Update = () => {
       default:
         return;
     }
-  };
+  }; */
   return (
     <div className="update-container">
       <>
@@ -166,33 +147,24 @@ const Update = () => {
           <NativeDragDropFolderInput rootDirs={rootDirs} setRootDirs={setRootDirs} />
         )}
       </>
-      {fileUpdateReq ? (
+      {fileUpdateReq && (
         <div className="file-update-results">
           <Loader />
         </div>
-      ) : (
-        <div className="file-update-details" onClick={handleDetailsRequest} id="file">
-          File update details
-        </div>
       )}
-      {folderUpdateReq ? (
+
+      {folderUpdateReq && (
         <div className="folder-update-results">
           <Loader />
         </div>
-      ) : (
-        <div className="folder-update-details" onClick={handleDetailsRequest} id="folder">
-          Folder update details
-        </div>
       )}
-      {coverUpdateReq ? (
+
+      {coverUpdateReq && (
         <div className="cover-update-results">
           <Loader />
         </div>
-      ) : (
-        <div className="cover-update-details" onClick={handleDetailsRequest} id="cover">
-          <span>Cover update details</span>
-        </div>
       )}
+
       {metaUpdateReq && (
         <div className="meta-update-results">
           <Loader />
@@ -231,23 +203,23 @@ const Update = () => {
       {/* <div className="file-update-details" onClick={handleDetailsRequest} id="file">
         File update details
       </div> */}
-      {showFileDetails && fileUpdateDetails && (
+      {/*  {showFileDetails && fileUpdateDetails && (
         <TextEditor
           title="File - updates"
           text={fileUpdateDetails}
           closeFileDetails={setShowFileDetails}
         />
-      )}
+      )} */}
       {/* <div className="folder-update-details" onClick={handleDetailsRequest} id="folder">
         Folder update details
       </div>{' '} */}
-      {showFolderDetails && folderUpdateDetails && (
+      {/*   {showFolderDetails && folderUpdateDetails && (
         <TextEditor
           title="Folder - updates"
           text={folderUpdateDetails}
           closeFolderDetails={setShowFolderDetails}
         />
-      )}
+      )} */}
     </div>
   );
 };
