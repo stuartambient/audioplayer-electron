@@ -41,6 +41,17 @@ const Update = () => {
   }, []);
 
   useEffect(() => {
+    const handleMetaUpdateComplete = (result) => {
+      setMetaUpdateReq(false);
+      setMetaUpdateResults(result);
+    };
+    window.api.onUpdateMetadata(handleMetaUpdateComplete);
+    return () => {
+      window.api.off('file-update-complete', handleMetaUpdateComplete);
+    };
+  }, []);
+
+  useEffect(() => {
     const reqRoots = async () => {
       const rootFolders = await window.api.getRoots();
       //console.log('rootFolders: ', rootFolders);
@@ -92,8 +103,8 @@ const Update = () => {
       case 'metafiles':
         setMetaUpdateReq(true);
         const modifiedMeta = await window.api.updateMeta();
-        setMetaUpdateResults(modifiedMeta);
-        setMetaUpdateReq(false);
+        /* setMetaUpdateResults(modifiedMeta);
+        setMetaUpdateReq(false); */
         break;
       case 'coversupdate':
         setCoverUpdateReq(true);
@@ -191,7 +202,7 @@ const Update = () => {
       <div className="meta-update-results">
         {metaUpdateResults && (
           <>
-            <p>Changed: {metaUpdateResults.new.length}</p>
+            <p>Changed: {metaUpdateResults.new === '' ? 0 : metaUpdateResults.new}</p>
             {/* <p>Deleted: {folderUpdateResults.deleted.length}</p> */}
             {metaUpdateResults.nochange === true ? <p>No changes</p> : <p>See changes</p>}
           </>

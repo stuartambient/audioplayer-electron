@@ -36,9 +36,10 @@ import createUpdateTagsWorker from './updateTagsWorker?nodeWorker';
 import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
 import createUpdateFoldersWorker from './updateFoldersWorker?nodeWorker';
 import createUpdateCoversWorker from './updateCoversWorker?nodeWorker';
+import createUpdateMetadataWorker from './updateMetadataWorker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { writeFile, convertToUTC, parseMeta } from './utility/index.js';
+import { writeFile, convertToUTC /* , parseMeta */ } from './utility/index.js';
 import searchCover from './folderImageCheck.js';
 import db from './connection.js';
 
@@ -83,7 +84,7 @@ import {
 } from './stats';
 /* import initFiles from './updateFiles'; */
 import initCovers from './updateFolderCovers';
-import initUpdateMetadata from './updateMetadata';
+/* import initUpdateMetadata from './updateMetadata'; */
 import updateTags from './updateTags';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -400,17 +401,34 @@ ipcMain.handle('update-files', async (event) => {
   }
 });
 
-ipcMain.handle('update-meta', async () => {
-  let result; // Define result outside the try-catch block
+ipcMain.handle('update-meta', async (event) => {
+  const senderWebContents = event.sender;
+  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
+  const targetWindow = BrowserWindow.fromId(senderWindow.id);
 
   try {
-    result = await initUpdateMetadata();
-    console.log(result);
-  } catch (e) {
-    console.log('meta error: ', e.message);
+    const workerPath = process.resourcesPath;
+    await createUpdateMetadataWorker({
+      workerData: workerPath
+    })
+      .on('message', (message) => {
+        console.log('message from worker: ', message);
+        mainWindow.webContents.send('meta-update-complete', getObjectWithLengths(message.result));
+      })
+      .on('error', (err) => {
+        console.error('Worker error:', err);
+      })
+      .on('exit', (code) => {
+        if (code !== 0) {
+          const errorMessage = `Worker stopped with exit code ${code}`;
+          console.error(errorMessage);
+        }
+      })
+      .postMessage('');
+  } catch (error) {
+    console.error('Worker encountered an error:', error);
+    console.log('Handling subsequent code after worker error.');
   }
-
-  return result; // This will now always return result, whether an error occurred or not
 });
 
 /* function escapeSpecialChars(path) {
@@ -828,6 +846,13 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       visible: type === 'playlist',
       click: () => {
         return event.sender.send('context-menu-command', 'remove-from-playlist');
+      }
+    },
+    {
+      label: 'Edit Track Metadata',
+      visible: type === 'playlist',
+      click: () => {
+        return event.sender.send('context-menu-command', 'edit-track-metadata');
       }
     },
     {

@@ -90,6 +90,11 @@ contextBridge.exposeInMainWorld('api', {
       cb(result);
     });
   },
+  onUpdateMetadata: (cb) => {
+    ipcRenderer.on('meta-update-complete', (event, result) => {
+      cb(result);
+    });
+  },
   onUpdateCovers: (cb) => {
     ipcRenderer.on('cover-update-complete', (event, result) => {
       /* console.log('Preload: Received file-update-complete event', event, result); */
