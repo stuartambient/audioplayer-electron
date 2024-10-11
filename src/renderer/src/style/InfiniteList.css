@@ -120,6 +120,11 @@
   grid-column: 1/ 2;
 }
 
+.item:hover {
+  background-color: var(--blue3);
+  /*  border: 1px solid yellow; */
+}
+
 .flash {
   animation-name: flash;
   animation-duration: 1s;

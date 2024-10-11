@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useReducer, useContext, createContext } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import classNames from 'classnames';
+import { handleManualChange } from './utility/audioUtils';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 import { FaForward, FaBackward, FaListUl, FaHeart } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
@@ -58,13 +59,19 @@ function App() {
 
     const handleError = (e) => {
       const { code, message } = e.target.error; // Note: Adjusted for potential cross-browser compatibility
-      console.log(code, message);
+      console.log('code: ', code, 'message: ', message, 'e target: ', e.target);
       if (code === 3 && message === 'AUDIO_RENDERER_ERROR: audio render error') {
-        console.log('audio: ', state.audioRef.current);
-        setTimeout(() => {
+        console.log(code, message);
+        /*  setTimeout(() => {
           e.target.load(); // Reloads the audio file
           e.target.play(); // Attempts to play again
-        }, 500); // Adjust delay as necessary
+        }, 500);  */
+        // Adjust delay as necessary
+      }
+      if (code === 4) {
+        if (state.nextTrack) {
+          handleManualChange(state.nextTrack, state, dispatch);
+        }
       }
     };
 
@@ -152,6 +159,11 @@ function App() {
   const handlePlayerControls = (e) => {
     console.log(e.currentTarget.id);
     switch (e.currentTarget.id) {
+      case 'stop':
+        dispatch({
+          type: 'reset'
+        });
+        break;
       case 'playlist':
         dispatch({
           type: 'library'

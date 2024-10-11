@@ -6,23 +6,6 @@ import { parentPort, workerData } from 'worker_threads';
 import { v4 as uuidv4 } from 'uuid';
 import { File } from 'node-taglib-sharp';
 import Database from 'better-sqlite3';
-/* import processFile from '../processProblemTracks'; */
-
-/* const mode = import.meta.env.MODE;
-const dbPath =
-  mode === 'development'
-    ? path.join(process.cwd(), import.meta.env.MAIN_VITE_DB_PATH_DEV)
-    : path.join(process.resourcesPath, 'music.db');
-
-const db = new Database(dbPath);
-let newestRoots;
-const getRoots = () => {
-  const roots = db.prepare('SELECT root FROM roots');
-
-  newestRoots = roots.all().map((row) => row.root);
-};
-
-getRoots(); */
 
 const streamFinished = promisify(finished);
 
@@ -67,22 +50,5 @@ const findRoot = (file) => {
   }
   return 'No root found';
 };
-
-/* const checkDataType = (entry) => {
-  if (entry === undefined || entry === null) {
-    return null;
-  } else if (Array.isArray(entry)) {
-    return entry.join(', ');
-  } else if (typeof entry === 'object' && !Array.isArray(entry)) {
-    return Object.values(entry).join(', ');
-  } else if (typeof entry === 'string') {
-    return entry;
-  } else if (typeof entry === 'number') {
-    return Number(entry);
-  } else if (typeof entry === 'boolean') {
-    if (entry === true) return 1;
-    return 0;
-  }
-}; */
 
 export { writeFile, convertToUTC };

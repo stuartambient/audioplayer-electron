@@ -29,6 +29,10 @@
   border-right: 1px inset var(--blue1);
 }
 
+.audio-player .extras .btn:hover {
+  cursor: pointer;
+}
+
 .audio-player .extras .off {
   visibility: hidden;
 }

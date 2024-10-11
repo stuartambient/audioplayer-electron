@@ -9,6 +9,7 @@ import { ImCancelCircle } from 'react-icons/im';
 import CustomLoadingOverlay from './CustomLoadingOverlay';
 import CustomToolPanel from './CustomToolPanel';
 import EditForm from './EditForm';
+import { openChildWindow } from '../ChildWindows/openChildWindow';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
 /* import CustomContextMenu from './ContextMenu'; */
 import PlayButtonRenderer from './PlayButtonRenderer';
@@ -130,6 +131,16 @@ const AGGrid = ({ reset, data, playButton }) => {
       hiddenColumns.map((col) => col.getColId())
     ); */
   };
+
+  useEffect(() => {
+    const handlePictureMenu = (menu) => {
+      console.log('menu: ', menu);
+    };
+    metadataEditingApi.onContextMenuCommand(handlePictureMenu);
+    return () => {
+      metadataEditingApi.off('context-menu-command', handlePictureMenu);
+    };
+  }, []);
 
   const IconCellRenderer = () => (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -425,10 +436,12 @@ const AGGrid = ({ reset, data, playButton }) => {
   const handleCellContextMenu = (params) => {
     params.event.preventDefault(); // Prevent default context menu
     /* showContextMenu(params.data, params.event.clientX, params.event.clientY); */
-    const album = params.data.album;
-    const artist = params.data.albumArtists || params.data.performers;
+    if (params.colDef.field === 'pictures') {
+      const album = params.data.album;
+      const artist = params.data.albumArtists || params.data.performers;
 
-    window.metadataEditingApi.showContextMenu(`${artist} - ${album}`, 'picture');
+      window.metadataEditingApi.showContextMenu(`${artist} - ${album}`, 'picture');
+    }
   };
 
   /*   const loadingOverlayComponent = useMemo(() => {

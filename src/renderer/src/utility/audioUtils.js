@@ -33,27 +33,15 @@ const loadFile = async (file, id, state, dispatch) => {
 };
 
 const handleTrackSelect = (event, state, dispatch, ...params) => {
-  //console.log('event.target: ', event.target, event.target.getAttribute('fromlisttype'));
-  //const listType = event.target.getAttribute('fromlistType');
   event.preventDefault();
 
-  //console.log(event.target.id, '----', event.target.getAttribute('val'), '---', params);
-
   if (event.target.id) {
-    //console.log('event.target.id: ', event.target, '----', state.active);
     if (event.target.id === state.active) {
       return;
     }
   }
 
-  /*   if (params[0].active) {
-    console.log('params: ', event.params[0].active, '----', state.active);
-    if (params[0].active) {
-      return;
-    }
-  } */
-
-  state.audioRef.current.src = '';
+  //state.audioRef.current.src = '';
 
   dispatch({
     type: 'newtrack',
@@ -74,12 +62,41 @@ const handleTrackSelect = (event, state, dispatch, ...params) => {
     playNext: false,
     playPrev: false
   });
+  try {
+    loadFile(params[0].audiofile, event.target.id, state, dispatch);
+  } catch (error) {
+    console.error('error: ', error);
+  }
+};
 
-  /*  dispatch({
-    type: 'usertriggered'
-  }); */
-
-  loadFile(params[0].audiofile, event.target.id, state, dispatch);
+export const handleManualChange = (track, state, dispatch) => {
+  const listType = state.activeList === 'tracklistActive' ? state.tracks : state.playlistTracks;
+  const newTrack = listType.findIndex((obj) => obj.track_id === track);
+  console.log(listType[newTrack]);
+  const evt = {
+    preventDefault: () => {
+      console.log('preventDefault called');
+    },
+    target: {
+      id: track,
+      getAttribute: (attr) => {
+        const attributes = {
+          val: newTrack
+        };
+        return attributes[attr] || null;
+      }
+    }
+  };
+  return handleTrackSelect(evt, state, dispatch, {
+    //newtrack: newTrack,
+    artist: listType[newTrack].performers ? listType[newTrack].performers : 'not available',
+    title: listType[newTrack].title ? listType[newTrack].title : listType[newTrack].audiotrack,
+    album: listType[newTrack].album ? listType[newTrack].album : 'not available',
+    audiofile: listType[newTrack].audiotrack,
+    like: listType[newTrack].like,
+    active: listType[newTrack].track_id,
+    list: state.activeList
+  });
 };
 
 export default handleTrackSelect;

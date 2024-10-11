@@ -38,13 +38,13 @@ const MainNav = ({ onClick }) => {
               <span>Player</span>
             </li>
             <li onClick={onClick} id="playerplaylist" className={state.player ? 'highlight' : ''}>
-              <span>Player/Playlist</span>
+              <span>Lists</span>
             </li>
             <li onClick={onClick} id="mini-mode" className="endline">
               <span>Miniplayer</span>
             </li>
             <li onClick={onClick} id="albums" className={state.home ? 'highlight' : ''}>
-              <span>Albums</span>
+              <span>Covers</span>
             </li>
             <li onClick={onClick} id="tag-editor" className={state.tagEditor ? 'highlight' : ''}>
               <span>Tags</span>

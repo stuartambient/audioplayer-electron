@@ -16,8 +16,8 @@ contextBridge.exposeInMainWorld('metadataEditingApi', {
   savePreferences: (preferences) => ipcRenderer.invoke('save-preferences', preferences),
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
-    ipcRenderer.once('context-menu-command', (event, command) => callback(command));
-    return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
+    ipcRenderer.on('context-menu-command', (event, command) => callback(command));
+    //return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
   },
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });

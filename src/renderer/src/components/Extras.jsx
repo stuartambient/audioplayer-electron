@@ -1,11 +1,15 @@
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { CgMiniPlayer } from 'react-icons/cg';
+import { CiStop1 } from 'react-icons/ci';
 import '../style/Extras.css';
 
 const Extras = ({ handlePlayerControls }) => {
   const { state, dispatch } = useAudioPlayer();
   return (
     <ul className="extras">
+      <li className="btn" id="stop" onClick={handlePlayerControls}>
+        <CiStop1 />
+      </li>
       <li className="btn" id="miniplayer" onClick={handlePlayerControls}>
         <CgMiniPlayer />
       </li>

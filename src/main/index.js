@@ -210,7 +210,7 @@ app.whenReady().then(async () => {
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
   // Register the custom 'streaming' protocol
-  protocol.registerStreamProtocol('streaming', async (request, cb) => {
+  /* protocol.registerStreamProtocol('streaming', async (request, cb) => {
     const uri = decodeURIComponent(request.url);
 
     const filePath = uri.replace('streaming://', '');
@@ -244,6 +244,68 @@ app.whenReady().then(async () => {
           'Content-Type': 'audio/mpeg'
         },
         data: fs.createReadStream(path)
+      });
+    }
+  }); */
+
+  protocol.registerStreamProtocol('streaming', async (request, cb) => {
+    try {
+      const uri = decodeURIComponent(request.url);
+      const filePath = uri.replace('streaming://', '');
+      const path = capitalizeDriveLetter(filePath);
+
+      const fileSize = fs.statSync(path).size;
+      const range = request.headers.Range;
+
+      if (range) {
+        const parts = range.replace(/bytes=/, '').split('-');
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        const chunksize = end - start + 1;
+
+        const headers = {
+          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': String(chunksize),
+          'Content-Type': 'audio/mpeg'
+        };
+
+        cb({
+          statusCode: 206,
+          headers,
+          data: fs.createReadStream(path, { start, end }).on('error', (err) => {
+            console.error('Stream error:', err);
+            cb({
+              statusCode: 200,
+              headers: { 'Content-Type': 'text/plain', 'X-Stream-Error': 'true' },
+              data: 'Stream failed due to an error.'
+            });
+          })
+        });
+      } else {
+        console.log('No range header provided');
+        cb({
+          statusCode: 200,
+          headers: {
+            'Content-Length': String(fileSize),
+            'Content-Type': 'audio/mpeg'
+          },
+          data: fs.createReadStream(path).on('error', (err) => {
+            console.error('Stream error:', err);
+            cb({
+              statusCode: 200,
+              headers: { 'Content-Type': 'text/plain', 'X-Stream-Error': 'true' },
+              data: 'Stream failed due to an error.'
+            });
+          })
+        });
+      }
+    } catch (err) {
+      console.error('Error processing streaming request:', err);
+      cb({
+        statusCode: 200,
+        headers: { 'Content-Type': 'text/plain', 'X-Stream-Error': 'true' },
+        data: 'Internal Server Error'
       });
     }
   });
@@ -493,8 +555,26 @@ ipcMain.handle('get-album-tracks', async (event, args) => {
   return allAlbumTracks;
 });
 
+const getRoot = (currentDir) => {
+  let rootPaths = [];
+  let currentPath = currentDir;
+  rootPaths.push(currentPath);
+  let search = true;
+  while (search) {
+    const p = path.normalize(currentPath).split(path.sep);
+    if (p.length >= 3) {
+      currentPath = p[p.length - 1];
+      rootPaths.push(currentPath);
+    } else {
+      search = false;
+    }
+  }
+  console.log('rootPaths: ', rootPaths);
+};
+
 ipcMain.handle('get-cover', async (event, arg) => {
   const trackDirectory = path.dirname(arg);
+  getRoot(trackDirectory);
   const myFile = await File.createFromPath(arg);
 
   if (myFile.tag.pictures?.[0]?.data) {

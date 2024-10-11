@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect, forwardRef, memo, useMemo } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
-import handleTrackSelect from '../utility/audioUtils';
+import handleTrackSelect, { handleManualChange } from '../utility/audioUtils';
 import { ArchiveAdd, Playlist, Shuffle, Plus, Minus } from '../assets/icons';
 import { GiPauseButton, GiPlayButton } from 'react-icons/gi';
 GiPlayButton;
@@ -188,13 +188,14 @@ const InfiniteList = memo(() => {
     };
 
     if (state.listType === 'files' && state.activeList === 'tracklistActive') {
+      console.log('setTrackNavigation tripped');
       setTrackNavigation(state.tracks);
     } else if (state.listType === 'playlist' && state.activeList === 'playlistActive') {
       setTrackNavigation(state.playlistTracks);
     }
   }, [state.newtrack, state.tracks, state.listType, state.playlistTracks, state.activeList]);
 
-  const handleManualChange = (track) => {
+  /* const handleManualChange = (track) => {
     const listType = state.activeList === 'tracklistActive' ? state.tracks : state.playlistTracks;
     const newTrack = listType.findIndex((obj) => obj.track_id === track);
     console.log(listType[newTrack]);
@@ -213,7 +214,6 @@ const InfiniteList = memo(() => {
       }
     };
     return handleTrackSelect(evt, state, dispatch, {
-      //newtrack: newTrack,
       artist: listType[newTrack].performers ? listType[newTrack].performers : 'not available',
       title: listType[newTrack].title ? listType[newTrack].title : listType[newTrack].audiotrack,
       album: listType[newTrack].album ? listType[newTrack].album : 'not available',
@@ -222,7 +222,7 @@ const InfiniteList = memo(() => {
       active: listType[newTrack].track_id,
       list: state.activeList
     });
-  };
+  }; */
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
@@ -255,7 +255,7 @@ const InfiniteList = memo(() => {
       /*     const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef; */
 
       if (!state.listScroll) {
-        return handleManualChange(state.nextTrack);
+        return handleManualChange(state.nextTrack, state, dispatch);
       }
 
       if (state.listScroll) {
@@ -271,7 +271,7 @@ const InfiniteList = memo(() => {
 
     if (state.playPrev && state.prevTrack && state.newtrack > 0) {
       if (!state.listScroll) {
-        return handleManualChange(state.prevTrack);
+        return handleManualChange(state.prevTrack, state, dispatch);
       }
 
       if (state.listScroll) {
