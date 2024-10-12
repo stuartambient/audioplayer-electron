@@ -556,33 +556,36 @@ ipcMain.handle('get-album-tracks', async (event, args) => {
 });
 
 const getRoot = (currentDir) => {
-  let rootPaths = [];
-  let currentPath = currentDir;
-  rootPaths.push(currentPath);
-  let search = true;
-  while (search) {
-    const p = path.normalize(currentPath).split(path.sep);
-    if (p.length >= 3) {
-      currentPath = p[p.length - 1];
-      rootPaths.push(currentPath);
-    } else {
-      search = false;
+  const root = getRoots();
+  const allPaths = [];
+  const paths = path.normalize(currentDir).split(path.sep);
+  const pathsStr = paths.join('/');
+  const rootFiltered = root.filter((r) => pathsStr.startsWith(r)).join('');
+  //console.log(pathsStr === currentDir);
+  const sliced = pathsStr.replace(`${rootFiltered}/`, '');
+  const split = sliced.split('/');
+  const splitLength = split.length;
+  console.log(splitLength);
+  if (splitLength > 1) {
+    allPaths.push(`${rootFiltered}/${split[0]}`);
+    for (let i = splitLength - 1; i > 0; i--) {
+      allPaths.push(`${rootFiltered}/${split[0]}/${split[i]}`);
     }
   }
-  console.log('rootPaths: ', rootPaths);
+  return allPaths;
 };
 
 ipcMain.handle('get-cover', async (event, arg) => {
   const trackDirectory = path.dirname(arg);
-  getRoot(trackDirectory);
+
   const myFile = await File.createFromPath(arg);
+  const getPaths = getRoot(trackDirectory);
 
   if (myFile.tag.pictures?.[0]?.data) {
     return myFile.tag.pictures[0].data._bytes;
   } else if (!myFile.tag.pictures?.[0]?.data) {
     const folderCover = await searchCover(trackDirectory);
     if (folderCover) {
-      console.log('folder cover: ', folderCover);
       return folderCover;
     }
   } else return 0;

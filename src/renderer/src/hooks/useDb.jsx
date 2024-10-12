@@ -2,6 +2,86 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useAudioPlayer } from '../AudioPlayerContext';
 
+/* const useTracks = (
+  tracksPageNumber,
+  tracksSearchTerm,
+  sortType,
+  resetKey,
+  state,
+  dispatch,
+  tracksShuffle
+) => {
+  console.log(
+    'tracks page number: ',
+    tracksPageNumber,
+    'tracks search term: ',
+    tracksSearchTerm,
+    'sort type: ',
+    sortType,
+    'reset key: ',
+    resetKey,
+    'tracks shuffle: ',
+    tracksShuffle
+  );
+  const [tracksLoading, setTracksLoading] = useState(true);
+  const [tracksError, setTracksError] = useState(false);
+  const [hasMoreTracks, setHasMoreTracks] = useState(false);
+
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const loadTracks = async (isShuffled) => {
+      setTracksLoading(true);
+      setTracksError(false);
+      try {
+        let trackRequest;
+
+        if (isShuffled) {
+          if (tracksPageNumber === 0) {
+            await window.api.setShuffledTracksArray();
+          }
+          trackRequest = await window.api.getShuffledTracks(tracksPageNumber);
+        } else {
+          trackRequest = await window.api.getTracks(tracksPageNumber, tracksSearchTerm, sortType);
+        }
+
+        if (trackRequest && isSubscribed) {
+          handleDispatch(
+            trackRequest,
+            tracksPageNumber === 0 ? 'add-shuffled-tracks' : 'tracks-playlist'
+          );
+        }
+      } catch (error) {
+        setTracksError(true);
+        setTracksLoading(false);
+      }
+    };
+
+    const handleDispatch = (tracks, actionType) => {
+      dispatch({
+        type: actionType,
+        tracks
+      });
+      setHasMoreTracks(tracks.length === 200);
+      setTracksLoading(false);
+    };
+
+    tracksShuffle && state.listType === 'files' ? loadTracks(true) : loadTracks(false);
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [tracksPageNumber, tracksSearchTerm, sortType, resetKey, tracksShuffle]);
+
+  return {
+    tracksLoading,
+    hasMoreTracks,
+    tracksError,
+    tracksShuffle,
+    resetKey
+  };
+}; */
+
 const useTracks = (
   tracksPageNumber,
   tracksSearchTerm,
@@ -11,6 +91,18 @@ const useTracks = (
   dispatch,
   tracksShuffle
 ) => {
+  console.log(
+    'tracks page number: ',
+    tracksPageNumber,
+    'tracks search term: ',
+    tracksSearchTerm,
+    'sort type: ',
+    sortType,
+    'reset key: ',
+    resetKey,
+    'tracks shuffle: ',
+    tracksShuffle
+  );
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
   const [hasMoreTracks, setHasMoreTracks] = useState(false);

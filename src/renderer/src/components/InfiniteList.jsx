@@ -28,7 +28,7 @@ const InfiniteList = memo(() => {
   const [showMore, setShowMore] = useState(null);
   const [filesSortType, setFilesSortType] = useState('DESC');
   const [albumsSortType, setAlbumsSortType] = useState('DESC');
-  const [resetKey, setResetKey] = useState(null);
+  const [resetKey, setResetKey] = useState('');
   const [shuffledPlaylist, setShuffledPlaylist] = useState([]);
   const [isScrolling, setIsScrolling] = useState(true);
   const [visibleRange, setVisibleRange] = useState({
@@ -394,6 +394,9 @@ const InfiniteList = memo(() => {
     if (e.currentTarget.textsearch.value === '') {
       setResetKey(getKey());
     }
+    if (e.currentTarget.textsearch.value === tracksSearchTerm) {
+      setResetKey(getKey());
+    }
     if (state.listType === 'files') {
       dispatch({
         type: 'reset-tracks',
@@ -414,6 +417,13 @@ const InfiniteList = memo(() => {
       setTracksSearchTerm(e.currentTarget.textsearch.value);
     }
     if (state.listType === 'albums') {
+      if (e.currentTarget.textsearch.value === '') {
+        setResetKey(getKey());
+      }
+      if (e.currentTarget.textsearch.value === albumsSearchTerm) {
+        setResetKey(getKey());
+      }
+
       dispatch({
         type: 'reset-albums',
         albums: []
