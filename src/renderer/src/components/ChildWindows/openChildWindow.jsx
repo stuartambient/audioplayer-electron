@@ -1,5 +1,6 @@
 export const openChildWindow = (name, type, config, data) => {
-  const apipreload = name === 'tag-form' ? window.metadataEditingApi : window.api;
+  console.log(name, type, config, data);
+  const apipreload = name === 'cover-search-alt-tags' ? window.metadataEditingApi : window.api;
   /* window.api.showChild({ */
   apipreload.showChild({
     name: name,

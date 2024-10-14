@@ -84,6 +84,7 @@ const CoverSearchAltApp = () => {
 
   useEffect(() => {
     const handleSearchParams = (args) => {
+      console.log('args: ', args);
       if (!args.results.artist) return;
       setArtist(args.results.artist);
       setAlbum(args.results.title);
@@ -203,18 +204,7 @@ const CoverSearchAltApp = () => {
           title="Cover Search"
         ></iframe>
       </div>
-      <div
-        className="image-preview"
-        style={{
-          gridColumn: 2 / 3,
-          backgroundColor: 'black',
-          display: 'grid',
-          gridTemplateRows: '1fr',
-          gridTemplateColumns: '100%',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
+      <div className="image-preview">
         {imageUrl ? (
           <>
             <div

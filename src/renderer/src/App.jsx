@@ -161,7 +161,8 @@ function App() {
     switch (e.currentTarget.id) {
       case 'stop':
         dispatch({
-          type: 'reset'
+          type: 'reset',
+          pause: true
         });
         break;
       case 'playlist':
@@ -203,6 +204,10 @@ function App() {
           dispatch({
             type: 'tracks-pagenumber',
             tracksPageNumber: 0
+          });
+          dispatch({
+            type: 'reset',
+            pause: !!state.pause
           });
         }
         if (state.listType === 'playlist') {

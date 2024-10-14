@@ -12,6 +12,7 @@ const ContextMenu = ({ fromlisttype, id, fullpath, divid }) => {
     if (!contextMenuItem) return;
 
     const cleanup = window.api.onContextMenuCommand((command) => {
+      console.log(command);
       switch (command) {
         case 'add-track-to-playlist':
           const track = state.tracks.find((item) => item.track_id === contextMenuItem.id);

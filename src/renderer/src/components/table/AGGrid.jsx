@@ -31,6 +31,8 @@ const AGGrid = ({ reset, data, playButton }) => {
   const [columnApi, setColumnApi] = useState(null);
   const [hiddenColumns, setHiddenColumns] = useState([]);
   const [prefsLoaded, setPrefsLoaded] = useState(false);
+  const [artistPic, setArtistPic] = useState('');
+  const [albumPic, setAlbumPic] = useState('');
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
@@ -132,15 +134,26 @@ const AGGrid = ({ reset, data, playButton }) => {
     ); */
   };
 
-  useEffect(() => {
-    const handlePictureMenu = (menu) => {
-      console.log('menu: ', menu);
-    };
-    metadataEditingApi.onContextMenuCommand(handlePictureMenu);
-    return () => {
-      metadataEditingApi.off('context-menu-command', handlePictureMenu);
-    };
-  }, []);
+  const handleEmbedPicture = (params) => {
+    const artist = params.artist;
+    const title = params.album;
+    const path = 'c:/';
+    openChildWindow(
+      'cover-search-alt-tags',
+      'cover-search-alt',
+      {
+        width: 700,
+        height: 600,
+        show: false,
+        resizable: true,
+        preload: 'coverSearchAlt',
+        sandbox: true,
+        webSecurity: true,
+        contextIsolation: true
+      },
+      { artist, title, path }
+    );
+  };
 
   const IconCellRenderer = () => (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -439,8 +452,15 @@ const AGGrid = ({ reset, data, playButton }) => {
     if (params.colDef.field === 'pictures') {
       const album = params.data.album;
       const artist = params.data.albumArtists || params.data.performers;
+      /*       setAlbumPic(album);
+      setArtistPic(artist); */
 
-      window.metadataEditingApi.showContextMenu(`${artist} - ${album}`, 'picture');
+      //window.metadataEditingApi.showContextMenu(`${artist} - ${album}`, 'picture');
+      window.metadataEditingApi.showContextMenu({ artist, album }, 'picture');
+      metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
+      return () => {
+        metadataEditingApi.off('context-menu-command', handleEmbedPicture);
+      };
     }
   };
 

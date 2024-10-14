@@ -556,6 +556,7 @@ ipcMain.handle('get-album-tracks', async (event, args) => {
 });
 
 const getRoot = (currentDir) => {
+  console.log(currentDir);
   const root = getRoots();
   const allPaths = [];
   const paths = path.normalize(currentDir).split(path.sep);
@@ -565,11 +566,13 @@ const getRoot = (currentDir) => {
   const sliced = pathsStr.replace(`${rootFiltered}/`, '');
   const split = sliced.split('/');
   const splitLength = split.length;
-  console.log(splitLength);
   if (splitLength > 1) {
     allPaths.push(`${rootFiltered}/${split[0]}`);
     for (let i = splitLength - 1; i > 0; i--) {
-      allPaths.push(`${rootFiltered}/${split[0]}/${split[i]}`);
+      let tmp = `${rootFiltered}/${split[0]}/${split[i]}`;
+      if (tmp !== currentDir) {
+        allPaths.push(tmp);
+      }
     }
   }
   return allPaths;
@@ -577,18 +580,48 @@ const getRoot = (currentDir) => {
 
 ipcMain.handle('get-cover', async (event, arg) => {
   const trackDirectory = path.dirname(arg);
+  const trackRoot = getRoot(trackDirectory);
 
   const myFile = await File.createFromPath(arg);
-  const getPaths = getRoot(trackDirectory);
 
+  if (myFile.tag.pictures?.[0]?.data) {
+    return myFile.tag.pictures[0].data._bytes;
+  }
+
+  const folderCover = await searchCover(trackDirectory);
+  if (folderCover) {
+    console.log('folder cover: ', folderCover);
+    return folderCover;
+  }
+
+  if (trackRoot.length > 0) {
+    const coverResults = await searchCover(trackRoot);
+    if (coverResults) {
+      console.log('cover results: ', coverResults);
+      return coverResults;
+    }
+    console.log('coverResults: ', coverResults);
+  }
+
+  return 0;
+
+  /*   if (trackRoot.length > 0) {
+    console.log('trackRoot: ', trackRoot);
+  } */
+
+  /*   const myFile = await File.createFromPath(arg);
   if (myFile.tag.pictures?.[0]?.data) {
     return myFile.tag.pictures[0].data._bytes;
   } else if (!myFile.tag.pictures?.[0]?.data) {
     const folderCover = await searchCover(trackDirectory);
     if (folderCover) {
       return folderCover;
+    } else if (trackRoot.length > 0) {
+      const coverResults = await searchCover(trackRoot);
+      if (coverResults) return coverResults;
+      console.log('coverResults: ', coverResults);
     }
-  } else return 0;
+  } else return 0; */
 
   /* console.log('pic from path: ', Picture.fromPath(arg)); */
   /* return; */
@@ -946,20 +979,20 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       }
     },
     {
-      label: `Search pictures for ${id}`,
+      label: `Search pictures for ${id.artist} -- ${id.album}`,
       visible: type === 'picture',
       click: () => {
-        return event.sender.send('context-menu-command', `search pictures for ${id}`);
+        return event.sender.send('context-menu-command', id);
       }
     },
-    { type: 'separator' },
-    {
+    { type: 'separator' }
+    /*   {
       label: 'Save Picture',
       visible: type === 'picture',
       click: () => {
         return event.sender.send('context-menu-command', 'save picture');
       }
-    }
+    } */
   ];
   const menu = Menu.buildFromTemplate(template);
   menu.popup(BrowserWindow.fromWebContents(event.sender));
@@ -1021,8 +1054,12 @@ ipcMain.handle('show-text-input-menu', (event) => {
 });
 
 ipcMain.handle('show-child', (event, args) => {
+  /* console.log('show-child: ', args); */
   const { name, type, winConfig, data } = args;
+  console.log('name: ', name, 'type: ', type, 'winConfig: ', winConfig, 'data: ', data);
   createOrUpdateChildWindow(name, type, winConfig, data);
+  const names = getWindowNames();
+  console.log('names: ', names);
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {
