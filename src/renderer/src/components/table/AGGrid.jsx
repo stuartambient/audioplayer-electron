@@ -135,12 +135,13 @@ const AGGrid = ({ reset, data, playButton }) => {
   };
 
   const handleEmbedPicture = (params) => {
+    console.log('params: ', params);
     const artist = params.artist;
     const title = params.album;
     const path = 'c:/';
     openChildWindow(
       'cover-search-alt-tags',
-      'cover-search-alt',
+      'cover-search-alt-tags',
       {
         width: 700,
         height: 600,

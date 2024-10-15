@@ -11,12 +11,19 @@ const CoverSearchAltApp = () => {
   const iframeRef = useRef(null);
   const [message, setMessage] = useState(false);
   const [download, setDownload] = useState(false);
+  const [listType, setListType] = useState(null);
+  const [tempPath, setTempPath] = useState('');
 
   const isListenerAttached = useRef(false);
 
-  useEffect(() => {
-    console.log('artist: ', artist, 'album: ', album);
-  }, [artist, album]);
+  /*   useEffect(() => {
+    const windowName = async () => {
+      const getWinName = await coverSearchAltApi.getWindowName();
+      setWin(getWinName);
+    };
+
+    windowName();
+  }, [win, setWin]); */
 
   const generateNonce = () => {
     return Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
@@ -27,6 +34,9 @@ const CoverSearchAltApp = () => {
 
   useEffect(() => {
     const handleDownloadCompleted = (val) => {
+      if (val[0] === 'download successful' && listType === 'cover-search-alt-tags') {
+        setDownload(false);
+      }
       if (val[0] === 'download successful') {
         setDownload(false);
       }
@@ -41,7 +51,7 @@ const CoverSearchAltApp = () => {
 
   useEffect(() => {
     if (download && imageUrl) {
-      window.coverSearchAltApi.downloadFile(imageUrl, savePath);
+      window.coverSearchAltApi.downloadFile(imageUrl, savePath, listType);
     }
     /* return setDownload(false); */
   }, [download, imageUrl, savePath]);
@@ -83,12 +93,25 @@ const CoverSearchAltApp = () => {
   }, [nonce]);
 
   useEffect(() => {
+    const handleTempPath = async () => {
+      const tempPath = await window.coverSearchAltApi.getTempPath();
+      setSavePath(tempPath.replaceAll('\\', '/'));
+    };
+    if (listType === 'cover-search-alt-tags') {
+      handleTempPath();
+    }
+  }, [listType]);
+
+  useEffect(() => {
+    window.coverSearchAltApi.notifyReady();
     const handleSearchParams = (args) => {
       console.log('args: ', args);
       if (!args.results.artist) return;
       setArtist(args.results.artist);
       setAlbum(args.results.title);
+      setListType(args.listType);
       setSavePath(args.results.path);
+      //}
     };
 
     window.coverSearchAltApi.onSendToChild(handleSearchParams);
@@ -133,7 +156,7 @@ const CoverSearchAltApp = () => {
   const handleContextMenu = (event) => {
     event.preventDefault();
 
-    window.coverSearchAltApi.showContextMenu(0, 'cover');
+    window.coverSearchAltApi.showContextMenu(listType, 'cover');
   };
 
   useEffect(() => {

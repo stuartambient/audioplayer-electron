@@ -253,9 +253,16 @@ function App() {
     }
   }, [state.playlistTracks[0]]); */
 
+  const handleMenu = () => {
+    window.api.showContextMenu(1, 'menu');
+  };
+
   const handleMainNav = async (e) => {
     console.log('handleMainNav: ', e.currentTarget.id);
     switch (e.currentTarget.id) {
+      case 'menu':
+        handleMenu();
+        break;
       case 'close':
         /* window.api.appClose(); */
         break;

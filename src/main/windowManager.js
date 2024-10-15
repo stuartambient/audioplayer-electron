@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import { /* electronApp, optimizer,  */ is } from '@electron-toolkit/utils';
 import path from 'node:path';
 /* import { EventEmitter } from 'node:events'; */
@@ -7,8 +7,6 @@ import { mainWindow } from './index.js';
 const windows = new Map();
 
 function createOrUpdateChildWindow(name, type, config, data) {
-  console.log(name, type, config);
-  console.log(`Creating or updating window: ${name}`);
   let window = windows.get(name);
   if (window) {
     console.log(`Window ${name} already exists. Sending data to it.`);
@@ -50,8 +48,18 @@ function createOrUpdateChildWindow(name, type, config, data) {
 
   windows.set(name, window);
 
+  /*   window.once('ready-to-show', () => {
+    window.show();
+    if (window.isFocusable()) {
+      window.webContents.send('send-to-child', data);
+    }
+  }); */
   window.once('ready-to-show', () => {
     window.show();
+  });
+
+  ipcMain.once('child-ready', () => {
+    console.log('Child window is ready. Sending data...');
     window.webContents.send('send-to-child', data);
   });
 }

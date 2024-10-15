@@ -111,6 +111,10 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 /* IN DOCUMENTS/ELECTRONMUSICPLAYER */
+console.log('home: ', app.getPath('home'));
+console.log('appData: ', app.getPath('appData'));
+console.log('temp: ', app.getPath('temp'));
+console.log('userData: ', app.getPath('userData'));
 const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`;
 const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`;
 const playlistsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\playlists`;
@@ -834,6 +838,11 @@ ipcMain.handle('get-playlists', async () => {
   return playlists;
 });
 
+ipcMain.handle('get-temp-path', async () => {
+  console.log('get-temp-path');
+  return app.getPath('temp');
+});
+
 /* ipcMain.handle('homepage-playlists', async (_m, ...args) => {
   const [type, value] = args;
   switch (type) {
@@ -926,7 +935,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
   }
 });
 
-ipcMain.on('show-context-menu', (event, id, type) => {
+/* ipcMain.on('show-context-menu', (event, id, type) => {
   console.log('id: ', id, 'type: ', type);
   const template = [
     {
@@ -985,15 +994,152 @@ ipcMain.on('show-context-menu', (event, id, type) => {
         return event.sender.send('context-menu-command', id);
       }
     },
-    { type: 'separator' }
-    /*   {
-      label: 'Save Picture',
-      visible: type === 'picture',
+    { type: 'separator' },
+    {
+      label: 'Update All',
+      visible: type === 'menu',
       click: () => {
-        return event.sender.send('context-menu-command', 'save picture');
+        return event.sender.send('context-menu-command', 'update-all');
       }
-    } */
+    },
+    {
+      label: 'Schedule Updates',
+      visible: type === 'menu',
+      click: () => {
+        return event.sender.send('context-menu-command', 'schedule-updates');
+      }
+    },
+    {
+      label: 'Update Files',
+      visible: type === 'menu',
+      click: () => {
+        return event.sender.send('context-menu-command', 'update-files');
+      }
+    },
+    {
+      label: 'Update Folders',
+      visible: type === 'menu',
+      click: () => {
+        return event.sender.send('context-menu-command', 'update-folders');
+      }
+    },
+    {
+      label: 'Update Covers',
+      visible: type === 'menu',
+      click: () => {
+        return event.sender.send('context-menu-command', 'update-covers');
+      }
+    },
+    {
+      label: 'Update Meta',
+      visible: type === 'menu',
+      click: () => {
+        return event.sender.send('context-menu-command', 'update-meta');
+      }
+    }
   ];
+  const menu = Menu.buildFromTemplate(template);
+  menu.popup(BrowserWindow.fromWebContents(event.sender));
+}); */
+
+ipcMain.on('show-context-menu', (event, id, type) => {
+  console.log('id: ', id, 'type: ', type);
+
+  const template = [];
+
+  // Add items based on the 'type'
+  if (type === 'files') {
+    template.push(
+      {
+        label: 'Add Track to Playlist',
+        click: () => event.sender.send('context-menu-command', 'add-track-to-playlist')
+      },
+      { type: 'separator' },
+      {
+        label: 'Edit Track Metadata',
+        click: () => event.sender.send('context-menu-command', 'edit-track-metadata')
+      }
+    );
+  }
+
+  if (type === 'folder') {
+    template.push(
+      {
+        label: 'Add Album to Playlist',
+        click: () => event.sender.send('context-menu-command', 'add-album-to-playlist')
+      },
+      { type: 'separator' },
+      {
+        label: 'Open Album Folder',
+        click: () => event.sender.send('context-menu-command', 'open-album-folder')
+      }
+    );
+  }
+
+  if (type === 'playlist') {
+    template.push(
+      {
+        label: 'Remove from Playlist',
+        click: () => event.sender.send('context-menu-command', 'remove-from-playlist')
+      },
+      { type: 'separator' },
+      {
+        label: 'Edit Track Metadata',
+        click: () => event.sender.send('context-menu-command', 'edit-track-metadata')
+      }
+    );
+  }
+
+  if (type === 'cover') {
+    const customLabel = id === 'cover-search-alt' ? 'Save Image' : 'Select Image';
+    template.push({
+      label: customLabel,
+      click: () => event.sender.send('context-menu-command', 'save image')
+    });
+  }
+
+  if (type === 'picture') {
+    template.push({
+      label: `Search pictures for ${id.artist} -- ${id.album}`,
+      click: () => event.sender.send('context-menu-command', id)
+    });
+  }
+
+  if (type === 'menu') {
+    template.push(
+      {
+        label: 'Update All',
+        click: () => event.sender.send('context-menu-command', 'update-all')
+      },
+      { type: 'separator' },
+      {
+        label: 'Schedule Updates',
+        click: () => event.sender.send('context-menu-command', 'schedule-updates')
+      },
+      { type: 'separator' },
+      {
+        label: 'Update Files',
+        click: () => event.sender.send('context-menu-command', 'update-files')
+      },
+      { type: 'separator' },
+      {
+        label: 'Update Folders',
+        click: () => event.sender.send('context-menu-command', 'update-folders')
+      },
+      { type: 'separator' },
+      {
+        label: 'Update Covers',
+        click: () => event.sender.send('context-menu-command', 'update-covers')
+      },
+      { type: 'separator' },
+      {
+        label: 'Update Meta',
+        click: () => event.sender.send('context-menu-command', 'update-meta')
+      }
+    );
+  }
+
+  // Create and show the context menu
   const menu = Menu.buildFromTemplate(template);
   menu.popup(BrowserWindow.fromWebContents(event.sender));
 });
@@ -1054,26 +1200,22 @@ ipcMain.handle('show-text-input-menu', (event) => {
 });
 
 ipcMain.handle('show-child', (event, args) => {
-  /* console.log('show-child: ', args); */
   const { name, type, winConfig, data } = args;
-  console.log('name: ', name, 'type: ', type, 'winConfig: ', winConfig, 'data: ', data);
   createOrUpdateChildWindow(name, type, winConfig, data);
-  const names = getWindowNames();
-  console.log('names: ', names);
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {
   console.log('args: ', args);
-  const [fileUrl, filePath] = args;
+  const [fileUrl, filePath, listType] = args;
 
   const extension = path.extname(new URL(fileUrl).pathname);
   const defaultFilename = `cover${extension}`;
   const initialPath = filePath ? path.join(filePath, defaultFilename) : defaultFilename;
 
   let savePath = await dialog.showSaveDialog({
-    title: 'Save Image',
+    title: 'save image',
     defaultPath: initialPath,
-    filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif'] }],
+    filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'] }],
     properties: ['showOverwriteConfirmation']
   });
 
@@ -1092,6 +1234,10 @@ ipcMain.handle('download-file', async (event, ...args) => {
     if (response.status === 200) {
       await fs.promises.writeFile(savePath.filePath, response.data);
       console.log('Download complete:', savePath.filePath);
+      if (listType === 'cover-search-alt-tags') {
+        return event.sender.send('download-completed', 'download successful');
+      }
+
       return event.sender.send('download-completed', 'download successful');
     } else {
       console.log('Failed to download:', response.status);
@@ -1109,6 +1255,11 @@ ipcMain.handle('refresh-cover', async (event, ...args) => {
   /* const imageobj = { img: imgurl.href }; */
 
   BrowserWindow.fromId(mainWindow.id).webContents.send('refresh-home-cover', filepath, imgurl);
+});
+
+ipcMain.handle('get-window-name', async (event) => {
+  console.log('event sender: ', event.sender);
+  return 1;
 });
 
 ipcMain.handle('open-album-folder', async (_, path) => {
