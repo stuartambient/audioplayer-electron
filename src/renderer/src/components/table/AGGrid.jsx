@@ -134,6 +134,18 @@ const AGGrid = ({ reset, data, playButton }) => {
     ); */
   };
 
+  useEffect(() => {
+    const handleDownloadedImage = async (img) => {
+      console.log('image:', img);
+    };
+
+    window.metadataEditingApi.onDownloadedImage(handleDownloadedImage);
+
+    return () => {
+      window.metadataEditingApi.off('downloaded-image', handleDownloadedImage);
+    };
+  }, []);
+
   const handleEmbedPicture = (params) => {
     console.log('params: ', params);
     const artist = params.artist;

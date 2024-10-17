@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import useWindowSize from '../../../hooks/useWindowSize';
 import './style.css';
 
 const CoverSearchAltApp = () => {
-  console.log('mounted');
   const [artist, setArtist] = useState('');
   const [album, setAlbum] = useState('');
   const [savePath, setSavePath] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   /* const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 }); */
-  const iframeRef = useRef(null);
   const [message, setMessage] = useState(false);
   const [download, setDownload] = useState(false);
   const [listType, setListType] = useState(null);
@@ -16,14 +15,9 @@ const CoverSearchAltApp = () => {
 
   const isListenerAttached = useRef(false);
 
-  /*   useEffect(() => {
-    const windowName = async () => {
-      const getWinName = await coverSearchAltApi.getWindowName();
-      setWin(getWinName);
-    };
+  const iframeRef = useRef(null);
 
-    windowName();
-  }, [win, setWin]); */
+  const [isVertical, setIsVertical] = useState(window.innerWidth < 378); // Track if layout is vertical
 
   const generateNonce = () => {
     return Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
@@ -34,9 +28,11 @@ const CoverSearchAltApp = () => {
 
   useEffect(() => {
     const handleDownloadCompleted = (val) => {
-      if (val[0] === 'download successful' && listType === 'cover-search-alt-tags') {
+      console.log('val: ', val);
+      /* if (val[0] === 'download successful' && listType === 'cover-search-alt-tags') {
         setDownload(false);
-      }
+        console.log('downloaded: ', val);
+      } */
       if (val[0] === 'download successful') {
         setDownload(false);
       }
@@ -216,7 +212,7 @@ const CoverSearchAltApp = () => {
     <>
       <div
         className="iframeContainer"
-        style={{ width: '100%', height: '100vh', overflow: 'hidden' }}
+        //style={{ width: '100%', height: '100vh', overflow: 'hidden' }}
       >
         <iframe
           ref={iframeRef}
@@ -227,6 +223,7 @@ const CoverSearchAltApp = () => {
           title="Cover Search"
         ></iframe>
       </div>
+      <div className="resizer"></div>
       <div className="image-preview">
         {imageUrl ? (
           <>
@@ -260,6 +257,7 @@ const CoverSearchAltApp = () => {
           </>
         ) : (
           <div
+            className="image-preview"
             style={{
               height: '100%',
               display: 'flex',

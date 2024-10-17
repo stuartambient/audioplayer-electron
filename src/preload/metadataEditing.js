@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld('metadataEditingApi', {
   onSendToChild: (cb) => ipcRenderer.on('send-to-child', (event, arg) => cb(arg)),
   updateTags: (arr) => ipcRenderer.invoke('update-tags', arr),
   onUpdateTagsStatus: (cb) => ipcRenderer.on('update-tags', (event, msg) => cb(msg)),
+  onDownloadedImage: (cb) => ipcRenderer.on('downloaded-image', (event, img) => cb(img)),
   showChild: (args) => ipcRenderer.invoke('show-child', args),
   onClearTable: (cb) => ipcRenderer.on('clear-table', (event, arg) => cb(arg)),
   getPreferences: () => ipcRenderer.invoke('get-preferences'),
