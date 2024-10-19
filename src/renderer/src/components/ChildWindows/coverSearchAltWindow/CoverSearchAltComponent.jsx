@@ -12,12 +12,71 @@ const CoverSearchAltApp = () => {
   const [download, setDownload] = useState(false);
   const [listType, setListType] = useState(null);
   const [tempPath, setTempPath] = useState('');
+  const [isResizing, setIsResizing] = useState(false);
+  const [div1StartWidth, setDiv1StartWidth] = useState(0);
+  const [div2StartWidth, setDiv2StartWidth] = useState(0);
 
   const isListenerAttached = useRef(false);
 
   const iframeRef = useRef(null);
+  /*   const resizeRef = useRef(null); */
+  const div1Ref = useRef(null);
+  const div2Ref = useRef(null);
+  /* const mouseStartPosition = useRef({ x: 0, y: 0 }); */
+  const mouseStartPosition = useRef({ x: 0 });
+  const timeoutRef = useRef(null);
+  const overlayRef = useRef(null);
 
   const [isVertical, setIsVertical] = useState(window.innerWidth < 378); // Track if layout is vertical
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+      if (window.innerWidth < 768) {
+        setLayout('column');
+      } else {
+        setLayout('row');
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const updateWidths = () => {
+      setDiv1StartWidth(div1Ref.current.offsetWidth);
+      setDiv2StartWidth(div2Ref.current.offsetWidth);
+    };
+
+    updateWidths(); // Set initial widths
+
+    window.addEventListener('resize', updateWidths); // Update on resize
+    return () => window.removeEventListener('resize', updateWidths); // Cleanup listener on unmount
+  }, [div1Ref, div2Ref]); // Still dependent on refs
+
+  const handleMouseMove = (e) => {
+    console.log('mouse moving');
+    //if (isResizing) {
+    const diff = mouseStartPosition.current.x - e.pageX;
+    console.log('diff: ', diff);
+    div1Ref.current.style.flexBasis = div1StartWidth + -1 * diff + 'px';
+    div2Ref.current.style.flexBasis = div2StartWidth + diff + 'px';
+    //}
+  };
+
+  const handleMouseUp = (e) => {
+    console.log('mouse up');
+    setIsResizing(false);
+
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleMouseDown = (e) => {
+    console.log('mouse down');
+    setIsResizing(true);
+    mouseStartPosition.current.x = e.pageX;
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
 
   const generateNonce = () => {
     return Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) =>
@@ -212,6 +271,7 @@ const CoverSearchAltApp = () => {
     <>
       <div
         className="iframeContainer"
+        ref={div1Ref}
         //style={{ width: '100%', height: '100vh', overflow: 'hidden' }}
       >
         <iframe
@@ -221,56 +281,42 @@ const CoverSearchAltApp = () => {
           width="100%"
           height="100%"
           title="Cover Search"
-        ></iframe>
+          style={{ pointerEvents: isResizing ? 'none' : 'auto' }}
+        />
       </div>
-      <div className="resizer"></div>
-      <div className="image-preview">
-        {imageUrl ? (
-          <>
-            <div
-              style={{
-                height: '100%',
-                backgroundImage: `url(${imageUrl})`,
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'contain',
-                backgroundPosition: 'center',
-                cursor: 'context-menu'
-              }}
-              onContextMenu={handleContextMenu}
-            >
-              {/*           {contextMenu.visible && (
-                <ul
-                  className="context-menu"
-                  style={{
-                    position: 'absolute' ,
-                    top: contextMenu.y,
-                    left: contextMenu.x,
-                    backgroundColor: 'white',
-                    boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)',
-                    listStyleType: 'none',
-                    padding: '5px',
-                    margin: '0px'
-                  }}
-                ></ul>
-              )} */}
-            </div>
-          </>
-        ) : (
+      <div className="resizer" onMouseDown={handleMouseDown}></div>
+      {imageUrl ? (
+        <>
           <div
             className="image-preview"
+            ref={div2Ref}
             style={{
               height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '22px',
-              color: 'white'
+              backgroundImage: `url(${imageUrl})`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              cursor: 'context-menu'
             }}
-          >
-            <p>No image selected</p>
-          </div>
-        )}
-      </div>
+            onContextMenu={handleContextMenu}
+          ></div>
+        </>
+      ) : (
+        <div
+          className="image-preview"
+          ref={div2Ref}
+          style={{
+            height: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '22px',
+            color: 'white'
+          }}
+        >
+          <p>No image selected</p>
+        </div>
+      )}
     </>
   );
 };

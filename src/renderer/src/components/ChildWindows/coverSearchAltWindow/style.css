@@ -17,7 +17,7 @@
   /* grid-column: 2 / 3; */
   background-color: orange;
   cursor: col-resize;
-  width: 5px;
+  width: 10px;
 }
 
 .image-preview {
@@ -33,9 +33,11 @@
 
 .iframeContainer,
 .image-preview {
-  flex-grow: 1; /* Allow the pane to grow to fill available space */
-  flex-shrink: 1; /* Allow the pane to shrink when space is limited */
-  flex-basis: 0; /* Default basis so flex-grow works correctly */
+  /*   flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 0; */
+  flex-basis: 50%;
+  min-width: 50px;
 }
 
 @media (max-width: 768px) {
@@ -46,13 +48,13 @@
   .resizer {
     background-color: orange;
     cursor: row-resize;
-    height: 5px;
+    height: 10px;
     width: 100%;
   }
 }
 
 .download-image {
-  background-color: #f58f05; /* Primary color */
+  background-color: #f58f05;
   border: 2px solid #4caf50;
   border-radius: 5px;
   color: white;
