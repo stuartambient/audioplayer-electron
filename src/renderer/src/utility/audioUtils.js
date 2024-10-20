@@ -1,6 +1,6 @@
 import { Buffer } from 'buffer';
 
-const handlePicture = (buffer) => {
+export const handlePicture = (buffer) => {
   if (!buffer) return;
   const bufferToString = Buffer.from(buffer).toString('base64');
   return `data:${buffer.format};base64,${bufferToString}`;
@@ -14,7 +14,7 @@ const loadFile = async (file, id, state, dispatch) => {
     console.log(e);
   }
   const picture = await window.api.getCover(file);
-  //console.log('picture: ', picture);
+  console.log('picture: ', picture);
   if (picture === 0 || !picture) {
     dispatch({
       type: 'set-cover',

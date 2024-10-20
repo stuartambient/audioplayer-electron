@@ -1238,7 +1238,7 @@ ipcMain.handle('download-file', async (event, ...args) => {
         //return event.sender.send('download-completed', 'download successful', response.data);
         const win = getWindow('table-data');
         if (win) {
-          win.webContents.send('downloaded-image', { img: response.data });
+          win.webContents.send('downloaded-image', /* { img: */ response.data /* } */);
         }
       }
 

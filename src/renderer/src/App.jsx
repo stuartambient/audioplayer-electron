@@ -59,7 +59,7 @@ function App() {
 
     const handleError = (e) => {
       const { code, message } = e.target.error; // Note: Adjusted for potential cross-browser compatibility
-      console.log('code: ', code, 'message: ', message, 'e target: ', e.target);
+      /* console.log('code: ', code, 'message: ', message, 'e target: ', e.target); */
       if (code === 3 && message === 'AUDIO_RENDERER_ERROR: audio render error') {
         console.log(code, message);
         /*  setTimeout(() => {
@@ -153,11 +153,11 @@ function App() {
   const handleUpdateLike = async (id) => {
     if (!id) return;
     const updatelike = await window.api.updateLike(id);
-    console.log('update like: ', updatelike);
+    /* console.log('update like: ', updatelike); */
   };
 
   const handlePlayerControls = (e) => {
-    console.log(e.currentTarget.id);
+    /* console.log(e.currentTarget.id); */
     switch (e.currentTarget.id) {
       case 'stop':
         dispatch({
@@ -258,7 +258,7 @@ function App() {
   };
 
   const handleMainNav = async (e) => {
-    console.log('handleMainNav: ', e.currentTarget.id);
+    /* console.log('handleMainNav: ', e.currentTarget.id); */
     switch (e.currentTarget.id) {
       case 'menu':
         handleMenu();

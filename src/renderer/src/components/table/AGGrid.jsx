@@ -11,6 +11,7 @@ import CustomToolPanel from './CustomToolPanel';
 import EditForm from './EditForm';
 import { openChildWindow } from '../ChildWindows/openChildWindow';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
+import { handlePicture } from '../../utility/audioUtils';
 /* import CustomContextMenu from './ContextMenu'; */
 import PlayButtonRenderer from './PlayButtonRenderer';
 
@@ -32,7 +33,7 @@ const AGGrid = ({ reset, data, playButton }) => {
   const [hiddenColumns, setHiddenColumns] = useState([]);
   const [prefsLoaded, setPrefsLoaded] = useState(false);
   const [artistPic, setArtistPic] = useState('');
-  const [albumPic, setAlbumPic] = useState('');
+  const [picture, setPicture] = useState('');
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
@@ -136,7 +137,8 @@ const AGGrid = ({ reset, data, playButton }) => {
 
   useEffect(() => {
     const handleDownloadedImage = async (img) => {
-      console.log('image:', img);
+      const buffer = handlePicture(img.buffer);
+      console.log(buffer);
     };
 
     window.metadataEditingApi.onDownloadedImage(handleDownloadedImage);

@@ -15,6 +15,10 @@ const CoverSearchAltApp = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [div1StartWidth, setDiv1StartWidth] = useState(0);
   const [div2StartWidth, setDiv2StartWidth] = useState(0);
+  const [div1StartHeight, setDiv1StartHeight] = useState(0);
+  const [div2StartHeight, setDiv2StartHeight] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [layout, setLayout] = useState('row');
 
   const isListenerAttached = useRef(false);
 
@@ -23,7 +27,7 @@ const CoverSearchAltApp = () => {
   const div1Ref = useRef(null);
   const div2Ref = useRef(null);
   /* const mouseStartPosition = useRef({ x: 0, y: 0 }); */
-  const mouseStartPosition = useRef({ x: 0 });
+  const mouseStartPosition = useRef({ x: 0, y: 0 });
   const timeoutRef = useRef(null);
   const overlayRef = useRef(null);
 
@@ -38,27 +42,83 @@ const CoverSearchAltApp = () => {
         setLayout('row');
       }
     };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Set initial layout
+
+    return () => window.removeEventListener('resize', handleResize); // Cleanup on unmount
   }, []);
 
   useEffect(() => {
+    const resetDivSizes = () => {
+      if (div1Ref.current && div2Ref.current) {
+        div1Ref.current.style.flexBasis = '';
+        div2Ref.current.style.flexBasis = '';
+      }
+    };
+    if (layout === 'row') {
+      resetDivSizes();
+    }
+  }, [layout]);
+
+  useEffect(() => {
+    const updateLayout = () => {
+      if (!div1Ref.current || !div2Ref.current) return; // Ensure refs are available
+
+      if (layout === 'row') {
+        setDiv1StartWidth(div1Ref.current.offsetWidth);
+        setDiv2StartWidth(div2Ref.current.offsetWidth);
+      } else if (layout === 'column') {
+        setDiv1StartHeight(div1Ref.current.offsetHeight);
+        setDiv2StartHeight(div2Ref.current.offsetHeight);
+      }
+    };
+
+    // Set initial sizes
+    updateLayout();
+
+    // Add resize event listener
+    window.addEventListener('resize', updateLayout);
+
+    // Cleanup listener on unmount
+    return () => window.removeEventListener('resize', updateLayout);
+  }, [div1Ref, div2Ref, layout]); // Dependent on refs and layout
+
+  /*   useEffect(() => {
     const updateWidths = () => {
       setDiv1StartWidth(div1Ref.current.offsetWidth);
       setDiv2StartWidth(div2Ref.current.offsetWidth);
     };
 
-    updateWidths(); // Set initial widths
+    const updateHeights = () => {
+      setDiv1StartHeight(div1Ref.current.offsetHeight);
+      setDiv2StartHeight(div2Ref.current.offsetHeight);
+    };
 
-    window.addEventListener('resize', updateWidths); // Update on resize
-    return () => window.removeEventListener('resize', updateWidths); // Cleanup listener on unmount
-  }, [div1Ref, div2Ref]); // Still dependent on refs
+    if (layout === 'row') {
+      updateWidths();
+
+      window.addEventListener('resize', updateWidths);
+      return () => window.removeEventListener('resize', updateWidths);
+    } else if (layout === 'column') {
+      updateHeights();
+      window.addEventListener('resize', updateHeights); 
+      return () => window.removeEventListener('resize', updateHeights);
+    }
+  }, [div1Ref, div2Ref, layout]);  */
 
   const handleMouseMove = (e) => {
     console.log('mouse moving');
     //if (isResizing) {
-    const diff = mouseStartPosition.current.x - e.pageX;
-    console.log('diff: ', diff);
-    div1Ref.current.style.flexBasis = div1StartWidth + -1 * diff + 'px';
-    div2Ref.current.style.flexBasis = div2StartWidth + diff + 'px';
+    if (layout === 'row') {
+      const diff = mouseStartPosition.current.x - e.pageX;
+      div1Ref.current.style.flexBasis = div1StartWidth + -1 * diff + 'px';
+      div2Ref.current.style.flexBasis = div2StartWidth + diff + 'px';
+    } else if (layout === 'column') {
+      const diff = mouseStartPosition.current.y - e.pageY;
+      div1Ref.current.style.flexBasis = div1StartHeight + -1 * diff + 'px';
+      div2Ref.current.style.flexBasis = div2StartHeight + diff + 'px';
+    }
     //}
   };
 
@@ -73,7 +133,11 @@ const CoverSearchAltApp = () => {
   const handleMouseDown = (e) => {
     console.log('mouse down');
     setIsResizing(true);
-    mouseStartPosition.current.x = e.pageX;
+    if (layout === 'row') {
+      mouseStartPosition.current.x = e.pageX;
+    } else if (layout === 'column') {
+      mouseStartPosition.current.y = e.pageY;
+    }
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   };

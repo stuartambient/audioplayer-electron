@@ -91,7 +91,7 @@ const useTracks = (
   dispatch,
   tracksShuffle
 ) => {
-  console.log(
+  /*  console.log(
     'tracks page number: ',
     tracksPageNumber,
     'tracks search term: ',
@@ -102,7 +102,7 @@ const useTracks = (
     resetKey,
     'tracks shuffle: ',
     tracksShuffle
-  );
+  ); */
   const [tracksLoading, setTracksLoading] = useState(true);
   const [tracksError, setTracksError] = useState(false);
   const [hasMoreTracks, setHasMoreTracks] = useState(false);
