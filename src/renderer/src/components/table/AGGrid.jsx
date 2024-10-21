@@ -11,7 +11,7 @@ import CustomToolPanel from './CustomToolPanel';
 import EditForm from './EditForm';
 import { openChildWindow } from '../ChildWindows/openChildWindow';
 import { useColumnDefinitions, useColumnTypes } from './useTableDefinitions';
-import { handlePicture } from '../../utility/audioUtils';
+/* import { handlePicture } from '../../utility/audioUtils'; */
 /* import CustomContextMenu from './ContextMenu'; */
 import PlayButtonRenderer from './PlayButtonRenderer';
 
@@ -137,8 +137,9 @@ const AGGrid = ({ reset, data, playButton }) => {
 
   useEffect(() => {
     const handleDownloadedImage = async (img) => {
-      const buffer = handlePicture(img.buffer);
-      console.log(buffer);
+      /* const buffer = handlePicture(img.buffer); */
+      /* const myPic = Picture.fromPath(img) */
+      console.log(img);
     };
 
     window.metadataEditingApi.onDownloadedImage(handleDownloadedImage);
@@ -150,10 +151,13 @@ const AGGrid = ({ reset, data, playButton }) => {
 
   const handleEmbedPicture = (params) => {
     console.log('params: ', params);
+    if (params === 'search-folder') {
+      return;
+    }
     const artist = params.artist;
     const title = params.album;
-    const path = 'c:/';
-    openChildWindow(
+    const path = params.audiotrack;
+    return openChildWindow(
       'cover-search-alt-tags',
       'cover-search-alt-tags',
       {
@@ -462,16 +466,20 @@ const AGGrid = ({ reset, data, playButton }) => {
   };
 
   const handleCellContextMenu = (params) => {
+    console.log('params: ', params);
     params.event.preventDefault(); // Prevent default context menu
     /* showContextMenu(params.data, params.event.clientX, params.event.clientY); */
     if (params.colDef.field === 'pictures') {
       const album = params.data.album;
       const artist = params.data.albumArtists || params.data.performers;
+      const path = params.data.audiotrack;
+      console.log(params.data, params.data.audiotrack);
+      /* console.log('filepath: ', filePath); */
       /*       setAlbumPic(album);
       setArtistPic(artist); */
 
       //window.metadataEditingApi.showContextMenu(`${artist} - ${album}`, 'picture');
-      window.metadataEditingApi.showContextMenu({ artist, album }, 'picture');
+      window.metadataEditingApi.showContextMenu({ artist, album, path }, 'picture');
       metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
       return () => {
         metadataEditingApi.off('context-menu-command', handleEmbedPicture);

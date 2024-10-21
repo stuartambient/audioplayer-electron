@@ -384,7 +384,7 @@ ipcMain.handle('update-roots', async (event, roots) => {
 });
 
 ipcMain.handle('get-folder-path', (event, folderName) => {
-  console.log('folderName: ', folderName);
+  /*  console.log('folderName: ', folderName); */
   return path.resolve(folderName);
 });
 
@@ -1043,7 +1043,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
 }); */
 
 ipcMain.on('show-context-menu', (event, id, type) => {
-  console.log('id: ', id, 'type: ', type);
+  /* console.log('id: ', id, 'type: ', type); */
 
   const template = [];
 
@@ -1099,10 +1099,16 @@ ipcMain.on('show-context-menu', (event, id, type) => {
   }
 
   if (type === 'picture') {
-    template.push({
-      label: `Search pictures for ${id.artist} -- ${id.album}`,
-      click: () => event.sender.send('context-menu-command', id)
-    });
+    template.push(
+      {
+        label: `Search pictures for ${id.artist} -- ${id.album}`,
+        click: () => event.sender.send('context-menu-command', id)
+      },
+      {
+        label: 'From folder',
+        click: () => event.sender.send('context-menu-command', 'search-folder')
+      }
+    );
   }
 
   if (type === 'menu') {
@@ -1201,11 +1207,12 @@ ipcMain.handle('show-text-input-menu', (event) => {
 
 ipcMain.handle('show-child', (event, args) => {
   const { name, type, winConfig, data } = args;
+  /* console.log('name: ', name, 'type: ', type, 'config: ', winConfig, 'data: ', data); */
   createOrUpdateChildWindow(name, type, winConfig, data);
 });
 
 ipcMain.handle('download-file', async (event, ...args) => {
-  console.log('args: ', args);
+  console.log('download-file: ', args);
   const [fileUrl, filePath, listType] = args;
 
   const extension = path.extname(new URL(fileUrl).pathname);
@@ -1236,10 +1243,13 @@ ipcMain.handle('download-file', async (event, ...args) => {
       console.log('Download complete:', savePath.filePath);
       if (listType === 'cover-search-alt-tags') {
         //return event.sender.send('download-completed', 'download successful', response.data);
+
+        console.log('filepath: ', filePath);
+        /*  const filePath = savePath.filePath.replace(/\\/g, '/');
         const win = getWindow('table-data');
         if (win) {
-          win.webContents.send('downloaded-image', /* { img: */ response.data /* } */);
-        }
+          win.webContents.send('downloaded-image', filePath);
+        } */
       }
 
       return event.sender.send('download-completed', 'download successful');

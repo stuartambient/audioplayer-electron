@@ -7,7 +7,7 @@ import { mainWindow } from './index.js';
 const windows = new Map();
 
 function createOrUpdateChildWindow(name, type, config, data) {
-  console.log('window name: ', name);
+  console.log('window name: ', name, data);
   let window = windows.get(name);
   if (window) {
     console.log(`Window ${name} already exists. Sending data to it.`);
