@@ -169,8 +169,10 @@ const CoverSearchAltApp = () => {
   }, []);
 
   useEffect(() => {
-    if (download && imageUrl) {
+    if (download && imageUrl && listType === 'cover-search-alt') {
       window.coverSearchAltApi.downloadFile(imageUrl, savePath, listType);
+    } else if (download && imageUrl && listType === 'cover-search-alt-tags') {
+      window.coverSearchAltApi.downloadTagImage(imageUrl, savePath, listType);
     }
     /* return setDownload(false); */
   }, [download, imageUrl, savePath]);
@@ -211,7 +213,7 @@ const CoverSearchAltApp = () => {
     };
   }, [nonce]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const handleTempPath = async () => {
       const tempPath = await window.coverSearchAltApi.getTempPath();
       setSavePath(tempPath.replaceAll('\\', '/'));
@@ -219,12 +221,12 @@ const CoverSearchAltApp = () => {
     if (listType === 'cover-search-alt-tags') {
       handleTempPath();
     }
-  }, [listType]);
+  }, [listType]); */
 
   useEffect(() => {
     window.coverSearchAltApi.notifyReady();
     const handleSearchParams = (args) => {
-      console.log('args: ', args);
+      console.log('args: ', args.listType, args.results.path, args);
       if (!args.results.artist) return;
       setArtist(args.results.artist);
       setAlbum(args.results.title);

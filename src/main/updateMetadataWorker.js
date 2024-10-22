@@ -2,6 +2,7 @@ import { parentPort, workerData, isMainThread } from 'worker_threads';
 import fs from 'fs';
 import path from 'path';
 import process from 'node:process';
+import { File } from 'node-taglib-sharp';
 import Database from 'better-sqlite3';
 
 const mode = import.meta.env.MODE;
@@ -273,6 +274,7 @@ const run = async (cb) => {
     const stats = await fs.promises.stat(r.audiotrack);
     const lastModified = stats.mtimeMs;
     if (lastModified > r.modified) {
+      console.log('lastModified > r.modified');
       updatedTracks.push(r);
     }
   }

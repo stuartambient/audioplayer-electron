@@ -1044,6 +1044,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
 
 ipcMain.on('show-context-menu', (event, id, type) => {
   /* console.log('id: ', id, 'type: ', type); */
+  console.log('id: ', id);
 
   const template = [];
 
@@ -1211,6 +1212,47 @@ ipcMain.handle('show-child', (event, args) => {
   createOrUpdateChildWindow(name, type, winConfig, data);
 });
 
+// EMBED SAVED IMAGE TO TAG
+const embedImage = (savedImage, file) => {
+  console.log('savedImage: ', savedImage, file);
+  try {
+    const pic = Picture.fromPath(savedImage);
+    const myFile = File.createFromPath(file);
+    console.log('pic: ', pic);
+    myFile.tag.pictures = [pic];
+    myFile.save();
+    myFile.dispose();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return err.message;
+  }
+};
+
+// Helper function for downloading and saving
+const downloadFile = async (fileUrl, savePath) => {
+  try {
+    const response = await axios.get(fileUrl, {
+      responseType: 'arraybuffer',
+      headers: {
+        'User-Agent': 'musicplayer-electron/1.0 +https://stuartambient.github.io/musicapp-intro/'
+      }
+    });
+
+    if (response.status === 200) {
+      await fs.promises.writeFile(savePath, response.data);
+      console.log('Download complete:', savePath);
+      return true;
+    } else {
+      console.log('Failed to download:', response.status);
+      return false;
+    }
+  } catch (err) {
+    console.error('Error during download or save:', err);
+    throw new Error(`Error: ${err.message}`);
+  }
+};
+
 ipcMain.handle('download-file', async (event, ...args) => {
   console.log('download-file: ', args);
   const [fileUrl, filePath, listType] = args;
@@ -1231,36 +1273,27 @@ ipcMain.handle('download-file', async (event, ...args) => {
     return 'User cancelled the download';
   }
 
-  try {
-    const response = await axios.get(fileUrl, {
-      responseType: 'arraybuffer',
-      headers: {
-        'User-Agent': 'musicplayer-electron/1.0 +https://stuartambient.github.io/musicapp-intro/'
-      }
-    });
-    if (response.status === 200) {
-      await fs.promises.writeFile(savePath.filePath, response.data);
-      console.log('Download complete:', savePath.filePath);
-      if (listType === 'cover-search-alt-tags') {
-        //return event.sender.send('download-completed', 'download successful', response.data);
+  const success = await downloadFile(fileUrl, savePath.filePath);
+  if (success) event.sender.send('download-completed', 'download successful');
+  else event.sender.send('download-failed', 'download failed');
+});
 
-        console.log('filepath: ', filePath);
-        /*  const filePath = savePath.filePath.replace(/\\/g, '/');
-        const win = getWindow('table-data');
-        if (win) {
-          win.webContents.send('downloaded-image', filePath);
-        } */
-      }
+ipcMain.handle('download-tag-image', async (event, ...args) => {
+  const [fileUrl, filePath, listType] = args;
+  console.log('download-tag-image: ', fileUrl, filePath, listType);
+  const extension = path.extname(new URL(fileUrl).pathname);
+  const defaultFilename = `cover${extension}`;
+  const tempDir = app.getPath('temp');
+  const saveTo = path.join(tempDir, defaultFilename);
 
-      return event.sender.send('download-completed', 'download successful');
-    } else {
-      console.log('Failed to download:', response.status);
-      return `Download failed with status: ${response.status}`;
-    }
-  } catch (err) {
-    console.error('Error during download or save:', err);
-    return `Error: ${err.message}`;
+  const success = await downloadFile(fileUrl, saveTo);
+  if (success) {
+    const tempFile = saveTo.replace(/\\/g, '/');
+    const embedImgTag = embedImage(tempFile, filePath);
+    console.log('embedImgTag: ', embedImgTag);
   }
+  /*   if (success) event.sender.send('download-completed', 'download successful');
+  else event.sender.send('download-failed', 'download failed'); */
 });
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {

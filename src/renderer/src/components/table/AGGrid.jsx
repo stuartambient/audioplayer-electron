@@ -156,7 +156,8 @@ const AGGrid = ({ reset, data, playButton }) => {
     }
     const artist = params.artist;
     const title = params.album;
-    const path = params.audiotrack;
+    const path = params.path;
+
     return openChildWindow(
       'cover-search-alt-tags',
       'cover-search-alt-tags',
