@@ -34,6 +34,7 @@ const AGGrid = ({ reset, data, playButton }) => {
   const [prefsLoaded, setPrefsLoaded] = useState(false);
   const [artistPic, setArtistPic] = useState('');
   const [picture, setPicture] = useState('');
+  const [roots, setRoots] = useState([]);
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
@@ -52,6 +53,14 @@ const AGGrid = ({ reset, data, playButton }) => {
     };
     loadPreferences();
   }, []);
+
+  useEffect(() => {
+    const getRoots = async () => {
+      const roots = await metadataEditingApi.getRoots();
+      if (roots) setRoots(roots);
+    };
+    getRoots();
+  }, [roots]);
 
   useEffect(() => {
     const updateColPrefs = async () => {
@@ -154,6 +163,7 @@ const AGGrid = ({ reset, data, playButton }) => {
     if (params === 'search-folder') {
       return;
     }
+
     const artist = params.artist;
     const title = params.album;
     const path = params.path;
@@ -471,8 +481,13 @@ const AGGrid = ({ reset, data, playButton }) => {
     params.event.preventDefault(); // Prevent default context menu
     /* showContextMenu(params.data, params.event.clientX, params.event.clientY); */
     if (params.colDef.field === 'pictures') {
-      const album = params.data.album;
-      const artist = params.data.albumArtists || params.data.performers;
+      const album = params.data.album ? params.data.album : '';
+      //const artist = params.data.albumArtists || params.data.performers;
+      const artist = params.data.albumArtists
+        ? params.data.albumArtists
+        : params.data.performers
+        ? params.data.performers
+        : '';
       const path = params.data.audiotrack;
       console.log(params.data, params.data.audiotrack);
       /* console.log('filepath: ', filePath); */

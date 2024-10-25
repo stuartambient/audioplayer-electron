@@ -253,21 +253,30 @@ const refreshMetadata = (tracks) => {
 };
 
 // Define the sequential functions
-async function func1(data) {
-  // Simulate a task
+/* async function func1(data) {
   return new Promise((resolve, reject) => {
     try {
-      const updateTagsResult = updateTags(data);
-      /* console.log('tags result: ', updateTagsResult); */
+      const updateTagsResult = await updateTags(data);
       const updatedArray = data.filter(
         (obj) => !updateTagsResult.errors.find((e) => e.track_id === obj.track_id)
       );
-      /* console.log('updatedArray = ', updatedArray); */
-      resolve(updatedArray); // Assuming updateTags is synchronous. Adjust if it's asynchronous.
+      resolve(updatedArray); 
     } catch (error) {
       reject(error);
     }
   });
+} */
+
+async function func1(data) {
+  try {
+    const updateTagsResult = await updateTags(data);
+    const updatedArray = data.filter(
+      (obj) => !updateTagsResult.errors.find((e) => e.track_id === obj.track_id)
+    );
+    return updatedArray;
+  } catch (error) {
+    return error;
+  }
 }
 
 async function func2(input) {

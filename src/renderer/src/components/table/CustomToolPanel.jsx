@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import EditForm from './EditForm';
 import Modal from '../Modal';
-import { openChildWindow } from '../ChildWindows/openChildWindow';
+/* import { openChildWindow } from '../ChildWindows/openChildWindow'; */
 import TableAudioControls from './TableAudioControls';
 import './styles/CustomToolPanel.css';
 

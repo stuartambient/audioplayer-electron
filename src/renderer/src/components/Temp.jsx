@@ -1,23 +1,20 @@
-pcMain.handle('download-file', async (event, ...args) => {
-  console.log('download-file: ', args);
-  const [fileUrl, filePath, listType] = args;
-
-  const extension = path.extname(new URL(fileUrl).pathname);
-  const defaultFilename = `cover${extension}`;
-  const initialPath = filePath ? path.join(filePath, defaultFilename) : defaultFilename;
-
-  let savePath = await dialog.showSaveDialog({
-    title: 'save image',
-    defaultPath: initialPath,
-    filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'] }],
-    properties: ['showOverwriteConfirmation']
-  });
-
-  if (savePath.canceled) {
-    console.log('Download canceled by user.');
-    return 'User cancelled the download';
+const embedImage = (savedImage, file) => {
+  console.log('savedImage: ', savedImage, file);
+  try {
+    const pic = Picture.fromPath(savedImage);
+    const myFile = File.createFromPath(file);
+    console.log('pic: ', pic);
+    myFile.tag.pictures = [pic];
+    myFile.save();
+    myFile.dispose();
+    return true;
+  } catch (err) {
+    console.error(err);
+    return err.message;
   }
+};
 
+const downloadFile = async (fileUrl, savePath) => {
   try {
     const response = await axios.get(fileUrl, {
       responseType: 'arraybuffer',
@@ -25,20 +22,52 @@ pcMain.handle('download-file', async (event, ...args) => {
         'User-Agent': 'musicplayer-electron/1.0 +https://stuartambient.github.io/musicapp-intro/'
       }
     });
-    if (response.status === 200) {
-      await fs.promises.writeFile(savePath.filePath, response.data);
-      console.log('Download complete:', savePath.filePath);
-      if (listType === 'cover-search-alt-tags') {
-        /* */
-      }
 
-      return event.sender.send('download-completed', 'download successful');
+    if (response.status === 200) {
+      await fs.promises.writeFile(savePath, response.data);
+      console.log('Download complete:', savePath);
+      return true;
     } else {
       console.log('Failed to download:', response.status);
-      return `Download failed with status: ${response.status}`;
+      return false;
     }
   } catch (err) {
     console.error('Error during download or save:', err);
-    return `Error: ${err.message}`;
+    throw new Error(`Error: ${err.message}`);
   }
+};
+
+ipcMain.handle('download-tag-image', async (event, ...args) => {
+  const [fileUrl, filePath, listType] = args;
+  console.log('download-tag-image: ', fileUrl, filePath, listType);
+  const extension = path.extname(new URL(fileUrl).pathname);
+  const defaultFilename = `cover${extension}`;
+  const tempDir = app.getPath('temp');
+  const saveTo = path.join(tempDir, defaultFilename);
+
+  const success = await downloadFile(fileUrl, saveTo);
+  if (success) {
+    const tempFile = saveTo.replace(/\\/g, '/');
+    const embedImgTag = embedImage(tempFile, filePath);
+    console.log('embedImgTag: ', embedImgTag);
+  }
+  /*   if (success) event.sender.send('download-completed', 'download successful');
+  else event.sender.send('download-failed', 'download failed'); */
 });
+
+if (type === 'picture') {
+  const fileIndex = id.path.lastIndexOf('/');
+  const strEnd = id.path.substring(0, fileIndex);
+  template.push(
+    {
+      label: `Search pictures for ${
+        id.artist && id.album ? `${id.artist} - ${id.album}` : `${strEnd}`
+      } `,
+      click: () => event.sender.send('context-menu-command', id)
+    },
+    {
+      label: 'From folder',
+      click: () => event.sender.send('context-menu-command', 'search-folder')
+    }
+  );
+}

@@ -1,4 +1,5 @@
 import { Picture, File } from 'node-taglib-sharp';
+import checkAndRemoveReadOnly from './utility/checkAndRemoveReadOnly';
 
 const tagKeys = {
   albumArtists: (param) => param.split(', '),
@@ -30,32 +31,9 @@ const tagKeys = {
   year: (param) => Number(param)
 };
 
-/* const updateTags = async (arr) => {
-  try {
-      const promises = arr.map(async (a) => {
-      const myFile = File.createFromPath(a.id);
-      for (const [key, value] of Object.entries(a.updates)) {
-        console.log('processing file....: ', a.id);
-        const t = tagKeys[key](value);
-        myFile.tag[key] = t;
-      }
-      await myFile.save();
-    });
-
-    await Promise.all(promises);
-    return 'Tag updates successful';
-  } catch (e) {
-    console.error('error msg: ', e.message);
-  }
-};
-
-export default updateTags; */
-
-const updateTags = (arr) => {
-  // Array to store errors
+const updateTags = async (arr) => {
   const errors = [];
 
-  // Process each file synchronously
   arr.forEach((a) => {
     try {
       const myFile = File.createFromPath(a.id);
@@ -64,21 +42,60 @@ const updateTags = (arr) => {
         const t = tagKeys[key](value);
         myFile.tag[key] = t;
       }
-      // Save the file (synchronously)
       myFile.save();
     } catch (e) {
-      // Log the error and continue with the next file
       console.error(`Error processing file ${a.id}: ${e.message}`);
       errors.push({ track_id: a.track_id, id: a.id, error: e.message });
     }
   });
 
   console.log('errors: ', errors);
-  // Return results
   return {
     message: 'Tag updates completed with some errors',
     errors
   };
 };
+
+/* const updateTags = async (arr) => {
+  // Array to store errors
+  const errors = [];
+
+  // Loop over the array of files
+  for (const a of arr) {
+    try {
+      // Ensure the file is writable
+      const fileWritable = await checkAndRemoveReadOnly(a.id);
+      if (!fileWritable) {
+        throw new Error('File is not writable');
+      }
+
+      // Proceed with tag updates if writable
+      const myFile = File.createFromPath(a.id);
+
+      // Update tags
+      for (const [key, value] of Object.entries(a.updates)) {
+        console.log('Processing file....: ', a.id);
+        const t = tagKeys[key](value);
+        myFile.tag[key] = t;
+      }
+
+      // Save the file
+      myFile.save();
+    } catch (e) {
+      // Log the error and continue with the next file
+      console.error(`Error processing file ${a.id}: ${e.message}`);
+      errors.push({ track_id: a.track_id, id: a.id, error: e.message });
+    }
+  }
+
+  // Log any errors
+  console.log('errors: ', errors);
+
+  // Return results
+  return {
+    message: 'Tag updates completed with some errors',
+    errors
+  };
+}; */
 
 export default updateTags;

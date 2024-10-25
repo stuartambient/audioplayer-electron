@@ -124,6 +124,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
   }, [isScrolling]); // Re-run the effect when the `isScrolling` state changes
 
   const handleCoverSearch = async (search) => {
+    console.log('search: ', search);
     const { album, path, service } = search;
 
     let artist, title;
@@ -135,7 +136,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
       title = album;
     }
 
-    if (!artist) return;
+    /*   if (!artist) return; */
 
     if (service === 'covit') {
       return openChildWindow(

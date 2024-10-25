@@ -19,6 +19,7 @@ const CoverSearchAltApp = () => {
   const [div2StartHeight, setDiv2StartHeight] = useState(0);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [layout, setLayout] = useState('row');
+  const [notified, setNotified] = useState(false);
 
   const isListenerAttached = useRef(false);
 
@@ -224,12 +225,17 @@ const CoverSearchAltApp = () => {
   }, [listType]); */
 
   useEffect(() => {
-    window.coverSearchAltApi.notifyReady();
+    if (!notified) {
+      window.coverSearchAltApi.notifyReady();
+      setNotified(true);
+      console.log('Notified parent that child is ready');
+    }
+
     const handleSearchParams = (args) => {
       console.log('args: ', args.listType, args.results.path, args);
-      if (!args.results.artist) return;
-      setArtist(args.results.artist);
-      setAlbum(args.results.title);
+      /* if (!args.results.artist) return; */
+      setArtist(args.results.artist ? args.results.artist : '');
+      setAlbum(args.results.title ? args.results.title : '');
       setListType(args.listType);
       setSavePath(args.results.path);
       //}

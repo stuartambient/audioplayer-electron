@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('metadataEditingApi', {
   onDownloadedImage: (cb) => ipcRenderer.on('downloaded-image', (event, img) => cb(img)),
   showChild: (args) => ipcRenderer.invoke('show-child', args),
   onClearTable: (cb) => ipcRenderer.on('clear-table', (event, arg) => cb(arg)),
+  getRoots: () => ipcRenderer.invoke('get-roots'),
   getPreferences: () => ipcRenderer.invoke('get-preferences'),
   savePreferences: (preferences) => ipcRenderer.invoke('save-preferences', preferences),
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),

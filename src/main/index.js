@@ -21,6 +21,7 @@ import { exec } from 'child_process';
 import process from 'node:process';
 import fs from 'node:fs';
 import fg from 'fast-glob';
+import checkAndRemoveReadOnly from './utility/checkAndRemoveReadOnly.js';
 /* import { spawn } from 'child_process'; */
 import { createOrUpdateChildWindow, getWindowNames, getWindow } from './windowManager.js';
 import url, { pathToFileURL } from 'url';
@@ -85,7 +86,7 @@ import {
 /* import initFiles from './updateFiles'; */
 import initCovers from './updateFolderCovers';
 /* import initUpdateMetadata from './updateMetadata'; */
-import updateTags from './updateTags';
+/* import updateTags from './updateTags'; */
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1100,9 +1101,13 @@ ipcMain.on('show-context-menu', (event, id, type) => {
   }
 
   if (type === 'picture') {
+    const fileIndex = id.path.lastIndexOf('/');
+    const strEnd = id.path.substring(0, fileIndex);
     template.push(
       {
-        label: `Search pictures for ${id.artist} -- ${id.album}`,
+        label: `Search pictures for ${
+          id.artist && id.album ? `${id.artist} - ${id.album}` : `${strEnd}`
+        } `,
         click: () => event.sender.send('context-menu-command', id)
       },
       {
@@ -1213,15 +1218,22 @@ ipcMain.handle('show-child', (event, args) => {
 });
 
 // EMBED SAVED IMAGE TO TAG
-const embedImage = (savedImage, file) => {
-  console.log('savedImage: ', savedImage, file);
+const embedImage = async (savedImage, file) => {
   try {
+    const fileWritable = await checkAndRemoveReadOnly(file); // Await here to ensure file is writable before proceeding
+    if (!fileWritable) return 'file not writable';
+
     const pic = Picture.fromPath(savedImage);
     const myFile = File.createFromPath(file);
     console.log('pic: ', pic);
     myFile.tag.pictures = [pic];
     myFile.save();
     myFile.dispose();
+
+    // Delete the temp file after embedding the image
+    fs.unlinkSync(savedImage);
+    console.log('Temp file deleted:', savedImage);
+
     return true;
   } catch (err) {
     console.error(err);

@@ -10,7 +10,7 @@ import {
   TracksByRoot
 } from './StatsComponents';
 import { useDistinctDirectories } from '../hooks/useDb';
-import { openChildWindow } from './ChildWindows/openChildWindow';
+/* import { openChildWindow } from './ChildWindows/openChildWindow'; */
 import StatsLoader from './StatsLoader';
 import '../style/Stats.css';
 
