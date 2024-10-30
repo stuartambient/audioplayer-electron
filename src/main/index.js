@@ -1104,14 +1104,26 @@ ipcMain.on('show-context-menu', (event, id, type) => {
     const fileIndex = id.path.lastIndexOf('/');
     const strEnd = id.path.substring(0, fileIndex);
     template.push(
-      {
-        label: `Search pictures for ${
+      /*     {
+        label: `Search pictures for single track ${
           id.artist && id.album ? `${id.artist} - ${id.album}` : `${strEnd}`
         } `,
         click: () => event.sender.send('context-menu-command', id)
+      }, */
+      {
+        label: `Embed image for single track`,
+        click: () => event.sender.send('context-menu-command', { type: 'single-track', params: id })
       },
       {
-        label: 'From folder',
+        label: `Embed image for all tracks in folder`,
+        click: () =>
+          event.sender.send('context-menu-command', {
+            type: 'all-tracks',
+            params: 'all-tracks'
+          })
+      },
+      {
+        label: 'Select image from folder',
         click: () => event.sender.send('context-menu-command', 'search-folder')
       }
     );
@@ -1291,8 +1303,8 @@ ipcMain.handle('download-file', async (event, ...args) => {
 });
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
-  const [fileUrl, filePath, listType] = args;
-  console.log('download-tag-image: ', fileUrl, filePath, listType);
+  const [fileUrl, filePath, listType, embedType] = args;
+  console.log('download-tag-image: ', fileUrl, filePath, listType, embedType);
   const extension = path.extname(new URL(fileUrl).pathname);
   const defaultFilename = `cover${extension}`;
   const tempDir = app.getPath('temp');
@@ -1301,7 +1313,7 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
   const success = await downloadFile(fileUrl, saveTo);
   if (success) {
     const tempFile = saveTo.replace(/\\/g, '/');
-    const embedImgTag = embedImage(tempFile, filePath);
+    const embedImgTag = await embedImage(tempFile, filePath);
     console.log('embedImgTag: ', embedImgTag);
   }
   /*   if (success) event.sender.send('download-completed', 'download successful');

@@ -32,8 +32,8 @@ const AGGrid = ({ reset, data, playButton }) => {
   const [columnApi, setColumnApi] = useState(null);
   const [hiddenColumns, setHiddenColumns] = useState([]);
   const [prefsLoaded, setPrefsLoaded] = useState(false);
-  const [artistPic, setArtistPic] = useState('');
-  const [picture, setPicture] = useState('');
+  /*   const [artistPic, setArtistPic] = useState('');
+  const [picture, setPicture] = useState(''); */
   const [roots, setRoots] = useState([]);
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
@@ -43,6 +43,11 @@ const AGGrid = ({ reset, data, playButton }) => {
   const [redos, setRedos] = useState([]);
 
   const isRowsSelected = useRef([]);
+
+  useEffect(() => {
+    const selected = nodesSelected.map((node) => node.data.audiotrack);
+    console.log('selected: ', selected);
+  }, [nodesSelected]);
 
   useEffect(() => {
     const loadPreferences = async () => {
@@ -158,17 +163,47 @@ const AGGrid = ({ reset, data, playButton }) => {
     };
   }, []);
 
-  const handleEmbedPicture = (params) => {
-    console.log('params: ', params);
-    if (params === 'search-folder') {
+  const handleEmbedPicture = (values) => {
+    console.log('values: ', values.type);
+    let artist, title, path, type;
+    let paths = [];
+    if (values.type === 'single-track') {
+      artist = values.params.artist;
+      title = values.params.album;
+      path = values.params.path;
+      type = values.type;
+    } else if (values === 'search-folder') {
       return;
+    } else if (values.type === 'all-tracks') {
+      nodesSelected.forEach((node, index) => {
+        const currentArtist = (node.data.albumArtists || node.data.performers || '').trim();
+        const currentAlbum = (node.data.album || '').trim();
+        const currentPath = node.data.audiotrack;
+
+        // On the first iteration, set the artist and album
+        if (index === 0) {
+          artist = currentArtist;
+          title = currentAlbum;
+        }
+
+        // Check if the artist and album are consistent
+        if (artist === currentArtist && title === currentAlbum) {
+          paths.push(currentPath);
+        } else {
+          console.error('Artist or album mismatch detected!');
+        }
+      });
+      console.log('Artist:', artist);
+      console.log('Album:', title);
+      return console.log('Paths:', paths);
     }
 
-    const artist = params.artist;
-    const title = params.album;
-    const path = params.path;
+    /*     const artist = values.params.artist;
+    const title = values.params.album;
+    const path = values.params.path;
+    const type = values.type; */
 
-    return openChildWindow(
+    /*     return openChildWindow(
       'cover-search-alt-tags',
       'cover-search-alt-tags',
       {
@@ -181,8 +216,8 @@ const AGGrid = ({ reset, data, playButton }) => {
         webSecurity: true,
         contextIsolation: true
       },
-      { artist, title, path }
-    );
+      { artist, title, path, type }
+    ); */
   };
 
   const IconCellRenderer = () => (
@@ -489,7 +524,7 @@ const AGGrid = ({ reset, data, playButton }) => {
         ? params.data.performers
         : '';
       const path = params.data.audiotrack;
-      console.log(params.data, params.data.audiotrack);
+      /* console.log(params.data, params.data.audiotrack); */
       /* console.log('filepath: ', filePath); */
       /*       setAlbumPic(album);
       setArtistPic(artist); */

@@ -1,5 +1,5 @@
 export const openChildWindow = (name, type, config, data) => {
-  console.log('ocw: ', 'name: ', name, 'type: ', type, 'config: ', config, 'data: ', data);
+  /* console.log('ocw: ', 'name: ', name, 'type: ', type, 'config: ', config, 'data: ', data); */
   const apipreload = name === 'cover-search-alt-tags' ? window.metadataEditingApi : window.api;
   /* window.api.showChild({ */
   apipreload.showChild({

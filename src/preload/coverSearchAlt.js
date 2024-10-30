@@ -14,8 +14,8 @@ contextBridge.exposeInMainWorld('coverSearchAltApi', {
   downloadFile: (fileUrl, savepath, listType) =>
     ipcRenderer.invoke('download-file', fileUrl, savepath, listType),
   onDownloadFile: (cb) => ipcRenderer.on('download-completed', (event, ...args) => cb(args)),
-  downloadTagImage: (fileUrl, savepath, listType) =>
-    ipcRenderer.invoke('download-tag-image', fileUrl, savepath, listType),
+  downloadTagImage: (fileUrl, savepath, listType, embedType) =>
+    ipcRenderer.invoke('download-tag-image', fileUrl, savepath, listType, embedType),
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
     ipcRenderer.on('context-menu-command', (event, command) => callback(command));

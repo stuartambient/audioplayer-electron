@@ -11,6 +11,7 @@ const CoverSearchAltApp = () => {
   const [message, setMessage] = useState(false);
   const [download, setDownload] = useState(false);
   const [listType, setListType] = useState(null);
+  const [embedType, setEmbedType] = useState('');
   const [tempPath, setTempPath] = useState('');
   const [isResizing, setIsResizing] = useState(false);
   const [div1StartWidth, setDiv1StartWidth] = useState(0);
@@ -173,7 +174,7 @@ const CoverSearchAltApp = () => {
     if (download && imageUrl && listType === 'cover-search-alt') {
       window.coverSearchAltApi.downloadFile(imageUrl, savePath, listType);
     } else if (download && imageUrl && listType === 'cover-search-alt-tags') {
-      window.coverSearchAltApi.downloadTagImage(imageUrl, savePath, listType);
+      window.coverSearchAltApi.downloadTagImage(imageUrl, savePath, listType, embedType);
     }
     /* return setDownload(false); */
   }, [download, imageUrl, savePath]);
@@ -238,6 +239,10 @@ const CoverSearchAltApp = () => {
       setAlbum(args.results.title ? args.results.title : '');
       setListType(args.listType);
       setSavePath(args.results.path);
+      if (args.listType === 'cover-search-alt-tags') {
+        setEmbedType(args.results.type);
+      }
+
       //}
     };
 

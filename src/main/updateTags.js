@@ -31,7 +31,7 @@ const tagKeys = {
   year: (param) => Number(param)
 };
 
-const updateTags = async (arr) => {
+/* const updateTags = async (arr) => {
   const errors = [];
 
   arr.forEach((a) => {
@@ -54,9 +54,9 @@ const updateTags = async (arr) => {
     message: 'Tag updates completed with some errors',
     errors
   };
-};
+}; */
 
-/* const updateTags = async (arr) => {
+const updateTags = async (arr) => {
   // Array to store errors
   const errors = [];
 
@@ -96,6 +96,6 @@ const updateTags = async (arr) => {
     message: 'Tag updates completed with some errors',
     errors
   };
-}; */
+};
 
 export default updateTags;

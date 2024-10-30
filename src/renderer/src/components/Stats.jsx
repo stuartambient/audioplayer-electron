@@ -147,13 +147,13 @@ const Stats = () => {
           <p>Total media</p>
         </li>
         <li className="stat" id="topArtists" onClick={handleStatReq}>
-          <p>Top Artists</p>
+          <p>By Artists</p>
         </li>
         <li className="stat" id="genres" onClick={handleStatReq}>
-          <p>Genres</p>
+          <p>By Genres</p>
         </li>
         <li className="stat" id="directories" onClick={toggleSubmenu}>
-          Directories
+          By Directories
           {isSubmenuOpen && (
             <ul>
               {directories.map((item) => {
