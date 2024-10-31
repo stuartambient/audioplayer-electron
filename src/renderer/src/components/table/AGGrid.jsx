@@ -193,17 +193,10 @@ const AGGrid = ({ reset, data, playButton }) => {
           console.error('Artist or album mismatch detected!');
         }
       });
-      console.log('Artist:', artist);
-      console.log('Album:', title);
-      return console.log('Paths:', paths);
+      path = paths;
     }
 
-    /*     const artist = values.params.artist;
-    const title = values.params.album;
-    const path = values.params.path;
-    const type = values.type; */
-
-    /*     return openChildWindow(
+    return openChildWindow(
       'cover-search-alt-tags',
       'cover-search-alt-tags',
       {
@@ -217,7 +210,7 @@ const AGGrid = ({ reset, data, playButton }) => {
         contextIsolation: true
       },
       { artist, title, path, type }
-    ); */
+    );
   };
 
   const IconCellRenderer = () => (

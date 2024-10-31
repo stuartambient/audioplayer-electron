@@ -38,6 +38,7 @@ import createUpdateFilesWorker from './updateFilesWorker?nodeWorker';
 import createUpdateFoldersWorker from './updateFoldersWorker?nodeWorker';
 import createUpdateCoversWorker from './updateCoversWorker?nodeWorker';
 import createUpdateMetadataWorker from './updateMetadataWorker?nodeWorker';
+import createUpdateTagImageWorker from './updateTagImageWorker?nodeWorker';
 import axios from 'axios';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import { writeFile, convertToUTC /* , parseMeta */ } from './utility/index.js';
@@ -1111,11 +1112,11 @@ ipcMain.on('show-context-menu', (event, id, type) => {
         click: () => event.sender.send('context-menu-command', id)
       }, */
       {
-        label: `Embed image for single track`,
+        label: `Get image for single track`,
         click: () => event.sender.send('context-menu-command', { type: 'single-track', params: id })
       },
       {
-        label: `Embed image for all tracks in folder`,
+        label: `Get image for selected tracks`,
         click: () =>
           event.sender.send('context-menu-command', {
             type: 'all-tracks',
@@ -1230,9 +1231,9 @@ ipcMain.handle('show-child', (event, args) => {
 });
 
 // EMBED SAVED IMAGE TO TAG
-const embedImage = async (savedImage, file) => {
+/* const embedImage = async (savedImage, file) => {
   try {
-    const fileWritable = await checkAndRemoveReadOnly(file); // Await here to ensure file is writable before proceeding
+    const fileWritable = await checkAndRemoveReadOnly(file);
     if (!fileWritable) return 'file not writable';
 
     const pic = Picture.fromPath(savedImage);
@@ -1241,8 +1242,6 @@ const embedImage = async (savedImage, file) => {
     myFile.tag.pictures = [pic];
     myFile.save();
     myFile.dispose();
-
-    // Delete the temp file after embedding the image
     fs.unlinkSync(savedImage);
     console.log('Temp file deleted:', savedImage);
 
@@ -1251,7 +1250,7 @@ const embedImage = async (savedImage, file) => {
     console.error(err);
     return err.message;
   }
-};
+}; */
 
 // Helper function for downloading and saving
 const downloadFile = async (fileUrl, savePath) => {
@@ -1304,7 +1303,7 @@ ipcMain.handle('download-file', async (event, ...args) => {
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
   const [fileUrl, filePath, listType, embedType] = args;
-  console.log('download-tag-image: ', fileUrl, filePath, listType, embedType);
+  console.log('download-tag-image: ', fileUrl, '--', filePath, '--', listType, '--', embedType);
   const extension = path.extname(new URL(fileUrl).pathname);
   const defaultFilename = `cover${extension}`;
   const tempDir = app.getPath('temp');
@@ -1313,8 +1312,30 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
   const success = await downloadFile(fileUrl, saveTo);
   if (success) {
     const tempFile = saveTo.replace(/\\/g, '/');
-    const embedImgTag = await embedImage(tempFile, filePath);
-    console.log('embedImgTag: ', embedImgTag);
+    /* const embedImgTag = await embedImage(tempFile, filePath); */
+    try {
+      const workerPath = process.resourcesPath;
+      await createUpdateTagImageWorker({
+        workerData: { tempFile, filePath }
+      })
+        .on('message', (message) => {
+          console.log('message from worker: ', message);
+          //mainWindow.webContents.send('file-update-complete', getObjectWithLengths(message.result));
+        })
+        .on('error', (err) => {
+          console.error('Worker error:', err);
+        })
+        .on('exit', (code) => {
+          if (code !== 0) {
+            const errorMessage = `Worker stopped with exit code ${code}`;
+            console.error(errorMessage);
+          }
+        })
+        .postMessage('');
+    } catch (error) {
+      console.error(error.message);
+    }
+    /*  console.log('embedImgTag: ', embedImgTag); */
   }
   /*   if (success) event.sender.send('download-completed', 'download successful');
   else event.sender.send('download-failed', 'download failed'); */
@@ -1334,7 +1355,12 @@ ipcMain.handle('get-window-name', async (event) => {
 });
 
 ipcMain.handle('open-album-folder', async (_, path) => {
-  const properPath = path.replaceAll('/', '\\');
+  try {
+    const properPath = path.replaceAll('/', '\\');
+    shell.openPath(properPath);
+  } catch (error) {
+    console.error(error.message);
+  }
   /*   let explorer;
   switch (process.platform) {
     case 'win32':
@@ -1348,7 +1374,6 @@ ipcMain.handle('open-album-folder', async (_, path) => {
       break;
   } */
   /*  spawn(explorer, [path], { detached: true }).unref(); */
-  shell.openPath(properPath);
 });
 
 ipcMain.handle('get-preferences', async (event) => {
