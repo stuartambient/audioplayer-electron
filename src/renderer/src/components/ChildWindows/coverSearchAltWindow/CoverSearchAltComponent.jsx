@@ -153,13 +153,17 @@ const CoverSearchAltApp = () => {
 
   useEffect(() => {
     const handleDownloadCompleted = (val) => {
-      console.log('val: ', val);
+      console.log('val: ', val[0]);
       /* if (val[0] === 'download successful' && listType === 'cover-search-alt-tags') {
         setDownload(false);
         console.log('downloaded: ', val);
       } */
       if (val[0] === 'download successful') {
         setDownload(false);
+        setImageUrl('');
+      } else if (val[0] === 'download cancelled') {
+        setDownload(false);
+        setImageUrl('');
       }
     };
 

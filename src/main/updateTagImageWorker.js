@@ -15,11 +15,12 @@ const dbPath =
 const db = new Database(dbPath);
 
 const refreshMetadata = (tracks) => {
+  console.log('refreshMetadata tracks: ', tracks);
   const transaction = db.transaction(() => {
     const updateStmt = db.prepare(`
         UPDATE "audio-tracks" SET 
           modified = @modified,
-          pictures = @pictures,
+          pictures = @pictures
         WHERE 
           audiotrack = @audiotrack
         `);
@@ -42,6 +43,7 @@ const refreshMetadata = (tracks) => {
 };
 
 const parseMeta = async (files) => {
+  console.log('parseMeta files: ', files, Array.isArray);
   const filesMetadata = [];
 
   for (const file of files) {
@@ -51,9 +53,11 @@ const parseMeta = async (files) => {
       const fileStats = await fs.promises.stat(filePath);
       filesMetadata.push({
         audiotrack: filePath /* op === 'new' ? file : file.audiotrack, */,
-        modified: fileStats.mtimeMs || null
+        modified: fileStats.mtimeMs || null,
+        pictures: myFile.tag.pictures?.[0]?.data ? 1 : 0
       });
     } catch (error) {
+      console.log('========= FILE: =======', file);
       console.error(`Error processing file ${file}: ${error.message}`);
       const fileStats = await fs.promises.stat(file);
       filesMetadata.push({
@@ -66,6 +70,7 @@ const parseMeta = async (files) => {
 };
 
 const embedImage = async (savedImage, file) => {
+  console.log('embedImage: ', savedImage, '---', file);
   try {
     // Ensure 'file' is an array, even if it's a single string
     const files = Array.isArray(file) ? file : [file];
@@ -85,7 +90,7 @@ const embedImage = async (savedImage, file) => {
     fs.unlinkSync(savedImage);
     console.log('Temp file deleted:', savedImage);
 
-    return file;
+    return files;
   } catch (err) {
     console.error(err);
     return err.message;
@@ -105,6 +110,7 @@ const processFiles = async (message) => {
 if (!parentPort) throw Error('IllegalState');
 parentPort.on('message', async (message) => {
   try {
+    console.log('worker data: ', workerData);
     const result = await processFiles(workerData);
     /* const result = addTwoNums(2, 3); */
     parentPort.postMessage({ result });

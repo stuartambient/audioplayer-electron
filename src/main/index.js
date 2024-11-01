@@ -16,6 +16,7 @@ import {
   /* powerSaveBlocker */
 } from 'electron';
 import * as path from 'path';
+import { logger } from './utility/logger.js';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
 import process from 'node:process';
@@ -117,17 +118,17 @@ console.log('home: ', app.getPath('home'));
 console.log('appData: ', app.getPath('appData'));
 console.log('temp: ', app.getPath('temp'));
 console.log('userData: ', app.getPath('userData'));
-const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`;
-const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`;
+/* const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`; */
+/* const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`; */
 const playlistsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\playlists`;
 const coversFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\covers`;
-const preferences = `${app.getPath('documents')}\\ElectronMusicplayer\\preferences`;
-if (!fs.existsSync(updatesFolder)) {
+/* const preferences = `${app.getPath('documents')}\\ElectronMusicplayer\\preferences`; */
+/* if (!fs.existsSync(updatesFolder)) {
   fs.mkdirSync(updatesFolder);
 }
 if (!fs.existsSync(metaErrorsFolder)) {
   fs.mkdirSync(metaErrorsFolder);
-}
+} */
 if (!fs.existsSync(playlistsFolder)) {
   fs.mkdirSync(playlistsFolder);
 }
@@ -140,7 +141,19 @@ let shuffled = new Array();
 
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled promise rejection:', err);
+  logger.error('Unhandled promise rejection', { message: err.message, stack: err.stack });
+  if (shouldRestartOnError(err)) {
+    console.log('Critical error encountered, restarting app...');
+    app.relaunch();
+    app.exit(0);
+  }
 });
+
+function shouldRestartOnError(err) {
+  // Define conditions for restarting, e.g., critical errors only
+  const criticalErrors = ['CriticalDatabaseFailure', 'FatalWorkerError'];
+  return criticalErrors.includes(err.name);
+}
 
 const capitalizeDriveLetter = (str) => {
   return `${str.charAt(0).toUpperCase()}:${str.slice(1)}`;
@@ -1277,7 +1290,9 @@ const downloadFile = async (fileUrl, savePath) => {
 };
 
 ipcMain.handle('download-file', async (event, ...args) => {
-  console.log('download-file: ', args);
+  const senderWebContents = event.sender;
+  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
+  const targetWindow = BrowserWindow.fromId(senderWindow.id);
   const [fileUrl, filePath, listType] = args;
 
   const extension = path.extname(new URL(fileUrl).pathname);
@@ -1293,17 +1308,27 @@ ipcMain.handle('download-file', async (event, ...args) => {
 
   if (savePath.canceled) {
     console.log('Download canceled by user.');
-    return 'User cancelled the download';
+    return event.sender.send('download-completed', 'download cancelled');
   }
 
-  const success = await downloadFile(fileUrl, savePath.filePath);
-  if (success) event.sender.send('download-completed', 'download successful');
-  else event.sender.send('download-failed', 'download failed');
+  try {
+    await downloadFile(fileUrl, savePath.filePath).then(() =>
+      event.sender.send('download-completed', 'download successful')
+    );
+  } catch (error) {
+    console.error(error.message);
+    event.sender.send('download-failed', 'download failed');
+  }
 });
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
+  /*  const senderWebContents = event.sender;
+  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
+  const targetWindow = BrowserWindow.fromId(senderWindow.id); */
+  const targetWindow = await getWindow('table-data');
+  targetWindow.webContents.send('update-tags', 'starting');
   const [fileUrl, filePath, listType, embedType] = args;
-  console.log('download-tag-image: ', fileUrl, '--', filePath, '--', listType, '--', embedType);
+  //console.log('download-tag-image: ', fileUrl, '--', filePath, '--', listType, '--', embedType);
   const extension = path.extname(new URL(fileUrl).pathname);
   const defaultFilename = `cover${extension}`;
   const tempDir = app.getPath('temp');
@@ -1320,6 +1345,7 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
       })
         .on('message', (message) => {
           console.log('message from worker: ', message);
+          targetWindow.webContents.send('update-tags', 'success');
           //mainWindow.webContents.send('file-update-complete', getObjectWithLengths(message.result));
         })
         .on('error', (err) => {

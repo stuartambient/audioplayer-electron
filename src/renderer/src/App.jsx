@@ -264,7 +264,7 @@ function App() {
         handleMenu();
         break;
       case 'close':
-        /* window.api.appClose(); */
+        window.api.appClose();
         break;
       case 'minimize':
         window.api.appMinimize();

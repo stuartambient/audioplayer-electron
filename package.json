@@ -39,7 +39,8 @@
     "react-virtuoso": "^4.7.10",
     "react-window": "^1.8.10",
     "remove-accents": "^0.5.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "winston": "^3.15.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.1.0",
