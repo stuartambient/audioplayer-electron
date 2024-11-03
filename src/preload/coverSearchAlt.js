@@ -21,7 +21,6 @@ contextBridge.exposeInMainWorld('coverSearchAltApi', {
     ipcRenderer.on('context-menu-command', (event, command) => callback(command));
     /* return () => ipcRenderer.removeAllListeners('context-menu-command'); */ // Cleanup
   },
-  getWindowName: () => ipcRenderer.invoke('get-window-name', event),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });
 

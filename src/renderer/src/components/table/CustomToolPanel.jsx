@@ -3,6 +3,7 @@ import EditForm from './EditForm';
 import Modal from '../Modal';
 /* import { openChildWindow } from '../ChildWindows/openChildWindow'; */
 import TableAudioControls from './TableAudioControls';
+import TagUpdateState from './TagUpdateStatus';
 import './styles/CustomToolPanel.css';
 
 const CustomToolPanel = ({
@@ -15,6 +16,8 @@ const CustomToolPanel = ({
   hiddenColumns
 }) => {
   const [onForm, setOnForm] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState('');
+
   /*  const [isPanelVisible, setIsPanelVisible] = useState(true); */
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -116,7 +119,7 @@ const CustomToolPanel = ({
           <button className="panel-button" onClick={openModal} /* style={{ gridColumn: '1/-1' }} */>
             Column Preferences
           </button>
-          {/* </div> */}
+          <TagUpdateState updateStatus={updateStatus} setUpdateStatus={setUpdateStatus} />
         </fieldset>
         {/*      {nodesSelected.length > 0 && (
           <EditForm

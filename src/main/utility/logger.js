@@ -1,4 +1,4 @@
-import winston from 'winston';
+const winston = require('winston');
 import path from 'node:path';
 import { app } from 'electron';
 

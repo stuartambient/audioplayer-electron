@@ -433,28 +433,7 @@ const AGGrid = ({ reset, data, playButton }) => {
           track_id: row.track_id,
           updates: row.changes
         }));
-        /* console.log('save all: ', saveAll); */
-        /*  console.log('save-all: ', saveAll); */
         return updateTags(saveAll);
-      /*  if (undos.length === 0) return;
-
-        const updatesByRow = undos.reduce((acc, undo) => {
-          if (!acc[undo.rowId]) {
-            acc[undo.rowId] = {
-              id: originalData[undo.rowId].afid,
-              changes: {}
-            };
-          }
-          acc[undo.rowId].changes[undo.field] = undo.newValue;
-
-          return acc;
-        }, {});
-        const saveAll = Object.values(updatesByRow).map((row) => ({
-          id: row.id,
-          updates: row.changes
-        }));
-        console.log('save all: ', saveAll);
-        return; */
       case 'undo-last':
         return handleUndoLastEdit();
       case 'redo-last':

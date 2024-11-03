@@ -1,22 +1,23 @@
 .status-loader {
-  width: 25%;
-  height: 4.8px;
+  width: 15%;
+  height: 10px;
   display: inline-block;
   position: relative;
   background: rgba(255, 255, 255, 0.15);
   overflow: hidden;
-  margin-left: 20px;
+  margin-left: 10px;
+  border-radius: 3px;
 }
 .status-loader::after {
   content: '';
-  width: 192px;
-  height: 4.8px;
+  width: 100px;
+  height: 10px;
   background: #fff;
   position: absolute;
   top: 0;
   left: 0;
   box-sizing: border-box;
-  animation: animloader 2s linear infinite;
+  animation: animloader 2s linear alternate infinite;
 }
 
 @keyframes animloader {

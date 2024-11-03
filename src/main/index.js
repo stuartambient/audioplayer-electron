@@ -120,21 +120,19 @@ console.log('temp: ', app.getPath('temp'));
 console.log('userData: ', app.getPath('userData'));
 /* const updatesFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\updates`; */
 /* const metaErrorsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\metaerrors`; */
-const playlistsFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\playlists`;
-const coversFolder = `${app.getPath('documents')}\\ElectronMusicplayer\\covers`;
-/* const preferences = `${app.getPath('documents')}\\ElectronMusicplayer\\preferences`; */
-/* if (!fs.existsSync(updatesFolder)) {
-  fs.mkdirSync(updatesFolder);
-}
-if (!fs.existsSync(metaErrorsFolder)) {
-  fs.mkdirSync(metaErrorsFolder);
-} */
-if (!fs.existsSync(playlistsFolder)) {
-  fs.mkdirSync(playlistsFolder);
-}
-if (!fs.existsSync(coversFolder)) {
-  fs.mkdirSync(coversFolder);
-}
+const foldersToCreate = [
+  /*   'updates',
+  'metaerrors', */
+  'playlists',
+  'covers'
+];
+
+foldersToCreate.forEach((folder) => {
+  const folderPath = `${app.getPath('documents')}\ElectronMusicplayer\${folder}`;
+  if (!fs.existsSync(folderPath)) {
+    fs.mkdirSync(folderPath);
+  }
+});
 
 /* RANDOM ARRAY FOR TRACKS SHUFFLE */
 let shuffled = new Array();
@@ -190,21 +188,24 @@ function createWindow() {
     return { action: 'deny' };
   });
 
-  ipcMain.on('app-close', (events, args) => {
-    mainWindow.close();
-  });
-
-  ipcMain.on('minimize', (events, args) => {
-    mainWindow.minimize();
-  });
-
-  ipcMain.on('maximize', (events, args) => {
-    /* console.log('getsize: ', mainWindow.getBounds()); */
-    if (mainWindow.isMaximized()) {
-      mainWindow.unmaximize();
-    } else {
-      mainWindow.setMaximumSize(4000, 4000);
-      mainWindow.maximize();
+  ipcMain.on('window-action', (event, action) => {
+    switch (action) {
+      case 'close':
+        mainWindow.close();
+        break;
+      case 'minimize':
+        mainWindow.minimize();
+        break;
+      case 'maximize':
+        if (mainWindow.isMaximized()) {
+          mainWindow.unmaximize();
+        } else {
+          mainWindow.setMaximumSize(4000, 4000);
+          mainWindow.maximize();
+        }
+        break;
+      default:
+        console.warn('Unknown window action:', action);
     }
   });
 
@@ -223,55 +224,27 @@ app.whenReady().then(async () => {
   const createRootsTable = `CREATE TABLE IF NOT EXISTS roots ( id INTEGER PRIMARY KEY AUTOINCREMENT, root TEXT UNIQUE)`;
   db.exec(createRootsTable);
 
-  await session.defaultSession.clearCache(() => {
-    console.log('--------> Cache cleared!');
-  });
+  await session.defaultSession.clearCache().then(() => console.log('Cache cleared!'));
+
   await session.defaultSession.loadExtension(reactDevToolsPath, { allowFileAccess: true });
   electronApp.setAppUserModelId('com.electron');
+
   // Register the custom 'streaming' protocol
-  /* protocol.registerStreamProtocol('streaming', async (request, cb) => {
-    const uri = decodeURIComponent(request.url);
-
-    const filePath = uri.replace('streaming://', '');
-    const path = capitalizeDriveLetter(filePath);
-
-    const fileSize = fs.statSync(path).size;
-    const range = request.headers.Range;
-    if (range) {
-      const parts = range.replace(/bytes=/, '').split('-');
-      const start = parseInt(parts[0], 10);
-      const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-      const chunksize = end - start + 1;
-
-      const headers = {
-        'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-        'Accept-Ranges': 'bytes',
-        'Content-Length': String(chunksize),
-        'Content-Type': 'audio/mpeg'
-      };
-      cb({
-        statusCode: 206,
-        headers,
-        data: fs.createReadStream(path, { start, end })
-      });
-    } else {
-      console.log('no range');
-      cb({
-        statusCode: 200,
-        headers: {
-          'Content-Length': String(fileSize),
-          'Content-Type': 'audio/mpeg'
-        },
-        data: fs.createReadStream(path)
-      });
-    }
-  }); */
 
   protocol.registerStreamProtocol('streaming', async (request, cb) => {
     try {
       const uri = decodeURIComponent(request.url);
       const filePath = uri.replace('streaming://', '');
       const path = capitalizeDriveLetter(filePath);
+
+      if (!fs.existsSync(path)) {
+        console.error('File not found:', path);
+        return cb({
+          statusCode: 404,
+          headers: { 'Content-Type': 'text/plain' },
+          data: 'File not found'
+        });
+      }
 
       const fileSize = fs.statSync(path).size;
       const range = request.headers.Range;
@@ -280,6 +253,19 @@ app.whenReady().then(async () => {
         const parts = range.replace(/bytes=/, '').split('-');
         const start = parseInt(parts[0], 10);
         const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+
+        if (start >= fileSize || end >= fileSize) {
+          console.error('Invalid range request:', range);
+          return cb({
+            statusCode: 416,
+            headers: {
+              'Content-Range': `bytes */${fileSize}`,
+              'Content-Type': 'text/plain'
+            },
+            data: 'Requested range not satisfiable'
+          });
+        }
+
         const chunksize = end - start + 1;
 
         const headers = {
@@ -312,7 +298,7 @@ app.whenReady().then(async () => {
           data: fs.createReadStream(path).on('error', (err) => {
             console.error('Stream error:', err);
             cb({
-              statusCode: 200,
+              statusCode: 500,
               headers: { 'Content-Type': 'text/plain', 'X-Stream-Error': 'true' },
               data: 'Stream failed due to an error.'
             });
@@ -322,7 +308,7 @@ app.whenReady().then(async () => {
     } catch (err) {
       console.error('Error processing streaming request:', err);
       cb({
-        statusCode: 200,
+        statusCode: 500,
         headers: { 'Content-Type': 'text/plain', 'X-Stream-Error': 'true' },
         data: 'Internal Server Error'
       });
@@ -575,7 +561,7 @@ ipcMain.handle('get-album-tracks', async (event, args) => {
 });
 
 const getRoot = (currentDir) => {
-  console.log(currentDir);
+  /* console.log(currentDir); */
   const root = getRoots();
   const allPaths = [];
   const paths = path.normalize(currentDir).split(path.sep);
@@ -609,49 +595,20 @@ ipcMain.handle('get-cover', async (event, arg) => {
 
   const folderCover = await searchCover(trackDirectory);
   if (folderCover) {
-    console.log('folder cover: ', folderCover);
     return folderCover;
   }
 
   if (trackRoot.length > 0) {
     const coverResults = await searchCover(trackRoot);
     if (coverResults) {
-      console.log('cover results: ', coverResults);
       return coverResults;
     }
-    console.log('coverResults: ', coverResults);
   }
 
   return 0;
-
-  /*   if (trackRoot.length > 0) {
-    console.log('trackRoot: ', trackRoot);
-  } */
-
-  /*   const myFile = await File.createFromPath(arg);
-  if (myFile.tag.pictures?.[0]?.data) {
-    return myFile.tag.pictures[0].data._bytes;
-  } else if (!myFile.tag.pictures?.[0]?.data) {
-    const folderCover = await searchCover(trackDirectory);
-    if (folderCover) {
-      return folderCover;
-    } else if (trackRoot.length > 0) {
-      const coverResults = await searchCover(trackRoot);
-      if (coverResults) return coverResults;
-      console.log('coverResults: ', coverResults);
-    }
-  } else return 0; */
-
-  /* console.log('pic from path: ', Picture.fromPath(arg)); */
-  /* return; */
-  /*   const track = await requestedFile(arg);
-  const meta = await parseFile(track.audiotrack);
-  if (!meta.common.picture) return 0;
-  return meta.common.picture[0].data; */
 });
 
 ipcMain.handle('screen-mode', async (event, ...args) => {
-  /* console.log('screen-mode-change: ', args[0]); */
   if (args[0] === 'mini') {
     await mainWindow.setMinimumSize(290, 350);
     await mainWindow.setSize(290, 350, false);
@@ -759,8 +716,8 @@ ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
   }
 });
 
+// FOR TAGS WHEN DISPLAYING ALBUM LISTS
 ipcMain.handle('get-tracks-by-album', async (event, listType, album) => {
-  console.log(listType, album);
   try {
     const albumTracks = await filesByAlbum(album);
     if (albumTracks) {
@@ -854,7 +811,6 @@ ipcMain.handle('get-playlists', async () => {
 });
 
 ipcMain.handle('get-temp-path', async () => {
-  console.log('get-temp-path');
   return app.getPath('temp');
 });
 
@@ -876,7 +832,6 @@ ipcMain.handle('get-temp-path', async () => {
 }); */
 
 ipcMain.handle('get-covers', async (_, ...args) => {
-  console.log('args: ', args);
   let albums;
 
   if (args[3] === 'missing-covers') {
@@ -931,12 +886,12 @@ ipcMain.handle('update-tags', async (event, arr) => {
       workerData: { workerPath: workerPath, data: arr }
     })
       .on('message', (message) => {
-        console.log('message from worker: ', message);
-        targetWindow.webContents.send('update-tags', 'success');
+        targetWindow.webContents.send('update-tags', 'tags updated');
         mainWindow.webContents.send('updated-tags', 'updated-tags');
       })
       .on('error', (err) => {
         console.error('Tags worker error: ', err);
+        targetWindow.webContents.send('update-tags', 'error processing');
       })
       .on('exit', (code) => {
         if (code !== 0) {
@@ -950,117 +905,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
   }
 });
 
-/* ipcMain.on('show-context-menu', (event, id, type) => {
-  console.log('id: ', id, 'type: ', type);
-  const template = [
-    {
-      label: 'Add Track to Playlist',
-      visible: type === 'files',
-      click: () => {
-        return event.sender.send('context-menu-command', 'add-track-to-playlist');
-      }
-    },
-    {
-      label: 'Edit Track Metadata',
-      visible: type === 'files',
-      click: () => {
-        return event.sender.send('context-menu-command', 'edit-track-metadata');
-      }
-    },
-    {
-      label: 'Add Album to Playlist',
-      visible: type === 'folder',
-      click: () => {
-        return event.sender.send('context-menu-command', 'add-album-to-playlist');
-      }
-    },
-    {
-      label: 'Open Album Folder',
-      visible: type === 'folder',
-      click: () => {
-        return event.sender.send('context-menu-command', 'open-album-folder');
-      }
-    },
-    {
-      label: 'Remove from Playlist',
-      visible: type === 'playlist',
-      click: () => {
-        return event.sender.send('context-menu-command', 'remove-from-playlist');
-      }
-    },
-    {
-      label: 'Edit Track Metadata',
-      visible: type === 'playlist',
-      click: () => {
-        return event.sender.send('context-menu-command', 'edit-track-metadata');
-      }
-    },
-    {
-      label: 'Save image',
-      visible: type === 'cover',
-      click: () => {
-        return event.sender.send('context-menu-command', 'save image');
-      }
-    },
-    {
-      label: `Search pictures for ${id.artist} -- ${id.album}`,
-      visible: type === 'picture',
-      click: () => {
-        return event.sender.send('context-menu-command', id);
-      }
-    },
-    { type: 'separator' },
-    {
-      label: 'Update All',
-      visible: type === 'menu',
-      click: () => {
-        return event.sender.send('context-menu-command', 'update-all');
-      }
-    },
-    {
-      label: 'Schedule Updates',
-      visible: type === 'menu',
-      click: () => {
-        return event.sender.send('context-menu-command', 'schedule-updates');
-      }
-    },
-    {
-      label: 'Update Files',
-      visible: type === 'menu',
-      click: () => {
-        return event.sender.send('context-menu-command', 'update-files');
-      }
-    },
-    {
-      label: 'Update Folders',
-      visible: type === 'menu',
-      click: () => {
-        return event.sender.send('context-menu-command', 'update-folders');
-      }
-    },
-    {
-      label: 'Update Covers',
-      visible: type === 'menu',
-      click: () => {
-        return event.sender.send('context-menu-command', 'update-covers');
-      }
-    },
-    {
-      label: 'Update Meta',
-      visible: type === 'menu',
-      click: () => {
-        return event.sender.send('context-menu-command', 'update-meta');
-      }
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  menu.popup(BrowserWindow.fromWebContents(event.sender));
-}); */
-
 ipcMain.on('show-context-menu', (event, id, type) => {
-  /* console.log('id: ', id, 'type: ', type); */
-  console.log('id: ', id);
-
   const template = [];
 
   // Add items based on the 'type'
@@ -1239,31 +1084,8 @@ ipcMain.handle('show-text-input-menu', (event) => {
 
 ipcMain.handle('show-child', (event, args) => {
   const { name, type, winConfig, data } = args;
-  /* console.log('name: ', name, 'type: ', type, 'config: ', winConfig, 'data: ', data); */
   createOrUpdateChildWindow(name, type, winConfig, data);
 });
-
-// EMBED SAVED IMAGE TO TAG
-/* const embedImage = async (savedImage, file) => {
-  try {
-    const fileWritable = await checkAndRemoveReadOnly(file);
-    if (!fileWritable) return 'file not writable';
-
-    const pic = Picture.fromPath(savedImage);
-    const myFile = File.createFromPath(file);
-    console.log('pic: ', pic);
-    myFile.tag.pictures = [pic];
-    myFile.save();
-    myFile.dispose();
-    fs.unlinkSync(savedImage);
-    console.log('Temp file deleted:', savedImage);
-
-    return true;
-  } catch (err) {
-    console.error(err);
-    return err.message;
-  }
-}; */
 
 // Helper function for downloading and saving
 const downloadFile = async (fileUrl, savePath) => {
@@ -1322,13 +1144,9 @@ ipcMain.handle('download-file', async (event, ...args) => {
 });
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
-  /*  const senderWebContents = event.sender;
-  const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
-  const targetWindow = BrowserWindow.fromId(senderWindow.id); */
   const targetWindow = await getWindow('table-data');
   targetWindow.webContents.send('update-tags', 'starting');
   const [fileUrl, filePath, listType, embedType] = args;
-  //console.log('download-tag-image: ', fileUrl, '--', filePath, '--', listType, '--', embedType);
   const extension = path.extname(new URL(fileUrl).pathname);
   const defaultFilename = `cover${extension}`;
   const tempDir = app.getPath('temp');
@@ -1337,19 +1155,19 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
   const success = await downloadFile(fileUrl, saveTo);
   if (success) {
     const tempFile = saveTo.replace(/\\/g, '/');
-    /* const embedImgTag = await embedImage(tempFile, filePath); */
+
     try {
       const workerPath = process.resourcesPath;
       await createUpdateTagImageWorker({
         workerData: { tempFile, filePath }
       })
         .on('message', (message) => {
-          console.log('message from worker: ', message);
-          targetWindow.webContents.send('update-tags', 'success');
+          targetWindow.webContents.send('update-tags', 'image(s) updated');
           //mainWindow.webContents.send('file-update-complete', getObjectWithLengths(message.result));
         })
         .on('error', (err) => {
           console.error('Worker error:', err);
+          targetWindow.webContents.send('update-tags', 'error processing');
         })
         .on('exit', (code) => {
           if (code !== 0) {
@@ -1361,10 +1179,7 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
     } catch (error) {
       console.error(error.message);
     }
-    /*  console.log('embedImgTag: ', embedImgTag); */
   }
-  /*   if (success) event.sender.send('download-completed', 'download successful');
-  else event.sender.send('download-failed', 'download failed'); */
 });
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {
@@ -1373,11 +1188,6 @@ ipcMain.handle('refresh-cover', async (event, ...args) => {
   /* const imageobj = { img: imgurl.href }; */
 
   BrowserWindow.fromId(mainWindow.id).webContents.send('refresh-home-cover', filepath, imgurl);
-});
-
-ipcMain.handle('get-window-name', async (event) => {
-  console.log('event sender: ', event.sender);
-  return 1;
 });
 
 ipcMain.handle('open-album-folder', async (_, path) => {

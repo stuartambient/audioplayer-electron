@@ -20,11 +20,7 @@ contextBridge.exposeInMainWorld('api', {
   getAlbumTracks: (pattern) => ipcRenderer.invoke('get-album-tracks', pattern),
   /* streamAudio: (trackid) => ipcRenderer.invoke('stream-audio', trackid), */
   getCover: (trackid) => ipcRenderer.invoke('get-cover', trackid),
-  appMinimize: () => ipcRenderer.send('minimize'),
-  appMaximize: () => ipcRenderer.send('maximize'),
-  appClose: () => ipcRenderer.send('app-close'),
-  /*   fileUpdateDetails: () => ipcRenderer.invoke('file-update-details'), */
-  /* folderUpdateDetails: () => ipcRenderer.invoke('folder-update-details'), */
+  windowAction: (action) => ipcRenderer.send('window-action', action),
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
   updateLike: (id) => ipcRenderer.invoke('update-like', id),
   isLiked: (id) => ipcRenderer.invoke('is-liked', id),

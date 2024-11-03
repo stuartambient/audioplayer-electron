@@ -247,6 +247,10 @@ function App() {
     }
   };
 
+  const handleWindowAction = (action) => {
+    api.windowAction(action);
+  };
+
   /*   useEffect(() => {
     if (state.playlistTracks[0]) {
       TrackSelector(state.playlistTracks[0], state, dispatch);
@@ -264,13 +268,13 @@ function App() {
         handleMenu();
         break;
       case 'close':
-        window.api.appClose();
+        handleWindowAction('close');
         break;
       case 'minimize':
-        window.api.appMinimize();
+        handleWindowAction('minimize');
         break;
       case 'maximize':
-        window.api.appMaximize();
+        handleWindowAction('maximize');
         break;
 
       case 'albums':

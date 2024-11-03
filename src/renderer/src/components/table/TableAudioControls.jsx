@@ -1,6 +1,5 @@
 import React from 'react';
 import { useAudio } from './AudioContext';
-import TagUpdateState from './TagUpdateStatus';
 import './styles/TableAudioControls.css';
 
 const TableAudioControls = () => {
@@ -26,7 +25,6 @@ const TableAudioControls = () => {
           className="volumeSlider"
         />
       </div>
-      <TagUpdateState />
     </>
   );
 };

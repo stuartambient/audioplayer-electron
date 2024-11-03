@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
 import StatusLoader from './StatusLoader';
 
-const TagUpdateState = () => {
-  const [status, setStatus] = useState('');
-
+const TagUpdateState = ({ updateStatus, setUpdateStatus }) => {
+  useEffect(() => {
+    if (updateStatus && updateStatus !== 'starting') {
+      setTimeout(() => setUpdateStatus(''), 8000);
+    }
+  }, [updateStatus]);
   useEffect(() => {
     const handleUpdateTagsStatus = (msg) => {
-      if (msg === 'starting') {
-        setStatus(msg);
-      }
-      if (msg === 'success') {
-        setStatus(msg);
+      const validMessages = ['starting', 'image(s) updated', 'tags updated', 'error processing'];
+      if (validMessages.includes(msg)) {
+        setUpdateStatus(msg);
+      } else {
+        return;
       }
     };
 
@@ -22,7 +25,15 @@ const TagUpdateState = () => {
   }, []);
 
   return (
-    <>{status === 'starting' ? <StatusLoader /> : <p style={{ color: 'white' }}>{status}</p>}</>
+    <>
+      {updateStatus === 'starting' ? (
+        <StatusLoader />
+      ) : (
+        <>
+          <p style={{ color: 'white' }}>{updateStatus}</p>
+        </>
+      )}
+    </>
   );
 };
 

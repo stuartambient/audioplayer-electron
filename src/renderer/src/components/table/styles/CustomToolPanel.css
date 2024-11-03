@@ -2,17 +2,10 @@
 .column-panel {
   grid-column: 1 / -1;
   grid-row: 2 / 3;
-  /* display: flex; */
-  /* flex-wrap: wrap; */
-  /* align-items: center; */
-  /* gap: 10px; */
-  /*   padding: 2px;
-  background-color: #d3d3d3;
-  border: 1px solid #d1d5db; */
-  /* border-radius: 8px; */
   position: sticky;
   top: 0; /* Adjust this value if you have a navbar or other elements at the top */
   z-index: 1000; /* Ensure the panel stays on top of other content */
+  min-width: 1500px;
 }
 
 .column-panel.hidden {
@@ -27,7 +20,7 @@
   padding: 10px;
   display: flex;
   flex-wrap: wrap; /* Allows internal elements to wrap */
-  align-items: flex-start; /* Aligns items vertically */
+  align-items: center; /* Aligns items vertically */
   gap: 10px; /* Space between checkboxes/buttons */
   border: none;
 }
