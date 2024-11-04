@@ -20,8 +20,8 @@ const HeaderRow = ({ onSort }) => {
 };
 
 const Row = ({ index, style, data, onClick, onChange, isChecked, stat }) => {
-  /* console.log('data: ', data);
-    const rowData = data[index];  */
+  /* console.log('data: ', data); */
+  /* const rowData = data[index];  */
 
   const rowStyles = {
     display: 'flex',
@@ -50,6 +50,15 @@ const Row = ({ index, style, data, onClick, onChange, isChecked, stat }) => {
     <div style={rowStyles}>
       {stat === 'stat-artists' && (
         <>
+          <label className="list-checkbox">
+            <input
+              type="checkbox"
+              id={data.performers}
+              data-list="artists"
+              checked={isChecked}
+              onChange={onChange}
+            />
+          </label>
           <span id={data.performers} onClick={onClick} style={itemStyles}>
             {data.performers}
           </span>
@@ -58,6 +67,15 @@ const Row = ({ index, style, data, onClick, onChange, isChecked, stat }) => {
       )}
       {stat === 'stat-genres' && (
         <>
+          <label className="list-checkbox">
+            <input
+              type="checkbox"
+              id={data.genre_display}
+              data-list="genres"
+              checked={isChecked}
+              onChange={onChange}
+            />
+          </label>
           <span style={itemStyles} id={data.genre_display} onClick={onClick}>
             {!data.genre_display ? 'null' : data.genre_display}
           </span>
@@ -86,7 +104,13 @@ const Row = ({ index, style, data, onClick, onChange, isChecked, stat }) => {
       {stat === 'stat-albums' && (
         <>
           <label className="list-checkbox">
-            <input type="checkbox" id={data.fullpath} checked={isChecked} onChange={onChange} />
+            <input
+              type="checkbox"
+              id={data.fullpath}
+              checked={isChecked}
+              onChange={onChange}
+              data-list="albums"
+            />
           </label>
           <span
             key={data.id}

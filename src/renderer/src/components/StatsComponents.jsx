@@ -117,6 +117,8 @@ export const TopHundredArtists = ({ dimensions }) => {
       onClick={getArtistTracks}
       stat="stat-artists"
       dimensions={dimensions}
+      tableStatus={tableStatus}
+      initTable={initTable}
       amountLoaded={topHundredArtists.length}
     />
   );
@@ -165,6 +167,8 @@ export const Genres = ({ dimensions }) => {
       onClick={getGenres}
       stat="stat-genres"
       dimensions={dimensions}
+      tableStatus={tableStatus}
+      initTable={initTable}
       amountLoaded={genres.length}
     />
   );

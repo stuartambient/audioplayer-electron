@@ -697,6 +697,7 @@ ipcMain.handle('distinct-directories', async () => {
 });
 
 ipcMain.handle('get-tracks-by-genre', async (event, genre, listType) => {
+  console.log('genre index.js: ', genre);
   const genreTracks = await allTracksByGenres(genre);
   try {
     await openWindowAndSendData(genreTracks, listType);

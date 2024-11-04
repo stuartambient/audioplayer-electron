@@ -68,16 +68,16 @@ const Header = ({
           <h3>
             {listType} loaded: {amountLoaded}
           </h3>
-          {stat === 'stat-albums' && (
-            <>
-              <span className="list-header-button" onClick={onClick}>
-                Load selected
-              </span>
-              <span onClick={handleMultiAlbumDeselect}>
-                <MdDeselect />
-              </span>
-            </>
-          )}
+          {/* {stat === 'stat-albums' && ( */}
+          <>
+            <span className="list-header-button" onClick={onClick}>
+              Load selected
+            </span>
+            <span onClick={handleMultiAlbumDeselect}>
+              <MdDeselect />
+            </span>
+          </>
+          {/*  )} */}
           <input
             value={filterValue}
             onChange={handleFilter}
@@ -118,15 +118,34 @@ const List = ({
   const [filteredData, setFilteredData] = useState(data);
 
   const [multiAlbums, setMultiAlbums] = useState([]);
+  console.log('onClick: ', onClick);
 
-  const handleMultiAlbumSelect = (e) => {
+  /* const handleMultiAlbumSelect = (e) => {
+    console.log('handleMultiAlbumSelect: ', e.target.dataset.list, '----', e.target.id);
     const albumId = e.target.id;
     setMultiAlbums((prevAlbums) =>
       prevAlbums.includes(albumId)
         ? prevAlbums.filter((album) => album !== albumId)
         : [...prevAlbums, albumId]
     );
+  }; */
+
+  const [multiSelects, setMultiSelects] = useState([]);
+
+  const handleMultiAlbumSelect = (e) => {
+    console.log('handleMultiAlbumSelect: ', e.target.dataset.list, '----', e.target.id);
+    const selectId = e.target.id;
+
+    setMultiSelects((prevSelects) =>
+      prevSelects.includes(selectId)
+        ? prevSelects.filter((select) => select !== selectId)
+        : [...prevSelects, selectId]
+    );
   };
+
+  useEffect(() => {
+    console.log('multiselects: ', multiSelects, '---', stat);
+  }, [multiSelects, stat]);
 
   const handleMultiAlbumDeselect = (e) => setMultiAlbums([]);
   useEffect(() => {
@@ -140,15 +159,45 @@ const List = ({
     };
   }, []);
 
-  const handleMultiAlbums = (e) => {
+  /*   const handleMultiSelects = (e) => {
+    const getTableName = (stat) => {
+      switch (stat) {
+        case 'stat-genres': return 'genre-tracks';
+        case 'stat-albums': return 'album-tracks';
+        case 'stat-artists': return 'artist-tracks';
+        default: return null;
+      }
+  };
+
+  const tableName = getTableName(stat); */
+
+  const handleMultiSelects = (e) => {
+    let tableName;
+
+    if (stat === 'stat-genres') {
+      tableName = 'genre-tracks';
+    } else if (stat === 'stat-albums') {
+      tableName = 'album-tracks';
+    } else if (stat === 'stat-artists') {
+      tableName = 'artist-tracks';
+    }
     const loadMultiAlbums = async () => {
       const tableStat = await tableStatus();
+
       if (!tableStat) {
-        initTable('album-tracks');
+        initTable(tableName);
       }
-      const result = await window.api.getTracksByAlbum('album-tracks', multiAlbums);
+      let result;
+      if (stat === 'stat-genres') {
+        console.log('multiselects: ', multiSelects);
+        result = await window.api.getTracksByGenre('genre-tracks', multiSelects);
+      } else if (stat === 'stat-albums') {
+        result = await window.api.getTracksByAlbum('album-tracks', multiSelects);
+      } else if (stat === 'stat-artists') {
+        result = await window.api.getTracksByArtist('artist-tracks', multiSelects);
+      }
     };
-    if (multiAlbums.length > 1) {
+    if (multiSelects.length > 1) {
       loadMultiAlbums();
     }
   };
@@ -196,6 +245,21 @@ const List = ({
     }
   }, [filterValue]);
 
+  const isChecked = (item) => {
+    console.log('item: ', item);
+    switch (stat) {
+      case 'stat-albums': {
+        return multiSelects.includes(item.fullpath);
+      }
+      case 'stat-genres': {
+        return multiSelects.includes(item.genre_display);
+      }
+      case 'stat-artists': {
+        return multiSelects.includes(item.performers);
+      }
+    }
+  };
+
   const role = 'virtuoso-header';
 
   return (
@@ -211,23 +275,26 @@ const List = ({
             dimensions={dimensions}
             filterValue={filterValue}
             setFilterValue={setFilterValue}
-            onClick={handleMultiAlbums}
+            onClick={handleMultiSelects}
             handleMultiAlbumDeselect={handleMultiAlbumDeselect}
             stat={stat}
           />
         )
       }}
-      itemContent={(index, item) => (
-        <Row
-          index={index}
-          data={item} // Pass the item directly
-          onClick={onClick}
-          onChange={handleMultiAlbumSelect}
-          /* isChecked={!!filteredData[item.id]} */
-          isChecked={multiAlbums.includes(item.fullpath)}
-          stat={stat}
-        />
-      )}
+      itemContent={(index, item) => {
+        /*     console.log('item.id: ', item); */
+        return (
+          <Row
+            index={index}
+            data={item} // Pass the item directly
+            onClick={onClick}
+            onChange={handleMultiAlbumSelect}
+            /* isChecked={!!filteredData[item.id]} */
+            isChecked={isChecked(item)}
+            stat={stat}
+          />
+        );
+      }}
     />
   );
 };

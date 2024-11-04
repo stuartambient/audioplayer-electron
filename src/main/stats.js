@@ -25,6 +25,7 @@ const allTracksByArtist = (artist) => {
 };
 
 const allTracksByGenres = (genres) => {
+  console.log('genres: ', genres);
   let query, params;
   if (genres === 'No Genres Specified') {
     // Query to handle special category
