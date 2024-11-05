@@ -172,7 +172,9 @@ const AGGrid = ({ reset, data, playButton }) => {
       title = values.params.album;
       path = values.params.path;
       type = values.type;
-    } else if (values === 'search-folder') {
+    } else if (values === 'search-folder-single') {
+      return;
+    } else if (values === 'search-folder-all-tracks') {
       return;
     } else if (values.type === 'all-tracks') {
       nodesSelected.forEach((node, index) => {

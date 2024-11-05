@@ -985,8 +985,12 @@ ipcMain.on('show-context-menu', (event, id, type) => {
           })
       },
       {
-        label: 'Select image from folder',
-        click: () => event.sender.send('context-menu-command', 'search-folder')
+        label: 'Select image from folder for single track',
+        click: () => event.sender.send('context-menu-command', 'search-folder-single')
+      },
+      {
+        label: 'Select image from folder for selected tracks',
+        click: () => event.sender.send('context-menu-command', 'search-folder-all-tracks')
       }
     );
   }
