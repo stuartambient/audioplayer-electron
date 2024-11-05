@@ -163,41 +163,73 @@ const AGGrid = ({ reset, data, playButton }) => {
     };
   }, []);
 
-  const handleEmbedPicture = (values) => {
-    console.log('values: ', values.type);
-    let artist, title, path, type;
+  const selectedNodesImagePicker = () => {
+    let artist, title, path;
     let paths = [];
+
+    nodesSelected.forEach((node, index) => {
+      const currentArtist = (node.data.albumArtists || node.data.performers || '').trim();
+      const currentAlbum = (node.data.album || '').trim();
+      const currentPath = node.data.audiotrack;
+
+      // On the first iteration, set the artist and album
+      if (index === 0) {
+        artist = currentArtist;
+        title = currentAlbum;
+      }
+
+      // Check if the artist and album are consistent
+      if (artist === currentArtist && title === currentAlbum) {
+        paths.push(currentPath);
+      } else {
+        console.error('Artist or album mismatch detected!');
+      }
+    });
+
+    return { artist, title, path: paths };
+  };
+
+  const handleEmbedPicture = (values) => {
+    let artist,
+      title,
+      path,
+      type = values.type;
+    /* let artist, title, path, type;
+    let paths = []; */
     if (values.type === 'single-track') {
       artist = values.params.artist;
       title = values.params.album;
       path = values.params.path;
-      type = values.type;
-    } else if (values === 'search-folder-single') {
-      return;
+      /* type = values.type; */
+    } else if (values.type === 'search-folder-single') {
+      /* metadataEditingApi.selectImageFromFolder(values.params.path); */
+      metadataEditingApi.selectImageFromFolder(values.params.path);
     } else if (values === 'search-folder-all-tracks') {
       return;
     } else if (values.type === 'all-tracks') {
-      nodesSelected.forEach((node, index) => {
+      const nodesObj = selectedNodesImagePicker();
+      artist = nodesObj.artist;
+      title = nodesObj.title;
+      path = nodesObj.path;
+      /*  nodesSelected.forEach((node, index) => {
         const currentArtist = (node.data.albumArtists || node.data.performers || '').trim();
         const currentAlbum = (node.data.album || '').trim();
-        const currentPath = node.data.audiotrack;
-
-        // On the first iteration, set the artist and album
-        if (index === 0) {
+        const currentPath = node.data.audiotrack; */
+      // On the first iteration, set the artist and album
+      /*  if (index === 0) {
           artist = currentArtist;
           title = currentAlbum;
-        }
-
-        // Check if the artist and album are consistent
-        if (artist === currentArtist && title === currentAlbum) {
+        } */
+      // Check if the artist and album are consistent
+      /*         if (artist === currentArtist && title === currentAlbum) {
           paths.push(currentPath);
         } else {
           console.error('Artist or album mismatch detected!');
         }
       });
-      path = paths;
+      path = paths; */
     }
-
+    console.log('artist: ', artist, 'title: ', title, 'path: ', path, 'type: ', type);
     return openChildWindow(
       'cover-search-alt-tags',
       'cover-search-alt-tags',

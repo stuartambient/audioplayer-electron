@@ -909,6 +909,7 @@ ipcMain.handle('update-tags', async (event, arr) => {
 });
 
 ipcMain.on('show-context-menu', (event, id, type) => {
+  console.log('id: ', id);
   const template = [];
 
   // Add items based on the 'type'
@@ -986,7 +987,11 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       },
       {
         label: 'Select image from folder for single track',
-        click: () => event.sender.send('context-menu-command', 'search-folder-single')
+        click: () =>
+          event.sender.send('context-menu-command', {
+            type: 'search-folder-single',
+            params: id
+          })
       },
       {
         label: 'Select image from folder for selected tracks',
@@ -1151,6 +1156,7 @@ ipcMain.handle('download-file', async (event, ...args) => {
 });
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
+  console.log('args: ', args);
   const targetWindow = await getWindow('table-data');
   targetWindow.webContents.send('update-tags', 'starting');
   const [fileUrl, filePath, listType, embedType] = args;
@@ -1187,6 +1193,13 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
       console.error(error.message);
     }
   }
+});
+
+ipcMain.handle('select-image-from-folder', async (event, arr) => {
+  //console.log('select-image-from-folder: ', arr);
+  const startFolder = path.dirname(arr);
+  console.log('startFolder: ', startFolder);
+  return true;
 });
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {
