@@ -677,7 +677,8 @@ async function openWindowAndSendData(queryResults, listType) {
   }
 }
 
-ipcMain.handle('get-tracks-by-artist', async (event, artist, listType) => {
+ipcMain.handle('get-tracks-by-artist', async (event, listType, artist) => {
+  console.log('get-tracks-by-artist: ', listType, artist);
   const artistTracks = await allTracksByArtist(artist);
   try {
     await openWindowAndSendData(artistTracks, listType);
@@ -696,8 +697,8 @@ ipcMain.handle('distinct-directories', async () => {
   }
 });
 
-ipcMain.handle('get-tracks-by-genre', async (event, genre, listType) => {
-  console.log('genre index.js: ', genre);
+ipcMain.handle('get-tracks-by-genre', async (event, listType, genre) => {
+  console.log('get-tracks-by-genre', listType, genre);
   const genreTracks = await allTracksByGenres(genre);
   try {
     await openWindowAndSendData(genreTracks, listType);
@@ -719,6 +720,7 @@ ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
 
 // FOR TAGS WHEN DISPLAYING ALBUM LISTS
 ipcMain.handle('get-tracks-by-album', async (event, listType, album) => {
+  console.log('get-tracks-by-album: ', listType, album);
   try {
     const albumTracks = await filesByAlbum(album);
     if (albumTracks) {

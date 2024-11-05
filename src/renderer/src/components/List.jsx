@@ -12,7 +12,7 @@ const Header = ({
   setFilterValue,
   onClick,
   stat,
-  handleMultiAlbumDeselect
+  handleDeselect
 }) => {
   if (!dimensions || !dimensions.width) {
     return null;
@@ -73,7 +73,7 @@ const Header = ({
             <span className="list-header-button" onClick={onClick}>
               Load selected
             </span>
-            <span onClick={handleMultiAlbumDeselect}>
+            <span className="list-header-deselect" onClick={handleDeselect}>
               <MdDeselect />
             </span>
           </>
@@ -118,22 +118,11 @@ const List = ({
   const [filteredData, setFilteredData] = useState(data);
 
   const [multiAlbums, setMultiAlbums] = useState([]);
-  console.log('onClick: ', onClick);
-
-  /* const handleMultiAlbumSelect = (e) => {
-    console.log('handleMultiAlbumSelect: ', e.target.dataset.list, '----', e.target.id);
-    const albumId = e.target.id;
-    setMultiAlbums((prevAlbums) =>
-      prevAlbums.includes(albumId)
-        ? prevAlbums.filter((album) => album !== albumId)
-        : [...prevAlbums, albumId]
-    );
-  }; */
 
   const [multiSelects, setMultiSelects] = useState([]);
 
-  const handleMultiAlbumSelect = (e) => {
-    console.log('handleMultiAlbumSelect: ', e.target.dataset.list, '----', e.target.id);
+  const loadMultiSelections = (e) => {
+    console.log('loadMultiSelections: ', e.target.dataset.list, '----', e.target.id);
     const selectId = e.target.id;
 
     setMultiSelects((prevSelects) =>
@@ -143,11 +132,11 @@ const List = ({
     );
   };
 
-  useEffect(() => {
-    console.log('multiselects: ', multiSelects, '---', stat);
-  }, [multiSelects, stat]);
+  const handleDeselect = (e) => {
+    e.preventDefault();
+    setMultiSelects([]);
+  };
 
-  const handleMultiAlbumDeselect = (e) => setMultiAlbums([]);
   useEffect(() => {
     const albumTracksLoaded = (arg) => {
       console.log('album-tracks-loaded', arg);
@@ -159,19 +148,50 @@ const List = ({
     };
   }, []);
 
-  /*   const handleMultiSelects = (e) => {
+  const handleMultiSelects = (e) => {
+    // Determine table name based on `stat` type
     const getTableName = (stat) => {
       switch (stat) {
-        case 'stat-genres': return 'genre-tracks';
-        case 'stat-albums': return 'album-tracks';
-        case 'stat-artists': return 'artist-tracks';
-        default: return null;
+        case 'stat-genres':
+          return 'genre-tracks';
+        case 'stat-albums':
+          return 'album-tracks';
+        case 'stat-artists':
+          return 'artist-tracks';
+        default:
+          return null;
       }
+    };
+
+    const tableName = getTableName(stat);
+
+    const loadMultiSelects = async () => {
+      // Initialize table if needed
+      const tableStat = await tableStatus();
+      if (!tableStat && tableName) {
+        initTable(tableName);
+      }
+
+      // Fetch tracks by selected type
+      const trackFetchers = {
+        'album-tracks': () => window.api.getTracksByAlbum(tableName, multiSelects),
+        'artist-tracks': () => window.api.getTracksByArtist(tableName, multiSelects),
+        'genre-tracks': () => window.api.getTracksByGenre(tableName, multiSelects)
+      };
+
+      // Only call the specific fetcher for the current `tableName`
+      if (tableName && trackFetchers[tableName]) {
+        await trackFetchers[tableName]();
+      }
+    };
+
+    // Trigger loading if more than one album is selected
+    if (multiSelects.length > 1) {
+      loadMultiSelects();
+    }
   };
 
-  const tableName = getTableName(stat); */
-
-  const handleMultiSelects = (e) => {
+  /* const handleMultiSelects = (e) => {
     let tableName;
 
     if (stat === 'stat-genres') {
@@ -181,7 +201,7 @@ const List = ({
     } else if (stat === 'stat-artists') {
       tableName = 'artist-tracks';
     }
-    const loadMultiAlbums = async () => {
+    const loadMultiSelects = async () => {
       const tableStat = await tableStatus();
 
       if (!tableStat) {
@@ -189,7 +209,6 @@ const List = ({
       }
       let result;
       if (stat === 'stat-genres') {
-        console.log('multiselects: ', multiSelects);
         result = await window.api.getTracksByGenre('genre-tracks', multiSelects);
       } else if (stat === 'stat-albums') {
         result = await window.api.getTracksByAlbum('album-tracks', multiSelects);
@@ -198,22 +217,15 @@ const List = ({
       }
     };
     if (multiSelects.length > 1) {
-      loadMultiAlbums();
+      loadMultiSelects();
     }
-  };
-
-  /*  console.log('data: ', data); */
+  }; */
 
   const fields = {
     'stat-albums': 'foldername',
     'stat-genres': 'genre_display',
     'stat-artists': 'performers'
   };
-
-  /*   useEffect(() => {
-    if (!filterValue) return setFilteredData(data);
-    setFilteredData(data.filter((d) => d.foldername.includes(filterValue)));
-  }, [filterValue, data]); */
 
   const filterData = useCallback(() => {
     if (!filterValue.trim()) {
@@ -246,7 +258,6 @@ const List = ({
   }, [filterValue]);
 
   const isChecked = (item) => {
-    console.log('item: ', item);
     switch (stat) {
       case 'stat-albums': {
         return multiSelects.includes(item.fullpath);
@@ -276,7 +287,7 @@ const List = ({
             filterValue={filterValue}
             setFilterValue={setFilterValue}
             onClick={handleMultiSelects}
-            handleMultiAlbumDeselect={handleMultiAlbumDeselect}
+            handleDeselect={handleDeselect}
             stat={stat}
           />
         )
@@ -288,8 +299,7 @@ const List = ({
             index={index}
             data={item} // Pass the item directly
             onClick={onClick}
-            onChange={handleMultiAlbumSelect}
-            /* isChecked={!!filteredData[item.id]} */
+            onChange={loadMultiSelections}
             isChecked={isChecked(item)}
             stat={stat}
           />

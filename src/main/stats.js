@@ -19,26 +19,50 @@ const topHundredArtists = () => {
 };
 
 const allTracksByArtist = (artist) => {
-  const stmt = db.prepare(`SELECT * FROM "audio-tracks" WHERE performers = ?`);
-  const result = stmt.all(artist);
-  return result;
+  try {
+    let query, params;
+    if (Array.isArray(artist)) {
+      // Query for artist array
+      const placeholders = artist.map(() => '?').join(', ');
+      query = `SELECT * FROM "audio-tracks" WHERE performers IN (${placeholders})`;
+      params = artist;
+    } else {
+      // Standard query for a single artist
+      query = `SELECT * FROM "audio-tracks" WHERE performers = ?`;
+      params = [artist];
+    }
+    const stmt = db.prepare(query);
+    const result = stmt.all(...params);
+    return result;
+  } catch (error) {
+    console.error('allTracksByArtist: sqlError: ', error.message);
+  }
 };
 
 const allTracksByGenres = (genres) => {
   console.log('genres: ', genres);
-  let query, params;
-  if (genres === 'No Genres Specified') {
-    // Query to handle special category
-    query = `SELECT * FROM "audio-tracks" WHERE genres IS NULL OR genres = '' OR genres = ' '`;
-    params = [];
-  } else {
-    // Standard query for specific genres
-    query = `SELECT * FROM "audio-tracks" WHERE genres = ?`;
-    params = [genres];
+  try {
+    let query, params;
+    if (genres === 'No Genres Specified') {
+      // Query to handle special category
+      query = `SELECT * FROM "audio-tracks" WHERE genres IS NULL OR genres = '' OR genres = ' '`;
+      params = [];
+    } else if (Array.isArray(genres)) {
+      // Query for genres array
+      const placeholders = genres.map(() => '?').join(', ');
+      query = `SELECT * FROM "audio-tracks" WHERE genres IN (${placeholders})`;
+      params = genres;
+    } else {
+      // Standard query for a single genre
+      query = `SELECT * FROM "audio-tracks" WHERE genres = ?`;
+      params = [genres];
+    }
+    const stmt = db.prepare(query);
+    const result = stmt.all(...params);
+    return result;
+  } catch (error) {
+    console.error('allTracksByGenres: sqlError: ', error.message);
   }
-  const stmt = db.prepare(query);
-  const result = stmt.all(...params);
-  return result;
 };
 
 const allTracksByRoot = (root) => {

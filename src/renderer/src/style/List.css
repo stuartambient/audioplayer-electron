@@ -52,6 +52,10 @@
   transform: translateY(-1px);
 }
 
+.list-header-deselect:hover {
+  cursor: pointer;
+}
+
 .list-header-button:active {
   background-color: #f0f0f1;
   border-color: rgba(0, 0, 0, 0.15);

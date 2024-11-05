@@ -57,9 +57,9 @@ contextBridge.exposeInMainWorld('api', {
   genresStat: () => ipcRenderer.invoke('genres-stat'),
   /* foldersStat: (dirs) => ipcRenderer.invoke('folders-stat', dirs), */
   distinctDirectories: () => ipcRenderer.invoke('distinct-directories'),
-  getTracksByArtist: (artist, listType) =>
-    ipcRenderer.invoke('get-tracks-by-artist', artist, listType),
-  getTracksByGenre: (genre, listType) => ipcRenderer.invoke('get-tracks-by-genre', genre, listType),
+  getTracksByArtist: (listType, artist) =>
+    ipcRenderer.invoke('get-tracks-by-artist', listType, artist),
+  getTracksByGenre: (listType, genre) => ipcRenderer.invoke('get-tracks-by-genre', listType, genre),
   getTracksByRoot: (root, listType) => ipcRenderer.invoke('get-tracks-by-root', root, listType),
   getTracksByAlbum: (listType, album) => ipcRenderer.invoke('get-tracks-by-album', listType, album),
   onTracksByAlbum: (cb) => ipcRenderer.on('album-tracks-loaded', (event, arg) => cb(arg)),

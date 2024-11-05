@@ -86,7 +86,7 @@ const useArtist = (artist) => {
       if (!tableStat) {
         initTable('artist-tracks');
       }
-      const results = await window.api.getTracksByArtist(artist, 'artist-tracks');
+      const results = await window.api.getTracksByArtist('artist-tracks', artist);
     };
     if (isSubscribed && artist) getTable();
     return () => {
@@ -132,7 +132,7 @@ const useGenre = (genre) => {
       if (!tableStat) {
         initTable('genre-tracks');
       }
-      const results = await window.api.getTracksByGenre(genre, 'genre-tracks');
+      const results = await window.api.getTracksByGenre('genre-tracks', genre);
     };
     if (isSubscribed && genre) getTable();
     return () => {
