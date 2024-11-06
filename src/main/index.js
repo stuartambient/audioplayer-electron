@@ -1125,8 +1125,12 @@ const downloadFile = async (fileUrl, savePath) => {
 
 ipcMain.handle('download-file', async (event, ...args) => {
   const senderWebContents = event.sender;
+  const win = getWindowNames();
+  console.log('win: ', win);
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
+  /* const targetWindow = await getWindow('table-data');
+  targetWindow.webContents.send('update-tags', 'starting'); */
   const [fileUrl, filePath, listType] = args;
 
   const extension = path.extname(new URL(fileUrl).pathname);
@@ -1142,7 +1146,7 @@ ipcMain.handle('download-file', async (event, ...args) => {
 
   if (savePath.canceled) {
     console.log('Download canceled by user.');
-    return event.sender.send('download-completed', 'download cancelled');
+    event.sender.send('download-completed', 'download cancelled');
   }
 
   try {
@@ -1157,6 +1161,8 @@ ipcMain.handle('download-file', async (event, ...args) => {
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
   console.log('args: ', args);
+  const win = getWindowNames();
+  const coverSearchWindow = getWindow('cover-search-alt-tags');
   const targetWindow = await getWindow('table-data');
   targetWindow.webContents.send('update-tags', 'starting');
   const [fileUrl, filePath, listType, embedType] = args;
@@ -1176,11 +1182,13 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
       })
         .on('message', (message) => {
           targetWindow.webContents.send('update-tags', 'image(s) updated');
+          coverSearchWindow.webContents.send('download-completed', 'download-successful');
           //mainWindow.webContents.send('file-update-complete', getObjectWithLengths(message.result));
         })
         .on('error', (err) => {
           console.error('Worker error:', err);
           targetWindow.webContents.send('update-tags', 'error processing');
+          coverSearchWindow.webContents.send('download-completed', 'download-cancelled');
         })
         .on('exit', (code) => {
           if (code !== 0) {
@@ -1199,6 +1207,21 @@ ipcMain.handle('select-image-from-folder', async (event, arr) => {
   //console.log('select-image-from-folder: ', arr);
   const startFolder = path.dirname(arr);
   console.log('startFolder: ', startFolder);
+  const targetWindow = getWindow('table-data');
+  dialog
+    .showOpenDialog(targetWindow, {
+      defaultPath: path.normalize(startFolder),
+      properties: ['openFile'],
+      filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'] }]
+    })
+    .then((result) => {
+      targetWindow.webContents.send('selected-image', 'image-acquired');
+      console.log(result.canceled);
+      console.log(result.filePaths);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   return true;
 });
 

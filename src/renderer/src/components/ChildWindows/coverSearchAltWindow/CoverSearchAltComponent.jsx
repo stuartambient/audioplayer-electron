@@ -158,10 +158,10 @@ const CoverSearchAltApp = () => {
         setDownload(false);
         console.log('downloaded: ', val);
       } */
-      if (val[0] === 'download successful') {
+      if (val[0] === 'download-successful') {
         setDownload(false);
         setImageUrl('');
-      } else if (val[0] === 'download cancelled') {
+      } else if (val[0] === 'download-cancelled') {
         setDownload(false);
         setImageUrl('');
       }

@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('metadataEditingApi', {
   updateTags: (arr) => ipcRenderer.invoke('update-tags', arr),
   onUpdateTagsStatus: (cb) => ipcRenderer.on('update-tags', (event, msg) => cb(msg)),
   selectImageFromFolder: (arr) => ipcRenderer.invoke('select-image-from-folder', arr),
+  onSelectedImage: (cb) => ipcRenderer.on('selected-image', (event, msg) => cb(msg)),
   onDownloadedImage: (cb) => ipcRenderer.on('downloaded-image', (event, img) => cb(img)),
   showChild: (args) => ipcRenderer.invoke('show-child', args),
   onClearTable: (cb) => ipcRenderer.on('clear-table', (event, arg) => cb(arg)),

@@ -163,6 +163,16 @@ const AGGrid = ({ reset, data, playButton }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleSelectedImage = async (img) => {
+      console.log('img: ', img);
+    };
+    window.metadataEditingApi.onSelectedImage(handleSelectedImage);
+    return () => {
+      window.metadataEditingApi.off('selected-image', handleSelectedImage);
+    };
+  }, []);
+
   const selectedNodesImagePicker = () => {
     let artist, title, path;
     let paths = [];
@@ -177,6 +187,17 @@ const AGGrid = ({ reset, data, playButton }) => {
         artist = currentArtist;
         title = currentAlbum;
       }
+
+      console.log(
+        'artist: ',
+        artist,
+        'currentArtist: ',
+        currentArtist,
+        'title: ',
+        title,
+        'currentAlbum: ',
+        currentAlbum
+      );
 
       // Check if the artist and album are consistent
       if (artist === currentArtist && title === currentAlbum) {
@@ -203,7 +224,7 @@ const AGGrid = ({ reset, data, playButton }) => {
       /* type = values.type; */
     } else if (values.type === 'search-folder-single') {
       /* metadataEditingApi.selectImageFromFolder(values.params.path); */
-      metadataEditingApi.selectImageFromFolder(values.params.path);
+      return metadataEditingApi.selectImageFromFolder(values.params.path);
     } else if (values === 'search-folder-all-tracks') {
       return;
     } else if (values.type === 'all-tracks') {
