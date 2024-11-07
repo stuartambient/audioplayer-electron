@@ -69,7 +69,7 @@ const parseMeta = async (files) => {
   return filesMetadata;
 };
 
-const embedImage = async (savedImage, file) => {
+const embedImage = async (savedImage, file, remove = false) => {
   console.log('embedImage: ', savedImage, '---', file);
   try {
     // Ensure 'file' is an array, even if it's a single string
@@ -87,8 +87,10 @@ const embedImage = async (savedImage, file) => {
     }
 
     // Delete the temp file after embedding the image
-    fs.unlinkSync(savedImage);
-    console.log('Temp file deleted:', savedImage);
+    if (!remove) {
+      fs.unlinkSync(savedImage);
+      console.log('Temp file deleted:', savedImage);
+    }
 
     return files;
   } catch (err) {
@@ -98,8 +100,9 @@ const embedImage = async (savedImage, file) => {
 };
 
 const processFiles = async (message) => {
+  console.log('processFiles: ', message);
   return new Promise((resolve, reject) => {
-    embedImage(message.tempFile, message.filePath)
+    embedImage(message.tempFile, message.filePath, message.remove)
       .then((embedded) => parseMeta(embedded))
       .then((updatedTags) => refreshMetadata(updatedTags))
       .then((result) => resolve(result))

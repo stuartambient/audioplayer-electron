@@ -45,6 +45,16 @@ const AGGrid = ({ reset, data, playButton }) => {
   const isRowsSelected = useRef([]);
 
   useEffect(() => {
+    // Attach the listener when the component mounts
+    metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
+
+    // Cleanup the listener when the component unmounts
+    return () => {
+      metadataEditingApi.off('context-menu-command', handleEmbedPicture);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  useEffect(() => {
     const selected = nodesSelected.map((node) => node.data.audiotrack);
     console.log('selected: ', selected);
   }, [nodesSelected]);
@@ -188,17 +198,6 @@ const AGGrid = ({ reset, data, playButton }) => {
         title = currentAlbum;
       }
 
-      console.log(
-        'artist: ',
-        artist,
-        'currentArtist: ',
-        currentArtist,
-        'title: ',
-        title,
-        'currentAlbum: ',
-        currentAlbum
-      );
-
       // Check if the artist and album are consistent
       if (artist === currentArtist && title === currentAlbum) {
         paths.push(currentPath);
@@ -232,26 +231,9 @@ const AGGrid = ({ reset, data, playButton }) => {
       artist = nodesObj.artist;
       title = nodesObj.title;
       path = nodesObj.path;
-      /*  nodesSelected.forEach((node, index) => {
-        const currentArtist = (node.data.albumArtists || node.data.performers || '').trim();
-        const currentAlbum = (node.data.album || '').trim();
-        const currentPath = node.data.audiotrack; */
-      // On the first iteration, set the artist and album
-      /*  if (index === 0) {
-          artist = currentArtist;
-          title = currentAlbum;
-        } */
-      // Check if the artist and album are consistent
-      /*         if (artist === currentArtist && title === currentAlbum) {
-          paths.push(currentPath);
-        } else {
-          console.error('Artist or album mismatch detected!');
-        }
-      });
-      path = paths; */
     }
     console.log('artist: ', artist, 'title: ', title, 'path: ', path, 'type: ', type);
-    return openChildWindow(
+    openChildWindow(
       'cover-search-alt-tags',
       'cover-search-alt-tags',
       {
@@ -540,29 +522,21 @@ const AGGrid = ({ reset, data, playButton }) => {
 
   const handleCellContextMenu = (params) => {
     console.log('params: ', params);
-    params.event.preventDefault(); // Prevent default context menu
-    /* showContextMenu(params.data, params.event.clientX, params.event.clientY); */
-    if (params.colDef.field === 'pictures') {
-      const album = params.data.album ? params.data.album : '';
-      //const artist = params.data.albumArtists || params.data.performers;
-      const artist = params.data.albumArtists
-        ? params.data.albumArtists
-        : params.data.performers
-        ? params.data.performers
-        : '';
-      const path = params.data.audiotrack;
-      /* console.log(params.data, params.data.audiotrack); */
-      /* console.log('filepath: ', filePath); */
-      /*       setAlbumPic(album);
-      setArtistPic(artist); */
-
-      //window.metadataEditingApi.showContextMenu(`${artist} - ${album}`, 'picture');
-      window.metadataEditingApi.showContextMenu({ artist, album, path }, 'picture');
-      metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
-      return () => {
+    params.event.preventDefault();
+    //if (params.colDef.field === 'pictures') {
+    const album = params.data.album ? params.data.album : '';
+    const artist = params.data.albumArtists
+      ? params.data.albumArtists
+      : params.data.performers
+      ? params.data.performers
+      : '';
+    const path = params.data.audiotrack;
+    window.metadataEditingApi.showContextMenu({ artist, album, path }, 'picture');
+    metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
+    /*    return () => {
         metadataEditingApi.off('context-menu-command', handleEmbedPicture);
-      };
-    }
+      }; */
+    //}
   };
 
   /*   const loadingOverlayComponent = useMemo(() => {

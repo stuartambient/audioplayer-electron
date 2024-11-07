@@ -1204,25 +1204,53 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
 });
 
 ipcMain.handle('select-image-from-folder', async (event, arr) => {
-  //console.log('select-image-from-folder: ', arr);
+  console.log('select-image-from-folder');
+  let tempFile;
+  const filePath = arr;
   const startFolder = path.dirname(arr);
-  console.log('startFolder: ', startFolder);
   const targetWindow = getWindow('table-data');
-  dialog
-    .showOpenDialog(targetWindow, {
+
+  try {
+    const result = await dialog.showOpenDialog(targetWindow, {
       defaultPath: path.normalize(startFolder),
       properties: ['openFile'],
       filters: [{ name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'] }]
-    })
-    .then((result) => {
-      targetWindow.webContents.send('selected-image', 'image-acquired');
-      console.log(result.canceled);
-      console.log(result.filePaths);
-    })
-    .catch((err) => {
-      console.log(err);
     });
-  return true;
+
+    if (result.canceled || result.filePaths.length === 0) {
+      console.log('No file selected');
+      targetWindow.webContents.send('update-tags', 'update-cancelled');
+      return;
+    }
+
+    tempFile = result.filePaths[0].replace(/\\/g, '/');
+    console.log('folderCover: ', tempFile);
+
+    // Send the selected image message
+    targetWindow.webContents.send('selected-image', 'image-acquired');
+
+    const workerPath = process.resourcesPath;
+    let remove = true;
+    targetWindow.webContents.send('update-tags', 'starting');
+    await createUpdateTagImageWorker({
+      workerData: { tempFile, filePath, remove }
+    })
+      .on('message', (message) => {
+        targetWindow.webContents.send('update-tags', 'image(s) updated');
+      })
+      .on('error', (err) => {
+        console.error('Worker error:', err);
+        targetWindow.webContents.send('update-tags', 'error processing');
+      })
+      .on('exit', (code) => {
+        if (code !== 0) {
+          console.error(`Worker stopped with exit code ${code}`);
+        }
+      })
+      .postMessage('');
+  } catch (error) {
+    console.error(error.message);
+  }
 });
 
 ipcMain.handle('refresh-cover', async (event, ...args) => {
