@@ -1,24 +1,13 @@
 import { contextBridge, ipcRenderer } from 'electron';
-/* import { electronAPI } from '@electron-toolkit/preload'; */
 
-/* const fixedEncodeURIComponent = (str) => {
-  console.log('str: ', str);
-  return encodeURIComponent(str).replace(/[!'()*]/g, (c) => {
-    return '%' + c.charCodeAt(0).toString(16);
-  });
-}; */
-// Custom APIs for renderer
 contextBridge.exposeInMainWorld('api', {
   updateFiles: () => ipcRenderer.invoke('update-files'),
   updateFolders: () => ipcRenderer.invoke('update-folders'),
   updateCovers: () => ipcRenderer.invoke('update-covers'),
-
-  /* createTable: () => ipcRenderer.invoke('create-table'), */
   getTracks: (page, term, sort) => ipcRenderer.invoke('get-tracks', page, term, sort),
   getAlbums: (page, term, sort) => ipcRenderer.invoke('get-albums', page, term, sort),
   getAlbum: (id) => ipcRenderer.invoke('get-album', id),
   getAlbumTracks: (pattern) => ipcRenderer.invoke('get-album-tracks', pattern),
-  /* streamAudio: (trackid) => ipcRenderer.invoke('stream-audio', trackid), */
   getCover: (trackid) => ipcRenderer.invoke('get-cover', trackid),
   windowAction: (action) => ipcRenderer.send('window-action', action),
   screenMode: (size) => ipcRenderer.invoke('screen-mode', size),
@@ -31,9 +20,7 @@ contextBridge.exposeInMainWorld('api', {
   openPlaylist: () => ipcRenderer.invoke('open-playlist'),
   savePlaylist: (playlistTracks) => ipcRenderer.invoke('save-playlist', playlistTracks),
   getPlaylists: () => ipcRenderer.invoke('get-playlists'),
-  /* homepagePlaylists: (action, id) => ipcRenderer.invoke('homepage-playlists', action, id), */
   getCovers: (coversPageNum, coversSearchTerm, coversDateSort, coversMissingReq) =>
-    /* console.log('missing req: ', coversMissingReq); */
     ipcRenderer.invoke(
       'get-covers',
       coversPageNum,
@@ -55,7 +42,6 @@ contextBridge.exposeInMainWorld('api', {
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
   updateMeta: () => ipcRenderer.invoke('update-meta'),
   genresStat: () => ipcRenderer.invoke('genres-stat'),
-  /* foldersStat: (dirs) => ipcRenderer.invoke('folders-stat', dirs), */
   distinctDirectories: () => ipcRenderer.invoke('distinct-directories'),
   getTracksByArtist: (listType, artist) =>
     ipcRenderer.invoke('get-tracks-by-artist', listType, artist),
@@ -63,7 +49,6 @@ contextBridge.exposeInMainWorld('api', {
   getTracksByRoot: (root, listType) => ipcRenderer.invoke('get-tracks-by-root', root, listType),
   getTracksByAlbum: (listType, album) => ipcRenderer.invoke('get-tracks-by-album', listType, album),
   onTracksByAlbum: (cb) => ipcRenderer.on('album-tracks-loaded', (event, arg) => cb(arg)),
-  /* getAlbumsByTopFolder: (folder) => ipcRenderer.invoke('get-albums-by-top-folder', folder), */
   showContextMenu: (id, itemType) => ipcRenderer.send('show-context-menu', id, itemType),
   onContextMenuCommand: (callback) => {
     ipcRenderer.once('context-menu-command', (event, command) => callback(command));
@@ -82,7 +67,6 @@ contextBridge.exposeInMainWorld('api', {
   },
   onUpdateFolders: (cb) => {
     ipcRenderer.on('folder-update-complete', (event, result) => {
-      /* console.log('Preload: Received file-update-complete event', event, result); */
       cb(result);
     });
   },
@@ -93,11 +77,9 @@ contextBridge.exposeInMainWorld('api', {
   },
   onUpdateCovers: (cb) => {
     ipcRenderer.on('cover-update-complete', (event, result) => {
-      /* console.log('Preload: Received file-update-complete event', event, result); */
       cb(result);
     });
   },
-  /* searchMusicHoarders: (artist, title) => ipcRenderer.invoke('search-musicHoarders', artist, title), */
   removeChildWindowClosedListener: (callback) => {
     ipcRenderer.removeListener('window-closed', callback);
   },
@@ -109,7 +91,5 @@ contextBridge.exposeInMainWorld('api', {
   getRoots: () => ipcRenderer.invoke('get-roots'),
   updateRoots: (roots) => ipcRenderer.invoke('update-roots', roots),
   getFolderPath: (folderName) => ipcRenderer.invoke('get-folder-path', folderName),
-  /* selectFolder: () => ipcRenderer.invoke('select-folder'), */
-  // startDrag: (folderName) => ipcRenderer.send('ondragstart', path.join(process.cwd(), fileName)),
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });

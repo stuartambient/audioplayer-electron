@@ -31,7 +31,7 @@ const Header = () => {
   );
 };
 
-const initTable = async (type, data = null) => {
+const initTable = /* async */ (type, data = null) => {
   const name = 'table-data';
   const config = {
     width: 1200,
@@ -55,7 +55,8 @@ const tableStatus = async () => {
       return true;
     }
   } catch (e) {
-    return e.message;
+    console.error(e); // Added console.error for better debugging of caught errors
+    return false; // Returning false instead of e.message for consistency
   }
   return false;
 };
@@ -124,7 +125,7 @@ export const TopHundredArtists = ({ dimensions }) => {
   );
 };
 
-const useGenre = (genre) => {
+/* const useGenre = (genre) => {
   useEffect(() => {
     let isSubscribed = true;
     const getTable = async () => {
@@ -139,7 +140,31 @@ const useGenre = (genre) => {
       isSubscribed = false;
     };
   }, [genre]);
+}; */
+
+const useGenre = (genre) => {
+  useEffect(() => {
+    let isSubscribed = true;
+    const getTable = async () => {
+      try {
+        const tableStat = await tableStatus();
+        if (isSubscribed && !tableStat) {
+          initTable('genre-tracks');
+        }
+        if (isSubscribed) {
+          const results = await window.api.getTracksByGenre('genre-tracks', genre);
+        }
+      } catch (e) {
+        console.error(e); // Added error handling for getTracksByGenre
+      }
+    };
+    if (genre) getTable();
+    return () => {
+      isSubscribed = false;
+    };
+  }, [genre]);
 };
+
 export const Genres = ({ dimensions }) => {
   const [genres, setGenres] = useState([]);
   const [genre, setGenre] = useState('');
@@ -147,7 +172,9 @@ export const Genres = ({ dimensions }) => {
   useGenre(genre);
 
   useEffect(() => {
-    if (genre !== '') setGenre('');
+    if (genre) {
+      setTimeout(() => setGenre(''), 1000);
+    }
   }, [genre, setGenre]);
 
   const getGenres = async (e) => {

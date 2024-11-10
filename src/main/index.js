@@ -678,7 +678,6 @@ async function openWindowAndSendData(queryResults, listType) {
 }
 
 ipcMain.handle('get-tracks-by-artist', async (event, listType, artist) => {
-  console.log('get-tracks-by-artist: ', listType, artist);
   const artistTracks = await allTracksByArtist(artist);
   try {
     await openWindowAndSendData(artistTracks, listType);
@@ -688,7 +687,6 @@ ipcMain.handle('get-tracks-by-artist', async (event, listType, artist) => {
 });
 
 ipcMain.handle('distinct-directories', async () => {
-  /* console.log('distinct-directories called'); */
   try {
     const dirs = await distinctDirectories();
     return dirs;
@@ -698,7 +696,6 @@ ipcMain.handle('distinct-directories', async () => {
 });
 
 ipcMain.handle('get-tracks-by-genre', async (event, listType, genre) => {
-  console.log('get-tracks-by-genre', listType, genre);
   const genreTracks = await allTracksByGenres(genre);
   try {
     await openWindowAndSendData(genreTracks, listType);
@@ -720,7 +717,6 @@ ipcMain.handle('get-tracks-by-root', async (event, root, listType) => {
 
 // FOR TAGS WHEN DISPLAYING ALBUM LISTS
 ipcMain.handle('get-tracks-by-album', async (event, listType, album) => {
-  console.log('get-tracks-by-album: ', listType, album);
   try {
     const albumTracks = await filesByAlbum(album);
     if (albumTracks) {
@@ -909,7 +905,6 @@ ipcMain.handle('update-tags', async (event, arr) => {
 });
 
 ipcMain.on('show-context-menu', (event, id, type) => {
-  console.log('id: ', id);
   const template = [];
 
   // Add items based on the 'type'
@@ -995,7 +990,32 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       },
       {
         label: 'Select image from folder for selected tracks',
-        click: () => event.sender.send('context-menu-command', 'search-folder-all-tracks')
+        click: () =>
+          event.sender.send('context-menu-command', {
+            type: 'search-folder-all-tracks',
+            params: 'search-folder-all-tracks'
+          })
+      }
+    );
+  }
+
+  if (type === 'form-picture') {
+    template.push(
+      {
+        label: `Get image for selected tracks`,
+        click: () =>
+          event.sender.send('context-menu-command', {
+            type: 'all-tracks',
+            params: 'all-tracks'
+          })
+      },
+      {
+        label: 'Select image from folder for selected tracks',
+        click: () =>
+          event.sender.send('context-menu-command', {
+            type: 'search-folder-all-tracks',
+            params: 'search-folder-all-tracks'
+          })
       }
     );
   }
@@ -1111,10 +1131,10 @@ const downloadFile = async (fileUrl, savePath) => {
 
     if (response.status === 200) {
       await fs.promises.writeFile(savePath, response.data);
-      console.log('Download complete:', savePath);
+      /* console.log('Download complete:', savePath); */
       return true;
     } else {
-      console.log('Failed to download:', response.status);
+      /* console.log('Failed to download:', response.status); */
       return false;
     }
   } catch (err) {
@@ -1126,7 +1146,6 @@ const downloadFile = async (fileUrl, savePath) => {
 ipcMain.handle('download-file', async (event, ...args) => {
   const senderWebContents = event.sender;
   const win = getWindowNames();
-  console.log('win: ', win);
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
   const targetWindow = BrowserWindow.fromId(senderWindow.id);
   /* const targetWindow = await getWindow('table-data');
@@ -1160,7 +1179,6 @@ ipcMain.handle('download-file', async (event, ...args) => {
 });
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
-  console.log('args: ', args);
   const win = getWindowNames();
   const coverSearchWindow = getWindow('cover-search-alt-tags');
   const targetWindow = await getWindow('table-data');
@@ -1204,10 +1222,10 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
 });
 
 ipcMain.handle('select-image-from-folder', async (event, arr) => {
-  console.log('select-image-from-folder');
+  console.log('select-image-from-folder', '-----', arr);
   let tempFile;
   const filePath = arr;
-  const startFolder = path.dirname(arr);
+  const startFolder = Array.isArray(arr) ? path.dirname(arr[0]) : path.dirname(arr);
   const targetWindow = getWindow('table-data');
 
   try {
@@ -1224,10 +1242,6 @@ ipcMain.handle('select-image-from-folder', async (event, arr) => {
     }
 
     tempFile = result.filePaths[0].replace(/\\/g, '/');
-    console.log('folderCover: ', tempFile);
-
-    // Send the selected image message
-    targetWindow.webContents.send('selected-image', 'image-acquired');
 
     const workerPath = process.resourcesPath;
     let remove = true;

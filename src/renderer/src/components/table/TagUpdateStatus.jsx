@@ -9,12 +9,8 @@ const TagUpdateState = ({ updateStatus, setUpdateStatus }) => {
   }, [updateStatus]);
   useEffect(() => {
     const handleUpdateTagsStatus = (msg) => {
-      //const validMessages = ['starting', 'image(s) updated', 'tags updated', 'error processing'];
-      //if (validMessages.includes(msg)) {
       setUpdateStatus(msg);
-      //} else {
       return;
-      //}
     };
 
     window.metadataEditingApi.onUpdateTagsStatus(handleUpdateTagsStatus);

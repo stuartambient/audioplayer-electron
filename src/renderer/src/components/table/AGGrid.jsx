@@ -25,7 +25,7 @@ import './styles/AGGrid.css';
 const AGGrid = ({ reset, data, playButton }) => {
   const [originalData, setOriginalData] = useState(null);
   const [nodesSelected, setNodesSelected] = useState([]);
-  const [numNodes, setNumNodes] = useState(0);
+  const [numNodes, setNumNodes] = useState();
   const [isPanelVisible, setIsPanelVisible] = useState(true);
   const [isUndoAction, setIsUndoAction] = useState(false);
   const [isRedoAction, setIsRedoAction] = useState(false);
@@ -35,6 +35,7 @@ const AGGrid = ({ reset, data, playButton }) => {
   /*   const [artistPic, setArtistPic] = useState('');
   const [picture, setPicture] = useState(''); */
   const [roots, setRoots] = useState([]);
+  const [imageFolderPath, setImageFolderPath] = useState(null);
 
   const gridRef = useRef(); // Optional - for accessing Grid's API
   const undoRedoCellEditing = false;
@@ -44,20 +45,24 @@ const AGGrid = ({ reset, data, playButton }) => {
 
   const isRowsSelected = useRef([]);
 
-  useEffect(() => {
-    // Attach the listener when the component mounts
+  let gridApi;
+
+  /*   useEffect(() => {
     metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
 
-    // Cleanup the listener when the component unmounts
     return () => {
       metadataEditingApi.off('context-menu-command', handleEmbedPicture);
     };
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []); */
 
-  useEffect(() => {
+  /*   useEffect(() => {
     const selected = nodesSelected.map((node) => node.data.audiotrack);
     console.log('selected: ', selected);
-  }, [nodesSelected]);
+  }, [nodesSelected]); */
+
+  /*   useEffect(() => {
+    console.log('nodesSelected: ', nodesSelected);
+  }, [nodesSelected]); */
 
   useEffect(() => {
     const loadPreferences = async () => {
@@ -139,8 +144,6 @@ const AGGrid = ({ reset, data, playButton }) => {
     setNumNodes(nodesSelected.length);
   }, [nodesSelected]);
 
-  let gridApi;
-
   const onGridReady = (params) => {
     /*  console.log('grid ready'); */
     gridApi = params.api;
@@ -187,18 +190,18 @@ const AGGrid = ({ reset, data, playButton }) => {
     let artist, title, path;
     let paths = [];
 
-    nodesSelected.forEach((node, index) => {
+    const nodes = gridRef.current.api.getSelectedNodes();
+
+    nodes.forEach((node, index) => {
       const currentArtist = (node.data.albumArtists || node.data.performers || '').trim();
       const currentAlbum = (node.data.album || '').trim();
       const currentPath = node.data.audiotrack;
 
-      // On the first iteration, set the artist and album
       if (index === 0) {
         artist = currentArtist;
         title = currentAlbum;
       }
 
-      // Check if the artist and album are consistent
       if (artist === currentArtist && title === currentAlbum) {
         paths.push(currentPath);
       } else {
@@ -209,31 +212,41 @@ const AGGrid = ({ reset, data, playButton }) => {
     return { artist, title, path: paths };
   };
 
+  const handleNumNodes = () => {
+    const n = gridRef.current.api.getSelectedNodes();
+    return n.length;
+  };
+
   const handleEmbedPicture = (values) => {
+    console.log('values-type: ', values.type);
     let artist,
       title,
       path,
       type = values.type;
     /* let artist, title, path, type;
     let paths = []; */
-    if (values.type === 'single-track') {
+    if (type === 'single-track') {
       artist = values.params.artist;
       title = values.params.album;
       path = values.params.path;
       /* type = values.type; */
-    } else if (values.type === 'search-folder-single') {
-      /* metadataEditingApi.selectImageFromFolder(values.params.path); */
-      return metadataEditingApi.selectImageFromFolder(values.params.path);
-    } else if (values === 'search-folder-all-tracks') {
-      return;
-    } else if (values.type === 'all-tracks') {
+    } else if (type === 'search-folder-single') {
+      return setImageFolderPath(values.params.path);
+    } else if (type === 'search-folder-all-tracks') {
+      const numNodes = handleNumNodes();
+      if (numNodes < 2) return;
+      const nodesObj = selectedNodesImagePicker();
+      return setImageFolderPath(nodesObj.path);
+    } else if (type === 'all-tracks') {
+      const numNodes = handleNumNodes();
+      if (numNodes < 2) return;
       const nodesObj = selectedNodesImagePicker();
       artist = nodesObj.artist;
       title = nodesObj.title;
       path = nodesObj.path;
     }
     console.log('artist: ', artist, 'title: ', title, 'path: ', path, 'type: ', type);
-    openChildWindow(
+    return openChildWindow(
       'cover-search-alt-tags',
       'cover-search-alt-tags',
       {
@@ -249,6 +262,42 @@ const AGGrid = ({ reset, data, playButton }) => {
       { artist, title, path, type }
     );
   };
+
+  useEffect(() => {
+    // Attach the listener when the component mounts
+    const handleTagContextMenu = (option) => {
+      console.log('option: ', option);
+    };
+    metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
+
+    // Cleanup the listener when the component unmounts
+    return () => {
+      metadataEditingApi.off('context-menu-command', handleEmbedPicture);
+    };
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  useEffect(() => {
+    const handleTagUpdateStatus = (val) => {
+      console.log('tag update stat: ', val);
+      if (val === 'image(s) updated' && imageFolderPath) {
+        setImageFolderPath(null);
+      } else if (val === 'error processing' && imageFolderPath) {
+        setImageFolderPath(null);
+        console.error(val);
+      }
+    };
+
+    window.metadataEditingApi.onUpdateTagsStatus(handleTagUpdateStatus);
+    return () => {
+      window.metadataEditingApi.off('update-tags', handleTagUpdateStatus);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (imageFolderPath) {
+      metadataEditingApi.selectImageFromFolder(imageFolderPath);
+    }
+  }, [imageFolderPath]);
 
   const IconCellRenderer = () => (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -521,7 +570,6 @@ const AGGrid = ({ reset, data, playButton }) => {
   };
 
   const handleCellContextMenu = (params) => {
-    console.log('params: ', params);
     params.event.preventDefault();
     //if (params.colDef.field === 'pictures') {
     const album = params.data.album ? params.data.album : '';
@@ -532,10 +580,10 @@ const AGGrid = ({ reset, data, playButton }) => {
       : '';
     const path = params.data.audiotrack;
     window.metadataEditingApi.showContextMenu({ artist, album, path }, 'picture');
-    metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
-    /*    return () => {
-        metadataEditingApi.off('context-menu-command', handleEmbedPicture);
-      }; */
+    /* metadataEditingApi.onContextMenuCommand(handleEmbedPicture);
+    return () => {
+      metadataEditingApi.off('context-menu-command', handleEmbedPicture);
+    }; */
     //}
   };
 

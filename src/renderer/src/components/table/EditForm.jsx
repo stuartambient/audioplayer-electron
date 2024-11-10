@@ -14,6 +14,19 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleMenu = () => {
+    const selectedNode = nodesSelected[0];
+    const album = selectedNode.data.album ? selectedNode.data.album : '';
+    const artist = selectedNode.data.albumArtists
+      ? selectedNode.data.albumArtists
+      : selectedNode.data.performers
+      ? selectedNode.data.performers
+      : '';
+    const path = selectedNode.data.audiotrack;
+    window.metadataEditingApi.showContextMenu({ artist, album, path }, 'form-picture');
+    console.log('album: ', album, 'artist: ', artist, 'path: ', path);
+  };
+
   // Utility function to convert data types based on the field name
   function convertToCorrectType(key, value) {
     const numTypes = ['year', 'disc', 'discCount', 'track', 'trackCount'];
@@ -57,14 +70,26 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
             <label htmlFor={col} /* style={{ marginRight: '8px', whiteSpace: 'nowrap' }} */>
               {`${col} :`}
             </label>
-            <input
-              name={col}
-              id={col}
-              value={formData[col]}
-              /* placeholder={col} */
-              onChange={handleChange}
-              style={{ flex: '1', minWidth: '0' }}
-            />
+            {col === 'pictures' ? (
+              <input
+                name={col}
+                id={col}
+                value={formData[col]}
+                /* placeholder={col} */
+                onChange={handleChange}
+                onContextMenu={handleMenu}
+                style={{ flex: '1', minWidth: '0' }}
+              />
+            ) : (
+              <input
+                name={col}
+                id={col}
+                value={formData[col]}
+                /* placeholder={col} */
+                onChange={handleChange}
+                style={{ flex: '1', minWidth: '0' }}
+              />
+            )}
           </div>
         ) : null;
       })}
