@@ -7,11 +7,12 @@ const CoverSearchAltApp = () => {
   const [album, setAlbum] = useState('');
   const [savePath, setSavePath] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const [delayDownload, setDelayDownload] = useState(false);
   /* const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0 }); */
   const [message, setMessage] = useState(false);
   const [download, setDownload] = useState(false);
   const [listType, setListType] = useState(null);
-  const [embedType, setEmbedType] = useState('');
+
   const [tempPath, setTempPath] = useState('');
   const [isResizing, setIsResizing] = useState(false);
   const [div1StartWidth, setDiv1StartWidth] = useState(0);
@@ -178,7 +179,9 @@ const CoverSearchAltApp = () => {
     if (download && imageUrl && listType === 'cover-search-alt') {
       window.coverSearchAltApi.downloadFile(imageUrl, savePath, listType);
     } else if (download && imageUrl && listType === 'cover-search-alt-tags') {
-      window.coverSearchAltApi.downloadTagImage(imageUrl, savePath, listType, embedType);
+      window.coverSearchAltApi.downloadTagImage(imageUrl, savePath, listType, delayDownload);
+    } else if (download && imageUrl && listType === 'cover-search-alt=tags' && delayDownload) {
+      window.coverSearchAltApi.downloadTagImage(imageUrl, savePath, listType, delayDownload);
     }
     /* return setDownload(false); */
   }, [download, imageUrl, savePath]);
@@ -237,14 +240,14 @@ const CoverSearchAltApp = () => {
     }
 
     const handleSearchParams = (args) => {
-      console.log('args: ', args.listType, args.results.path, args);
+      console.log('args: ', args);
       /* if (!args.results.artist) return; */
       setArtist(args.results.artist ? args.results.artist : '');
       setAlbum(args.results.title ? args.results.title : '');
       setListType(args.listType);
       setSavePath(args.results.path);
-      if (args.listType === 'cover-search-alt-tags') {
-        setEmbedType(args.results.type);
+      if (args.results.type === 'form-search-online') {
+        setDelayDownload(true);
       }
 
       //}

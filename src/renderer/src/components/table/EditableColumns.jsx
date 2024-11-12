@@ -19,6 +19,7 @@ export const editableColumns = [
   'isrc',
   'copyright',
   'pictures',
+  'picture-location',
   'duration',
   'bpm',
   'lyrics',

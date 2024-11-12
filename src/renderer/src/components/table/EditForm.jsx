@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { editableColumns } from './EditableColumns';
+import { openChildWindow } from '../ChildWindows/openChildWindow';
 import './styles/EditForm.css';
 
-function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
+function EditForm({ onUpdate, nodesSelected, hiddenColumns, getSelectedNodes }) {
   const initialState = editableColumns.reduce((acc, col) => {
     acc[col] = '';
     return acc;
   }, {});
 
   const [formData, setFormData] = useState(initialState);
+  const [savedImage, setSavedImage] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,6 +29,61 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
     console.log('album: ', album, 'artist: ', artist, 'path: ', path);
   };
 
+  useEffect(() => {
+    const handleForSubmit = (values) => {
+      console.log('values: ', values);
+      setSavedImage(values);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        'picture-location': values.tempFile
+      }));
+    };
+    metadataEditingApi.onImagesForSubmit(handleForSubmit);
+    return () => {
+      metadataEditingApi.off('for-submit-form', handleForSubmit);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleFormMenu = (option) => {
+      const nodesObj = getSelectedNodes();
+      const artist = nodesObj.artist;
+      const title = nodesObj.title;
+      const path = nodesObj.path;
+
+      console.log('getSelectedNodes: ', artist, title, path);
+      switch (option.type) {
+        case 'form-search-online': {
+          return openChildWindow(
+            'cover-search-alt-tags',
+            'cover-search-alt-tags',
+            {
+              width: 700,
+              height: 600,
+              show: false,
+              resizable: true,
+              preload: 'coverSearchAlt',
+              sandbox: true,
+              webSecurity: true,
+              contextIsolation: true
+            },
+            { artist, title, path, type: option.type }
+          );
+          break;
+        }
+        case 'form-search-folder': {
+          break;
+        }
+        default:
+          break;
+      }
+    };
+    metadataEditingApi.onFormMenuCommand(handleFormMenu);
+    return () => {
+      metadataEditingApi.off('form-menu-command', handleFormMenu);
+    };
+  }, []);
+
   // Utility function to convert data types based on the field name
   function convertToCorrectType(key, value) {
     const numTypes = ['year', 'disc', 'discCount', 'track', 'trackCount'];
@@ -44,6 +101,7 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
     nodesSelected.forEach((node) => {
       Object.keys(formData).forEach((key) => {
         if (formData[key]) {
+          console.log(key, '----', formData[key]);
           const newValue = convertToCorrectType(key, formData[key]);
 
           const changeObj = {
@@ -70,12 +128,13 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns }) {
             <label htmlFor={col} /* style={{ marginRight: '8px', whiteSpace: 'nowrap' }} */>
               {`${col} :`}
             </label>
-            {col === 'pictures' ? (
+            {col === 'picture-location' ? (
               <input
                 name={col}
                 id={col}
+                //value={savedImage && savedImage.tempFile ? savedImage.tempFile : null}
+                /* placeholder={} */
                 value={formData[col]}
-                /* placeholder={col} */
                 onChange={handleChange}
                 onContextMenu={handleMenu}
                 style={{ flex: '1', minWidth: '0' }}

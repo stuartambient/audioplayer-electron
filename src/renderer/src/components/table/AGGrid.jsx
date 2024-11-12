@@ -486,7 +486,7 @@ const AGGrid = ({ reset, data, playButton }) => {
 
   const updateTags = async (arr) => {
     console.log('updateTags: ', arr);
-    const writeTags = await window.metadataEditingApi.updateTags(arr);
+    //const writeTags = await window.metadataEditingApi.updateTags(arr);
   };
 
   const handleGridMenu = (e) => {
@@ -631,6 +631,7 @@ const AGGrid = ({ reset, data, playButton }) => {
             onUpdate={handleMultiRowUpdate}
             nodesSelected={nodesSelected}
             hiddenColumns={hiddenColumns}
+            getSelectedNodes={selectedNodesImagePicker}
           />
         </div>
       )}

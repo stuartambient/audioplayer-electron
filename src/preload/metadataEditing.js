@@ -16,5 +16,11 @@ contextBridge.exposeInMainWorld('metadataEditingApi', {
   onContextMenuCommand: (callback) => {
     ipcRenderer.on('context-menu-command', (event, command) => callback(command));
   },
+  onFormMenuCommand: (callback) => {
+    ipcRenderer.on('form-menu-command', (event, command) => callback(command));
+  },
+  onImagesForSubmit: (callback) => {
+    ipcRenderer.on('for-submit-form', (event, command) => callback(command));
+  },
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });

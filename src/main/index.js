@@ -16,6 +16,7 @@ import {
   /* powerSaveBlocker */
 } from 'electron';
 import * as path from 'path';
+import crypto from 'node:crypto';
 import { logger } from './utility/logger.js';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
@@ -1004,16 +1005,16 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       {
         label: `Get image for selected tracks`,
         click: () =>
-          event.sender.send('context-menu-command', {
-            type: 'all-tracks',
+          event.sender.send('form-menu-command', {
+            type: 'form-search-online',
             params: 'all-tracks'
           })
       },
       {
         label: 'Select image from folder for selected tracks',
         click: () =>
-          event.sender.send('context-menu-command', {
-            type: 'search-folder-all-tracks',
+          event.sender.send('form-menu-command', {
+            type: 'form-search-folder',
             params: 'search-folder-all-tracks'
           })
       }
@@ -1121,6 +1122,7 @@ ipcMain.handle('show-child', (event, args) => {
 
 // Helper function for downloading and saving
 const downloadFile = async (fileUrl, savePath) => {
+  console.log('save-path: ', savePath);
   try {
     const response = await axios.get(fileUrl, {
       responseType: 'arraybuffer',
@@ -1179,20 +1181,28 @@ ipcMain.handle('download-file', async (event, ...args) => {
 });
 
 ipcMain.handle('download-tag-image', async (event, ...args) => {
+  console.log('download-tag-image: ====>', args);
   const win = getWindowNames();
   const coverSearchWindow = getWindow('cover-search-alt-tags');
   const targetWindow = await getWindow('table-data');
-  targetWindow.webContents.send('update-tags', 'starting');
-  const [fileUrl, filePath, listType, embedType] = args;
+
+  const [fileUrl, filePath, listType, delayDownload] = args;
+  const tempKey = crypto.randomBytes(16).toString('hex');
+  if (!delayDownload) {
+    targetWindow.webContents.send('update-tags', 'starting');
+  }
   const extension = path.extname(new URL(fileUrl).pathname);
-  const defaultFilename = `cover${extension}`;
+  const defaultFilename = `cover-${tempKey}${extension}`;
   const tempDir = app.getPath('temp');
   const saveTo = path.join(tempDir, defaultFilename);
 
   const success = await downloadFile(fileUrl, saveTo);
   if (success) {
     const tempFile = saveTo.replace(/\\/g, '/');
-
+    if (delayDownload) {
+      coverSearchWindow.webContents.send('download-completed', 'download-successful');
+      return targetWindow.webContents.send('for-submit-form', { tempFile, filePath });
+    }
     try {
       const workerPath = process.resourcesPath;
       await createUpdateTagImageWorker({

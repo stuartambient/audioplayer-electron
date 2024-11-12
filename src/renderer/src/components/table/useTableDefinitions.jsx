@@ -53,6 +53,7 @@ export const useColumnDefinitions = () => {
       { field: 'isrc' },
       { field: 'copyright', filter: true },
       { field: 'pictures', type: 'bool' },
+      { field: 'picture-location', editable: true },
       { field: 'duration', editable: false },
       { field: 'bpm', filter: true },
       { field: 'lyrics' },
