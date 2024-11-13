@@ -64,6 +64,10 @@ const AGGrid = ({ reset, data, playButton }) => {
     console.log('nodesSelected: ', nodesSelected);
   }, [nodesSelected]); */
 
+  const getUndosLength = () => {
+    return undos.length;
+  };
+
   useEffect(() => {
     const loadPreferences = async () => {
       const preferences = await window.metadataEditingApi.getPreferences();
@@ -486,7 +490,7 @@ const AGGrid = ({ reset, data, playButton }) => {
 
   const updateTags = async (arr) => {
     console.log('updateTags: ', arr);
-    //const writeTags = await window.metadataEditingApi.updateTags(arr);
+    const writeTags = await window.metadataEditingApi.updateTags(arr);
   };
 
   const handleGridMenu = (e) => {
@@ -624,6 +628,7 @@ const AGGrid = ({ reset, data, playButton }) => {
         hiddenColumns={hiddenColumns}
         isPanelVisible={isPanelVisible}
         togglePanelVisibility={togglePanelVisibility}
+        undos={undos.length}
       />
       {nodesSelected.length > 1 && (
         <div className={editFormClassname}>

@@ -11,6 +11,15 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns, getSelectedNodes }) 
 
   const [formData, setFormData] = useState(initialState);
   const [savedImage, setSavedImage] = useState(null);
+  const [imageFolder, setImageFolder] = useState(null);
+  const [savedFolder, setSavedFolder] = useState(null);
+
+  useEffect(() => {
+    if (imageFolder) {
+      const delayDownload = true;
+      metadataEditingApi.selectImageFromFolder(imageFolder, delayDownload);
+    }
+  }, [imageFolder]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,6 +54,21 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns, getSelectedNodes }) 
   }, []);
 
   useEffect(() => {
+    const handleSaveImageFolder = (value) => {
+      setSavedFolder(value);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        'picture-location': value
+      }));
+    };
+
+    metadataEditingApi.onSaveImageFolder(handleSaveImageFolder);
+    return () => {
+      metadataEditingApi.off('save-image-folder', handleSaveImageFolder);
+    };
+  }, []);
+
+  useEffect(() => {
     const handleFormMenu = (option) => {
       const nodesObj = getSelectedNodes();
       const artist = nodesObj.artist;
@@ -72,6 +96,7 @@ function EditForm({ onUpdate, nodesSelected, hiddenColumns, getSelectedNodes }) 
           break;
         }
         case 'form-search-folder': {
+          setImageFolder(nodesObj.path);
           break;
         }
         default:

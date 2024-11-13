@@ -1231,7 +1231,7 @@ ipcMain.handle('download-tag-image', async (event, ...args) => {
   }
 });
 
-ipcMain.handle('select-image-from-folder', async (event, arr) => {
+ipcMain.handle('select-image-from-folder', async (event, arr, delayDownload = false) => {
   console.log('select-image-from-folder', '-----', arr);
   let tempFile;
   const filePath = arr;
@@ -1252,6 +1252,10 @@ ipcMain.handle('select-image-from-folder', async (event, arr) => {
     }
 
     tempFile = result.filePaths[0].replace(/\\/g, '/');
+
+    if (delayDownload) {
+      return targetWindow.webContents.send('save-image-folder', tempFile);
+    }
 
     const workerPath = process.resourcesPath;
     let remove = true;

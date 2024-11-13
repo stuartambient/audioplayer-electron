@@ -137,3 +137,20 @@
 .hamburger-btn:hover span {
   background-color: #007bff; /* Bright color for visibility */
 }
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+.active {
+  color: white;
+  border: lightgray;
+  background: darkblue;
+  animation: blink 5s infinite;
+}

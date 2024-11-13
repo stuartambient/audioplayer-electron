@@ -13,6 +13,7 @@ const CustomToolPanel = ({
   isPanelVisible,
   togglePanelVisibility,
   /*   nodesSelected, */
+  undos,
   hiddenColumns
 }) => {
   const [onForm, setOnForm] = useState(false);
@@ -100,7 +101,11 @@ const CustomToolPanel = ({
             Deselect All
           </button>
 
-          <button id="save-all" className="panel-button" onClick={onClick}>
+          <button
+            id="save-all"
+            className={undos >= 1 ? 'panel-button active' : 'panel-button'}
+            onClick={onClick}
+          >
             Save all
           </button>
           <button id="cancel-all" className="panel-button" onClick={onClick}>

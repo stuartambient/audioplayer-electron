@@ -19,6 +19,7 @@ const tagKeys = {
   performers: (param) => param.split(', '),
   performersRole: (param) => param.split(', '),
   pictures: 'binary',
+  'picture-location': (param) => String(param),
   publisher: (param) => param.trim(),
   remixedBy: (param) => param.trim(),
   replayGainAlbumGain: (param) => Number(param),
@@ -57,41 +58,36 @@ const tagKeys = {
 }; */
 
 const updateTags = async (arr) => {
-  // Array to store errors
   const errors = [];
 
-  // Loop over the array of files
   for (const a of arr) {
     try {
-      // Ensure the file is writable
       const fileWritable = await checkAndRemoveReadOnly(a.id);
       if (!fileWritable) {
         throw new Error('File is not writable');
       }
-
-      // Proceed with tag updates if writable
       const myFile = File.createFromPath(a.id);
 
-      // Update tags
       for (const [key, value] of Object.entries(a.updates)) {
         console.log('Processing file....: ', a.id);
-        const t = tagKeys[key](value);
-        myFile.tag[key] = t;
-      }
 
-      // Save the file
+        if (key === 'picture-location') {
+          const pic = Picture.fromPath(value);
+          myFile.tag.pictures = [pic];
+        } else if (key !== 'picture-location') {
+          const t = tagKeys[key](value);
+          myFile.tag[key] = t;
+        }
+      }
       myFile.save();
     } catch (e) {
-      // Log the error and continue with the next file
       console.error(`Error processing file ${a.id}: ${e.message}`);
       errors.push({ track_id: a.track_id, id: a.id, error: e.message });
     }
   }
 
-  // Log any errors
   console.log('errors: ', errors);
 
-  // Return results
   return {
     message: 'Tag updates completed with some errors',
     errors
