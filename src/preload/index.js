@@ -88,6 +88,10 @@ contextBridge.exposeInMainWorld('api', {
     console.log('prefs: ', preferences);
     ipcRenderer.invoke('save-preferences', preferences);
   },
+  onHamburgerMenuCommand: (cb) =>
+    ipcRenderer.on('hamburger-menu-command', (event, command) => {
+      cb(command);
+    }),
   getRoots: () => ipcRenderer.invoke('get-roots'),
   updateRoots: (roots) => ipcRenderer.invoke('update-roots', roots),
   getFolderPath: (folderName) => ipcRenderer.invoke('get-folder-path', folderName),

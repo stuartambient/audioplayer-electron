@@ -1,4 +1,5 @@
 import { useAudioPlayer } from '../AudioPlayerContext';
+import { useEffect } from 'react';
 import {
   AiOutlineMenu,
   AiOutlineHome,
@@ -18,6 +19,24 @@ import '../style/MainNav.css';
 
 const MainNav = ({ onClick }) => {
   const { state, dispatch } = useAudioPlayer();
+  const hamburgerMenu = [
+    'update-all',
+    'schedule-updates',
+    'update-files',
+    'update-folders',
+    'update-covers',
+    'update-meta'
+  ];
+
+  useEffect(() => {
+    const handleHamburger = (value) => {
+      console.log('hamburger: ', value);
+    };
+    window.api.onHamburgerMenuCommand(handleHamburger);
+    return () => {
+      window.api.off('hamburger-menu-command', handleHamburger);
+    };
+  }, []);
   return (
     <nav className={!state.minimalmode ? 'main-nav' : 'main-nav main-nav--minimal'}>
       {!state.minimalmode && (

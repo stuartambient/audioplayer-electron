@@ -1025,32 +1025,32 @@ ipcMain.on('show-context-menu', (event, id, type) => {
     template.push(
       {
         label: 'Update All',
-        click: () => event.sender.send('context-menu-command', 'update-all')
+        click: () => event.sender.send('hamburger-menu-command', 'update-all')
       },
       { type: 'separator' },
       {
         label: 'Schedule Updates',
-        click: () => event.sender.send('context-menu-command', 'schedule-updates')
+        click: () => event.sender.send('hamburger-menu-command', 'schedule-updates')
       },
       { type: 'separator' },
       {
         label: 'Update Files',
-        click: () => event.sender.send('context-menu-command', 'update-files')
+        click: () => event.sender.send('hamburger-menu-command', 'update-files')
       },
       { type: 'separator' },
       {
         label: 'Update Folders',
-        click: () => event.sender.send('context-menu-command', 'update-folders')
+        click: () => event.sender.send('hamburger-menu-command', 'update-folders')
       },
       { type: 'separator' },
       {
         label: 'Update Covers',
-        click: () => event.sender.send('context-menu-command', 'update-covers')
+        click: () => event.sender.send('hamburger-menu-command', 'update-covers')
       },
       { type: 'separator' },
       {
         label: 'Update Meta',
-        click: () => event.sender.send('context-menu-command', 'update-meta')
+        click: () => event.sender.send('hamburger-menu-command', 'update-meta')
       }
     );
   }

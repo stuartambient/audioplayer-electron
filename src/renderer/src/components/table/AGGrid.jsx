@@ -288,6 +288,8 @@ const AGGrid = ({ reset, data, playButton }) => {
       } else if (val === 'error processing' && imageFolderPath) {
         setImageFolderPath(null);
         console.error(val);
+      } else if (val === 'tags updated') {
+        deselectAll();
       }
     };
 

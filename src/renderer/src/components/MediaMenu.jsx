@@ -112,7 +112,7 @@ const MediaMenu = ({
                 name="textsearch"
                 id="textsearch"
                 placeholder="   search tracks"
-                /* onContextMenu={handleInputMenu} */
+                onContextMenu={async () => await window.api.showTextInputMenu()}
               />
 
               <button type="submit" className="submitbtn">
@@ -134,7 +134,7 @@ const MediaMenu = ({
                 name="textsearch"
                 id="textsearch"
                 placeholder="   search albums"
-                /* onContextMenu={handleInputMenu} */
+                onContextMenu={async () => await window.api.showTextInputMenu()}
               />
 
               <button type="submit" className="submitbtn">
