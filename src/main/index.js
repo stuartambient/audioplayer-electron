@@ -410,7 +410,7 @@ ipcMain.handle('update-folders', async (event) => {
     })
       .on('message', (message) => {
         console.log('message from worker: ', message);
-        mainWindow.webContents.send('folder-update-complete', message.result);
+        mainWindow.webContents.send('update-complete', 'folders', message.result);
       })
       .on('error', (err) => {
         console.error('Worker error:', err);
@@ -450,7 +450,11 @@ ipcMain.handle('update-files', async (event) => {
     })
       .on('message', (message) => {
         console.log('message from worker: ', message);
-        mainWindow.webContents.send('file-update-complete', getObjectWithLengths(message.result));
+        mainWindow.webContents.send(
+          'update-complete',
+          'files',
+          getObjectWithLengths(message.result)
+        );
       })
       .on('error', (err) => {
         console.error('Worker error:', err);
@@ -481,7 +485,11 @@ ipcMain.handle('update-meta', async (event) => {
     })
       .on('message', (message) => {
         console.log('message from worker: ', message);
-        mainWindow.webContents.send('meta-update-complete', getObjectWithLengths(message.result));
+        mainWindow.webContents.send(
+          'update-complete',
+          'metadata',
+          getObjectWithLengths(message.result)
+        );
       })
       .on('error', (err) => {
         console.error('Worker error:', err);
@@ -512,7 +520,7 @@ ipcMain.handle('update-covers', async (event) => {
     })
       .on('message', (message) => {
         console.log('message from worker: ', message);
-        mainWindow.webContents.send('cover-update-complete', message.result);
+        mainWindow.webContents.send('update-complete', 'covers', message.result);
       })
       .on('error', (err) => {
         console.error('Worker error:', err);

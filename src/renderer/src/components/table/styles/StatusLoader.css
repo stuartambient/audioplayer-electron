@@ -20,6 +20,10 @@
   animation: animloader 2s linear alternate infinite;
 }
 
+.status-loader.nav {
+  width: 100px;
+}
+
 @keyframes animloader {
   0% {
     left: 0;

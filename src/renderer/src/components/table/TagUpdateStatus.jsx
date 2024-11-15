@@ -23,7 +23,7 @@ const TagUpdateState = ({ updateStatus, setUpdateStatus }) => {
   return (
     <>
       {updateStatus === 'starting' ? (
-        <StatusLoader />
+        <StatusLoader config="status-loader" />
       ) : (
         <>
           <p style={{ color: 'white' }}>{updateStatus}</p>

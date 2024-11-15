@@ -1,5 +1,6 @@
 import { useAudioPlayer } from '../AudioPlayerContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import StatusLoader from './table/StatusLoader';
 import {
   AiOutlineMenu,
   AiOutlineHome,
@@ -19,24 +20,59 @@ import '../style/MainNav.css';
 
 const MainNav = ({ onClick }) => {
   const { state, dispatch } = useAudioPlayer();
-  const hamburgerMenu = [
-    'update-all',
-    'schedule-updates',
-    'update-files',
-    'update-folders',
-    'update-covers',
-    'update-meta'
-  ];
+  const [updateOption, setUpdateOption] = useState(null);
+  const [updateResults, setUpdateResults] = useState(null);
 
   useEffect(() => {
-    const handleHamburger = (value) => {
-      console.log('hamburger: ', value);
+    const handleUpdate = (type, result) => {
+      console.log('type: ', type, 'result: ', result);
+      setUpdateResults({ type, result });
+      setUpdateOption(null);
     };
-    window.api.onHamburgerMenuCommand(handleHamburger);
+
+    window.api.onUpdateComplete(handleUpdate);
     return () => {
-      window.api.off('hamburger-menu-command', handleHamburger);
+      window.api.off('update-complete', handleUpdate);
     };
   }, []);
+
+  useEffect(() => {
+    const runUpdates = () => {
+      console.log('update option: ', updateOption);
+      switch (updateOption) {
+        case 'update-folders': {
+          window.api.updateFolders();
+          break;
+        }
+        case 'update-files': {
+          window.api.updateFiles();
+          break;
+        }
+        case 'update-covers': {
+          window.api.updateCovers();
+          break;
+        }
+        case 'update-meta': {
+          window.api.updateMeta();
+          break;
+        }
+        default:
+          return;
+      }
+    };
+    if (updateOption) runUpdates();
+  }, [updateOption]);
+
+  useEffect(() => {
+    const handleUpdateOption = (option) => {
+      setUpdateOption(option);
+    };
+    window.api.onHamburgerMenuCommand(handleUpdateOption);
+    return () => {
+      window.api.off('hamburger-menu-command', handleUpdateOption);
+    };
+  }, []);
+
   return (
     <nav className={!state.minimalmode ? 'main-nav' : 'main-nav main-nav--minimal'}>
       {!state.minimalmode && (
@@ -68,9 +104,11 @@ const MainNav = ({ onClick }) => {
             <li onClick={onClick} id="tag-editor" className={state.tagEditor ? 'highlight' : ''}>
               <span>Tags</span>
             </li>
-            {/*  <li onClick={onClick} id="playlists" className="endline">
-              <span>Playlists</span>
-            </li> */}
+            {updateOption && (
+              <li>
+                <StatusLoader config="status-loader nav" />
+              </li>
+            )}
           </ul>
           <ul className="main-nav--right">
             <li onClick={onClick} id="minimize">

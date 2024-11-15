@@ -1,5 +1,5 @@
 import './styles/StatusLoader.css';
 
-const StatusLoader = () => <span className="status-loader"></span>;
+const StatusLoader = ({ config }) => <span className={config}></span>;
 
 export default StatusLoader;

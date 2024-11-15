@@ -64,6 +64,7 @@ const Update = () => {
 
   useEffect(() => {
     const handleFolderUpdateComplete = (result) => {
+      console.log('folder update from update');
       setFolderUpdateReq(false);
       setFolderUpdateResults(result);
     };

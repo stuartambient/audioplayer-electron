@@ -66,7 +66,7 @@ contextBridge.exposeInMainWorld('api', {
     });
   },
   onUpdateFolders: (cb) => {
-    ipcRenderer.on('folder-update-complete', (event, result) => {
+    ipcRenderer.on('update-complete', (event, type, result) => {
       cb(result);
     });
   },
@@ -95,5 +95,10 @@ contextBridge.exposeInMainWorld('api', {
   getRoots: () => ipcRenderer.invoke('get-roots'),
   updateRoots: (roots) => ipcRenderer.invoke('update-roots', roots),
   getFolderPath: (folderName) => ipcRenderer.invoke('get-folder-path', folderName),
+  onUpdateComplete: (cb) => {
+    ipcRenderer.on('update-complete', (event, type, result) => {
+      cb(type, result);
+    });
+  },
   off: (channel, callback) => ipcRenderer.removeListener(channel, callback)
 });
