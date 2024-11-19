@@ -17,7 +17,9 @@ import '../style/AlbumsCoverView.css';
 
 const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
   const { state, dispatch } = useAudioPlayer();
-  const [coverPath, setCoverPath] = useState('');
+  /* const [coverPath, setCoverPath] = useState('');
+  const [albumPath, setAlbumPath] = useState({ pathToAlbum: '', album: '' }); */
+  const [menu, setMenu] = useState(false);
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [currentAlbum, setCurrentAlbum] = useState('');
   const [isScrolling, setIsScrolling] = useState(false); // State to control scrolling
@@ -213,33 +215,45 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
     }
   };
 
-  const handleContextMenuOption = async (option, path, album) => {
-    console.log('option: ', option);
-    if (option[0] === 'search for cover') {
-      const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
+  const handleContextMenu = (option) => {
+    const [menuoption, path, album] = option;
+    console.log(menuoption, '---', path, '---', album);
 
-      const refAlbum = album.replace(regex, '');
-      /*       console.log('album: ', album, 'refAlbum: ', refAlbum); */
-      handleCoverSearch({ path: path, album: refAlbum });
-      /* setCoverSearch({ path: path, album: refAlbum.join(' ') }); */
-    } else if (option[0] === 'add album to playlist') {
-      handleAlbumToPlaylist(path);
-    } else if (option[0] === 'open album folder') {
-      await window.api.openAlbumFolder(path);
-    } else if (option[0] === 'cover search') {
-      /* console.log('cover - search - engine', option, 'path: ', path, 'album: ', album); */
-      const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
-      const refAlbum = album.replace(regex, '');
-      handleCoverSearch({ path: path, album: refAlbum, service: 'covit' });
+    switch (menuoption) {
+      case 'add album to playlist': {
+        return handleAlbumToPlaylist(path);
+        break;
+      }
+      case 'open album folder': {
+        return window.api.openAlbumFolder(path);
+        break;
+      }
+      case 'cover search': {
+        const regex = /(\([^)]*\)|\[[^\]]*\]|\{[^}]*\})/g;
+        const refAlbum = album.replace(regex, '');
+        return handleCoverSearch({ path: path, album: refAlbum, service: 'covit' });
+        break;
+      }
+      default:
+        return;
     }
   };
 
-  const handleContextMenu = async (e) => {
+  /*   useEffect(() => {
+    window.api.onAlbumCoverMenu(handleContextMenu);
+    return () => {
+      window.api.off('album-menu', handleContextMenu);
+    };
+  }, []); */
+
+  const showContextMenu = async (e) => {
+    /* window.api.showContextMenu(); */
     e.preventDefault();
-    const pathToAlbum = e.currentTarget.getAttribute('fullpath');
-    const album = e.currentTarget.getAttribute('album');
-    await window.api.showAlbumCoverMenu();
-    await window.api.onAlbumCoverMenu((e) => handleContextMenuOption(e, pathToAlbum, album));
+    const path = e.currentTarget.getAttribute('fullpath');
+    const folder = e.currentTarget.getAttribute('album');
+    console.log('path: ', path, 'folder: ', folder);
+    await window.api.showAlbumCoverMenu(path, folder);
+    await window.api.onAlbumCoverMenu((e) => handleContextMenu(e));
   };
 
   const lastCoverElement = useCallback(
@@ -361,7 +375,11 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
                         album={item.foldername}
                       >
                         <BsThreeDots
-                          onClick={handleContextMenu}
+                          /*  onClick={async () =>
+                            await window.api.showAlbumCoverMenu(item.fullpath, item.foldername)
+                          } */
+                          onClick={showContextMenu}
+                          //async () => {async () => await window.api.showAlbumCoverMenu()}
                           id={item.fullpath}
                           fullpath={item.fullpath}
                           album={item.foldername}

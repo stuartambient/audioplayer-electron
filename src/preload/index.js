@@ -30,13 +30,15 @@ contextBridge.exposeInMainWorld('api', {
     ),
   setShuffledTracksArray: () => ipcRenderer.invoke('set-shuffled-tracks-array'),
   getShuffledTracks: (start, end) => ipcRenderer.invoke('get-shuffled-tracks', start, end),
-  showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'),
-  showAlbumCoverMenu: () => ipcRenderer.invoke('show-album-cover-menu'),
+  /* showAlbumsMenu: () => ipcRenderer.invoke('show-albums-menu'), */
+  showAlbumCoverMenu: (path, folder) => ipcRenderer.invoke('show-album-cover-menu', path, folder),
   showTextInputMenu: () => ipcRenderer.invoke('show-text-input-menu'),
   onEditTrackMetadata: (cb) => ipcRenderer.once('edit-metadata', (event, args) => cb(args)),
   onRemoveFromPlaylist: (cb) =>
     ipcRenderer.once('remove-from-playlist', (event, ...args) => cb(args)),
-  onAlbumCoverMenu: (cb) => ipcRenderer.once('album-menu', (event, ...args) => cb(args)),
+  onAlbumCoverMenu: (cb) => {
+    ipcRenderer.once('album-menu', (event, ...args) => cb(args));
+  },
   showChild: (args) => ipcRenderer.invoke('show-child', args),
   onRefreshHomeCover: (cb) => ipcRenderer.on('refresh-home-cover', (event, ...args) => cb(args)),
   openAlbumFolder: (path) => ipcRenderer.invoke('open-album-folder', path),
@@ -54,13 +56,17 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.once('context-menu-command', (event, command) => callback(command));
     return () => ipcRenderer.removeAllListeners('context-menu-command'); // Cleanup
   },
+  /*  onAlbumMenuCommand: (callback) => {
+    ipcRenderer.once('album-menu', (event, command) => callback(command));
+    return () => ipcRenderer.removeAllListeners('album-menu'); // Cleanup
+  }, */
   getAlbumsByRoot: (roots) => ipcRenderer.invoke('get-albums-by-root', roots),
   toggleResizable: (isResizable) => ipcRenderer.send('toggle-resizable', isResizable),
   checkForOpenTable: (name) => ipcRenderer.invoke('check-for-open-table', name),
   clearTable: () => ipcRenderer.invoke('clear-table'),
   onUpdatedTags: (cb) => ipcRenderer.on('updated-tags', (event, msg) => cb(msg)),
   onChildWindowClosed: (cb) => ipcRenderer.on('window-closed', (event, name) => cb(name)),
-  onUpdateFiles: (cb) => {
+  /* onUpdateFiles: (cb) => {
     ipcRenderer.on('file-update-complete', (event, result) => {
       cb(result);
     });
@@ -79,7 +85,7 @@ contextBridge.exposeInMainWorld('api', {
     ipcRenderer.on('cover-update-complete', (event, result) => {
       cb(result);
     });
-  },
+  }, */
   removeChildWindowClosedListener: (callback) => {
     ipcRenderer.removeListener('window-closed', callback);
   },

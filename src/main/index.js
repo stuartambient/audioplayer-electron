@@ -438,9 +438,9 @@ function getObjectWithLengths(obj) {
 }
 
 ipcMain.handle('update-files', async (event) => {
-  const senderWebContents = event.sender;
+  /*   const senderWebContents = event.sender;
   const senderWindow = BrowserWindow.fromWebContents(senderWebContents);
-  const targetWindow = BrowserWindow.fromId(senderWindow.id);
+  const targetWindow = BrowserWindow.fromId(senderWindow.id); */
 
   try {
     /* console.log('createUpdateFilesWorker', createUpdateFilesWorker()); */
@@ -471,6 +471,7 @@ ipcMain.handle('update-files', async (event) => {
 
     console.log('Handling subsequent code after worker error.');
   }
+  return;
 });
 
 ipcMain.handle('update-meta', async (event) => {
@@ -565,6 +566,7 @@ ipcMain.handle('get-album', async (_, args) => {
 });
 
 ipcMain.handle('get-album-tracks', async (event, args) => {
+  console.log('get-album-tracks');
   const allAlbumTracks = await filesByAlbum(args);
   return allAlbumTracks;
 });
@@ -1059,6 +1061,11 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       {
         label: 'Update Meta',
         click: () => event.sender.send('hamburger-menu-command', 'update-meta')
+      },
+      { type: 'separator' },
+      {
+        label: 'Setup and Update',
+        click: () => event.sender.send('hamburger-menu-command', 'setup-update')
       }
     );
   }
@@ -1068,33 +1075,27 @@ ipcMain.on('show-context-menu', (event, id, type) => {
   menu.popup(BrowserWindow.fromWebContents(event.sender));
 });
 
-ipcMain.handle('show-album-cover-menu', (event) => {
+ipcMain.handle('show-album-cover-menu', (event, path, folder) => {
+  console.log('show album cover menu: ', path, folder);
   const template = [
-    /*  {
-      label: 'search for cover',
-      click: () => {
-        return event.sender.send('album-menu', 'search for cover');
-      }
-    },
-    { type: 'separator' }, */
     {
       label: 'add album to playlist',
       click: () => {
-        return event.sender.send('album-menu', 'add album to playlist');
+        return event.sender.send('album-menu', 'add album to playlist', path, folder);
       }
     },
     { type: 'separator' },
     {
       label: 'open album folder',
       click: () => {
-        return event.sender.send('album-menu', 'open album folder');
+        return event.sender.send('album-menu', 'open album folder', path, folder);
       }
     },
     { type: 'separator' },
     {
       label: 'cover search',
       click: () => {
-        return event.sender.send('album-menu', 'cover search');
+        return event.sender.send('album-menu', 'cover search', path, folder);
       }
     }
   ];
@@ -1298,9 +1299,10 @@ ipcMain.handle('refresh-cover', async (event, ...args) => {
 });
 
 ipcMain.handle('open-album-folder', async (_, path) => {
+  console.log('open-album-folder');
   try {
     const properPath = path.replaceAll('/', '\\');
-    shell.openPath(properPath);
+    return shell.openPath(properPath);
   } catch (error) {
     console.error(error.message);
   }

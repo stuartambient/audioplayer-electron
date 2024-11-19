@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { useAudioPlayer } from '../AudioPlayerContext';
 import { useEffect, useState } from 'react';
 import StatusLoader from './table/StatusLoader';
@@ -56,6 +57,18 @@ const MainNav = ({ onClick }) => {
           window.api.updateMeta();
           break;
         }
+        case 'setup-update': {
+          dispatch({
+            type: 'set-page',
+            home: false,
+            update: true,
+            player: false,
+            library: false,
+            tagEditor: false
+          });
+          setTimeout(() => setUpdateOption(null));
+          break;
+        }
         default:
           return;
       }
@@ -73,8 +86,13 @@ const MainNav = ({ onClick }) => {
     };
   }, []);
 
+  const mainNav = classNames('main-nav', {
+    'main-nav--minimal': state.minimalmode,
+    'main-nav--hidden': state.player && !state.library
+  });
+
   return (
-    <nav className={!state.minimalmode ? 'main-nav' : 'main-nav main-nav--minimal'}>
+    <nav className={mainNav}>
       {!state.minimalmode && (
         <>
           <ul className="main-nav--left" style={{ justifySelf: 'start' }}>
@@ -83,12 +101,6 @@ const MainNav = ({ onClick }) => {
             </li>
           </ul>
           <ul className="main-nav--center">
-            {/*  <li onClick={onClick} id="home" className={state.home ? 'highlight' : ''}>
-              <span>Home</span>
-            </li> */}
-            <li onClick={onClick} id="update" className={state.update ? 'highlight' : ''}>
-              <span>Update</span>
-            </li>
             <li onClick={onClick} id="player" className={state.player ? 'highlight' : ''}>
               <span>Player</span>
             </li>
@@ -104,11 +116,27 @@ const MainNav = ({ onClick }) => {
             <li onClick={onClick} id="tag-editor" className={state.tagEditor ? 'highlight' : ''}>
               <span>Tags</span>
             </li>
-            {updateOption && (
+            {updateOption && updateOption !== 'setup-update' && (
               <li>
                 <StatusLoader config="status-loader nav" />
               </li>
             )}
+            {/*             {updateResults && (
+              <li>
+                <span
+                  style={{
+                    whiteSpace: 'nowrap',
+                    backgroundColor: 'black',
+                    color: 'white',
+                    fontSize: '.5rem'
+                  }}
+                >
+                  {updateResults.type} ⏹ Change:
+                  {updateResults.result.nochange ? 'none' : 'changes'} ⏹ new:{' '}
+                  {updateResults.result.new} ⏹ deleted: {updateResults.result.new}
+                </span>
+              </li>
+            )} */}
           </ul>
           <ul className="main-nav--right">
             <li onClick={onClick} id="minimize">
