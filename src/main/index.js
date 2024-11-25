@@ -87,7 +87,7 @@ import {
   albumsByTopFolder
 } from './stats';
 /* import initFiles from './updateFiles'; */
-import initCovers from './updateFolderCovers';
+/* import initCovers from './updateFolderCovers'; */
 /* import initUpdateMetadata from './updateMetadata'; */
 /* import updateTags from './updateTags'; */
 
@@ -489,7 +489,8 @@ ipcMain.handle('update-meta', async (event) => {
         mainWindow.webContents.send(
           'update-complete',
           'metadata',
-          getObjectWithLengths(message.result)
+          //getObjectWithLengths(message.result)
+          message.result
         );
       })
       .on('error', (err) => {
@@ -1064,8 +1065,8 @@ ipcMain.on('show-context-menu', (event, id, type) => {
       },
       { type: 'separator' },
       {
-        label: 'Setup and Update',
-        click: () => event.sender.send('hamburger-menu-command', 'setup-update')
+        label: 'Setup / Modify',
+        click: () => event.sender.send('hamburger-menu-command', 'setup / modify')
       }
     );
   }

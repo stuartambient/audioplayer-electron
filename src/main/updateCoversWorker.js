@@ -39,7 +39,8 @@ export const updateCoversInDatabase = (coversArray) => {
       });
     });
     transaction(coversArray);
-    return `success with ${coversArray.length} covers`;
+    /* return `found ${coversArray.length} covers`; */
+    return { added: coversArray.length };
   } catch (e) {
     return e.message;
   }
@@ -52,12 +53,12 @@ function normalizePath(p) {
 }
 
 function escapeSpecialChars(path) {
-  return path.replace(/[\[\]\(\)\{\}]/g, '\\$&');
+  return path.replace(/[\[\]\(\)\{\}\~\']/g, '\\$&');
 }
 
 const options = {
   caseSensitiveMatch: false,
-  suppressErrors: true,
+  suppressErrors: false,
   dot: true
 };
 
@@ -70,25 +71,19 @@ function checkFile(file) {
 }
 
 async function searchCover(folder) {
-  /*   if (folder.startsWith('D:/music/Ghédalia')) {
-    const w = await fs.readdir(folder);
-    console.log('fs: ', w);
-    const z = fg.sync(`${folder}/*`);
-    console.log('z: ', z);
-  } */
-  const files = ['.jpg', '.jpeg', '.png', '.webp'];
-  /*  const escapedPath = fg.escapePath(path.normalize(folder));
-  console.log('path: ', escapedPath); */
+  //const files = ['.jpg', '.jpeg', '.png', '.webp'];
+
   const escapedPath = escapeSpecialChars(folder);
-  /* console.log(escapedPath); */
-  //const cover = fg.sync(`${escapedPath}/**/*.{jpg, jpeg, png, webp}`, options);
-  /* const cover = fg.sync(`${escapedPath}/*.{jpeg,jpg}`, options); */
-  const cover = fg.sync(`${escapedPath}/*`, options);
-  /*   console.log('cover: ', cover); */
+
+  /* const cover = fg.sync(`${escapedPath}/*`, options); */
+  //const cover = await fg(`${escapedPath}/**/*.{jpg,jpeg,png,webp}`, options);
+  const cover = await fg('**/*.{jpg,jpeg,png,webp}', { cwd: folder });
+
   if (cover.length > 0) {
-    const filtered = cover.filter((cvr) => checkFile(cvr));
+    /*  const filtered = cover.filter((cvr) => checkFile(cvr));
     if (!filtered[0]) return;
-    return filtered[0];
+    return filtered[0]; */
+    return `${folder}/${cover[0]}`;
   }
   return;
 }

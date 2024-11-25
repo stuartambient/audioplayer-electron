@@ -10,6 +10,7 @@
   row-gap: 10px;
   color: white;
   justify-items: center;
+  align-items: center;
 }
 
 /* .update-container button {

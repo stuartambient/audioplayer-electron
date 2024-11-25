@@ -15,6 +15,7 @@ import {
 import { FaListUl } from 'react-icons/fa';
 import { BsMusicPlayer } from 'react-icons/bs';
 import { CgMiniPlayer } from 'react-icons/cg';
+import { IoMdHelpCircleOutline } from 'react-icons/io';
 import { VscChromeMaximize, VscChromeMinimize, VscChromeClose } from 'react-icons/vsc';
 
 import '../style/MainNav.css';
@@ -24,11 +25,43 @@ const MainNav = ({ onClick }) => {
   const [updateOption, setUpdateOption] = useState(null);
   const [updateResults, setUpdateResults] = useState(null);
 
+  const parseUpdateType = (type, result) => {
+    console.log('type: ', type, 'result: ', result);
+    switch (type) {
+      case 'files':
+      case 'folders':
+        return result.nochange
+          ? `${type} update completed, no changes`
+          : `${type} new: ${result.new} del: ${result.deleted}`;
+
+      case 'metadata':
+        return result.nochange
+          ? `${type} update completed, no changes`
+          : `${type} modified: ${result.modified}`;
+
+      case 'covers':
+        return result.added === 0
+          ? `${type} update completed, no changes`
+          : `${type} update completed, added: ${result.added}`;
+
+      default:
+        return 'Unknown update type';
+    }
+  };
+
+  useEffect(() => {
+    if (updateResults && updateOption) {
+      setUpdateResults(null);
+    }
+  }, [updateResults, updateOption]);
+
   useEffect(() => {
     const handleUpdate = (type, result) => {
-      console.log('type: ', type, 'result: ', result);
-      setUpdateResults({ type, result });
+      setUpdateResults(parseUpdateType(type, result));
       setUpdateOption(null);
+      setTimeout(() => {
+        setUpdateResults(null);
+      }, 4000);
     };
 
     window.api.onUpdateComplete(handleUpdate);
@@ -57,7 +90,7 @@ const MainNav = ({ onClick }) => {
           window.api.updateMeta();
           break;
         }
-        case 'setup-update': {
+        case 'setup / modify': {
           dispatch({
             type: 'set-page',
             home: false,
@@ -69,6 +102,12 @@ const MainNav = ({ onClick }) => {
           setTimeout(() => setUpdateOption(null));
           break;
         }
+        case 'schedule-updates': {
+          return;
+        }
+        case 'update-all': {
+          return;
+        }
         default:
           return;
       }
@@ -78,6 +117,9 @@ const MainNav = ({ onClick }) => {
 
   useEffect(() => {
     const handleUpdateOption = (option) => {
+      if (option === 'schedule-updates' || option === 'update-all') {
+        return;
+      }
       setUpdateOption(option);
     };
     window.api.onHamburgerMenuCommand(handleUpdateOption);
@@ -121,24 +163,21 @@ const MainNav = ({ onClick }) => {
                 <StatusLoader config="status-loader nav" />
               </li>
             )}
-            {/*             {updateResults && (
+            {updateResults && !state.library && (
               <li>
-                <span
-                  style={{
-                    whiteSpace: 'nowrap',
-                    backgroundColor: 'black',
-                    color: 'white',
-                    fontSize: '.5rem'
-                  }}
-                >
-                  {updateResults.type} ⏹ Change:
-                  {updateResults.result.nochange ? 'none' : 'changes'} ⏹ new:{' '}
-                  {updateResults.result.new} ⏹ deleted: {updateResults.result.new}
-                </span>
+                <span style={{ color: 'white', whiteSpace: 'nowrap' }}>{updateResults}</span>
               </li>
-            )} */}
+            )}
+            {updateResults && state.library && (
+              <li>
+                <span style={{ color: 'white', whiteSpace: 'nowrap' }}>Completed</span>
+              </li>
+            )}
           </ul>
           <ul className="main-nav--right">
+            <li onClick={onClick} id="help">
+              <IoMdHelpCircleOutline />
+            </li>
             <li onClick={onClick} id="minimize">
               <VscChromeMinimize />
             </li>

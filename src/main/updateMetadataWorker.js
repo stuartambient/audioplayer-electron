@@ -265,7 +265,7 @@ const parseMeta = async (files, op) => {
 };
 
 const run = async (cb) => {
-  let status = { deleted: '', new: '', nochange: false };
+  let status = { modified: 0, nochange: false };
   const updatedTracks = [];
   const result = await allTracks();
 

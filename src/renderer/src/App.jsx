@@ -420,8 +420,7 @@ function App() {
 
   return (
     <div className={containerClassNames}>
-      <MainNav onClick={handleMainNav} />
-
+      {state.player && !state.library ? null : <MainNav onClick={handleMainNav} />}
       {/* {state.home && !state.minimalmode && <Home />} */}
       <Home />
       {state.update && <Update />}

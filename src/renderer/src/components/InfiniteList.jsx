@@ -64,6 +64,10 @@ const InfiniteList = memo(() => {
   const resultsRef = useRef(null);
 
   useEffect(() => {
+    console.log('container size: ', contSize);
+  }, [contSize]);
+
+  useEffect(() => {
     if (resultsRef.current) {
       const handleResize = () => {
         const contDimension = resultsRef.current.getBoundingClientRect();

@@ -14,7 +14,7 @@ const loadFile = async (file, id, state, dispatch) => {
     console.log(e);
   }
   const picture = await window.api.getCover(file);
-  console.log('picture: ', picture);
+
   if (picture === 0 || !picture) {
     dispatch({
       type: 'set-cover',

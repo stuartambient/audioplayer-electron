@@ -174,6 +174,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
     //console.log('album id: ', e.currentTarget.id);
     if (currentAlbum === e.currentTarget.id) {
       setCurrentAlbum('');
+      state.audioRef.current.src = '';
       dispatch({
         type: 'stop-this-album'
       });
@@ -189,7 +190,7 @@ const AlbumsCoverView = ({ resetKey, coverSize, className }) => {
         nextTrack: '',
         prevTrack: ''
       });
-      return; //(state.audioRef.current.src = '');
+      return;
     }
     setCurrentAlbum(e.currentTarget.id);
     const albumPath = e.currentTarget.getAttribute('fullpath');
