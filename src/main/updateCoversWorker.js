@@ -77,7 +77,7 @@ async function searchCover(folder) {
 
   /* const cover = fg.sync(`${escapedPath}/*`, options); */
   //const cover = await fg(`${escapedPath}/**/*.{jpg,jpeg,png,webp}`, options);
-  const cover = await fg('**/*.{jpg,jpeg,png,webp}', { cwd: folder });
+  const cover = await fg('**/*.{jpg,jpeg,png,webp,gif}', { cwd: folder });
 
   if (cover.length > 0) {
     /*  const filtered = cover.filter((cvr) => checkFile(cvr));

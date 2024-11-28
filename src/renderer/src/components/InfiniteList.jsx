@@ -63,9 +63,9 @@ const InfiniteList = memo(() => {
   const playlistRef = useRef(null);
   const resultsRef = useRef(null);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     console.log('container size: ', contSize);
-  }, [contSize]);
+  }, [contSize]); */
 
   useEffect(() => {
     if (resultsRef.current) {
@@ -141,19 +141,6 @@ const InfiniteList = memo(() => {
 
   const scrollRef = useRef();
 
-  /*   useEffect(() => {
-    if (
-      (state.activeList === 'tracklistActive' && state.listType === 'playlist') ||
-      (state.activeList === 'playlistActive' && state.listType === 'files')
-    ) {
-      dispatch({
-        type: 'reset-queue'
-      });
-    }
-  }, [state.activeList, state.listType]); */
-
-  const handleElementOutOfDom = () => {};
-
   useEffect(() => {
     if (state.listScroll) {
       if (state.newtrack && state.activeList === 'tracklistActive') {
@@ -198,35 +185,6 @@ const InfiniteList = memo(() => {
       setTrackNavigation(state.playlistTracks);
     }
   }, [state.newtrack, state.tracks, state.listType, state.playlistTracks, state.activeList]);
-
-  /* const handleManualChange = (track) => {
-    const listType = state.activeList === 'tracklistActive' ? state.tracks : state.playlistTracks;
-    const newTrack = listType.findIndex((obj) => obj.track_id === track);
-    console.log(listType[newTrack]);
-    const evt = {
-      preventDefault: () => {
-        console.log('preventDefault called');
-      },
-      target: {
-        id: track,
-        getAttribute: (attr) => {
-          const attributes = {
-            val: newTrack
-          };
-          return attributes[attr] || null;
-        }
-      }
-    };
-    return handleTrackSelect(evt, state, dispatch, {
-      artist: listType[newTrack].performers ? listType[newTrack].performers : 'not available',
-      title: listType[newTrack].title ? listType[newTrack].title : listType[newTrack].audiotrack,
-      album: listType[newTrack].album ? listType[newTrack].album : 'not available',
-      audiofile: listType[newTrack].audiotrack,
-      like: listType[newTrack].like,
-      active: listType[newTrack].track_id,
-      list: state.activeList
-    });
-  }; */
 
   useEffect(() => {
     const handleTrackChange = (trackId) => {
@@ -301,97 +259,6 @@ const InfiniteList = memo(() => {
     state.newtrack,
     visibleRange
   ]);
-
-  /* useEffect(() => {
-    const handleTrackChange = (trackId) => {
-      const changeTrack = new Event('click', {
-        bubbles: true,
-        cancelable: false
-      });
-
-      const toTrack = document.getElementById(trackId);
-      if (toTrack) {
-        toTrack.dispatchEvent(changeTrack);
-      } else {
-        console.error(`Element with ID ${trackId} not found in the DOM.`);
-      }
-    };
-
-    if (state.playNext && state.nextTrack && state.newtrack < state.tracks.length - 1) {
-      const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef;
-
-      if (!state.listScroll) {
-        const newTrack = state.tracks.findIndex((obj) => obj.track_id === state.nextTrack);
-        console.log('newTrack: ', state.tracks[newTrack]);
-        const evt = {
-          preventDefault: () => {
-            console.log('preventDefault called');
-          },
-          target: {
-            id: state.nextTrack,
-            getAttribute: (attr) => {
-              const attributes = {
-                val: newTrack
-              };
-              return attributes[attr] || null;
-            }
-          }
-        };
-        return handleTrackSelect(evt, state, dispatch, {
-          newtrack: newTrack,
-          artist: state.tracks[newTrack].performers,
-          title: state.tracks[newTrack].title,
-          album: state.tracks[newTrack].album,
-          audiofile: state.tracks[newTrack].audiotrack,
-          like: state.tracks[newTrack].like,
-          active: state.tracks[newTrack].track_id,
-          list: 'tracklistActive'
-        });
-      }
-
-      if (state.listScroll) {
-        listRef.current.scrollToIndex({
-          index: state.newtrack + 1,
-          align: 'start'
-        });
-        const trackIndex =
-          state.activeList === 'tracklistActive'
-            ? state.tracks.findIndex((obj) => obj.track_id === state.nextTrack)
-            : state.playlistTracks.findIndex((obj) => obj.track_id === state.nextTrack);
-        if (trackIndex >= visibleRange.startIndex && trackIndex <= visibleRange.endIndex) {
-          handleTrackChange(state.nextTrack);
-        }
-      }
-    }
-
-    if (state.playPrev && state.prevTrack && state.newtrack > 0) {
-      const listRef = state.activeList === 'tracklistActive' ? fileslistRef : playlistRef;
-
-      listRef.current.scrollToIndex({
-        index: state.newtrack - 1,
-        align: 'start'
-      });
-      const trackIndex =
-        state.activeList === 'tracklistActive'
-          ? state.tracks.findIndex((obj) => obj.track_id === state.prevTrack)
-          : state.playlistTracks.findIndex((obj) => obj.track_id === state.prevTrack);
-
-      if (trackIndex >= visibleRange.startIndex && trackIndex <= visibleRange.endIndex) {
-        handleTrackChange(state.prevTrack);
-      }
-    }
-  }, [
-    state.playNext,
-    state.nextTrack,
-    state.playPrev,
-    state.prevTrack,
-    state.tracks,
-    state.playlistTracks,
-    fileslistRef,
-    playlistRef,
-    state.newtrack,
-    visibleRange
-  ]); */
 
   const handleTextSearch = (e) => {
     e.preventDefault();

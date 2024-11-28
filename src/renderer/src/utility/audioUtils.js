@@ -35,6 +35,8 @@ const loadFile = async (file, id, state, dispatch) => {
 const handleTrackSelect = (event, state, dispatch, ...params) => {
   event.preventDefault();
 
+  console.log('handle track select params: ', params);
+
   if (event.target.id) {
     if (event.target.id === state.active) {
       return;

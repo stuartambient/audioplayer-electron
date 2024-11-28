@@ -1,9 +1,6 @@
 {
   "hiddenColumns": [
     "performersRole",
-    "year",
-    "composers",
-    "conductor",
     "comment",
     "description",
     "disc",
@@ -12,12 +9,10 @@
     "publisher",
     "isrc",
     "copyright",
-    "duration",
     "bpm",
     "lyrics",
     "remixedBy",
     "like",
-    "audioBitrate",
     "audioSampleRate",
     "codecs",
     "replayGainAlbumGain",
